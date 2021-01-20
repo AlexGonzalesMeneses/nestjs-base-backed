@@ -8,7 +8,7 @@ import { DataBaseModule } from './config/database/database.module';
 import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
 import { LoggerModule } from 'nestjs-pino';
-import { SegipModule } from './modulos/servicios/iop/segip/segip.module';
+import { SegipModule } from './modules/servicios/iop/segip/segip.module';
 
 @Module({
   imports: [
