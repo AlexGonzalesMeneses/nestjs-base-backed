@@ -7,7 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DataBaseModule } from './config/database/database.module';
 import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
-import { LoggerModule } from 'nestjs-pino';
+import { LogsModule } from './config/logger/logger.module';
+
 
 @Module({
   imports: [
@@ -18,21 +19,7 @@ import { LoggerModule } from 'nestjs-pino';
     UsuarioModule,
     AutenticacionModule,
     EntidadModule,
-    LoggerModule.forRoot({
-      pinoHttp:
-        process.env.NODE_ENV === 'production'
-          ? {
-              timestamp: () =>
-                `,"time":"${new Date(Date.now()).toISOString()}"`,
-            }
-          : {
-              prettyPrint: {
-                colorize: true,
-                levelFirst: true,
-                translateTime: true,
-              },
-            },
-    }),
+    LogsModule,
     DataBaseModule,
     UsuarioModule,
     AutenticacionModule,
