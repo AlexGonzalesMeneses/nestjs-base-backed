@@ -6,9 +6,6 @@ export class SegipService {
     constructor(private http: HttpService) {}
 
     async contrastacion(datosPersona) {
-
-      let url = process.env.IOP_SEGIP_URL;
-      let token = process.env.IOP_SEGIP_TOKEN;
       try {
         const datosCampos = {
           Complemento: datosPersona.Complemento,
@@ -25,15 +22,8 @@ export class SegipService {
           return `"${dato}":"${datosCampos[dato]}"`;
         }).join(', ');
 
-        let urlContrastacion = encodeURI(`${url}/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`);
-        let respuesta = await this.http.get(urlContrastacion,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        ).pipe(
+        let urlContrastacion = encodeURI(`/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`);
+        let respuesta = await this.http.get(urlContrastacion).pipe(
           map(response => response.data),
         ).toPromise();
 
