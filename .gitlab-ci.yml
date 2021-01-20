@@ -1,0 +1,164 @@
+stages:
+  - build
+  - lint
+  - test
+  - deployment
+  - delivery
+
+Instalando Dependencias:
+  image: node:14-alpine
+  stage: build
+  tags:
+    - backend_base_nestjs
+  script:
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+      - package-lock.json
+    expire_in: 1 day
+
+Ejecutar linting:
+  image: node:14-alpine
+  stage: lint
+  except:
+    refs:
+      - master
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo $CI_COMMIT_TAG
+  allow_failure: true
+
+Verificando paquetes:
+  image: node:14-alpine
+  tags:
+    - backend_base_nestjs
+  stage: test
+  except:
+    refs:
+      - master
+  script:
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
+    - npm audit
+  allow_failure: true
+
+Ejecutando tests de integración:
+  image: node:14-alpine
+  stage: test
+  except:
+    refs:
+      - master
+  tags:
+    - backend_base_nestjs
+  script:
+    - npm test
+
+Ejecutando tests de covertura:
+  image: node:14-alpine
+  stage: test
+  except:
+    refs:
+      - master
+  tags:
+    - backend_base_nestjs
+  script:
+    - npm run test:cov
+
+Ejecutando tests e2e:
+  image: node:14-alpine
+  stage: test
+  except:
+    refs:
+      - master
+  tags:
+    - backend_base_nestjs
+  script:
+    - npm run test:e2e
+
+Generando imagen docker (Dev):
+  image: gcr.io/kaniko-project/executor:debug-v0.23.0
+  stage: deployment
+  only:
+    refs:
+      - develop
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+Generando imagen docker (Test):
+  image: gcr.io/kaniko-project/executor:debug-v0.23.0
+  stage: deployment
+  only:
+    refs:
+      - test
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+
+Generando imagen docker (PreProd):
+  image: gcr.io/kaniko-project/executor:debug-v0.23.0
+  stage: deployment
+  only:
+    refs:
+      - sandbox
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+Generando imagen docker (Prod):
+  image: gcr.io/kaniko-project/executor:debug-v0.23.0
+  stage: deployment
+  only:
+    refs:
+      - tags
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+Desplegando container (Dev):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - develop
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+
+Desplegando container (Test):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - test
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+Desplegando container (Sand):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - sandbox
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
+
+Desplegando container (Prod):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - tags
+  tags:
+    - backend_base_nestjs
+  script:
+    - echo "do something"
