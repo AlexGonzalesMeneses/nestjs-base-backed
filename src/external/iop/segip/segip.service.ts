@@ -1,11 +1,12 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { map } from 'rxjs/operators';
+import { SegipPersonaDTO } from './segipPersona.dto';
 
 @Injectable()
 export class SegipService {
     constructor(private http: HttpService) {}
 
-    async contrastacion(datosPersona) {
+    async contrastacion(datosPersona: SegipPersonaDTO) {
       try {
         const datosCampos = {
           Complemento: datosPersona.Complemento,
