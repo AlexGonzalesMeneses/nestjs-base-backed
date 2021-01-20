@@ -1,0 +1,11 @@
+#ignoring dirs
+./node_modules
+
+#ignoring dotfiles
+.eslintrc.js
+.env.sample
+.prettierrc
+.gitignore
+
+#ignoring markdown files
+README.md
