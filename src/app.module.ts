@@ -1,6 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsuarioModule } from './modules/usuario/usuario.module';
 import { AutenticacionModule } from './modules/autenticacion/autenticacion.module';
 import { ConfigModule } from '@nestjs/config';
@@ -27,6 +26,6 @@ import { ParametroModule } from './modules/parametro/parametro.module';
     ParametroModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

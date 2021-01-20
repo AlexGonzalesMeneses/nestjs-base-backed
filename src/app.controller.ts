@@ -1,19 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import { Response } from 'express';
 
-import { Logger } from "nestjs-pino";
+import { Logger } from 'nestjs-pino';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly logger: Logger
-  ) {}
+  constructor(private readonly logger: Logger) {}
 
-  @Get()
-  getHello(): string {
-    // Se puede enviar el contexto
-    this.logger.log("getHello()", AppController.name);
-    return this.appService.getHello();
+  @Get('/status')
+  status(@Res() res: Response) {
+    this.logger.debug('status()', AppController.name);
+    return res.status(HttpStatus.OK).send('Servicio funcionando correctamente');
   }
 }
