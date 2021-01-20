@@ -4,11 +4,12 @@ import {
   Post,
   Body,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { EntidadService } from 'src/modules/entidad/entidad.service';
-import { Entidad } from 'src/modules/entidad/entidad.entity';
 import { EntidadDto } from 'src/modules/entidad/dto/entidad.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Entidad } from './entidad.entity';
 
 @Controller('entidades')
 export class EntidadController {

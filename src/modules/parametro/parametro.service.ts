@@ -8,7 +8,7 @@ import { ParametroDto } from 'src/modules/parametro/dto/parametro.dto';
 export class ParametroService {
   constructor(
     @InjectRepository(ParametroRepositorio)
-    private parametroRepositorio: ParametroRepositorio
+    private parametroRepositorio: ParametroRepositorio,
   ) {}
 
   async guardar(parametroDto: ParametroDto): Promise<Parametro> {

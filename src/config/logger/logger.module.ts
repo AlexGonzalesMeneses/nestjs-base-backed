@@ -17,7 +17,7 @@ import { LoggerModule } from 'nestjs-pino';
                 translateTime: true,
               },
             },
-    })
+    }),
   ],
 })
 export class LogsModule {}

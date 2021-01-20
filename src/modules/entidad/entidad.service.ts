@@ -8,7 +8,7 @@ import { EntidadDto } from 'src/modules/entidad/dto/entidad.dto';
 export class EntidadService {
   constructor(
     @InjectRepository(EntidadRepositorio)
-    private entidadRepositorio: EntidadRepositorio
+    private entidadRepositorio: EntidadRepositorio,
   ) {}
 
   async guardar(entidadDto: EntidadDto): Promise<Entidad> {

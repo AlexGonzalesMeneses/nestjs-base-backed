@@ -4,11 +4,12 @@ import {
   Post,
   Body,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { ParametroService } from 'src/modules/parametro/parametro.service';
-import { Parametro } from 'src/modules/parametro/parametro.entity';
 import { ParametroDto } from 'src/modules/parametro/dto/parametro.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Parametro } from './parametro.entity';
 
 @Controller('parametros')
 export class ParametroController {
