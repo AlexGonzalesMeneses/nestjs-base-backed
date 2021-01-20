@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('entidad')
+@Entity()
 export class Entidad extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,22 +17,22 @@ export class Entidad extends BaseEntity {
   @Column({ length: 25 })
   sigla: string;
 
-  @Column({ length: 55 })
+  @Column({ length: 55, nullable: true })
   email: string;
 
-  @Column({ length: 55 })
+  @Column({ length: 55, nullable: true })
   telefonos: string;
 
-  @Column({ length: 555 })
+  @Column({ length: 555, nullable: true })
   direccion: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, nullable: true })
   web: string;
 
-  @Column({ length: 555 })
+  @Column({ length: 555, nullable: true })
   info: string;
 
-  @Column({ name: 'codigo_portal_unico', length: 8 })
+  @Column({ name: 'codigo_portal_unico', length: 8, nullable: true })
   codigoPortalUnico: string;
 
   @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
