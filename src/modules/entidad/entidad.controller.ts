@@ -10,18 +10,18 @@ import { EntidadService } from 'src/modules/entidad/entidad.service';
 import { Entidad } from 'src/modules/entidad/entidad.entity';
 import { EntidadDto } from 'src/modules/entidad/dto/entidad.dto';
 
-@Controller('entidad')
+@Controller('entidades')
 export class EntidadController {
   constructor(private entidadServicio: EntidadService) {}
 
   @Get()
-  recuperarEntidades(): Promise<Entidad[]> {
-    return this.entidadServicio.recuperarEntidades();
+  recuperar(): Promise<Entidad[]> {
+    return this.entidadServicio.recuperar();
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  guardarEntidad(@Body() entidadDto: EntidadDto): Promise<Entidad> {
-    return this.entidadServicio.guardarEntidad(entidadDto);
+  guardar(@Body() entidadDto: EntidadDto): Promise<Entidad> {
+    return this.entidadServicio.guardar(entidadDto);
   }
 }

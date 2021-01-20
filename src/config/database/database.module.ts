@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Entidad } from 'src/modules/entidad/entidad.entity';
+import { Parametro } from 'src/modules/parametro/parametro.entity';
 
 @Module({
   imports: [
@@ -16,11 +17,11 @@ import { Entidad } from 'src/modules/entidad/entidad.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         // entities: [
-         //  `${__dirname}/../**/**/*.entity.${
-         //    __dirname.includes('src') ? 'ts' : 'js'
-         // }`,
+        //   `${__dirname}/../modulos[><]*.entity.${
+        //     __dirname.includes('src') ? 'ts' : 'js'
+        //   }`,
         // ],
-        entities: [Entidad],
+        entities: [Entidad, Parametro],
         synchronize: true,
       }),
     }),

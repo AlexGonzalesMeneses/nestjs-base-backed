@@ -8,7 +8,7 @@ import { DataBaseModule } from './config/database/database.module';
 import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
 import { LogsModule } from './config/logger/logger.module';
-
+import { ParametroModule } from './modules/parametro/parametro.module';
 
 @Module({
   imports: [
@@ -23,7 +23,8 @@ import { LogsModule } from './config/logger/logger.module';
     DataBaseModule,
     UsuarioModule,
     AutenticacionModule,
-    EntidadModule
+    EntidadModule,
+    ParametroModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,7 +6,12 @@ import { EntidadDto } from 'src/modules/entidad/dto/entidad.dto';
 
 @Injectable()
 export class EntidadService {
-  async guardarEntidad(entidadDto: EntidadDto): Promise<Entidad> {
+  constructor(
+    @InjectRepository(EntidadRepositorio)
+    private entidadRepositorio: EntidadRepositorio
+  ) {}
+
+  async guardar(entidadDto: EntidadDto): Promise<Entidad> {
     const { razonSocial, nit, web, descripcion, sigla } = entidadDto;
     const entidad = new Entidad();
     entidad.razonSocial = razonSocial;
@@ -17,11 +22,8 @@ export class EntidadService {
     const entidadCreada = await this.entidadRepositorio.save(entidad);
     return entidadCreada;
   }
-  constructor(
-    @InjectRepository(EntidadRepositorio)
-    private entidadRepositorio: EntidadRepositorio
-  ) {}
-  async recuperarEntidades(): Promise<Entidad[]> {
+
+  async recuperar(): Promise<Entidad[]> {
     return this.entidadRepositorio.find();
   }
 }
