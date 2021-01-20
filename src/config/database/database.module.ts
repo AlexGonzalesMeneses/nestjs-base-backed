@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Entidad } from 'src/modules/entidad/entidad.entity';
 
 @Module({
   imports: [
@@ -14,12 +15,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [
-          `${__dirname}/../**/*.entity.${
-            __dirname.includes('src') ? 'ts' : 'js'
-          }`,
-        ],
-        synchronize: false,
+        // entities: [
+         //  `${__dirname}/../**/**/*.entity.${
+         //    __dirname.includes('src') ? 'ts' : 'js'
+         // }`,
+        // ],
+        entities: [Entidad],
+        synchronize: true,
       }),
     }),
   ],
