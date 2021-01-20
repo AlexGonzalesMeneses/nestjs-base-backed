@@ -3,13 +3,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsuarioModule } from './modulos/usuario/usuario.module';
 import { AutenticacionModule } from './modulos/autenticacion/autenticacion.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from 'src/config/typeorm.config';
+
+import { ConfigModule } from '@nestjs/config';
+import { DataBaseModule } from './config/database/database.module';
+
 @Module({
   imports: [
-    UsuarioModule, 
-    AutenticacionModule, 
-    TypeOrmModule.forRoot(typeOrmConfig)],
+    ConfigModule.forRoot(),
+    DataBaseModule,
+    UsuarioModule,
+    AutenticacionModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
