@@ -6,6 +6,11 @@ import { SegipPersonaDTO } from './segipPersona.dto';
 export class SegipService {
     constructor(private http: HttpService) {}
 
+    /**
+    * @title Contrastación
+    * @description Metodo para verificar si la información de una persona coincide con un registro en el SEGIP
+    * @param datosPersona Objeto de datos con la información de la persona
+    */
     async contrastacion(datosPersona: SegipPersonaDTO) {
       try {
         const datosCampos = {
