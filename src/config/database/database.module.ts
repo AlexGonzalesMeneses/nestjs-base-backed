@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Entidad } from 'src/modules/entidad/entidad.entity';
 import { Parametro } from 'src/modules/parametro/parametro.entity';
+import { Usuario } from 'src/modules/usuario/usuario.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Parametro } from 'src/modules/parametro/parametro.entity';
         //     __dirname.includes('src') ? 'ts' : 'js'
         //   }`,
         // ],
-        entities: [Entidad, Parametro],
+        entities: [Entidad, Parametro, Usuario],
         synchronize: true,
       }),
     }),
