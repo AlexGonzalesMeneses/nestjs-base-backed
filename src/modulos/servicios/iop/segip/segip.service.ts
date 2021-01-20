@@ -7,8 +7,8 @@ export class SegipService {
 
     async contrastacion(datosPersona) {
 
-      let url = `https://interoperabilidad.agetic.gob.bo/fake/segip`;
-      let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDY3VBU3BSZDJRNFVBZFE2ZUNrQThXUTZsYTZQQU5vUyIsInVzZXIiOiJhYWx2YXJhZG8iLCJleHAiOjE1MjQ2MDEwNTcsImlhdCI6MTUxNjgyNTA1OH0.t7zs7W-nhH4eGR5P8unGhPXWc53MqT4KKC3fGpElwUk`;
+      let url = process.env.IOP_SEGIP_URL;
+      let token = process.env.IOP_SEGIP_TOKEN;
       try {
         const datosCampos = {
           Complemento: datosPersona.Complemento,

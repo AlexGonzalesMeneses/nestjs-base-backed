@@ -18,6 +18,7 @@ import { SegipModule } from './modulos/servicios/iop/segip/segip.module';
     ExternalModule,
     UsuarioModule,
     AutenticacionModule,
+    EntidadModule,
     LoggerModule.forRoot({
       pinoHttp:
         process.env.NODE_ENV === 'production'
