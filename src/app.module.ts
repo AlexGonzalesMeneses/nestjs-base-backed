@@ -17,6 +17,7 @@ import { LoggerModule } from 'nestjs-pino';
     ExternalModule,
     UsuarioModule,
     AutenticacionModule,
+    EntidadModule,
     LoggerModule.forRoot({
       pinoHttp:
         process.env.NODE_ENV === 'production'
@@ -32,10 +33,6 @@ import { LoggerModule } from 'nestjs-pino';
               },
             },
     }),
-    EntidadModule,
-    DataBaseModule,
-    UsuarioModule,
-    AutenticacionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -30,7 +30,7 @@ export class MensajeriaService {
   }
 
   /**
-   * Metodo para enviar sms
+   * Metodo para enviar correo
    * @param email Correo Electronico
    * @param subject asunto
    * @param content contenido
