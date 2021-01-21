@@ -20,7 +20,7 @@ export class SinService {
       };
 
       const respuesta = await this.http
-        .post('login', datosCampos)
+        .post('/login', datosCampos)
         .pipe(map((response) => response.data))
         .toPromise();
 

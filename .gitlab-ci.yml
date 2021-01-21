@@ -1,74 +1,52 @@
 stages:
-  - build
-  - lint
-  - test
-  - deployment
-  - delivery
+   - build
+   - lint
+   - test
+   - deployment
+   - delivery
 
-Instalando Dependencias:
-  image: node:14-alpine
-  stage: build
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
-    - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-      - package-lock.json
-    expire_in: 1 day
+# Instalando Dependencias:
+#   image: node:14-alpine
+#   stage: build
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm ci
+#   artifacts:
+#     paths:
+#       - node_modules/
+#       - package-lock.json
+#     expire_in: 1 day
 
-Ejecutar linting:
-  image: node:14-alpine
-  stage: lint
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - echo $CI_COMMIT_TAG
-  allow_failure: true
+# Ejecutar linting:
+#   image: node:14-alpine
+#   stage: lint
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - echo $CI_COMMIT_TAG
+#   allow_failure: true
 
-Verificando paquetes:
-  image: node:14-alpine
-  tags:
-    - backend-base-nestjs
-  stage: test
-  except:
-    refs:
-      - master
-  script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
-    - npm audit
-  allow_failure: true
+# Verificando paquetes:
+#   image: node:14-alpine
+#   tags:
+#     - backend-base-nestjs
+#   stage: test
+#   except:
+#     refs:
+#       - master
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm audit
+#   allow_failure: true
 
-Ejecutando tests de integración:
-  image: node:14-alpine
-  stage: test
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm test
-
-Ejecutando tests de covertura:
-  image: node:14-alpine
-  stage: test
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:cov
-
-# Ejecutando tests e2e:
+# Ejecutando tests de integración:
 #   image: node:14-alpine
 #   stage: test
 #   except:
@@ -77,27 +55,49 @@ Ejecutando tests de covertura:
 #   tags:
 #     - backend-base-nestjs
 #   script:
-#     - npm run test:e2e
+#     - npm test
 
-Generando imagen docker (Dev):
-  image: gcr.io/kaniko-project/executor:debug-v0.23.0
-  stage: deployment
-  only:
-    refs:
-      - develop
-  tags:
-    - backend-base-nestjs
-  script:
-    - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
-    - chmod +x ./parse-template.sh
-    - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > /kaniko/.docker/config.json
-    - sh parse-template.sh /kaniko/.docker/config.json /kaniko/.docker/config.json
-    - echo $IR_REPO_URL_TEMPLATE | base64 -d > ip-repo-url-template.txt
-    - sh parse-template.sh ip-repo-url-template.txt ip-repo-url-template.txt
-    - export IR_REPO_URL=$(cat ip-repo-url-template.txt)
-    - echo $CI_COMMIT_TAG
-    - env
-    - /kaniko/executor --context . --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
+# Ejecutando tests de covertura:
+#   image: node:14-alpine
+#   stage: test
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:cov
+
+# # Ejecutando tests e2e:
+# #   image: node:14-alpine
+# #   stage: test
+# #   except:
+# #     refs:
+# #       - master
+# #   tags:
+# #     - backend-base-nestjs
+# #   script:
+# #     - npm run test:e2e
+
+# Generando imagen docker (Dev):
+#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   stage: deployment
+#   only:
+#     refs:
+#       - develop
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
+#     - chmod +x ./parse-template.sh
+#     - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > /kaniko/.docker/config.json
+#     - sh parse-template.sh /kaniko/.docker/config.json /kaniko/.docker/config.json
+#     - echo $IR_REPO_URL_TEMPLATE | base64 -d > ip-repo-url-template.txt
+#     - sh parse-template.sh ip-repo-url-template.txt ip-repo-url-template.txt
+#     - export IR_REPO_URL=$(cat ip-repo-url-template.txt)
+#     - echo $CI_COMMIT_TAG
+#     - env
+#     - /kaniko/executor --context . --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
 
 Desplegando container (Dev):
   image: alpine/helm:3.1.3
