@@ -5,7 +5,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as helmet from 'helmet';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as csurf from 'csurf';
+
 import {
   SWAGGER_API_DESCRIPTION,
   SWAGGER_API_NAME,
@@ -45,7 +48,7 @@ async function bootstrap() {
 
   app.enableCors();
   app.use(helmet());
-  app.use(csurf());
+  // app.use(csurf());
 
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
   const port = configService.get('PORT');

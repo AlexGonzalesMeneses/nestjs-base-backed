@@ -10,9 +10,9 @@ export default [
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     entities: ['src/**/*.entity.ts'],
-    migrations: ['src/migrations/*.ts'],
+    migrations: ['src/database/migrations/*.ts'],
     cli: {
-      migrationsDir: 'src/migrations',
+      migrationsDir: 'src/database/migrations',
     },
   },
   {
@@ -23,9 +23,9 @@ export default [
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    migrations: ['src/seeds/*.ts'],
+    migrations: ['src/database/seeds/*.ts'],
     cli: {
-      migrationsDir: 'src/seeds',
+      migrationsDir: 'src/database/seeds',
     },
   },
 ];
