@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as session from 'express-session';
+import * as passport from 'passport';
 import {
   SWAGGER_API_DESCRIPTION,
   SWAGGER_API_NAME,
@@ -19,6 +21,22 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(SWAGGER_API_ROOT, app, document);
+
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      rolling: true,
+      name: 'base.connect.sid',
+      cookie: {
+        maxAge: 30 * 60 * 1000,
+        httpOnly: true,
+      },
+    }),
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
   const port = configService.get('PORT');
