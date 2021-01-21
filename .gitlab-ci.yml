@@ -9,7 +9,7 @@ Instalando Dependencias:
   image: node:14-alpine
   stage: build
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
     - npm set strict-ssl false
@@ -27,7 +27,7 @@ Ejecutar linting:
     refs:
       - master
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
     - echo $CI_COMMIT_TAG
   allow_failure: true
@@ -35,7 +35,7 @@ Ejecutar linting:
 Verificando paquetes:
   image: node:14-alpine
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   stage: test
   except:
     refs:
@@ -53,7 +53,7 @@ Ejecutando tests de integración:
     refs:
       - master
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
     - npm test
 
@@ -64,7 +64,7 @@ Ejecutando tests de covertura:
     refs:
       - master
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
     - npm run test:cov
 
@@ -75,7 +75,7 @@ Ejecutando tests e2e:
     refs:
       - master
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
     - npm run test:e2e
 
@@ -107,7 +107,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - test
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 
@@ -118,7 +118,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - sandbox
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 # Generando imagen docker (Prod):
@@ -128,7 +128,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - tags
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 # Desplegando container (Dev):
@@ -138,7 +138,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - develop
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 
@@ -149,7 +149,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - test
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 # Desplegando container (Sand):
@@ -159,7 +159,7 @@ Generando imagen docker (Dev):
 #     refs:
 #       - sandbox
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
 
@@ -170,6 +170,6 @@ Generando imagen docker (Dev):
 #     refs:
 #       - tags
 #   tags:
-#     - backend_base_nestjs
+#     - backend-base-nestjs
 #   script:
 #     - echo "do something"
