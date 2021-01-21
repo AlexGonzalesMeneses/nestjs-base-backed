@@ -99,6 +99,35 @@ Generando imagen docker (Dev):
     - env
     - /kaniko/executor --context . --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
 
+Desplegando container (Dev):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - develop
+  tags:
+    - iop-servicios-fundempresa-v3
+  script:
+    - export IOP_VAULT_ENVIRONMENT=develop
+    - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
+    - chmod +x ./parse-template.sh
+    - echo $IR_CHART_REPO_URL_TEMPLATE | base64 -d > ip-chart-repo-url-template.txt
+    - sh parse-template.sh ip-chart-repo-url-template.txt ip-chart-repo-url-template.txt
+    - export IR_CHART_REPO_URL=$(cat ip-chart-repo-url-template.txt)
+    - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > ir-auth-config-template.txt
+    - sh parse-template.sh ir-auth-config-template.txt ir-auth-config-template.txt
+    - export IR_AUTH_CONFIG=$(cat ir-auth-config-template.txt | base64 | tr -d \\n)
+    - echo $VAULT_ENDPOINT_TEMPLATE | base64 -d > vault-endpoint-template.txt
+    - sh parse-template.sh vault-endpoint-template.txt vault-endpoint-template.txt
+    - export VAULT_ENDPOINT_B64=$(cat vault-endpoint-template.txt | base64 | tr -d \\n)
+    - export VAULT_TOKEN_B64=$(echo $VAULT_TOKEN | base64 | tr -d \\n)
+    - echo $K8S_CONFIG_TEMPLATE | base64 -d > ./config.yml
+    - sh parse-template.sh ./config.yml ./config.yml
+    - echo $VALUES_DEV_TEMPLATE | base64 -d > ./values.yml
+    - sh parse-template.sh ./values.yml ./values.yml
+    - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
+    - helm repo update
+    - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 
 # Generando imagen docker (Test):
 #   image: gcr.io/kaniko-project/executor:debug-v0.23.0
