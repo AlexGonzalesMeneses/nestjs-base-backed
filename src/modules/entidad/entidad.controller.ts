@@ -6,8 +6,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { EntidadService } from 'src/modules/entidad/entidad.service';
-import { EntidadDto } from 'src/modules/entidad/dto/entidad.dto';
+import { EntidadService } from './entidad.service';
+import { EntidadDto } from './dto/entidad.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entidad } from './entidad.entity';
 

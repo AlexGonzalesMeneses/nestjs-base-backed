@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UsuarioModule } from './modules/usuario/usuario.module';
 import { AutenticacionModule } from './modules/autenticacion/autenticacion.module';
@@ -12,14 +12,9 @@ import { ParametroModule } from './modules/parametro/parametro.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    HttpModule,
     DataBaseModule,
-    ExternalModule,
-    UsuarioModule,
-    AutenticacionModule,
-    EntidadModule,
     LogsModule,
-    DataBaseModule,
+    ExternalModule,
     UsuarioModule,
     AutenticacionModule,
     EntidadModule,

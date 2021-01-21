@@ -6,8 +6,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ParametroService } from 'src/modules/parametro/parametro.service';
-import { ParametroDto } from 'src/modules/parametro/dto/parametro.dto';
+import { ParametroService } from './parametro.service';
+import { ParametroDto } from './dto/parametro.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Parametro } from './parametro.entity';
 

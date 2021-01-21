@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Entidad } from 'src/modules/entidad/entidad.entity';
-import { Parametro } from 'src/modules/parametro/parametro.entity';
-import { Usuario } from 'src/modules/usuario/usuario.entity';
+import { Entidad } from '../../modules/entidad/entidad.entity';
+import { Parametro } from '../../modules/parametro/parametro.entity';
+import { Usuario } from '../../modules/usuario/usuario.entity';
 
 @Module({
   imports: [

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ParametroRepositorio } from 'src/modules/parametro/parametro.repositorio';
-import { Parametro } from 'src/modules/parametro/parametro.entity';
-import { ParametroDto } from 'src/modules/parametro/dto/parametro.dto';
+import { ParametroRepositorio } from './parametro.repositorio';
+import { Parametro } from './parametro.entity';
+import { ParametroDto } from './dto/parametro.dto';
 
 @Injectable()
 export class ParametroService {
