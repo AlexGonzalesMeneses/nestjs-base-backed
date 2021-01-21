@@ -1,9 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-export class EntidadDto {
+export class UsuarioDto {
   id: number;
+  @ApiProperty()
   @IsNotEmpty()
   usuario: string;
+  @ApiProperty()
   @IsNotEmpty()
   contrasena: string;
+  @ApiProperty()
   estado: string;
 }
