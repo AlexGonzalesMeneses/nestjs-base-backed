@@ -68,16 +68,16 @@ Ejecutando tests de covertura:
   script:
     - npm run test:cov
 
-Ejecutando tests e2e:
-  image: node:14-alpine
-  stage: test
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:e2e
+# Ejecutando tests e2e:
+#   image: node:14-alpine
+#   stage: test
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:e2e
 
 Generando imagen docker (Dev):
   image: gcr.io/kaniko-project/executor:debug-v0.23.0
