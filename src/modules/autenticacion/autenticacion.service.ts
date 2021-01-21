@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsuarioService } from '../usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { createHash } from 'crypto';
+import { STATUS_INACTIVE } from '../../common/constants';
 
 @Injectable()
 export class AutenticacionService {
@@ -21,7 +22,7 @@ export class AutenticacionService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      if (respuesta.estado === 'INACTIVO') {
+      if (respuesta.estado === STATUS_INACTIVE) {
         throw new HttpException(
           'El usuario se encuentra deshabilitado.',
           HttpStatus.UNAUTHORIZED,
