@@ -86,79 +86,90 @@ Generando imagen docker (Dev):
     refs:
       - develop
   tags:
-    - backend_base_nestjs
+    - backend-base-nestjs
   script:
-    - echo "do something"
-Generando imagen docker (Test):
-  image: gcr.io/kaniko-project/executor:debug-v0.23.0
-  stage: deployment
-  only:
-    refs:
-      - test
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
+    - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
+    - chmod +x ./parse-template.sh
+    - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > /kaniko/.docker/config.json
+    - sh parse-template.sh /kaniko/.docker/config.json /kaniko/.docker/config.json
+    - echo $IR_REPO_URL_TEMPLATE | base64 -d > ip-repo-url-template.txt
+    - sh parse-template.sh ip-repo-url-template.txt ip-repo-url-template.txt
+    - export IR_REPO_URL=$(cat ip-repo-url-template.txt)
+    - echo $CI_COMMIT_TAG
+    - env
+    - /kaniko/executor --context . --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
 
-Generando imagen docker (PreProd):
-  image: gcr.io/kaniko-project/executor:debug-v0.23.0
-  stage: deployment
-  only:
-    refs:
-      - sandbox
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
-Generando imagen docker (Prod):
-  image: gcr.io/kaniko-project/executor:debug-v0.23.0
-  stage: deployment
-  only:
-    refs:
-      - tags
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
-Desplegando container (Dev):
-  image: alpine/helm:3.1.3
-  stage: delivery
-  only:
-    refs:
-      - develop
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
 
-Desplegando container (Test):
-  image: alpine/helm:3.1.3
-  stage: delivery
-  only:
-    refs:
-      - test
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
-Desplegando container (Sand):
-  image: alpine/helm:3.1.3
-  stage: delivery
-  only:
-    refs:
-      - sandbox
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
+# Generando imagen docker (Test):
+#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   stage: deployment
+#   only:
+#     refs:
+#       - test
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
 
-Desplegando container (Prod):
-  image: alpine/helm:3.1.3
-  stage: delivery
-  only:
-    refs:
-      - tags
-  tags:
-    - backend_base_nestjs
-  script:
-    - echo "do something"
+# Generando imagen docker (PreProd):
+#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   stage: deployment
+#   only:
+#     refs:
+#       - sandbox
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
+# Generando imagen docker (Prod):
+#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   stage: deployment
+#   only:
+#     refs:
+#       - tags
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
+# Desplegando container (Dev):
+#   image: alpine/helm:3.1.3
+#   stage: delivery
+#   only:
+#     refs:
+#       - develop
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
+
+# Desplegando container (Test):
+#   image: alpine/helm:3.1.3
+#   stage: delivery
+#   only:
+#     refs:
+#       - test
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
+# Desplegando container (Sand):
+#   image: alpine/helm:3.1.3
+#   stage: delivery
+#   only:
+#     refs:
+#       - sandbox
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
+
+# Desplegando container (Prod):
+#   image: alpine/helm:3.1.3
+#   stage: delivery
+#   only:
+#     refs:
+#       - tags
+#   tags:
+#     - backend_base_nestjs
+#   script:
+#     - echo "do something"
