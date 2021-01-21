@@ -106,7 +106,7 @@ Desplegando container (Dev):
     refs:
       - develop
   tags:
-    - iop-servicios-fundempresa-v3
+    - backend-base-nestjs
   script:
     - export IOP_VAULT_ENVIRONMENT=develop
     - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
