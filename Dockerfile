@@ -9,7 +9,7 @@ RUN npm set strict-ssl false
 RUN npm install
 COPY --chown=node:node . .
 EXPOSE 3000
-CMD [ "node", "index.js" ]
+CMD [ "npm", "run", "start:dev" ]
 
 
 # # Stage development
