@@ -11,7 +11,6 @@ COPY --chown=node:node . .
 EXPOSE 3000
 CMD [ "npm", "run", "start:dev" ]
 
-
 # # Stage development
 # FROM node:14-alpine
 # ENV NODE_ENV development
