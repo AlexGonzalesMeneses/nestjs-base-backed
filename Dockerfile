@@ -10,5 +10,5 @@ RUN npm ci
 RUN npm run build
 COPY --chown=node:node . .
 EXPOSE 3000
-CMD [ "node", "dist/src/main" ]
+CMD [ "node", "/home/node/app/dist/src/main" ]
 
