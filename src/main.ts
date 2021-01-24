@@ -8,7 +8,6 @@ import * as helmet from 'helmet';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as csurf from 'csurf';
-
 import {
   SWAGGER_API_DESCRIPTION,
   SWAGGER_API_NAME,
@@ -19,7 +18,6 @@ import {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-
   // swagger
   const config = new DocumentBuilder()
     .setTitle(SWAGGER_API_NAME)
@@ -53,6 +51,11 @@ async function bootstrap() {
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
   const port = configService.get('PORT');
   await app.listen(port);
+  console.log(
+    `Path de la aplicación configurada como /${configService.get(
+      'PATH_SUBDOMAIN',
+    )}`,
+  );
   console.log(`Aplicación iniciada en el puerto ${port}`);
 }
 bootstrap();
