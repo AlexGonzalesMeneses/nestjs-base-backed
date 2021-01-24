@@ -8,7 +8,9 @@ import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
 import { LogsModule } from './config/logger/logger.module';
 import { ParametroModule } from './modules/parametro/parametro.module';
-import { AutorizacionModule } from './autorizacion/modules/autorizacion/autorizacion.module';
+import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './modules/autorizacion/rol.guard';
 
 @Module({
   imports: [
@@ -23,6 +25,11 @@ import { AutorizacionModule } from './autorizacion/modules/autorizacion/autoriza
     AutorizacionModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
