@@ -6,6 +6,7 @@
 .env.sample
 .prettierrc
 .gitignore
+.git
 
 #ignoring markdown files
 README.md
