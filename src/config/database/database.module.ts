@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Entidad } from '../../modules/entidad/entidad.entity';
 import { Parametro } from '../../modules/parametro/parametro.entity';
 import { Usuario } from '../../modules/usuario/usuario.entity';
+import { Rol } from '../../modules/autorizacion/entities/rol.entity';
+import { Modulo } from 'src/modules/autorizacion/entities/modulo.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { Usuario } from '../../modules/usuario/usuario.entity';
         //     __dirname.includes('src') ? 'ts' : 'js'
         //   }`,
         // ],
-        entities: [Entidad, Parametro, Usuario],
+        entities: [Entidad, Parametro, Usuario, Rol, Modulo],
         synchronize: true,
       }),
     }),
