@@ -1,4 +1,11 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+} from 'typeorm';
+import { RolModulo } from './rol-modulo.entity';
 
 @Entity()
 export class Modulo extends BaseEntity {
@@ -14,6 +21,12 @@ export class Modulo extends BaseEntity {
   @Column({ length: 50, unique: true })
   icono: string;
 
+  @Column({ length: 50, unique: true })
+  nombre: string;
+
   @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
   estado: string;
+
+  @OneToMany(() => RolModulo, (rolModulo) => rolModulo.modulo)
+  public rolModulo!: RolModulo[];
 }

@@ -28,18 +28,27 @@ export class AutenticacionService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-
+      const roles = [];
+      if (respuesta.usuarioRol.length) {
+        respuesta.usuarioRol.map((usuarioRol) => {
+          roles.push(usuarioRol.rol.rol);
+        });
+      }
       return {
         id: respuesta.id,
         usuario: respuesta.usuario,
+        roles,
       };
     }
     return null;
   }
 
   async autenticar(usuario: any) {
-    const payload = { usuario: usuario.usuario, sub: usuario.id };
-
+    const payload = {
+      usuario: usuario.usuario,
+      sub: usuario.id,
+      roles: usuario.roles,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };

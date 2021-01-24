@@ -13,4 +13,7 @@ export class UsuarioService {
   async buscarUsuario(usuario: string): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuario(usuario);
   }
+  async recuperar(): Promise<Usuario[]> {
+    return this.usuarioRepositorio.recuperar();
+  }
 }

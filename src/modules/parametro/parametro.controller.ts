@@ -17,8 +17,9 @@ import { JwtAuthGuard } from '../autenticacion/guards/jwt-auth.guard';
 export class ParametroController {
   constructor(private parametroServicio: ParametroService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
+  // @Roles(Rol.Admin)
   recuperar(): Promise<Parametro[]> {
     return this.parametroServicio.recuperar();
   }
