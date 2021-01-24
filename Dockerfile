@@ -6,10 +6,11 @@ COPY package*.json ./
 USER node
 RUN npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
 RUN npm set strict-ssl false
-RUN npm install
+RUN npm ci
+RUN npm run build
 COPY --chown=node:node . .
 EXPOSE 3000
-CMD [ "npm", "run", "start:dev" ]
+CMD [ "node", "dist/src/main" ]
 
 # # Stage development
 # FROM node:14-alpine
