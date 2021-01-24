@@ -97,7 +97,7 @@ Generando imagen docker (Dev):
     - export IR_REPO_URL=$(cat ip-repo-url-template.txt)
     - echo $CI_COMMIT_TAG
     - env
-    - echo ./Dockerfile
+    - cat ./Dockerfile
     - /kaniko/executor --context . --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
 
 Desplegando container (Dev):
