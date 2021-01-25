@@ -9,9 +9,6 @@ RUN npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
 RUN npm set strict-ssl false
 RUN npm ci
 RUN npm run build
-RUN ls -la
-RUN pwd
-RUN ls -la /home/node/app/dist/src
 
 EXPOSE 3000
 CMD [ "node", "/home/node/app/dist/src/main" ]
