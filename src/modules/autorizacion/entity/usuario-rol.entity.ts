@@ -1,4 +1,4 @@
-import { Usuario } from 'src/modules/usuario/usuario.entity';
+import { Usuario } from '../../usuario/usuario.entity';
 import {
   Entity,
   BaseEntity,
