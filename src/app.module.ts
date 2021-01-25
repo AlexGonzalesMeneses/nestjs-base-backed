@@ -9,6 +9,8 @@ import { EntidadModule } from './modules/entidad/entidad.module';
 import { LogsModule } from './config/logger/logger.module';
 import { ParametroModule } from './modules/parametro/parametro.module';
 import { AutorizacionModule } from './autorizacion/modules/autorizacion/autorizacion.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -23,6 +25,11 @@ import { AutorizacionModule } from './autorizacion/modules/autorizacion/autoriza
     AutorizacionModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
