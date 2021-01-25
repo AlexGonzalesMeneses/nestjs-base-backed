@@ -6,7 +6,6 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
-  Request,
 } from '@nestjs/common';
 import { ParametroService } from './parametro.service';
 import { ParametroDto } from './dto/parametro.dto';
