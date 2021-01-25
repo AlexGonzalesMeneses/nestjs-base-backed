@@ -3,10 +3,10 @@ import { generarPDF } from '../../common/lib/pdf.module';
 
 @Injectable()
 export class ReporteService {
-
   async generar() {
-    const html = 'src/templates/default.html';
-    const rutaGuardadoPdf = `${process.env.PDF_PATH}test.pdf`;
+    const nombreArchivo = 'reporte.pdf';
+    const plantillaHtml = 'src/templates/default.html';
+    const rutaGuardadoPdf = `${process.env.PDF_PATH}${nombreArchivo}`;
     const configPagina = {
       pageSize: 'Letter',
       orientation: 'portrait',
@@ -14,15 +14,15 @@ export class ReporteService {
       marginRight: '0.5cm',
       marginTop: '0.5cm',
       marginBottom: '0.5cm',
-      output: rutaGuardadoPdf
+      output: rutaGuardadoPdf,
     };
-    let resultado = generarPDF(
-      html,
+    const resultado = generarPDF(
+      plantillaHtml,
       {
-        titulo: 'Reporte de Ejemplo'
+        titulo: 'Reporte de Ejemplo',
       },
       rutaGuardadoPdf,
-      configPagina
+      configPagina,
     );
     return resultado;
   }

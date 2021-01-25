@@ -4,6 +4,6 @@ import { ReporteController } from './reporte.controller';
 
 @Module({
   providers: [ReporteService],
-  controllers: [ReporteController]
+  controllers: [ReporteController],
 })
 export class ReporteModule {}
