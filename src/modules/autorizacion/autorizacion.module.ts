@@ -8,8 +8,6 @@ import { RolController } from './controller/rol.controller';
 import { ModuloRepository } from './repository/modulo.repository';
 import { ModuloController } from './controller/modulo.controller';
 import { ModuloService } from './service/modulo.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './rol.guard';
 
 @Module({
   imports: [
@@ -17,14 +15,6 @@ import { RolesGuard } from './rol.guard';
     ConfigModule,
   ],
   controllers: [RolController, ModuloController],
-  providers: [
-    RolService,
-    ModuloService,
-    ConfigService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-  ],
+  providers: [RolService, ModuloService, ConfigService],
 })
 export class AutorizacionModule {}
