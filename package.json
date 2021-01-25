@@ -100,11 +100,12 @@
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "src/main.ts",
-      "src/migrations/",
-      "src/seeds/",
+      "src/database/migrations/",
+      "src/database/seeds/",
       ".module.ts",
       ".entity.ts",
-      ".dto.ts"
+      ".dto.ts",
+      ".guard.ts"
     ]
   },
   "husky": {
