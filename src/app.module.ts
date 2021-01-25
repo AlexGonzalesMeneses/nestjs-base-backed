@@ -11,6 +11,7 @@ import { ParametroModule } from './modules/parametro/parametro.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
+import { ReporteModule } from './modules/reporte/reporte.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
     EntidadModule,
     ParametroModule,
     AutorizacionModule,
+    ReporteModule,
   ],
   controllers: [AppController],
   providers: [
