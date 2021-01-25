@@ -10,7 +10,7 @@ export class ReporteController {
   async generar(@Res() res: Response) {
     await this.reporteService.generar();
     res.status(HttpStatus.OK).json({
-      mensaje: 'Reporte generado exitosamente'
+      mensaje: 'Reporte generado exitosamente',
     });
   }
 }
