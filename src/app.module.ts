@@ -8,6 +8,8 @@ import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
 import { LogsModule } from './config/logger/logger.module';
 import { ParametroModule } from './modules/parametro/parametro.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './modules/autorizacion/rol.guard';
@@ -26,6 +28,10 @@ import { RolesGuard } from './modules/autorizacion/rol.guard';
   ],
   controllers: [AppController],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
