@@ -40,7 +40,6 @@
     "@nestjs/typeorm": "^7.1.5",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
-    "crypto": "^1.0.1",
     "csurf": "^1.11.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
