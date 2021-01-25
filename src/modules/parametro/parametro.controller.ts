@@ -25,7 +25,7 @@ export class ParametroController {
 
   @Get()
   @Roles(Rol.Admin)
-  recuperar(@Request() req: any): Promise<Parametro[]> {
+  recuperar(): Promise<Parametro[]> {
     return this.parametroServicio.recuperar();
   }
 
