@@ -17,7 +17,6 @@ import {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-
   // swagger
   createSwagger(app);
 
@@ -44,6 +43,11 @@ async function bootstrap() {
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
   const port = configService.get('PORT');
   await app.listen(port);
+  console.log(
+    `Path de la aplicación configurada como /${configService.get(
+      'PATH_SUBDOMAIN',
+    )}`,
+  );
   console.log(`Aplicación iniciada en el puerto ${port}`);
 }
 

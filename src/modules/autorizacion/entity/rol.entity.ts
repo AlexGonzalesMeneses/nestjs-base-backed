@@ -5,22 +5,23 @@ import {
   Column,
   OneToMany,
 } from 'typeorm';
-import { UsuarioRol } from '../autorizacion/entity/usuario-rol.entity';
+import { UsuarioRol } from './usuario-rol.entity';
+import { RolModulo } from './rol-modulo.entity';
 
 @Entity()
-export class Usuario extends BaseEntity {
+export class Rol extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ length: 50, unique: true })
-  usuario: string;
-
-  @Column({ length: 255 })
-  contrasena: string;
+  rol: string;
 
   @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
   estado: string;
 
-  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
+  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)
   public usuarioRol!: UsuarioRol[];
+
+  @OneToMany(() => RolModulo, (rolModulo) => rolModulo.rol)
+  public rolModulo!: RolModulo[];
 }
