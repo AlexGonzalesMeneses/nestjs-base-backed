@@ -1,4 +1,5 @@
 # Proyecto base backend
+[![pipeline status](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/badges/develop/pipeline.svg)](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/-/commits/develop)
 
 ## Descripción
 Proyecto base backend con modulos:
