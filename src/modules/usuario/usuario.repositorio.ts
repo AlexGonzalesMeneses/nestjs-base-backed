@@ -9,6 +9,8 @@ export class UsuarioRepositorio extends Repository<Usuario> {
       .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
+      .leftJoinAndSelect('rol.rolModulo', 'rolModulo')
+      .leftJoinAndSelect('rolModulo.modulo', 'modulo')
       .where({ usuario: usuario })
       .getOne();
   }
