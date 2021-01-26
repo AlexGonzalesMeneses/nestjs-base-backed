@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsuarioService } from '../usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
-import { createHash } from 'crypto';
 import { STATUS_INACTIVE } from '../../common/constants';
+import { encrypt } from '../../common/lib/text.module';
 
 @Injectable()
 export class AutenticacionService {
@@ -13,9 +13,8 @@ export class AutenticacionService {
 
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuario(usuario);
-
     if (respuesta) {
-      const pass = createHash('sha256').update(contrasena).digest('hex');
+      const pass = encrypt(contrasena);
       if (respuesta.contrasena !== pass) {
         throw new HttpException(
           'El usuario no existe.',
@@ -31,7 +30,8 @@ export class AutenticacionService {
       const roles = [];
       if (respuesta.usuarioRol.length) {
         respuesta.usuarioRol.map((usuarioRol) => {
-          roles.push(usuarioRol.rol.rol);
+          const modulos = usuarioRol.rol.rolModulo.map((m) => m.modulo);
+          roles.push({ rol: usuarioRol.rol.rol, modulos });
         });
       }
       return {
@@ -51,6 +51,8 @@ export class AutenticacionService {
     };
     return {
       access_token: this.jwtService.sign(payload),
+      roles: usuario.roles,
+      usuario: usuario.usuario,
     };
   }
 }
