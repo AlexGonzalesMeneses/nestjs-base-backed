@@ -11,6 +11,7 @@ export class AutenticacionController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req) {
+    console.log(req.user);
     return this.autenticacionService.autenticar(req.user);
   }
 
@@ -23,7 +24,7 @@ export class AutenticacionController {
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-callback')
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
-    console.log('usuario', req.user);
+    // console.log('usuario', req.user);
     res.json({ mensaje: true });
   }
 }
