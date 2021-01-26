@@ -12,6 +12,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
 import { ReporteModule } from './modules/reporte/reporte.module';
+import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 
 @Module({
   imports: [
@@ -25,6 +27,13 @@ import { ReporteModule } from './modules/reporte/reporte.module';
     ParametroModule,
     AutorizacionModule,
     ReporteModule,
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({format: winston.format.combine(winston.format.timestamp(), nestWinstonModuleUtilities.format.nestLike(),),}),
+        new winston.transports.File({ filename: process.env.ERROR_LOG_FILE_PATH || 'error.log', level: 'error' }),
+        new winston.transports.Http({ }),
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [
