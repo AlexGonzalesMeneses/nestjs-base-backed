@@ -8,7 +8,7 @@ export class RolController {
 
   @Get()
   recuperar(): Promise<Rol[]> {
-    console.log(Rol);
+    // console.log(Rol);
     return this.rolService.recuperar();
   }
 }

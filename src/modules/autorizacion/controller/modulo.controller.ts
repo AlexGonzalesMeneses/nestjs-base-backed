@@ -8,7 +8,7 @@ export class ModuloController {
 
   @Get()
   recuperar(): Promise<Modulo[]> {
-    console.log(typeof Modulo);
+    // console.log(typeof Modulo);
     return this.moduloService.recuperar();
   }
 }
