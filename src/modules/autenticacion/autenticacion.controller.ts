@@ -1,4 +1,12 @@
-import { Controller, Get, Inject, Post, Request, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AutenticacionService } from './autenticacion.service';
@@ -10,8 +18,8 @@ import { Logger } from 'winston';
 export class AutenticacionController {
   constructor(
     private readonly autenticacionService: AutenticacionService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
-    ) {}
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')

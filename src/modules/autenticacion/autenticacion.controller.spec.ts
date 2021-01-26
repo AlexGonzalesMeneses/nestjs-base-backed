@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AutenticacionController } from './autenticacion.controller';
 import { AutenticacionService } from './autenticacion.service';
-import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
 import * as winston from 'winston';
 
 const resAutenticar = { access_token: 'aaa.bbb.ccc' };
@@ -15,11 +18,19 @@ describe('AutenticationController', () => {
       imports: [
         WinstonModule.forRoot({
           transports: [
-            new winston.transports.Console({format: winston.format.combine(winston.format.timestamp(), nestWinstonModuleUtilities.format.nestLike(),),}),
-            new winston.transports.File({ filename: process.env.ERROR_LOG_FILE_PATH || 'error.log', level: 'error' }),
-            new winston.transports.Http({ }),
+            new winston.transports.Console({
+              format: winston.format.combine(
+                winston.format.timestamp(),
+                nestWinstonModuleUtilities.format.nestLike(),
+              ),
+            }),
+            new winston.transports.File({
+              filename: process.env.ERROR_LOG_FILE_PATH || 'error.log',
+              level: 'error',
+            }),
+            new winston.transports.Http({}),
           ],
-        })
+        }),
       ],
       controllers: [AutenticacionController],
       providers: [
