@@ -37,5 +37,5 @@ export class EntidadDto {
   codigoPortalUnico: string;
 
   @ApiProperty()
-  estado: string;  
+  estado: string;
 }
