@@ -31,10 +31,10 @@ export class EntidadController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() entidadDto: EntidadDto) {
-      return this.entidadServicio.update(id, entidadDto)
+    return this.entidadServicio.update(id, entidadDto);
   }
   @Delete(':id')
   remove(@Param('id') id: string) {
-      return this.entidadServicio.remove(id)
+    return this.entidadServicio.remove(id);
   }
 }
