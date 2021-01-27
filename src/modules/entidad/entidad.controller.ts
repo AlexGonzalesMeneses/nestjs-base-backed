@@ -5,6 +5,9 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Patch,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { EntidadService } from './entidad.service';
 import { EntidadDto } from './dto/entidad.dto';
@@ -24,5 +27,14 @@ export class EntidadController {
   @UsePipes(ValidationPipe)
   guardar(@Body() entidadDto: EntidadDto): Promise<Entidad> {
     return this.entidadServicio.guardar(entidadDto);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() entidadDto: EntidadDto) {
+      return this.entidadServicio.update(id, entidadDto)
+  }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+      return this.entidadServicio.remove(id)
   }
 }

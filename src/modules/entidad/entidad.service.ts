@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntidadRepositorio } from './entidad.repositorio';
 import { Entidad } from './entidad.entity';
@@ -22,4 +22,20 @@ export class EntidadService {
     let resultado = await this.entidadRepositorio.findAndCount();
     return responseTotalRows(resultado);
   }
+
+  // update method
+  async update(id: string, entidadDto: EntidadDto) {
+    const entidad =  await this.entidadRepositorio.preload({ id: +id, ...entidadDto, });
+    console.log('asdf eniti ', entidad);
+    if(!entidad) {
+        throw new NotFoundException(`Entidad con id ${id} no encontrado`)
+    } 
+    return this.entidadRepositorio.save(entidad);
+  }
+
+  // delete method
+  async remove(id: string) {
+      const entidad = await this.entidadRepositorio.findOne(id);
+      return this.entidadRepositorio.remove(entidad);
+  }  
 }
