@@ -16,7 +16,7 @@ export class EntidadController {
   constructor(private entidadServicio: EntidadService) {}
 
   @Get()
-  recuperar(): Promise<Entidad[]> {
+  recuperar() {
     return this.entidadServicio.recuperar();
   }
 
