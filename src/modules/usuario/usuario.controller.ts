@@ -9,7 +9,7 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard)
   @Get()
   recuperar(): Promise<Usuario[]> {
-    console.log(typeof Usuario);
+    // console.log(typeof Usuario);
     return this.usuarioService.recuperar();
   }
   @UseGuards(JwtAuthGuard)
