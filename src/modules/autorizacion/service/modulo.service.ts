@@ -11,10 +11,10 @@ export class ModuloService {
   ) {}
 
   async recuperar(paginacionQuery: PaginacionQueryDto): Promise<Modulo[]> {
-    const { limit, offset } = paginacionQuery;
+    const { limite, pagina } = paginacionQuery;
     return this.moduloRepositorio.find({
-      skip: offset,
-      take: limit,
+      skip: pagina,
+      take: limite,
     });
   }
 }
