@@ -39,6 +39,9 @@ export class EntidadService {
   // delete method
   async remove(id: string) {
     const entidad = await this.entidadRepositorio.findOne(id);
+    if (!entidad) {
+      throw new NotFoundException(`Entidad con id ${id} no encontrado`);
+    }
     return this.entidadRepositorio.remove(entidad);
   }
 }
