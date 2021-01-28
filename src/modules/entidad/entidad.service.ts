@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntidadRepositorio } from './entidad.repositorio';
 import { Entidad } from './entidad.entity';
 import { EntidadDto } from './dto/entidad.dto';
-import { ResponseTotalRowsDto } from 'src/common/dto/response-total-rows.dto';
-import { responseTotalRows } from '../../common/lib/http.module';
+import { TotalRowsResponseDto } from 'src/common/dto/total-rows-response.dto';
+import { totalRowsResponse } from '../../common/lib/http.module';
 
 @Injectable()
 export class EntidadService {
@@ -18,9 +18,9 @@ export class EntidadService {
     return this.entidadRepositorio.save(entidad);
   }
 
-  async recuperar(): Promise<ResponseTotalRowsDto> {
+  async recuperar(): Promise<TotalRowsResponseDto> {
     const resultado = await this.entidadRepositorio.findAndCount();
-    return responseTotalRows(resultado);
+    return totalRowsResponse(resultado);
   }
 
   // update method
