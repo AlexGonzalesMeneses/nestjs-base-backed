@@ -18,13 +18,57 @@ export class ReporteController {
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename=test.pdf')
   async generar(@Res() res: Response) {
-    return res.download(await this.reporteService.generar());
+    const nombreArchivo = 'reporte.pdf';
+    const plantillaHtml = 'src/templates/default.html';
+    const rutaGuardadoPdf = `${process.env.PDF_PATH}${nombreArchivo}`;
+    const configPagina = {
+      pageSize: 'Letter',
+      orientation: 'portrait',
+      marginLeft: '0.5cm',
+      marginRight: '0.5cm',
+      marginTop: '0.5cm',
+      marginBottom: '0.5cm',
+      output: rutaGuardadoPdf,
+    };
+    const parametros = {
+      titulo: 'Pagina de prueba',
+    };
+    await this.reporteService.generar(
+      plantillaHtml,
+      parametros,
+      rutaGuardadoPdf,
+      configPagina,
+    );
+    return res.download(rutaGuardadoPdf);
   }
 
   @Get('generar/base64')
   @HttpCode(HttpStatus.OK)
   async generarBase64(@Res() res: Response) {
-    const resultado = await this.reporteService.generarBase64();
+    const nombreArchivo = 'reportebase64.pdf';
+    const plantillaHtml = 'src/templates/default.html';
+    const rutaGuardadoPdf = `${process.env.PDF_PATH}${nombreArchivo}`;
+    const configPagina = {
+      pageSize: 'Letter',
+      orientation: 'portrait',
+      marginLeft: '0.5cm',
+      marginRight: '0.5cm',
+      marginTop: '0.5cm',
+      marginBottom: '0.5cm',
+      output: rutaGuardadoPdf,
+    };
+    const parametros = {
+      titulo: 'Pagina de prueba Base64',
+    };
+    await this.reporteService.generar(
+      plantillaHtml,
+      parametros,
+      rutaGuardadoPdf,
+      configPagina,
+    );
+    const resultado = await this.reporteService.descargarBase64(
+      rutaGuardadoPdf,
+    );
     res.status(HttpStatus.OK).json({ data: resultado });
   }
 }
