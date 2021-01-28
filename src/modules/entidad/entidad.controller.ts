@@ -9,6 +9,7 @@ import {
   Delete,
   Param,
   Query,
+  Inject,
 } from '@nestjs/common';
 import { EntidadService } from './entidad.service';
 import { EntidadDto } from './dto/entidad.dto';
@@ -17,10 +18,15 @@ import { Entidad } from './entidad.entity';
 import { successResponse } from '../../common/lib/http.module';
 import { SUCCESS_CREATE, SUCCESS_DELETE, SUCCESS_LIST, SUCCESS_UPDATE } from '../../common/constants';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Controller('entidades')
 export class EntidadController {
-  constructor(private entidadServicio: EntidadService) {}
+  constructor(
+    private entidadServicio: EntidadService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,    
+    ) {}
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
@@ -31,6 +37,7 @@ export class EntidadController {
   @UsePipes(ValidationPipe)
   async guardar(@Body() entidadDto: EntidadDto) {
     // return this.entidadServicio.guardar(entidadDto);
+    this.logger.info(JSON.stringify(entidadDto));
     return successResponse(await this.entidadServicio.guardar(entidadDto), SUCCESS_CREATE);
   }
 
