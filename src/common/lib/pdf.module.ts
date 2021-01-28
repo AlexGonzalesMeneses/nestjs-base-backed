@@ -33,3 +33,17 @@ export const generarPDF = async function (
   });
   return resultado;
 };
+
+export const descargarPDF = async function (urlPDF: string): Promise<any> {
+  const resultado = new Promise((resolve, reject) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const fs = require('fs');
+      const contents = fs.readFileSync(urlPDF, { encoding: 'base64' });
+      resolve(contents);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return resultado;
+};
