@@ -8,21 +8,23 @@ import {
   Patch,
   Delete,
   Param,
+  Query,
 } from '@nestjs/common';
 import { EntidadService } from './entidad.service';
 import { EntidadDto } from './dto/entidad.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entidad } from './entidad.entity';
 import { successResponse } from '../../common/lib/http.module';
-import { SUCCESS_CREATE, SUCCESS_DELETE, SUCCESS_LIST, SUCCESS_UPDATE } from '../../common/constants'
+import { SUCCESS_CREATE, SUCCESS_DELETE, SUCCESS_LIST, SUCCESS_UPDATE } from '../../common/constants';
+import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 
 @Controller('entidades')
 export class EntidadController {
   constructor(private entidadServicio: EntidadService) {}
 
   @Get()
-  async recuperar() {
-    return successResponse(await this.entidadServicio.recuperar(), SUCCESS_LIST);
+  async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    return successResponse(await this.entidadServicio.recuperar(paginacionQueryDto), SUCCESS_LIST);
   }
 
   @Post()
