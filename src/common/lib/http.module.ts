@@ -5,10 +5,13 @@ export const totalRowsResponse = function (data): TotalRowsResponseDto {
   return { total: data[1], rows: data[0] };
 };
 
-export const successResponse = function (data, mensaje = 'ok'): SuccessResponseDto {
-  return { 
+export const successResponse = function (
+  data,
+  mensaje = 'ok',
+): SuccessResponseDto {
+  return {
     finalizado: true,
     mensaje,
-    datos: data
+    datos: data,
   };
 };

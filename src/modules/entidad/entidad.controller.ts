@@ -16,7 +16,12 @@ import { EntidadDto } from './dto/entidad.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entidad } from './entidad.entity';
 import { successResponse } from '../../common/lib/http.module';
-import { SUCCESS_CREATE, SUCCESS_DELETE, SUCCESS_LIST, SUCCESS_UPDATE } from '../../common/constants';
+import {
+  SUCCESS_CREATE,
+  SUCCESS_DELETE,
+  SUCCESS_LIST,
+  SUCCESS_UPDATE,
+} from '../../common/constants';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -25,12 +30,15 @@ import { Logger } from 'winston';
 export class EntidadController {
   constructor(
     private entidadServicio: EntidadService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,    
-    ) {}
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    return successResponse(await this.entidadServicio.recuperar(paginacionQueryDto), SUCCESS_LIST);
+    return successResponse(
+      await this.entidadServicio.recuperar(paginacionQueryDto),
+      SUCCESS_LIST,
+    );
   }
 
   @Post()
@@ -38,17 +46,26 @@ export class EntidadController {
   async guardar(@Body() entidadDto: EntidadDto) {
     // return this.entidadServicio.guardar(entidadDto);
     this.logger.info(JSON.stringify(entidadDto));
-    return successResponse(await this.entidadServicio.guardar(entidadDto), SUCCESS_CREATE);
+    return successResponse(
+      await this.entidadServicio.guardar(entidadDto),
+      SUCCESS_CREATE,
+    );
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() entidadDto: EntidadDto) {
     // return this.entidadServicio.update(id, entidadDto);
-    return successResponse(await this.entidadServicio.update(id, entidadDto), SUCCESS_UPDATE);
+    return successResponse(
+      await this.entidadServicio.update(id, entidadDto),
+      SUCCESS_UPDATE,
+    );
   }
   @Delete(':id')
   async remove(@Param('id') id: string) {
     // return this.entidadServicio.remove(id);
-    return successResponse(await this.entidadServicio.remove(id), SUCCESS_DELETE);
+    return successResponse(
+      await this.entidadServicio.remove(id),
+      SUCCESS_DELETE,
+    );
   }
 }

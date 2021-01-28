@@ -1,12 +1,12 @@
-import { IsOptional } from "class-validator";
+import { IsOptional } from 'class-validator';
 
 export class SuccessResponseDto {
-    @IsOptional()
-    finalizado: boolean;
+  @IsOptional()
+  finalizado: boolean;
 
-    @IsOptional()
-    mensaje: string;
+  @IsOptional()
+  mensaje: string;
 
-    @IsOptional()
-    datos: any;
+  @IsOptional()
+  datos: any;
 }

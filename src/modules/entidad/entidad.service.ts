@@ -14,7 +14,9 @@ export class EntidadService {
     private entidadRepositorio: EntidadRepositorio,
   ) {}
 
-  async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto): Promise<TotalRowsResponseDto> {
+  async recuperar(
+    @Query() paginacionQueryDto: PaginacionQueryDto,
+  ): Promise<TotalRowsResponseDto> {
     const { limite, pagina } = paginacionQueryDto;
     const resultado = await this.entidadRepositorio.findAndCount({
       skip: pagina || 0,
@@ -22,7 +24,7 @@ export class EntidadService {
     });
     return totalRowsResponse(resultado);
   }
-  
+
   async guardar(entidadDto: EntidadDto): Promise<Entidad> {
     const entidad = this.entidadRepositorio.create(entidadDto);
     return this.entidadRepositorio.save(entidad);
