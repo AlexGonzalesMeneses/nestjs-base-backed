@@ -22,11 +22,11 @@ export class EntidadService {
     });
     return totalRowsResponse(resultado);
   }
+  
   async guardar(entidadDto: EntidadDto): Promise<Entidad> {
     const entidad = this.entidadRepositorio.create(entidadDto);
     return this.entidadRepositorio.save(entidad);
   }
-
 
   // update method
   async update(id: string, entidadDto: EntidadDto) {
