@@ -25,7 +25,7 @@ import {
                 host: process.env.LOG_HOST,
                 port: +process.env.LOG_PORT,
                 path: process.env.LOG_PATH,
-                auth: {username: process.env.LOG_AUTH_USERNAME, password: process.env.LOG_AUTH_PASSWORD},
+                auth: { username: process.env.LOG_AUTH_USERNAME, password: process.env.LOG_AUTH_PASSWORD },
                 ssl: process.env.LOG_SSL,
                 level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
               }),
