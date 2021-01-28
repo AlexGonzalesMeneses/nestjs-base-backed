@@ -1,4 +1,11 @@
-import { Controller, HttpStatus, Get, Res } from '@nestjs/common';
+import {
+  Controller,
+  Header,
+  HttpCode,
+  HttpStatus,
+  Get,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ReporteService } from './reporte.service';
 
@@ -7,10 +14,10 @@ export class ReporteController {
   constructor(private reporteService: ReporteService) {}
 
   @Get('generar')
+  @HttpCode(HttpStatus.OK)
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=test.pdf')
   async generar(@Res() res: Response) {
-    await this.reporteService.generar();
-    res.status(HttpStatus.OK).json({
-      mensaje: 'Reporte generado exitosamente',
-    });
+    return res.download(await this.reporteService.generar());
   }
 }

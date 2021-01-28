@@ -16,7 +16,7 @@ export class ReporteService {
       marginBottom: '0.5cm',
       output: rutaGuardadoPdf,
     };
-    const resultado = generarPDF(
+    await generarPDF(
       plantillaHtml,
       {
         titulo: 'Reporte de Ejemplo',
@@ -24,6 +24,6 @@ export class ReporteService {
       rutaGuardadoPdf,
       configPagina,
     );
-    return resultado;
+    return rutaGuardadoPdf;
   }
 }

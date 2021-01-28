@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Modulo } from '../entity/modulo.entity';
 import { ModuloService } from '../service/modulo.service';
 

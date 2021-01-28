@@ -1,5 +1,6 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../autenticacion/guards/jwt-auth.guard';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Usuario } from './usuario.entity';
 import { UsuarioService } from './usuario.service';
 
