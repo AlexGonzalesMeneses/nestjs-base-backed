@@ -4,8 +4,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { UsuarioRol } from '../autorizacion/entity/usuario-rol.entity';
+import { Persona } from '../persona/persona.entity';
 
 @Entity()
 export class Usuario extends BaseEntity {
@@ -23,4 +26,11 @@ export class Usuario extends BaseEntity {
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
   public usuarioRol!: UsuarioRol[];
+
+  @ManyToOne(() => Persona, (persona) => persona.usuarios, { nullable: false })
+  @JoinColumn({
+    name: 'id_persona',
+    referencedColumnName: 'id',
+  })
+  persona: Persona;
 }

@@ -9,6 +9,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { buildOpenIdClient, OidcStrategy } from './strategies/oidc.strategy';
 import { SessionSerializer } from './session.serializer';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsuarioRepositorio } from '../usuario/usuario.repositorio';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
@@ -33,6 +35,7 @@ const OidcStrategyFactory = {
     }),
     UsuarioModule,
     ConfigModule,
+    TypeOrmModule.forFeature([UsuarioRepositorio]),
   ],
   controllers: [AutenticacionController],
   providers: [

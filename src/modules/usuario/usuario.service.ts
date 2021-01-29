@@ -6,6 +6,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { TotalRowsResponseDto } from 'src/common/dto/total-rows-response.dto';
 import { totalRowsResponse } from 'src/common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
+import { Persona } from '../persona/persona.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -58,4 +59,24 @@ export class UsuarioService {
     return this.usuarioRepositorio.remove(usuario);
   }
 
+  async buscarUsuarioId(id: string): Promise<any> {
+    const usuario = await this.usuarioRepositorio.buscarUsuarioId(id);
+
+    const roles = [];
+    if (usuario.usuarioRol.length) {
+      usuario.usuarioRol.map((usuarioRol) => {
+        const modulos = usuarioRol.rol.rolModulo.map((m) => m.modulo);
+        roles.push({ rol: usuarioRol.rol.rol, modulos });
+      });
+    }
+    return {
+      id: usuario.id,
+      usuario: usuario.usuario,
+      roles,
+    };
+  }
+
+  async buscarUsuarioPorCI(persona: Persona): Promise<Usuario> {
+    return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+  }
 }

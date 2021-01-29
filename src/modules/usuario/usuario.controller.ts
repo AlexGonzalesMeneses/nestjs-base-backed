@@ -4,6 +4,7 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { successResponse } from 'src/common/lib/http.module';
 import { JwtAuthGuard } from '../autenticacion/guards/jwt-auth.guard';
 import { UsuarioDto } from './dto/usuario.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
 
 @Controller('usuarios')
@@ -21,7 +22,7 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return this.usuarioService.buscarUsuarioId(req.user.id);
   }
   //create user
   @UseGuards(JwtAuthGuard)

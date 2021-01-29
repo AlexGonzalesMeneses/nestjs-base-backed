@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AutenticacionService } from './autenticacion.service';
 import { OidcAuthGuard } from './guards/oidc-auth.guard';
-
+import * as dayjs from 'dayjs';
 @Controller()
 export class AutenticacionController {
   constructor(private readonly autenticacionService: AutenticacionService) {}
@@ -25,7 +25,14 @@ export class AutenticacionController {
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-callback')
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
-    // console.log('usuario', req.user);
-    res.json({ mensaje: true });
+    const token = await this.autenticacionService.autenticarOidc(req.user);
+
+    res
+      .status(200)
+      .cookie('base.token', token, {
+        expires: dayjs.unix(req.user.exp).toDate(),
+        httpOnly: true,
+      })
+      .redirect(`${process.env.URL_FRONTEND}/#/login`);
   }
 }
