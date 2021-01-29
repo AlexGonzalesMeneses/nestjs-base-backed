@@ -1,5 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { Controller, Get } from '@nestjs/common';
 import { Modulo } from '../entity/modulo.entity';
 import { ModuloService } from '../service/modulo.service';
 
@@ -8,8 +7,7 @@ export class ModuloController {
   constructor(private moduloService: ModuloService) {}
 
   @Get()
-  recuperar(@Query() paginacionQuery: PaginacionQueryDto): Promise<Modulo[]> {
-    // console.log(typeof Modulo);
-    return this.moduloService.recuperar(paginacionQuery);
+  recuperar(): Promise<Modulo[]> {
+    return this.moduloService.recuperar();
   }
 }

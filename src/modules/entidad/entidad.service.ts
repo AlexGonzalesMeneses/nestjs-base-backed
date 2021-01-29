@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntidadRepositorio } from './entidad.repositorio';
 import { Entidad } from './entidad.entity';
 import { EntidadDto } from './dto/entidad.dto';
-import { ResponseTotalRowsDto } from 'src/common/dto/response-total-rows.dto';
-import { responseTotalRows } from '../../common/lib/http.module';
+import { TotalRowsResponseDto } from 'src/common/dto/total-rows-response.dto';
+import { totalRowsResponse } from '../../common/lib/http.module';
+import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 
 @Injectable()
 export class EntidadService {
@@ -13,14 +14,20 @@ export class EntidadService {
     private entidadRepositorio: EntidadRepositorio,
   ) {}
 
+  async recuperar(
+    @Query() paginacionQueryDto: PaginacionQueryDto,
+  ): Promise<TotalRowsResponseDto> {
+    const { limite, pagina } = paginacionQueryDto;
+    const resultado = await this.entidadRepositorio.findAndCount({
+      skip: pagina || 0,
+      take: limite || 10,
+    });
+    return totalRowsResponse(resultado);
+  }
+
   async guardar(entidadDto: EntidadDto): Promise<Entidad> {
     const entidad = this.entidadRepositorio.create(entidadDto);
     return this.entidadRepositorio.save(entidad);
-  }
-
-  async recuperar(): Promise<ResponseTotalRowsDto> {
-    const resultado = await this.entidadRepositorio.findAndCount();
-    return responseTotalRows(resultado);
   }
 
   // update method
@@ -29,7 +36,6 @@ export class EntidadService {
       id: +id,
       ...entidadDto,
     });
-    console.log('asdf eniti ', entidad);
     if (!entidad) {
       throw new NotFoundException(`Entidad con id ${id} no encontrado`);
     }
