@@ -16,6 +16,6 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return this.usuarioService.buscarUsuarioId(req.user.id);
   }
 }

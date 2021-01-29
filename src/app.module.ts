@@ -12,6 +12,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
 import { ReporteModule } from './modules/reporte/reporte.module';
+import { PersonaModule } from './modules/persona/persona.module';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
@@ -30,6 +31,7 @@ import * as winston from 'winston';
     ParametroModule,
     AutorizacionModule,
     ReporteModule,
+    PersonaModule,
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
