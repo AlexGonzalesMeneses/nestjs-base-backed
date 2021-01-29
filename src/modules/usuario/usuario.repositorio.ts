@@ -24,9 +24,25 @@ export class UsuarioRepositorio extends Repository<Usuario> {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
+      .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .leftJoinAndSelect('rol.rolModulo', 'rolModulo')
       .leftJoinAndSelect('rolModulo.modulo', 'modulo')
+      .select([
+        'usuario.id',
+        'usuario.usuario',
+        'usuario.estado',
+        'persona.nombres',
+        'persona.primerApellido',
+        'persona.segundoApellido',
+        'persona.tipoDocumento',
+        'persona.nroDocumento',
+        'persona.fechaNacimiento',
+        'usuarioRol',
+        'rol',
+        'rolModulo',
+        'modulo',
+      ])
       .where({ id })
       .getOne();
   }

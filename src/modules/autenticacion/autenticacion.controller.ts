@@ -25,14 +25,17 @@ export class AutenticacionController {
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-callback')
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
-    const token = await this.autenticacionService.autenticarOidc(req.user);
-
-    res
-      .status(200)
-      .cookie('base.token', token, {
-        expires: dayjs.unix(req.user.exp).toDate(),
-        httpOnly: true,
-      })
-      .redirect(`${process.env.URL_FRONTEND}/#/login`);
+    if (req.user) {
+      const token = await this.autenticacionService.autenticarOidc(req.user);
+      res
+        .status(200)
+        .cookie('base.token', token, {
+          expires: dayjs.unix(req.user.exp).toDate(),
+          // httpOnly: true,
+        })
+        .redirect(`${process.env.URL_FRONTEND}/#/login`);
+    } else {
+      res.redirect(`${process.env.URL_FRONTEND}`);
+    }
   }
 }

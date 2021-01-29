@@ -7,6 +7,7 @@ import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
+import { STATUS_ACTIVE } from '../../common/constants';
 
 @Injectable()
 export class UsuarioService {
@@ -65,14 +66,24 @@ export class UsuarioService {
     const roles = [];
     if (usuario.usuarioRol.length) {
       usuario.usuarioRol.map((usuarioRol) => {
-        const modulos = usuarioRol.rol.rolModulo.map((m) => m.modulo);
-        roles.push({ rol: usuarioRol.rol.rol, modulos });
+        if (usuarioRol.estado === STATUS_ACTIVE) {
+          const modulos = usuarioRol.rol.rolModulo.map((m) => {
+            if (
+              m.estado === STATUS_ACTIVE &&
+              m.modulo.estado === STATUS_ACTIVE
+            ) {
+              return m.modulo;
+            }
+          });
+          roles.push({ rol: usuarioRol.rol.rol, modulos });
+        }
       });
     }
     return {
       id: usuario.id,
       usuario: usuario.usuario,
       roles,
+      persona: usuario.persona,
     };
   }
 
