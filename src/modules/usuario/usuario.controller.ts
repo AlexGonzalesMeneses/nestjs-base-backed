@@ -1,5 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { SUCCESS_CREATE, SUCCESS_DELETE, SUCCESS_LIST, SUCCESS_UPDATE } from 'src/common/constants';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  SUCCESS_CREATE,
+  SUCCESS_DELETE,
+  SUCCESS_LIST,
+  SUCCESS_UPDATE,
+} from 'src/common/constants';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { successResponse } from 'src/common/lib/http.module';
 import { JwtAuthGuard } from '../autenticacion/guards/jwt-auth.guard';
@@ -43,7 +61,7 @@ export class UsuarioController {
       SUCCESS_UPDATE,
     );
   }
-  
+
   //delete user
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
@@ -52,5 +70,5 @@ export class UsuarioController {
       await this.usuarioService.remove(id),
       SUCCESS_DELETE,
     );
-  }  
+  }
 }

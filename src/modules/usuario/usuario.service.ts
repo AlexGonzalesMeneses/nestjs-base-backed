@@ -14,8 +14,8 @@ export class UsuarioService {
     @InjectRepository(UsuarioRepositorio)
     private usuarioRepositorio: UsuarioRepositorio,
   ) {}
-  // GET USERS  
-/*   async recuperar(): Promise<Usuario[]> {
+  // GET USERS
+  /*   async recuperar(): Promise<Usuario[]> {
     return this.usuarioRepositorio.recuperar();
   } */
   async recuperar(
@@ -27,12 +27,12 @@ export class UsuarioService {
       take: limite || 10,
     });
     return totalRowsResponse(resultado);
-  }  
+  }
 
   async buscarUsuario(usuario: string): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuario(usuario);
   }
-  // post method 
+  // post method
   async guardar(usuarioDto: UsuarioDto): Promise<Usuario> {
     const usuario = this.usuarioRepositorio.create(usuarioDto);
     return this.usuarioRepositorio.save(usuario);

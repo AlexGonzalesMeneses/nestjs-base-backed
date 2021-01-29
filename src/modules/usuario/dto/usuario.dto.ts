@@ -8,11 +8,11 @@ export class UsuarioDto {
   @ApiProperty()
   @IsNotEmpty()
   contrasena: string;
-  
+
   @ApiProperty()
   estado: string;
 
-/*   @ApiProperty()
+  /*   @ApiProperty()
   email: string;
 
   @ApiProperty()
