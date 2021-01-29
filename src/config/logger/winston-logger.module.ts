@@ -14,12 +14,17 @@ import * as winston from 'winston';
             winston.format.timestamp(),
             nestWinstonModuleUtilities.format.nestLike(),
           ),
-          level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+          level: process.env.NODE_ENV === 'development' ? 'info' : 'debug',
         }),
-        new winston.transports.File({
-          filename: process.env.ERROR_LOG_FILE_PATH || 'error.log',
-          level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-        }),
+        process.env.NODE_ENV === 'development'
+          ? new winston.transports.File({
+              filename: 'local.log',
+              level: 'error',
+            })
+          : new winston.transports.File({
+              filename: process.env.ERROR_LOG_FILE_PATH || 'error.log',
+              level: 'error',
+            }),
         new winston.transports.Http({
           host: process.env.LOG_HOST,
           port: +process.env.LOG_PORT,

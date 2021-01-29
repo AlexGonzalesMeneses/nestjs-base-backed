@@ -35,6 +35,7 @@ export class EntidadController {
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    console.log('lkadsf process.env.NODE_ENV ', process.env.NODE_ENV);
     return successResponse(
       await this.entidadServicio.recuperar(paginacionQueryDto),
       SUCCESS_LIST,
@@ -44,8 +45,15 @@ export class EntidadController {
   @Post()
   @UsePipes(ValidationPipe)
   async guardar(@Body() entidadDto: EntidadDto) {
-    // return this.entidadServicio.guardar(entidadDto);
-    this.logger.info(JSON.stringify(entidadDto));
+    if (process.env.NODE_ENV === 'development') {
+      this.logger.info(
+        'Esto es un INFO deberia salir en console entorno dev....',
+      );
+    } else {
+      this.logger.error(
+        'Esto es un ERROR deberia salir en archivo en entorno prod....',
+      );
+    }
     return successResponse(
       await this.entidadServicio.guardar(entidadDto),
       SUCCESS_CREATE,
