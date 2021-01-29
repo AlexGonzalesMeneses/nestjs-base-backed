@@ -35,7 +35,6 @@ export class EntidadController {
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    console.log('lkadsf process.env.NODE_ENV ', process.env.NODE_ENV);
     return successResponse(
       await this.entidadServicio.recuperar(paginacionQueryDto),
       SUCCESS_LIST,
