@@ -36,7 +36,6 @@ export class EntidadService {
       id: +id,
       ...entidadDto,
     });
-    console.log('asdf eniti ', entidad);
     if (!entidad) {
       throw new NotFoundException(`Entidad con id ${id} no encontrado`);
     }
