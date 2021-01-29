@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { UsuarioRepositorio } from './usuario.repositorio';
-import { Usuario } from 'src/modules/usuario/usuario.entity';
+import { Usuario } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { TotalRowsResponseDto } from 'src/common/dto/total-rows-response.dto';
-import { totalRowsResponse } from 'src/common/lib/http.module';
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
+import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
+import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
 
