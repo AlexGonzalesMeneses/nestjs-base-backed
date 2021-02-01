@@ -12,6 +12,9 @@ export class UsuarioDto {
   @ApiProperty()
   estado: string;
 
+  @ApiProperty()
+  persona: any;
+
   /*   @ApiProperty()
   email: string;
 
