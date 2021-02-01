@@ -28,8 +28,14 @@ export class AutenticacionService {
           HttpStatus.UNAUTHORIZED,
         );
       }
+      const roles = [];
+      if (respuesta.usuarioRol.length) {
+        respuesta.usuarioRol.map((usuarioRol) => {
+          roles.push(usuarioRol.rol.rol);
+        });
+      }
 
-      return { id: respuesta.id };
+      return { id: respuesta.id, roles };
     }
     return null;
   }
@@ -37,7 +43,7 @@ export class AutenticacionService {
   async autenticar(user: any) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id);
 
-    const payload = { id: user.id };
+    const payload = { id: user.id, roles: user.roles };
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -54,13 +60,19 @@ export class AutenticacionService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      return { id: respuesta.id };
+      const roles = [];
+      if (respuesta.usuarioRol.length) {
+        respuesta.usuarioRol.map((usuarioRol) => {
+          roles.push(usuarioRol.rol.rol);
+        });
+      }
+      return { id: respuesta.id, roles };
     }
     return null;
   }
 
   async autenticarOidc(user: any) {
-    const payload = { id: user.id };
+    const payload = { id: user.id, roles: user.roles };
 
     return this.jwtService.sign(payload);
   }

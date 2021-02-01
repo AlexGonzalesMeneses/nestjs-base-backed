@@ -16,6 +16,8 @@ export class UsuarioRepositorio extends Repository<Usuario> {
     // return Usuario.findOne({ usuario });
     return getRepository(Usuario)
       .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
+      .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where({ usuario: usuario })
       .getOne();
   }
@@ -51,6 +53,8 @@ export class UsuarioRepositorio extends Repository<Usuario> {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')
       .innerJoin('usuario.persona', 'persona')
+      .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
+      .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('persona.tipoDocumento = :td', { td: persona.tipoDocumento })
       .andWhere('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
       .getOne();
