@@ -60,6 +60,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
 
       const data = {
         id: usuario.id,
+        roles: usuario.roles || [],
         idToken: tokenset.id_token,
         accessToken: tokenset.access_token,
         refreshToken: tokenset.refresh_token,

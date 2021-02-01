@@ -18,7 +18,7 @@ import { LocalAuthGuard } from '../autenticacion/guards/local-auth.guard';
 import { RolesGuard } from '../autorizacion/rol.guard';
 
 @Controller('parametros')
-@UseGuards(LocalAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ParametroController {
   constructor(private parametroServicio: ParametroService) {}
 
