@@ -6,7 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 import { DataBaseModule } from './config/database/database.module';
 import { ExternalModule } from './external/external.module';
 import { EntidadModule } from './modules/entidad/entidad.module';
-import { LogsModule } from './config/logger/logger.module';
 import { ParametroModule } from './modules/parametro/parametro.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -17,7 +16,6 @@ import { WinstonLoggerModule } from './config/logger/winston-logger.module';
   imports: [
     ConfigModule.forRoot(),
     DataBaseModule,
-    LogsModule,
     ExternalModule,
     UsuarioModule,
     AutenticacionModule,
