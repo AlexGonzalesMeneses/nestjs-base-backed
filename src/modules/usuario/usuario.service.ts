@@ -15,7 +15,7 @@ export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioRepositorio)
     private usuarioRepositorio: UsuarioRepositorio,
-    private personaRepositorio: PersonaRepositorio
+    private personaRepositorio: PersonaRepositorio,
   ) {}
   // GET USERS
   /*   async recuperar(): Promise<Usuario[]> {
@@ -38,7 +38,7 @@ export class UsuarioService {
   // post method
   async guardar(usuarioDto: UsuarioDto): Promise<Usuario> {
     const persona = await this.preloadPersonaByNroDocumento(usuarioDto.persona);
-    usuarioDto.persona = { id:  persona.id };
+    usuarioDto.persona = { id: persona.id };
     const usuario = this.usuarioRepositorio.create(usuarioDto);
     return this.usuarioRepositorio.save(usuario);
   }
@@ -96,11 +96,13 @@ export class UsuarioService {
   }
 
   private async preloadPersonaByNroDocumento(persona: any): Promise<any> {
-    const existingPersona = await this.personaRepositorio.findOne({nroDocumento: persona.nroDocumento});
+    const existingPersona = await this.personaRepositorio.findOne({
+      nroDocumento: persona.nroDocumento,
+    });
     if (existingPersona) {
-      return existingPersona
+      return existingPersona;
     }
     const per = this.personaRepositorio.create(persona);
     return this.personaRepositorio.save(per);
-}
+  }
 }
