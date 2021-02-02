@@ -4,6 +4,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AutenticacionService } from './autenticacion.service';
 import { OidcAuthGuard } from './guards/oidc-auth.guard';
 import * as dayjs from 'dayjs';
+import { Issuer } from 'openid-client';
+
 @Controller()
 export class AutenticacionController {
   constructor(private readonly autenticacionService: AutenticacionService) {}
@@ -37,5 +39,26 @@ export class AutenticacionController {
     } else {
       res.redirect(`${process.env.URL_FRONTEND}`);
     }
+  }
+
+  @Get('logout')
+  async logoutCiudadania(@Request() req, @Res() res: Response) {
+    const idToken = req.user ? req.user.idToken : null;
+    req.logout();
+    req.session.destroy(async (error: any) => {
+      const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+      const url = issuer.metadata.end_session_endpoint;
+      if (url && idToken) {
+        res.redirect(
+          url +
+            '?post_logout_redirect_uri=' +
+            process.env.OIDC_POST_LOGOUT_REDIRECT_URI +
+            '&id_token_hint=' +
+            idToken,
+        );
+      } else {
+        res.redirect(`${process.env.URL_FRONTEND}/#/logout`);
+      }
+    });
   }
 }

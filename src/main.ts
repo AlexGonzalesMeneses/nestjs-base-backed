@@ -6,6 +6,9 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import * as helmet from 'helmet';
 import { INestApplication } from '@nestjs/common';
+import { getConnection } from 'typeorm';
+import { TypeormStore } from 'typeorm-store';
+import { Session } from './modules/autenticacion/session.entity';
 
 import {
   SWAGGER_API_DESCRIPTION,
@@ -22,6 +25,7 @@ async function bootstrap() {
   createSwagger(app);
 
   // configuration app
+  const repository = getConnection().getRepository(Session);
   app.use(
     session({
       secret: configService.get('SESSION_SECRET'),
@@ -33,6 +37,7 @@ async function bootstrap() {
         maxAge: 30 * 60 * 1000,
         httpOnly: true,
       },
+      store: new TypeormStore({ repository, expirationInterval: 3600000 }), //ms
     }),
   );
   app.use(passport.initialize());

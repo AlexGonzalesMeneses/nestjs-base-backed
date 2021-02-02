@@ -9,6 +9,7 @@ import { Modulo } from 'src/modules/autorizacion/entity/modulo.entity';
 import { UsuarioRol } from 'src/modules/autorizacion/entity/usuario-rol.entity';
 import { RolModulo } from 'src/modules/autorizacion/entity/rol-modulo.entity';
 import { Persona } from 'src/modules/persona/persona.entity';
+import { Session } from 'src/modules/autenticacion/session.entity';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Persona } from 'src/modules/persona/persona.entity';
           UsuarioRol,
           RolModulo,
           Persona,
+          Session,
         ],
         synchronize: true,
       }),

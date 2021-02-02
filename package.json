@@ -57,6 +57,7 @@
     "rxjs": "^6.6.3",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.30",
+    "typeorm-store": "^1.2.0",
     "winston": "^3.3.3",
     "wkhtmltopdf": "^0.3.4"
   },
