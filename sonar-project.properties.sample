@@ -1,0 +1,10 @@
+sonar.projectKey=backend-base-nestjs
+sonar.sources=src
+sonar.host.url=https://test.agetic.gob.bo/sonarqube
+sonar.login=<token-usuario>
+sonar.exclusions=/node_modules/,tests/,coverage/
+sonar.tests=test
+sonar.test.inclusions=**/*.spec.ts
+sonar.javascript.lcov.reportPaths=coverage/lcov.info
+sonar.testExecutionReportPaths=test-report.xml
+sonar.projectVersion=<version-proyecto>
