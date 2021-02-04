@@ -77,6 +77,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.3.8",
     "jest": "^26.6.3",
+    "jest-sonar-reporter": "^2.0.0",
     "prettier": "^2.1.2",
     "supertest": "^6.0.0",
     "ts-jest": "^26.4.3",
@@ -109,7 +110,9 @@
       ".entity.ts",
       ".dto.ts",
       ".guard.ts"
-    ]
+    ],
+    "collectCoverage": true,
+    "testResultsProcessor": "jest-sonar-reporter"
   },
   "husky": {
     "hooks": {
