@@ -99,53 +99,12 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-## Estructura de directorios
+## Documentación
+Este proyecto incluye el directorio **docs** con mas detalle de:
+1. [Instalación y Configuración](/docs/INSTALL.md)
+2. [Arquitectura](/docs/arquitectura.md)
+4. [Documentacion de APIS](/docs/openapi.yaml)
 
-```
-.
-├─src
-|  ├── common 
-|  |    ├── constants
-|  |    ├── exceptions
-|  |    ├── interceptors
-|  |    ├── helpers
-|  |    └── serializers
-|  ├── config
-|  |    ├── database
-|  |    └── logger
-|  ├── external
-|  |    ├── iop
-|  |    └── mensajeria
-|  ├── modules
-|  |    ├── autenticacion
-|  |    ├── autorizacion
-|  |    ├── entidad
-|  |    ├── parametro
-|  |    ├── reporte
-|  |    ├── usuario
-|  ├── templates
-|  ├── app.controller.ts
-|  ├── app.module.ts
-|  └── main.ts
-├──scripts
-├──test
-├──.Dockerignore
-├──.env.example
-├──.eslintrc.js
-├──.gitignore
-├──.gitlab-ci.yml
-├──.prettierc
-├──Dockerfile
-├──LICENSE
-├──nest-cli.json
-├──ormconfig.ts
-├──package-lock.json
-├──package.json
-├──README.md
-├──tsconfig.build.json
-└──tsconfig.json
-
-```
 
 ## Licencia
 
