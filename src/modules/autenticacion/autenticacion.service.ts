@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsuarioService } from '../usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { STATUS_INACTIVE } from '../../common/constants';
-import { encrypt } from '../../common/lib/text.module';
+import { TextService } from '../../common/lib/text.service';
 import { Persona } from '../persona/persona.entity';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AutenticacionService {
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuario(usuario);
     if (respuesta) {
-      const pass = encrypt(contrasena);
+      const pass = TextService.encrypt(contrasena);
       if (respuesta.contrasena !== pass) {
         throw new HttpException(
           'El usuario no existe.',
