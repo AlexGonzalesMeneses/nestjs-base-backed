@@ -1,6 +1,5 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { SinService } from './sin.service';
-import { SinController } from './sin.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -17,6 +16,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   providers: [SinService],
-  controllers: [SinController],
 })
 export class SinModule {}

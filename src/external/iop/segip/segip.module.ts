@@ -1,6 +1,5 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { SegipService } from './segip.service';
-import { SegipController } from './segip.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -17,6 +16,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   providers: [SegipService],
-  controllers: [SegipController],
 })
 export class SegipModule {}
