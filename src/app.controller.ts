@@ -9,10 +9,13 @@ export class AppController {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get('/status')
-  async status(@Res() res: Response) {
-    this.logger.log('status()', AppController.name);
+  @Get('/estado')
+  async verificarEstado(@Res() res: Response) {
+    this.logger.log('estado()', AppController.name);
 
-    return res.status(HttpStatus.OK).send('Servicio funcionando correctamente');
+    return res.status(HttpStatus.OK).json({
+      mensaje: 'Servicio funcionando correctamente',
+      hora: Math.floor(Date.now() / 1000),
+    });
   }
 }

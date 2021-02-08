@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  title: PROYECTO BASE BACKEND
+  version: '1.0'
+  description: Documentación del Proyecto base BACKEND
+  contact:
+    name: agetic@agetic.gob.bo
+servers:
+  - url: 'http://localhost:3000'
+  - url: 'https://dev.iop.agetic.gob.bo/backend-base'
+paths:
+  /api/estado:
+    get:
+      summary: Api para obtener el estado del sistema
+      tags: ['estado']
+      operationId: get-api-v1-status
+      description: Api de estado del sistema
+      responses:
+       '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: 'Servicio funcionando correctamente.'
+                  hora:
+                    type: number
+                    example: 1612800763
