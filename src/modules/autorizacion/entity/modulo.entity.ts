@@ -1,14 +1,8 @@
-import {
-  Entity,
-  BaseEntity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { RolModulo } from './rol-modulo.entity';
 
 @Entity()
-export class Modulo extends BaseEntity {
+export class Modulo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

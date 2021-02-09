@@ -1,6 +1,5 @@
 import {
   Entity,
-  BaseEntity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
@@ -10,7 +9,7 @@ import { Modulo } from './modulo.entity';
 import { Rol } from './rol.entity';
 
 @Entity()
-export class RolModulo extends BaseEntity {
+export class RolModulo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

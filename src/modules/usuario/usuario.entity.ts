@@ -1,6 +1,5 @@
 import {
   Entity,
-  BaseEntity,
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
@@ -11,7 +10,7 @@ import { UsuarioRol } from '../autorizacion/entity/usuario-rol.entity';
 import { Persona } from '../persona/persona.entity';
 
 @Entity()
-export class Usuario extends BaseEntity {
+export class Usuario {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

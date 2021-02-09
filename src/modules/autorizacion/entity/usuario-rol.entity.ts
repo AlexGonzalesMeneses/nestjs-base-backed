@@ -1,7 +1,6 @@
 import { Usuario } from '../../usuario/usuario.entity';
 import {
   Entity,
-  BaseEntity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
@@ -10,7 +9,7 @@ import {
 import { Rol } from './rol.entity';
 
 @Entity()
-export class UsuarioRol extends BaseEntity {
+export class UsuarioRol {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
