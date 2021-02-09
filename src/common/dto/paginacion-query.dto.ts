@@ -24,8 +24,12 @@ export class PaginacionQueryDto {
   })
   @Type(() => Number)
   @IsInt()
-  @Min(LIMITE_MIN)
-  @Max(LIMITE_MAX)
+  @Min(LIMITE_MIN, {
+    message: `El valor mínimo para $property debe ser ${LIMITE_MIN}.`,
+  })
+  @Max(LIMITE_MAX, {
+    message: `El valor máximo para $property debe ser ${LIMITE_MAX}.`,
+  })
   @IsOptional()
   readonly limite?: number = LIMITE_MIN;
 
@@ -35,7 +39,9 @@ export class PaginacionQueryDto {
   })
   @Type(() => Number)
   @IsInt()
-  @Min(PAGINA_MIN)
+  @Min(PAGINA_MIN, {
+    message: `El valor mínimo para $property debe ser ${PAGINA_MIN}.`,
+  })
   @IsOptional()
   readonly pagina?: number = PAGINA_MIN;
 
@@ -53,7 +59,7 @@ export class PaginacionQueryDto {
   @IsOptional()
   readonly orden?: Orden = Orden.ASC;
 
-  get omitir(): number {
+  get saltar(): number {
     return (this.pagina - 1) * this.limite;
   }
 }
