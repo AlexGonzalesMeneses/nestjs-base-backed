@@ -1,6 +1,5 @@
 stages:
    - build
-   - lint
    - test
    - deployment
    - delivery
@@ -22,14 +21,14 @@ Instalando Dependencias:
 
 Ejecutar linting:
   image: node:14-alpine
-  stage: lint
+  stage: test
   except:
     refs:
       - master
   tags:
     - backend-base-nestjs
   script:
-    - echo $CI_COMMIT_TAG
+    - npm run lint
   allow_failure: true
 
 Verificando paquetes:
@@ -128,7 +127,7 @@ Desplegando container (Dev):
     - helm repo update
     - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 
-# Generando imagen docker (Test):
+# Generando imagen docker (Test):pac
 #   image: gcr.io/kaniko-project/executor:debug-v0.23.0
 #   stage: deployment
 #   only:
