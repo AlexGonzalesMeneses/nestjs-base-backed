@@ -125,7 +125,7 @@ Desplegando container (Dev):
     - sh parse-template.sh ./values.yml ./values.yml
     - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
     - helm repo update
-    - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
+    - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME-dev --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 
 # Generando imagen docker (Test):pac
 #   image: gcr.io/kaniko-project/executor:debug-v1.3.0
