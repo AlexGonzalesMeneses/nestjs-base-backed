@@ -79,7 +79,7 @@ Ejecutando tests de covertura:
 #     - npm run test:e2e
 
 Generando imagen docker (Dev):
-  image: gcr.io/kaniko-project/executor:debug-v0.23.0
+  image: gcr.io/kaniko-project/executor:debug-v1.3.0
   stage: deployment
   only:
     refs:
@@ -128,7 +128,7 @@ Desplegando container (Dev):
     - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 
 # Generando imagen docker (Test):pac
-#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
 #   stage: deployment
 #   only:
 #     refs:
@@ -139,7 +139,7 @@ Desplegando container (Dev):
 #     - echo "do something"
 
 # Generando imagen docker (PreProd):
-#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
 #   stage: deployment
 #   only:
 #     refs:
@@ -149,7 +149,7 @@ Desplegando container (Dev):
 #   script:
 #     - echo "do something"
 # Generando imagen docker (Prod):
-#   image: gcr.io/kaniko-project/executor:debug-v0.23.0
+#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
 #   stage: deployment
 #   only:
 #     refs:
