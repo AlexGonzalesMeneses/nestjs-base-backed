@@ -71,6 +71,7 @@ Ejecutando tests e2e:
   allow_failure: true
 
 Ejecutar Setup de la base de datos (dev):
+  image: node:14-slim
   stage: configurations
   tags:
     - backend-base-nestjs
@@ -82,6 +83,7 @@ Ejecutar Setup de la base de datos (dev):
   when: manual
 
 Ejecutar Seeders de la base de datos (dev):
+  image: node:14-slim
   stage: configurations
   tags:
     - backend-base-nestjs
@@ -93,6 +95,7 @@ Ejecutar Seeders de la base de datos (dev):
   when: manual
 
 Ejecutar Migrations de la base de datos (dev):
+  image: node:14-slim
   stage: configurations
   tags:
     - backend-base-nestjs
