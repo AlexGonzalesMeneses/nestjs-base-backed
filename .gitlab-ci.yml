@@ -1,8 +1,8 @@
 stages:
-   - build
-   - test
-   - deployment
-   - delivery
+  - building
+  - testing
+  - deployment
+  - delivery
 
 Instalando Dependencias:
   image: node:14-alpine
@@ -18,18 +18,6 @@ Instalando Dependencias:
       - node_modules/
       - package-lock.json
     expire_in: 1 day
-
-Ejecutar linting:
-  image: node:14-alpine
-  stage: test
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run lint
-  allow_failure: true
 
 Verificando paquetes:
   image: node:14-alpine
@@ -67,97 +55,67 @@ Ejecutando tests de covertura:
   script:
     - npm run test:cov
 
-# Ejecutando tests e2e:
-#   image: node:14-alpine
-#   stage: test
-#   except:
-#     refs:
-#       - master
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - npm run test:e2e
-
-Generando imagen docker (Dev):
-  image: gcr.io/kaniko-project/executor:debug-v1.3.0
-  stage: deployment
-  only:
+Ejecutando tests e2e:
+  image: node:14-alpine
+  stage: test
+  except:
     refs:
-      - develop
+      - master
   tags:
     - backend-base-nestjs
   script:
-    - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
-    - chmod +x ./parse-template.sh
-    - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > /kaniko/.docker/config.json
-    - sh parse-template.sh /kaniko/.docker/config.json /kaniko/.docker/config.json
-    - echo $IR_REPO_URL_TEMPLATE | base64 -d > ip-repo-url-template.txt
-    - sh parse-template.sh ip-repo-url-template.txt ip-repo-url-template.txt
-    - export IR_REPO_URL=$(cat ip-repo-url-template.txt)
-    - echo $CI_COMMIT_TAG
-    - /kaniko/executor --context . --dockerfile ./Dockerfile  --target=development --destination $IR_REPO_URL:dev
+    - npm run test:e2e
 
-Desplegando container (Dev):
-  image: alpine/helm:3.1.3
-  stage: delivery
-  only:
-    refs:
-      - develop
+Ejecutar Setup de la base de datos (dev):
+  stage: configurations
   tags:
-    - backend-base-nestjs
+    - runner-dev
   script:
-    - export IOP_VAULT_ENVIRONMENT=develop
-    - echo $PARSE_TEMPLATE | base64 -d > ./parse-template.sh
-    - chmod +x ./parse-template.sh
-    - echo $IR_CHART_REPO_URL_TEMPLATE | base64 -d > ip-chart-repo-url-template.txt
-    - sh parse-template.sh ip-chart-repo-url-template.txt ip-chart-repo-url-template.txt
-    - export IR_CHART_REPO_URL=$(cat ip-chart-repo-url-template.txt)
-    - echo $IR_AUTH_CONFIG_TEMPLATE | base64 -d > ir-auth-config-template.txt
-    - sh parse-template.sh ir-auth-config-template.txt ir-auth-config-template.txt
-    - export IR_AUTH_CONFIG=$(cat ir-auth-config-template.txt | base64 | tr -d \\n)
-    - echo $VAULT_ENDPOINT_TEMPLATE | base64 -d > vault-endpoint-template.txt
-    - sh parse-template.sh vault-endpoint-template.txt vault-endpoint-template.txt
-    - export VAULT_ENDPOINT_B64=$(cat vault-endpoint-template.txt | base64 | tr -d \\n)
-    - export VAULT_TOKEN_B64=$(echo $VAULT_TOKEN | base64 | tr -d \\n)
-    - echo $K8S_CONFIG_TEMPLATE | base64 -d > ./config.yml
-    - sh parse-template.sh ./config.yml ./config.yml
-    - echo $VALUES_DEV_TEMPLATE | base64 -d > ./values.yml
-    - sh parse-template.sh ./values.yml ./values.yml
-    - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
-    - helm repo update
-    - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME-dev --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
+    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
+    - npm run setup
+  only:
+    - develop
+  when: manual
 
-# Generando imagen docker (Test):pac
-#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
-#   stage: deployment
-#   only:
-#     refs:
-#       - test
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
+Ejecutar Seeders de la base de datos (dev):
+  stage: configurations
+  tags:
+    - runner-dev
+  script:
+    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
+    - npm run seeds:run
+  only:
+    - develop
+  when: manual
 
-# Generando imagen docker (PreProd):
-#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
-#   stage: deployment
-#   only:
-#     refs:
-#       - sandbox
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
-# Generando imagen docker (Prod):
-#   image: gcr.io/kaniko-project/executor:debug-v1.3.0
-#   stage: deployment
-#   only:
-#     refs:
-#       - tags
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
+Ejecutar Migrations de la base de datos (dev):
+  stage: configurations
+  tags:
+    - runner-dev
+  script:
+    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
+    - npm run migrations:run
+  only:
+    - develop
+  when: manual
+  
+
+
+
+#Generando imagen docker (Dev):
+#  image: gcr.io/kaniko-project/executor:v1.3.0-debug
+#  stage: deployment
+#  only:
+#    refs:
+#      - develop
+#  tags:
+#    - frontend-base-vue
+#  script:
+#    - echo $CONFIGURE_IMAGE | base64 -d > ./configure-image-generation.sh
+#    - chmod +x ./configure-image-generation.sh
+#    - . ./configure-image-generation.sh
+#    - /kaniko/executor --context . --target=development --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
+
 # Desplegando container (Dev):
 #   image: alpine/helm:3.1.3
 #   stage: delivery
@@ -165,38 +123,14 @@ Desplegando container (Dev):
 #     refs:
 #       - develop
 #   tags:
-#     - backend-base-nestjs
+#     - frontend-base-vue
 #   script:
-#     - echo "do something"
-
-# Desplegando container (Test):
-#   image: alpine/helm:3.1.3
-#   stage: delivery
-#   only:
-#     refs:
-#       - test
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
-# Desplegando container (Sand):
-#   image: alpine/helm:3.1.3
-#   stage: delivery
-#   only:
-#     refs:
-#       - sandbox
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
-
-# Desplegando container (Prod):
-#   image: alpine/helm:3.1.3
-#   stage: delivery
-#   only:
-#     refs:
-#       - tags
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - echo "do something"
+#     - echo $CI_PROJECT_NAME
+#     - export IOP_VAULT_ENVIRONMENT=develop
+#     - echo $DEPLOY_CONTAINER | base64 -d > ./configure-container-deployment.sh
+#     - chmod +x ./configure-container-deployment.sh
+#     - . ./configure-container-deployment.sh
+#     - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
+#     - helm repo update
+#     - helm repo
+#     - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME-dev --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
