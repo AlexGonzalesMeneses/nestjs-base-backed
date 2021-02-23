@@ -1,13 +1,13 @@
 stages:
   - building
   - testing
-  - deployment
+  # - deployment
   - delivery
   - configurations
 
 Instalando Dependencias:
   image: node:14-alpine
-  stage: build
+  stage: building
   tags:
     - backend-base-nestjs
   script:
@@ -24,7 +24,7 @@ Verificando paquetes:
   image: node:14-alpine
   tags:
     - backend-base-nestjs
-  stage: test
+  stage: testing
   except:
     refs:
       - master
@@ -36,7 +36,7 @@ Verificando paquetes:
 
 Ejecutando tests de integración:
   image: node:14-alpine
-  stage: test
+  stage: testing
   except:
     refs:
       - master
@@ -47,7 +47,7 @@ Ejecutando tests de integración:
 
 Ejecutando tests de covertura:
   image: node:14-alpine
-  stage: test
+  stage: testing
   except:
     refs:
       - master
@@ -58,7 +58,7 @@ Ejecutando tests de covertura:
 
 Ejecutando tests e2e:
   image: node:14-alpine
-  stage: test
+  stage: testing
   except:
     refs:
       - master
