@@ -1,74 +1,74 @@
 stages:
-  - building
-  - testing
+  # - building
+  # - testing
   # - deployment
-  - delivery
+  # - delivery
   - configurations
 
-Instalando Dependencias:
-  image: node:14-alpine
-  stage: building
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
-    - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-      - package-lock.json
-    expire_in: 1 day
-
-Verificando paquetes:
-  image: node:14-alpine
-  tags:
-    - backend-base-nestjs
-  stage: testing
-  except:
-    refs:
-      - master
-  script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
-    - npm audit
-  allow_failure: true
-
-Ejecutando tests de integración:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm test
-  allow_failure: true
-
-Ejecutando tests de covertura:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:cov
-  allow_failure: true
-
-Ejecutando tests e2e:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:e2e
-  allow_failure: true
+# Instalando Dependencias:
+#   image: node:14-alpine
+#   stage: building
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm ci
+#   artifacts:
+#     paths:
+#       - node_modules/
+#       - package-lock.json
+#     expire_in: 1 day
+# 
+# Verificando paquetes:
+#   image: node:14-alpine
+#   tags:
+#     - backend-base-nestjs
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm audit
+#   allow_failure: true
+# 
+# Ejecutando tests de integración:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm test
+#   allow_failure: true
+# 
+# Ejecutando tests de covertura:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:cov
+#   allow_failure: true
+# 
+# Ejecutando tests e2e:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:e2e
+#   allow_failure: true
 
 Ejecutar migraciones de la base de datos (dev):
   image: node:14-slim
