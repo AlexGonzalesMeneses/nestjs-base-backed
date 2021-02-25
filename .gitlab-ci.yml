@@ -93,32 +93,6 @@ Ejecutar migraciones de la base de datos (dev):
     - develop
   when: manual
 
-Ejecutar Seeders de la base de datos (dev):
-  image: node:14-slim
-  stage: configurations
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run seeds:run
-  only:
-    - develop
-  when: manual
-
-Ejecutar Migrations de la base de datos (dev):
-  image: node:14-slim
-  stage: configurations
-  tags:
-    - backend-base-nestjs
-  script:
-    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
-    - npm run migrations:run
-  only:
-    - develop
-  when: manual
-
-
-
-
 #Generando imagen docker (Dev):
 #  image: gcr.io/kaniko-project/executor:v1.3.0-debug
 #  stage: deployment
