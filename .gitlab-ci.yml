@@ -79,6 +79,8 @@ Ejecutar migraciones de la base de datos (dev):
     - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch main contrib > /etc/apt/sources.list
     - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch-updates main contrib >> /etc/apt/sources.list
     - echo deb http://repositorio.agetic.gob.bo/os/security.debian.org/debian-security/ stretch/updates main contrib >> /etc/apt/sources.list
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
     - apt-get update -y
     - apt-get install curl -y
     - apt-get install jq -y
@@ -88,8 +90,6 @@ Ejecutar migraciones de la base de datos (dev):
     - echo $(jq ".data.data" secretos.json) > values.json
     - cat values.json
     - convert-json-env values.json --out=.env
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
     - npm ci
     - npm run migrations:run
   only:
