@@ -94,8 +94,6 @@ Ejecutar migraciones de la base de datos (dev):
     - npm run migrations:run
   only:
     - develop
-  when: manual
-
 #Generando imagen docker (Dev):
 #  image: gcr.io/kaniko-project/executor:v1.3.0-debug
 #  stage: deployment
