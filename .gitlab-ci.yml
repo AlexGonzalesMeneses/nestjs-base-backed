@@ -1,75 +1,107 @@
 stages:
-  # - building
-  # - testing
-  # - deployment
-  # - delivery
+  - building
+  - testing
+  - deployment
+  - delivery
   - configurations
 
-# Instalando Dependencias:
-#   image: node:14-alpine
-#   stage: building
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-#     - npm set strict-ssl false
-#     - npm ci
-#   artifacts:
-#     paths:
-#       - node_modules/
-#       - package-lock.json
-#     expire_in: 1 day
-# 
-# Verificando paquetes:
-#   image: node:14-alpine
-#   tags:
-#     - backend-base-nestjs
-#   stage: testing
-#   except:
-#     refs:
-#       - master
-#   script:
-#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-#     - npm set strict-ssl false
-#     - npm audit
-#   allow_failure: true
-# 
-# Ejecutando tests de integración:
-#   image: node:14-alpine
-#   stage: testing
-#   except:
-#     refs:
-#       - master
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - npm test
-#   allow_failure: true
-# 
-# Ejecutando tests de covertura:
-#   image: node:14-alpine
-#   stage: testing
-#   except:
-#     refs:
-#       - master
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - npm run test:cov
-#   allow_failure: true
-# 
-# Ejecutando tests e2e:
-#   image: node:14-alpine
-#   stage: testing
-#   except:
-#     refs:
-#       - master
-#   tags:
-#     - backend-base-nestjs
-#   script:
-#     - npm run test:e2e
-#   allow_failure: true
+Instalando Dependencias:
+  image: node:14-alpine
+  stage: building
+  tags:
+    - backend-base-nestjs
+  script:
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+      - package-lock.json
+    expire_in: 1 day
 
+Verificando paquetes:
+  image: node:14-alpine
+  tags:
+    - backend-base-nestjs
+  stage: testing
+  except:
+    refs:
+      - master
+  script:
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
+    - npm audit
+  allow_failure: true
+
+Ejecutando tests de integración:
+  image: node:14-alpine
+  stage: testing
+  except:
+    refs:
+      - master
+  tags:
+    - backend-base-nestjs
+  script:
+    - npm test
+  allow_failure: true
+
+Ejecutando tests de covertura:
+  image: node:14-alpine
+  stage: testing
+  except:
+    refs:
+      - master
+  tags:
+    - backend-base-nestjs
+  script:
+    - npm run test:cov
+  allow_failure: true
+
+Ejecutando tests e2e:
+  image: node:14-alpine
+  stage: testing
+  except:
+    refs:
+      - master
+  tags:
+    - backend-base-nestjs
+  script:
+    - npm run test:e2e
+  allow_failure: true
+
+Generando imagen docker (Dev):
+  image: gcr.io/kaniko-project/executor:v1.3.0-debug
+  stage: deployment
+  only:
+    refs:
+      - develop
+  tags:
+    - backend-base-nestjs
+  script:
+    - echo $CONFIGURE_IMAGE | base64 -d > ./configure-image-generation.sh
+    - chmod +x ./configure-image-generation.sh
+    - . ./configure-image-generation.sh
+    - /kaniko/executor --context . --target=development --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
+
+Desplegando container (Dev):
+  image: alpine/helm:3.1.3
+  stage: delivery
+  only:
+    refs:
+      - develop
+  tags:
+    - backend-base-nestjs
+  script:
+    - echo $CI_PROJECT_NAME
+    - export IOP_VAULT_ENVIRONMENT=develop
+    - echo $DEPLOY_CONTAINER | base64 -d > ./configure-container-deployment.sh
+    - chmod +x ./configure-container-deployment.sh
+    - . ./configure-container-deployment.sh
+    - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
+    - helm repo update
+    - helm repo
+    - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME-dev --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 Ejecutar migraciones de la base de datos (dev):
   image: node:14.16-stretch-slim
   stage: configurations
@@ -88,43 +120,10 @@ Ejecutar migraciones de la base de datos (dev):
     - apt-get install jq -y
     - npm install -g convert-json-env
     - 'curl https://$(echo $VAULT_DOMAIN)/v1/iop/develop/backend-base-nestjs --header "X-Vault-Token: $(echo $VAULT_TOKEN)" > secretos.json'
-    - cat secretos.json
     - echo $(jq ".data" secretos.json) > values.json
-    - cat values.json
     - convert-json-env values.json --out=.env
     - npm ci
     - npm run migrations:run
   only:
     - develop
-#Generando imagen docker (Dev):
-#  image: gcr.io/kaniko-project/executor:v1.3.0-debug
-#  stage: deployment
-#  only:
-#    refs:
-#      - develop
-#  tags:
-#    - frontend-base-vue
-#  script:
-#    - echo $CONFIGURE_IMAGE | base64 -d > ./configure-image-generation.sh
-#    - chmod +x ./configure-image-generation.sh
-#    - . ./configure-image-generation.sh
-#    - /kaniko/executor --context . --target=development --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
-
-# Desplegando container (Dev):
-#   image: alpine/helm:3.1.3
-#   stage: delivery
-#   only:
-#     refs:
-#       - develop
-#   tags:
-#     - frontend-base-vue
-#   script:
-#     - echo $CI_PROJECT_NAME
-#     - export IOP_VAULT_ENVIRONMENT=develop
-#     - echo $DEPLOY_CONTAINER | base64 -d > ./configure-container-deployment.sh
-#     - chmod +x ./configure-container-deployment.sh
-#     - . ./configure-container-deployment.sh
-#     - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
-#     - helm repo update
-#     - helm repo
-#     - helm upgrade -i --debug $CI_PROJECT_NAME-dev repository/$IR_CHART_NAME-dev --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
+  when: manual
