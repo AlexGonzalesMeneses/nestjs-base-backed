@@ -20,8 +20,22 @@ Instalando Dependencias:
       - package-lock.json
     expire_in: 1 day
 
+# Verificando paquetes:
+#   image: node:14-alpine
+#   tags:
+#     - backend-base-nestjs
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm audit
+#   allow_failure: true
+
 Verificando paquetes:
-  image: node:14-alpine
+  image: opensecurity/nodejsscan:latest
   tags:
     - backend-base-nestjs
   stage: testing
@@ -31,8 +45,9 @@ Verificando paquetes:
   script:
     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
     - npm set strict-ssl false
-    - npm audit
+    - njsscan .
   allow_failure: true
+
 
 Ejecutando tests de integración:
   image: node:14-alpine
