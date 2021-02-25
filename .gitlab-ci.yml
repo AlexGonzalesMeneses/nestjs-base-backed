@@ -87,7 +87,7 @@ Ejecutar migraciones de la base de datos (dev):
     - apt-get install curl -y
     - apt-get install jq -y
     - npm install -g convert-json-env
-    - 'curl $VAULT_SERVICE_URL --header "X-Vault-Token: $VAULT_TOKEN" > secretos.json'
+    - 'curl https://$(echo $VAULT_DOMAIN)/v1/iop/develop/backend-base-nestjs --header "X-Vault-Token: $(echo $VAULT_TOKEN)" > secretos.json'
     - cat secretos.json
     - echo $(jq ".data.data" secretos.json) > values.json
     - cat values.json
