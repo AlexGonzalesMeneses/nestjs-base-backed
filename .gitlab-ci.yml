@@ -43,8 +43,6 @@ Verificando paquetes:
     refs:
       - master
   script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
     - njsscan .
   allow_failure: true
 
