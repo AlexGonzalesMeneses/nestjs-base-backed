@@ -70,14 +70,25 @@ Ejecutando tests e2e:
     - npm run test:e2e
   allow_failure: true
 
-Ejecutar Setup de la base de datos (dev):
+Ejecutar migraciones de la base de datos (dev):
   image: node:14-slim
   stage: configurations
   tags:
     - backend-base-nestjs
   script:
-    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
-    - npm run setup
+    - apt-get update -y
+    - apt-get install curl -y
+    - apt-get install jq -y
+    - npm install -g convert-json-env
+    - 'curl $VAULT_SERVICE_URL --header "X-Vault-Token: $VAULT_TOKEN" > secretos.json'
+    - cat secretos.json
+    - echo $(jq ".data.data" secretos.json) > values.json
+    - cat values.json
+    - convert-json-env values.json --out=.env
+    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+    - npm set strict-ssl false
+    - npm ci
+    - npm run migrations:run
   only:
     - develop
   when: manual
@@ -88,7 +99,6 @@ Ejecutar Seeders de la base de datos (dev):
   tags:
     - backend-base-nestjs
   script:
-    - ['sh', '-c', 'wget --header "X-Vault-Token: $(echo $VAULT_TOKEN)" -q -O secrets.txt $VAULT_SERVICE_URL']
     - npm run seeds:run
   only:
     - develop
@@ -105,7 +115,7 @@ Ejecutar Migrations de la base de datos (dev):
   only:
     - develop
   when: manual
-  
+
 
 
 
