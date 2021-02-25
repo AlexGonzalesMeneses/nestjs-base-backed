@@ -76,6 +76,8 @@ Ejecutar migraciones de la base de datos (dev):
   tags:
     - backend-base-nestjs
   script:
+    - echo "variables predefinidas"
+    - env
     - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch main contrib > /etc/apt/sources.list
     - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch-updates main contrib >> /etc/apt/sources.list
     - echo deb http://repositorio.agetic.gob.bo/os/security.debian.org/debian-security/ stretch/updates main contrib >> /etc/apt/sources.list
