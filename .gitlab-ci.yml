@@ -94,10 +94,13 @@ Generando imagen docker (Dev):
     - echo $CONFIGURE_IMAGE | base64 -d > ./configure-image-generation.sh
     - chmod +x ./configure-image-generation.sh
     - . ./configure-image-generation.sh
+    - echo $CI_COMMIT_SHORT_SHA
+    - echo $CI_COMMIT_MESSAGE
+    - echo $CI_COMMIT_REF_NAME
     - /kaniko/executor --context . --target=development \
-       --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA \
-       --build-arg CI_COMMIT_MESSAGE=$CI_COMMIT_MESSAGE \
-       --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME \
+       "--build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA" \
+       "--build-arg CI_COMMIT_MESSAGE=$CI_COMMIT_MESSAGE" \
+       "--build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME" \
        --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev
 
 Desplegando container (Dev):
