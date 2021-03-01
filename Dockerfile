@@ -2,6 +2,10 @@ FROM node:14-alpine AS build
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 COPY --chown=node:node . .
+RUN npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+RUN npm set strict-ssl false
+RUN npm install -g rimraf
+RUN npm install -g readdirp
 USER node
 ARG CI_COMMIT_SHORT_SHA
 ARG CI_COMMIT_MESSAGE
@@ -9,8 +13,6 @@ ARG CI_COMMIT_REF_NAME
 ENV CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA} \
     CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE} \
     CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
-RUN npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-RUN npm set strict-ssl false
 RUN npm run build
 RUN npm ci
 
