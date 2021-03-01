@@ -26,7 +26,8 @@
     "migrations:generate": "npm run typeorm -- migration:generate -c connection -n",
     "migrations:run": "npm run typeorm -- migration:run -c connection",
     "seeds:create": "npm run typeorm -- migration:create -c seed -n",
-    "seeds:run": "npm run typeorm -- migration:run -c seed"
+    "seeds:run": "npm run typeorm -- migration:run -c seed",
+    "rimraf": "./node_modules/rimraf/bin.js"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.1",
