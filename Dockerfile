@@ -13,8 +13,9 @@ ARG CI_COMMIT_REF_NAME
 ENV CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA} \
     CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE} \
     CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
-RUN npm run build
 RUN npm ci
+RUN npm run build
+
 
 FROM build AS production
 WORKDIR /home/node/app
