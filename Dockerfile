@@ -19,21 +19,17 @@ FROM build AS production
 WORKDIR /home/node/app
 COPY --from=build --chown=node:node /home/node/app/dist .
 USER node
-RUN env
 CMD ["node", "/home/node/app/dist/src/main.js"]
 EXPOSE 3000
 
 FROM build AS testing
 WORKDIR /home/node/app
 USER node
-RUN env
 CMD ["npm", "run", "start:dev"]
 EXPOSE 3000
 
 FROM build AS development
 WORKDIR /home/node/app
 USER node
-RUN env
-RUN echo "variables dev"
 CMD ["npm", "run", "start:dev"]
 EXPOSE 3000
