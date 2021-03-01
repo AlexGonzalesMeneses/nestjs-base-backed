@@ -1,24 +1,24 @@
 stages:
-  - building
-  - testing
-  - deployment
-  - delivery
-  - configurations
+  # - building
+  # - testing
+   - deployment
+  # - delivery
+  # - configurations
 
-Instalando Dependencias:
-  image: node:14-alpine
-  stage: building
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
-    - npm set strict-ssl false
-    - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-      - package-lock.json
-    expire_in: 1 day
+# Instalando Dependencias:
+#   image: node:14-alpine
+#   stage: building
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+#     - npm set strict-ssl false
+#     - npm ci
+#   artifacts:
+#     paths:
+#       - node_modules/
+#       - package-lock.json
+#     expire_in: 1 day
 
 # Verificando paquetes:
 #   image: node:14-alpine
@@ -34,53 +34,53 @@ Instalando Dependencias:
 #     - npm audit
 #   allow_failure: true
 
-Verificando paquetes:
-  image: opensecurity/nodejsscan:latest
-  tags:
-    - backend-base-nestjs
-  stage: testing
-  except:
-    refs:
-      - master
-  script:
-    - njsscan .
-  allow_failure: true
+# Verificando paquetes:
+#   image: opensecurity/nodejsscan:latest
+#   tags:
+#     - backend-base-nestjs
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   script:
+#     - njsscan .
+#   allow_failure: true
 
-Ejecutando tests de integración:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm test
-  allow_failure: true
+# Ejecutando tests de integración:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm test
+#   allow_failure: true
 
-Ejecutando tests de covertura:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:cov
-  allow_failure: true
+# Ejecutando tests de covertura:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:cov
+#   allow_failure: true
 
-Ejecutando tests e2e:
-  image: node:14-alpine
-  stage: testing
-  except:
-    refs:
-      - master
-  tags:
-    - backend-base-nestjs
-  script:
-    - npm run test:e2e
-  allow_failure: true
+# Ejecutando tests e2e:
+#   image: node:14-alpine
+#   stage: testing
+#   except:
+#     refs:
+#       - master
+#   tags:
+#     - backend-base-nestjs
+#   script:
+#     - npm run test:e2e
+#   allow_failure: true
 
 Generando imagen docker (Dev):
   image: gcr.io/kaniko-project/executor:v1.3.0-debug
@@ -97,7 +97,7 @@ Generando imagen docker (Dev):
     - echo $CI_COMMIT_SHORT_SHA
     - echo $CI_COMMIT_MESSAGE
     - echo $CI_COMMIT_REF_NAME
-    - /kaniko/executor --context . --target=development --dockerfile ./Dockerfile --destination $IR_REPO_URL:dev  --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA --build-arg CI_COMMIT_MESSAGE=$CI_COMMIT_MESSAGE --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME
+    - /kaniko/executor --context . --target=development --dockerfile ./Dockerfile --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA --destination $IR_REPO_URL:dev
 Desplegando container (Dev):
   image: alpine/helm:3.1.3
   stage: delivery
