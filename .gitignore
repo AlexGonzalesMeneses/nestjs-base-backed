@@ -38,3 +38,4 @@ test-report.xml
 .env
 requests.http
 src/logs
+database/migrations/
