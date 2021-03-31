@@ -12,7 +12,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
 import { ReporteModule } from './modules/reporte/reporte.module';
 import { WinstonLoggerModule } from './config/logger/winston-logger.module';
-import { AuthorizationModule } from './config/authorization/authorization.module';
+import { AuthorizationConfigModule } from './config/authorization/authorization.module';
+import { AuthorizationModule } from './modules/authorization/authorization.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -25,6 +26,7 @@ import { AuthorizationModule } from './config/authorization/authorization.module
     AutorizacionModule,
     ReporteModule,
     WinstonLoggerModule,
+    AuthorizationConfigModule,
     AuthorizationModule,
   ],
   controllers: [AppController],
