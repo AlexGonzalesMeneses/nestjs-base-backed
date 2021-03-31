@@ -12,10 +12,23 @@ export class AutenticacionController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
-  async login(@Request() req) {
+  async login(@Request() req, @Res() res: Response) {
     // console.log(req.user);
     // this.logger.error(req.user);
-    return this.autenticacionService.autenticar(req.user);
+    const result = await this.autenticacionService.autenticar(req.user);
+    console.log('------------------------- ', result.data);
+    res
+      .status(200)
+      .cookie("jid", result.refreshToken.id, {
+        httpOnly: true
+        // domain: '.example.com'
+        // www.example.com
+        // api.example.com
+        // path: "/refresh_token"
+      });
+    return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
+
+    // return this.autenticacionService.autenticar(req.user);
   }
 
   @UseGuards(OidcAuthGuard)

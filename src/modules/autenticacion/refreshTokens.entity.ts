@@ -1,25 +1,23 @@
 import { 
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn
+  PrimaryColumn
 } from 'typeorm';
-import { Usuario } from '../usuario/usuario.entity';
+// import { Usuario } from '../usuario/usuario.entity';
 
 @Entity()
 export class RefreshTokens {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column({ name: 'grant_id' })
   grantId: string
 
   @Column()
-  iat: number;
+  iat: Date;
 
   @Column({ name: 'expires_at'})
-  expiresAt: number;
+  expiresAt: Date;
 
   @Column({ name: 'is_revoked' })
   isRevoked: boolean

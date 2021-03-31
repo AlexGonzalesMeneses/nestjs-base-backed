@@ -12,6 +12,9 @@ import { SessionSerializer } from './session.serializer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioRepositorio } from '../usuario/usuario.repositorio';
 
+import { RefreshTokensRepository } from './refreshTokens.repository';
+import { RefreshTokensService } from './refreshTokens.service'
+
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
   useFactory: async (autenticacionService: AutenticacionService) => {
@@ -35,11 +38,12 @@ const OidcStrategyFactory = {
     }),
     UsuarioModule,
     ConfigModule,
-    TypeOrmModule.forFeature([UsuarioRepositorio]),
+    TypeOrmModule.forFeature([UsuarioRepositorio, RefreshTokensRepository]),
   ],
   controllers: [AutenticacionController],
   providers: [
     AutenticacionService,
+    RefreshTokensService,
     LocalStrategy,
     JwtStrategy,
     OidcStrategyFactory,

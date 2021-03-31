@@ -1,15 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UsuarioService } from '../usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { STATUS_INACTIVE } from '../../common/constants';
 import { TextService } from '../../common/lib/text.service';
 import { Persona } from '../persona/persona.entity';
+import { RefreshTokensService } from './refreshTokens.service';
 
 @Injectable()
 export class AutenticacionService {
   constructor(
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
+    private readonly refreshTokensService: RefreshTokensService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
@@ -44,10 +48,16 @@ export class AutenticacionService {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id);
 
     const payload = { id: user.id, roles: user.roles };
-
-    return {
+    // crear refresh_token
+    const ttl = parseInt(this.configService.get('REFRESH_TOKEN_EXPIRES_IN'), 10);
+    const refreshToken = await this.refreshTokensService.create(user.id, ttl);
+    const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
+    }
+    return {
+      data,
+      refreshToken
     };
   }
 
@@ -77,3 +87,4 @@ export class AutenticacionService {
     return this.jwtService.sign(payload);
   }
 }
+
