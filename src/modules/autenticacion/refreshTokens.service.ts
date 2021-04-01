@@ -28,4 +28,11 @@ export class RefreshTokensService {
     });
     return this.refreshTokensRepository.save(refreshToken);
   }
+
+  async createAccessToken(refreshTokenId: string) {
+    const refreshToken = await this.refreshTokensRepository.findById(refreshTokenId);
+    if (!refreshToken) {
+      throw new Error('');
+    }
+  } 
 }

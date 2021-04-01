@@ -13,10 +13,7 @@ export class AutenticacionController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
-    // console.log(req.user);
-    // this.logger.error(req.user);
     const result = await this.autenticacionService.autenticar(req.user);
-    console.log('------------------------- ', result.data);
     res
       .status(200)
       .cookie("jid", result.refreshToken.id, {
@@ -27,8 +24,13 @@ export class AutenticacionController {
         // path: "/refresh_token"
       });
     return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
+  }
 
-    // return this.autenticacionService.autenticar(req.user);
+  @Post('token')
+  async getAccessToken (@Request() req) {
+    // const refreshToken = req.refreshToken
+    console.log(' ******************** req.body: ', req.body);
+    return {};
   }
 
   @UseGuards(OidcAuthGuard)

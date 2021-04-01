@@ -51,6 +51,7 @@ export class AutenticacionService {
     // crear refresh_token
     const ttl = parseInt(this.configService.get('REFRESH_TOKEN_EXPIRES_IN'), 10);
     const refreshToken = await this.refreshTokensService.create(user.id, ttl);
+    // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
