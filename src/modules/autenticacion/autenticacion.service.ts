@@ -57,7 +57,8 @@ export class AutenticacionService {
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
-      refresh_token: refreshToken,
+      refresh_token: refreshToken.id,
+      refhresh_token_exp_in: ttl,
       ...usuario,
     };
     return data;
