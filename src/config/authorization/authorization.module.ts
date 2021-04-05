@@ -29,29 +29,40 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           // TODO: politicas definir de donde se obtendra
           const politicas = [
             {
-              sujeto: 'admin',
-              objeto: '/status',
+              sujeto: 'ADMINISTRADOR',
+              objeto: '/usuarios',
               accion: 'GET',
+              padre: 'administracion',
+              label: 'Lista de Usuarios',
+              icon: 'user',
             },
             {
-              sujeto: 'admin',
-              objeto: '/permisos',
-              accion: 'POST',
+              sujeto: 'ADMINISTRADOR',
+              objeto: '/entidades',
+              accion: '(GET)|(POST)',
+              padre: 'parametros',
+              label: 'Lista de Entidades',
+              icon: 'home',
             },
             {
-              sujeto: 'admin',
-              objeto: '/permisos',
+              sujeto: 'ENTIDAD',
+              objeto: '/entidades',
               accion: 'GET',
-            },
-            {
-              sujeto: 'superadmin',
-              objeto: '/permisos',
-              accion: 'GET',
+              padre: 'parametros',
+              label: 'Lista de Usuarios',
+              icon: 'user',
             },
           ];
           for (let politica of politicas) {
-            const { sujeto, objeto, accion } = politica;
-            await enforcer.addPolicy(sujeto, objeto, accion);
+            const { sujeto, objeto, accion, padre, label, icon } = politica;
+            await enforcer.addPolicy(
+              sujeto,
+              objeto,
+              accion,
+              padre,
+              label,
+              icon,
+            );
           }
           return enforcer;
         },

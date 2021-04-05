@@ -17,7 +17,7 @@ export class AuthorizationController {
     private readonly rbacSrv: AuthZManagementService,
   ) {}
 
-  @Post('/politica')
+  @Post('/politicas')
   async crearPolitica(@Body() politica) {
     const { sujeto, objeto, accion } = politica;
     return successResponse(
@@ -28,7 +28,7 @@ export class AuthorizationController {
     );
   }
 
-  @Get('/politica')
+  @Get('/politicas')
   async listarPolitica() {
     const respuesta = await this.rbacSrv.getPolicy();
     const resultado = [];
@@ -45,7 +45,7 @@ export class AuthorizationController {
     );
   }
 
-  @Post('/politica/eliminar')
+  @Post('/politicas/eliminar')
   async eliminarPolitica(@Body() politica) {
     const { sujeto, objeto, accion } = politica;
     return successResponse(
@@ -54,5 +54,11 @@ export class AuthorizationController {
         : {},
       SUCCESS_DELETE,
     );
+  }
+
+  @Get('/politicas/roles')
+  async obtenerRoles() {
+    const resultado = await this.rbacSrv.getPolicy();
+    return successResponse(resultado, SUCCESS_LIST);
   }
 }
