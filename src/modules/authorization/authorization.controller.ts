@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, Get, Patch, Delete, Param } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Get } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { AuthZManagementService } from 'nest-authz';
@@ -21,7 +21,9 @@ export class AuthorizationController {
   async crearPolitica(@Body() politica) {
     const { sujeto, objeto, accion } = politica;
     return successResponse(
-      await this.rbacSrv.addPolicy(sujeto, objeto, accion) ? { sujeto, objeto, accion } : {},
+      (await this.rbacSrv.addPolicy(sujeto, objeto, accion))
+        ? { sujeto, objeto, accion }
+        : {},
       SUCCESS_CREATE,
     );
   }
@@ -31,7 +33,11 @@ export class AuthorizationController {
     const respuesta = await this.rbacSrv.getPolicy();
     const resultado = [];
     for (const i in respuesta) {
-      resultado.push({'sujeto': respuesta[i][0], 'objeto': respuesta[i][1], 'accion': respuesta[i][2]});
+      resultado.push({
+        sujeto: respuesta[i][0],
+        objeto: respuesta[i][1],
+        accion: respuesta[i][2],
+      });
     }
     return successResponse(
       totalRowsResponse([resultado, respuesta.length]),
@@ -43,7 +49,9 @@ export class AuthorizationController {
   async eliminarPolitica(@Body() politica) {
     const { sujeto, objeto, accion } = politica;
     return successResponse(
-      await this.rbacSrv.removePolicy(sujeto, objeto, accion) ? { sujeto, objeto, accion } : {},
+      (await this.rbacSrv.removePolicy(sujeto, objeto, accion))
+        ? { sujeto, objeto, accion }
+        : {},
       SUCCESS_DELETE,
     );
   }
