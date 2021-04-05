@@ -6,6 +6,9 @@ import { nanoid } from 'nanoid';
 import { RefreshTokensRepository } from './refreshTokens.repository';
 import { RefreshTokens } from './refreshTokens.entity';
 import { UsuarioService } from '../usuario/usuario.service';
+
+import { Cron } from '@nestjs/schedule';
+
 @Injectable()
 export class RefreshTokensService {
   constructor(
@@ -51,5 +54,17 @@ export class RefreshTokensService {
     return {
       data,
     };
+  }
+
+  async remove(id: string) {
+    const refreshToken = await this.refreshTokensRepository.findOne(id);
+    if (!refreshToken) {
+      throw new NotFoundException(`refreshToken con id ${id} no encontrado`);
+    }
+    return this.refreshTokensRepository.remove(refreshToken);
+  }
+  @Cron('2 * * * * *')
+  async eliminarCaducos() {
+    return this.refreshTokensRepository.eliminarTokensCaducos();
   }
 }

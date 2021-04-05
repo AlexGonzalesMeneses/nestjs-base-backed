@@ -12,9 +12,11 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AutorizacionModule } from './modules/autorizacion/autorizacion.module';
 import { ReporteModule } from './modules/reporte/reporte.module';
 import { WinstonLoggerModule } from './config/logger/winston-logger.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
     DataBaseModule,
     ExternalModule,
     UsuarioModule,

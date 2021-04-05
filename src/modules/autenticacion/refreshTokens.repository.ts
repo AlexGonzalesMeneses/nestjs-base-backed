@@ -10,4 +10,14 @@ export class RefreshTokensRepository extends Repository<RefreshTokens> {
       .where('refreshTokens.id = :id', { id })
       .getOne();
   }
+
+  eliminarTokensCaducos() {
+    const now: Date = new Date();
+    return getRepository(RefreshTokens)
+      .createQueryBuilder('RefreshTokens')
+      .delete()
+      .from(RefreshTokens)
+      .where('expires_at > :now', { now })
+      .execute();
+  }
 }
