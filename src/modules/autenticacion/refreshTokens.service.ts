@@ -56,14 +56,14 @@ export class RefreshTokensService {
     };
   }
 
-  async remove(id: string) {
+  async removeByid(id: string) {
     const refreshToken = await this.refreshTokensRepository.findOne(id);
     if (!refreshToken) {
       throw new NotFoundException(`refreshToken con id ${id} no encontrado`);
     }
     return this.refreshTokensRepository.remove(refreshToken);
   }
-  @Cron('2 * * * * *')
+  @Cron('5 * * * * *')
   async eliminarCaducos() {
     return this.refreshTokensRepository.eliminarTokensCaducos();
   }
