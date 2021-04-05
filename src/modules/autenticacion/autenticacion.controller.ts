@@ -12,16 +12,8 @@ export class AutenticacionController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
-  async login(@Request() req, @Res() res: Response) {
-    const result = await this.autenticacionService.autenticar(req.user);
-    res.status(200).cookie('jid', result.refreshToken.id, {
-      httpOnly: true,
-      // domain: '.example.com'
-      // www.example.com
-      // api.example.com
-      // path: "/refresh_token"
-    });
-    return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
+  async login(@Request() req) {
+    return this.autenticacionService.autenticar(req.user);
   }
 
   @Post('token')

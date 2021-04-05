@@ -57,12 +57,10 @@ export class AutenticacionService {
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
+      refresh_token: refreshToken,
       ...usuario,
     };
-    return {
-      data,
-      refreshToken,
-    };
+    return data;
   }
 
   async validarUsuarioOidc(persona: Persona): Promise<any> {
