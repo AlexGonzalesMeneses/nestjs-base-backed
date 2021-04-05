@@ -49,16 +49,19 @@ export class AutenticacionService {
 
     const payload = { id: user.id, roles: user.roles };
     // crear refresh_token
-    const ttl = parseInt(this.configService.get('REFRESH_TOKEN_EXPIRES_IN'), 10);
+    const ttl = parseInt(
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      10,
+    );
     const refreshToken = await this.refreshTokensService.create(user.id, ttl);
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
-    }
+    };
     return {
       data,
-      refreshToken
+      refreshToken,
     };
   }
 
@@ -88,4 +91,3 @@ export class AutenticacionService {
     return this.jwtService.sign(payload);
   }
 }
-

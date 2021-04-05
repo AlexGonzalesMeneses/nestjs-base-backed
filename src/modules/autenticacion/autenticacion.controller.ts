@@ -14,20 +14,18 @@ export class AutenticacionController {
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
-    res
-      .status(200)
-      .cookie("jid", result.refreshToken.id, {
-        httpOnly: true
-        // domain: '.example.com'
-        // www.example.com
-        // api.example.com
-        // path: "/refresh_token"
-      });
+    res.status(200).cookie('jid', result.refreshToken.id, {
+      httpOnly: true,
+      // domain: '.example.com'
+      // www.example.com
+      // api.example.com
+      // path: "/refresh_token"
+    });
     return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
   }
 
   @Post('token')
-  async getAccessToken (@Request() req) {
+  async getAccessToken(@Request() req) {
     // const refreshToken = req.refreshToken
     console.log(' ******************** req.body: ', req.body);
     return {};

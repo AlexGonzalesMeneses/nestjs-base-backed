@@ -13,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioRepositorio } from '../usuario/usuario.repositorio';
 
 import { RefreshTokensRepository } from './refreshTokens.repository';
-import { RefreshTokensService } from './refreshTokens.service'
+import { RefreshTokensService } from './refreshTokens.service';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
