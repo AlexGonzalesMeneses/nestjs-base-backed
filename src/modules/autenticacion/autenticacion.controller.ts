@@ -40,11 +40,20 @@ export class AutenticacionController {
   }
 
   @Post('token')
-  async getAccessToken(@Request() req) {
+  async getAccessToken(@Request() req, @Res() res: Response) {
     const jid = req.cookies['jid'];
-    console.log('*********************************** ', req.headers);
     const result = await this.refreshTokensService.createAccessToken(jid);
-    return result;
+    console.log(' result: ', result);
+    if (result.refresh_token) {
+      res.status(200).cookie('jid', result.refresh_token.id, {
+        httpOnly: true,
+      });
+      return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
+    } else {
+      return res
+        .status(200)
+        .json({ finalizado: true, mensaje: 'ok', datos: result.data });
+    }
   }
 
   @UseGuards(OidcAuthGuard)

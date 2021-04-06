@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { nanoid } from 'nanoid';
+import * as dayjs from 'dayjs';
+import { ConfigService } from '@nestjs/config';
 
 import { RefreshTokensRepository } from './refreshTokens.repository';
 import { RefreshTokens } from './refreshTokens.entity';
@@ -16,6 +22,7 @@ export class RefreshTokensService {
     private refreshTokensRepository: RefreshTokensRepository,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async findById(id: string): Promise<RefreshTokens> {
@@ -39,20 +46,54 @@ export class RefreshTokensService {
     const refreshToken = await this.refreshTokensRepository.findById(
       refreshTokenId,
     );
+    console.log(' **** ', refreshToken);
     if (!refreshToken) {
       throw new NotFoundException();
     }
+    console.log(
+      ' ++++++++++++ isbefore ',
+      dayjs().isBefore(dayjs(refreshToken.expiresAt)),
+    );
+    if (!dayjs().isBefore(dayjs(refreshToken.expiresAt))) {
+      throw new UnauthorizedException();
+    }
+
+    // usuario
     const usuario = await this.usuarioService.buscarUsuarioId(
       refreshToken.grantId,
     );
-    const payload = {};
+
+    const roles = [];
+    if (usuario.roles.length) {
+      usuario.roles.map((usuarioRol) => {
+        roles.push(usuarioRol.rol);
+      });
+    }
+
+    let newRefreshToken = null;
+    const ttl = parseInt(
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      10,
+    );
+    // crear rotacion de refresh token
+    console.log(
+      ' ++++++++++++ diff ',
+      dayjs(refreshToken.expiresAt).diff(dayjs()),
+    );
+    if (dayjs(refreshToken.expiresAt).diff(dayjs()) < 60000) {
+      newRefreshToken = await this.create(refreshToken.grantId, ttl);
+    }
+    const payload = { id: usuario.id, roles };
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
     };
-    // TODO: valar la rotacion de refresh token
+
     return {
       data,
+      refresh_token: newRefreshToken
+        ? { id: newRefreshToken.id, exp_in: ttl }
+        : null,
     };
   }
 
@@ -64,7 +105,7 @@ export class RefreshTokensService {
     return this.refreshTokensRepository.remove(refreshToken);
   }
 
-  @Cron('5 * * * * *')
+  // @Cron('5 * * * * *')
   async eliminarCaducos() {
     return this.refreshTokensRepository.eliminarTokensCaducos();
   }
