@@ -8,6 +8,8 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
                             VALUES('p', 'ADMINISTRADOR' , '/parametros', 'read', 'frontend')`);
     await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
                             VALUES('p', 'ENTIDAD' , '/parametros', 'read', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'ADMINISTRADOR' , '/api/parametros', 'GET', 'backend')`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -19,6 +21,9 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
     `);
     await queryRunner.query(`
       DELETE FROM casbin_rule WHERE ptype='p' AND v0='ENTIDAD' AND v1='/parametros' AND v2='read' AND v3='frontend'
+    `);
+    await queryRunner.query(`
+      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/parametros' AND v2='GET' AND v3='backend'
     `);
   }
 }
