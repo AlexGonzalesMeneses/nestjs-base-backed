@@ -45,7 +45,7 @@ async function bootstrap() {
   app.use(passport.session());
   app.use(cookieParser());
 
-  app.enableCors();
+  app.enableCors({ origin: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', credentials: true, });
   app.use(helmet());
 
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
