@@ -14,11 +14,10 @@ import { Parametro } from './parametro.entity';
 import { JwtAuthGuard } from '../autenticacion/guards/jwt-auth.guard';
 import { Roles } from '../autorizacion/rol.decorator';
 import { Rol } from '../autorizacion/rol.enum';
-import { LocalAuthGuard } from '../autenticacion/guards/local-auth.guard';
-import { RolesGuard } from '../autorizacion/rol.guard';
+import { CasbinGuard } from '../authorization/casbin.guard';
 
 @Controller('parametros')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController {
   constructor(private parametroServicio: ParametroService) {}
 
@@ -28,7 +27,6 @@ export class ParametroController {
     return this.parametroServicio.recuperar();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(ValidationPipe)
   guardar(@Body() parametroDto: ParametroDto): Promise<Parametro> {
