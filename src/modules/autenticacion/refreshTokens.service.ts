@@ -9,6 +9,10 @@ import { UsuarioService } from '../usuario/usuario.service';
 
 import { Cron } from '@nestjs/schedule';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 @Injectable()
 export class RefreshTokensService {
   constructor(
@@ -64,7 +68,7 @@ export class RefreshTokensService {
     return this.refreshTokensRepository.remove(refreshToken);
   }
 
-  @Cron('5 * * * * *')
+  @Cron(process.env.REFRESH_TOKEN_REVISIONS)
   async eliminarCaducos() {
     return this.refreshTokensRepository.eliminarTokensCaducos();
   }
