@@ -63,6 +63,7 @@ export class RefreshTokensService {
     }
     return this.refreshTokensRepository.remove(refreshToken);
   }
+
   @Cron('5 * * * * *')
   async eliminarCaducos() {
     return this.refreshTokensRepository.eliminarTokensCaducos();

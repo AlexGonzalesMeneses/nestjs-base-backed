@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as helmet from 'helmet';
+import * as cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
@@ -42,6 +43,7 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(cookieParser());
 
   app.enableCors();
   app.use(helmet());

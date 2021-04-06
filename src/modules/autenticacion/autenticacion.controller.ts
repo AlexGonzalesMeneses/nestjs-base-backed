@@ -1,26 +1,50 @@
 import { Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { AutenticacionService } from './autenticacion.service';
-import { OidcAuthGuard } from './guards/oidc-auth.guard';
+import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import { Issuer } from 'openid-client';
 
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { OidcAuthGuard } from './guards/oidc-auth.guard';
+import { AutenticacionService } from './autenticacion.service';
+import { RefreshTokensService } from './refreshTokens.service';
+
 @Controller()
 export class AutenticacionController {
-  constructor(private readonly autenticacionService: AutenticacionService) {}
+  constructor(
+    private readonly autenticacionService: AutenticacionService,
+    private readonly refreshTokensService: RefreshTokensService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
-  async login(@Request() req) {
-    return this.autenticacionService.autenticar(req.user);
+  async login(@Request() req, @Res() res: Response) {
+    // return this.autenticacionService.autenticar(req.user);
+    const ttl = parseInt(
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      10,
+    );
+    const result = await this.autenticacionService.autenticar(req.user);
+    res.status(200).cookie('jid', result.refresh_token.id, {
+      httpOnly: true,
+      // secure: true
+      // domain: '.app.com',
+      // www.example.com
+      // api.example.com
+      // expires: new Date(Date.now() + ttl),
+      // maxAge: ttl,
+      // path: '/token',
+    });
+    return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
   }
 
   @Post('token')
   async getAccessToken(@Request() req) {
-    // const refreshToken = req.refreshToken
-    console.log(' ******************** req.body: ', req.body);
-    return {};
+    const jid = req.cookies['jid'];
+    console.log('*********************************** ', req.headers);
+    const result = await this.refreshTokensService.createAccessToken(jid);
+    return result;
   }
 
   @UseGuards(OidcAuthGuard)
