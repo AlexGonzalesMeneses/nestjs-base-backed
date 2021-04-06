@@ -4,6 +4,7 @@ import { AuthZModule, AUTHZ_ENFORCER } from 'nest-authz';
 import { join } from 'path';
 import { newEnforcer } from 'casbin';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 @Module({
   imports: [
     ConfigModule,
@@ -26,44 +27,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             adapter,
           );
           await enforcer.enableLog(true);
-          // TODO: politicas definir de donde se obtendra
-          const politicas = [
-            {
-              sujeto: 'ADMINISTRADOR',
-              objeto: '/usuarios',
-              accion: 'GET',
-              padre: 'administracion',
-              label: 'Lista de Usuarios',
-              icon: 'user',
-            },
-            {
-              sujeto: 'ADMINISTRADOR',
-              objeto: '/entidades',
-              accion: '(GET)|(POST)',
-              padre: 'parametros',
-              label: 'Lista de Entidades',
-              icon: 'home',
-            },
-            {
-              sujeto: 'ENTIDAD',
-              objeto: '/entidades',
-              accion: 'GET',
-              padre: 'parametros',
-              label: 'Lista de Usuarios',
-              icon: 'user',
-            },
-          ];
-          for (let politica of politicas) {
-            const { sujeto, objeto, accion, padre, label, icon } = politica;
-            await enforcer.addPolicy(
-              sujeto,
-              objeto,
-              accion,
-              padre,
-              label,
-              icon,
-            );
-          }
           return enforcer;
         },
         inject: [ConfigService],
