@@ -79,12 +79,14 @@ export class RefreshTokensService {
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
       10,
     );
+    const rft = parseInt(this.configService.get('ROTATE_REFRESH_TOKEN_IN'), 10);
+
     // crear rotacion de refresh token
     console.log(
       ' ++++++++++++ diff ',
       dayjs(refreshToken.expiresAt).diff(dayjs()),
     );
-    if (dayjs(refreshToken.expiresAt).diff(dayjs()) < 60000) {
+    if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
       newRefreshToken = await this.create(refreshToken.grantId, ttl);
     }
     const payload = { id: usuario.id, roles };
