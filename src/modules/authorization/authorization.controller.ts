@@ -19,10 +19,10 @@ export class AuthorizationController {
 
   @Post('/politicas')
   async crearPolitica(@Body() politica) {
-    const { sujeto, objeto, accion } = politica;
+    const { sujeto, objeto, accion, app } = politica;
     return successResponse(
-      (await this.rbacSrv.addPolicy(sujeto, objeto, accion))
-        ? { sujeto, objeto, accion }
+      (await this.rbacSrv.addPolicy(sujeto, objeto, accion, app))
+        ? { sujeto, objeto, accion, app }
         : {},
       SUCCESS_CREATE,
     );
@@ -37,6 +37,7 @@ export class AuthorizationController {
         sujeto: respuesta[i][0],
         objeto: respuesta[i][1],
         accion: respuesta[i][2],
+        app: respuesta[i][3],
       });
     }
     return successResponse(
@@ -47,10 +48,10 @@ export class AuthorizationController {
 
   @Post('/politicas/eliminar')
   async eliminarPolitica(@Body() politica) {
-    const { sujeto, objeto, accion } = politica;
+    const { sujeto, objeto, accion, app } = politica;
     return successResponse(
-      (await this.rbacSrv.removePolicy(sujeto, objeto, accion))
-        ? { sujeto, objeto, accion }
+      (await this.rbacSrv.removePolicy(sujeto, objeto, accion, app))
+        ? { sujeto, objeto, accion, app }
         : {},
       SUCCESS_DELETE,
     );
