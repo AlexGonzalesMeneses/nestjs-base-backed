@@ -81,12 +81,19 @@ export class AutenticacionController {
 
   @Get('logout')
   async logoutCiudadania(@Request() req, @Res() res: Response) {
+    console.log('---------------------->', req.cookies);
     const idToken = req.user ? req.user.idToken : null;
-    req.logout();
-    req.session.destroy(async (error: any) => {
-      const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
-      const url = issuer.metadata.end_session_endpoint;
-      if (url && idToken) {
+    // req.logout();
+
+    req.session = null
+    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+    const url = issuer.metadata.end_session_endpoint;
+    res.clearCookie('connect.sid');
+ 
+    // TODO: probar con ciudadania para ver si hace el logout correctamente
+    if (url && idToken) {
+      console.log('-------))))--------------->', url, idToken);
+
         res.redirect(
           url +
             '?post_logout_redirect_uri=' +
@@ -94,9 +101,10 @@ export class AutenticacionController {
             '&id_token_hint=' +
             idToken,
         );
-      } else {
-        res.redirect(`${process.env.URL_FRONTEND}/#/logout`);
-      }
-    });
+    } else {
+      return res.status(200);
+      // return res.redirect(`${process.env.URL_FRONTEND}/#`);
+    }
+    
   }
 }
