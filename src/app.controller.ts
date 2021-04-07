@@ -13,7 +13,7 @@ export class AppController {
 
   @Get('/estado')
   async verificarEstado(@Res() res: Response) {
-    this.logger.log('estado()', AppController.name);
+    this.logger.debug('estado()', AppController.name);
     return res.status(HttpStatus.OK).json({
       estado: 'Servicio funcionando correctamente',
       commit_sha: this.configService.get('CI_COMMIT_SHORT_SHA'),

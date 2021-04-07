@@ -39,3 +39,4 @@ test-report.xml
 requests.http
 src/logs
 database/migrations/
+documentation
