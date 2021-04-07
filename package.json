@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build && npm run copy:statics",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "nest start && npm run copy:statics",
     "start:dev": "NODE_ENV=development npm run copy:statics && nest start --watch",
     "start:database": "./scripts/database.sh",
     "start:debug": "nest start --debug --watch",
@@ -25,10 +25,13 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migrations:generate": "npm run typeorm -- migration:generate -c connection -n",
     "migrations:run": "npm run typeorm -- migration:run -c connection",
+    "migrations:revert": "npm run typeorm -- migration:revert -c connection",
     "seeds:create": "npm run typeorm -- migration:create -c seed -n",
     "seeds:run": "npm run typeorm -- migration:run -c seed",
+    "schema:drop": "npm run typeorm -- schema:drop -c connection",
     "rimraf": "./node_modules/rimraf/bin.js",
-    "copy:statics": "cpx 'src/config/authorization/*.{conf, csv}' 'dist/src/config/authorization'"
+    "copy:statics": "cpx 'src/config/authorization/*.{conf, csv}' 'dist/src/config/authorization'",
+    "compodoc": "compodoc -p tsconfig.json -s"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.1",
@@ -66,6 +69,7 @@
     "wkhtmltopdf": "^0.3.4"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.11",
     "@nestjs/cli": "^7.5.1",
     "@nestjs/schematics": "^7.1.3",
     "@nestjs/testing": "^7.5.1",
@@ -121,7 +125,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && npm run test"
+      "pre-commit": "npm run lint"
     }
   }
 }
