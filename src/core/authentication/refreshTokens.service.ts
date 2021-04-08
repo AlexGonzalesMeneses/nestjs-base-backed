@@ -50,14 +50,11 @@ export class RefreshTokensService {
     const refreshToken = await this.refreshTokensRepository.findById(
       refreshTokenId,
     );
-    console.log(' **** ', refreshToken);
+
     if (!refreshToken) {
       throw new NotFoundException();
     }
-    console.log(
-      ' ++++++++++++ isbefore ',
-      dayjs().isBefore(dayjs(refreshToken.expiresAt)),
-    );
+
     if (!dayjs().isBefore(dayjs(refreshToken.expiresAt))) {
       throw new UnauthorizedException();
     }
@@ -82,10 +79,6 @@ export class RefreshTokensService {
     const rft = parseInt(this.configService.get('ROTATE_REFRESH_TOKEN_IN'), 10);
 
     // crear rotacion de refresh token
-    console.log(
-      ' ++++++++++++ diff ',
-      dayjs(refreshToken.expiresAt).diff(dayjs()),
-    );
     if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
       newRefreshToken = await this.create(refreshToken.grantId, ttl);
     }
