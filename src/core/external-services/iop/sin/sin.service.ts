@@ -1,5 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import { IopException } from 'src/common/exceptions/iop.exception';
+import { map } from 'rxjs/operators';
 import { SINCredencialesDTO } from './credenciales.dto';
 
 @Injectable()
@@ -13,28 +13,18 @@ export class SinService {
    */
   async login(datosSIN: SINCredencialesDTO) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const datosCampos = {
         nit: datosSIN.Nit,
         usuario: datosSIN.Usuario,
         clave: datosSIN.Contrasena,
       };
 
-      // const respuesta = await this.http.post('/login', datosCampos).toPromise();
-      /* .pipe(
-          map((response) => response.data),
-          catchError((error) => {
-            throw new HttpException(error.response.data, error.response.status);
-          }),
-        ) */
-      /* const { data: respuesta } = await this.http
+      const respuesta = await this.http
         .post('/login', datosCampos)
-        .toPromise(); */
+        .pipe(map((response) => response.data))
+        .toPromise();
 
-      const { data: respuesta } = await this.http.get('/status1').toPromise();
-      // https://ws.agetic.gob.bo/ajam/v1/status
-      console.log(respuesta.data);
-      /* if (
+      if (
         !respuesta.estado &&
         respuesta.message &&
         respuesta.message.match(/You cannot consume this service/) !== null &&
@@ -61,16 +51,12 @@ export class SinService {
         };
       } else {
         throw new Error(respuesta.Mensaje || 'Error con el servicio web SIN');
-      } */
+      }
     } catch (e) {
-      console.log('---------ERROR-*****--------');
-      console.log(e.data, e.message, e.response);
-      console.log('----------*****---------');
-      /* return {
+      return {
         resultado: false,
         mensaje: e.message,
-      }; */
-      throw new IopException('Error en el servicio de impuestos');
+      };
     }
   }
 }
