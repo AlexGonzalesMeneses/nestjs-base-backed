@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import * as uuid from 'uuid';
 
 export class rol1611498173795 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -6,6 +7,8 @@ export class rol1611498173795 implements MigrationInterface {
                               VALUES('526b78e9-2434-4d9d-b10e-c59a37fbde13', 'ADMINISTRADOR', 'ACTIVO')`);
     await queryRunner.query(`INSERT INTO rol (id, rol, estado)
                               VALUES('94abbf94-5cdd-4f52-ae5c-b8001a48a568', 'ENTIDAD', 'ACTIVO')`);
+    await queryRunner.query(`INSERT INTO rol (id, rol, estado)
+                              VALUES('${uuid.v4()}', 'USUARIO', 'ACTIVO')`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
