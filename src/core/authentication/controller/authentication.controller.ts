@@ -10,6 +10,7 @@ import {
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Issuer } from 'openid-client';
+import { sendRefreshToken } from '../../../common/lib/http.module';
 
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
@@ -30,20 +31,12 @@ export class AuthenticationController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
-    const ttl = parseInt(
-      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-      10,
-    );
     const result = await this.autenticacionService.autenticar(req.user);
     this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
-    res.status(200).cookie('jid', result.refresh_token.id, {
-      httpOnly: true,
-      // secure: true
-      // domain: '.app.com',
-      expires: new Date(Date.now() + ttl),
-      // path: '/token',
-    });
-    return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
+    sendRefreshToken(res, result.refresh_token.id);
+    return res
+      .status(200)
+      .send({ finalizado: true, mensaje: 'ok', datos: result.data });
   }
 
   @Post('token')
