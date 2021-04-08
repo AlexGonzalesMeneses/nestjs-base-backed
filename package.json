@@ -30,8 +30,8 @@
     "seeds:run": "npm run typeorm -- migration:run -c seed",
     "schema:drop": "npm run typeorm -- schema:drop -c connection",
     "rimraf": "./node_modules/rimraf/bin.js",
-    "copy:statics": "cpx 'src/config/authorization/*.{conf, csv}' 'dist/src/config/authorization'",
-    "compodoc": "compodoc -p tsconfig.json -s"
+    "copy:statics": "cpx 'src/core/config/authorization/*.{conf, csv}' 'dist/src/core/config/authorization'",
+    "compodoc": "compodoc -p tsconfig.json -o --language es-ES"
   },
   "dependencies": {
     "@golevelup/ts-jest": "^0.3.1",
