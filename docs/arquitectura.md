@@ -52,5 +52,7 @@
 └──tsconfig.json
 
 ```
+## Diagrama ERD
+![Diagrama ERD](ERD.png "Diagrama")
 
 ## Estructura Modular
