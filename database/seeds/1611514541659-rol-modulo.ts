@@ -11,6 +11,8 @@ export class rolModulo1611514541659 implements MigrationInterface {
     await queryRunner.query(`INSERT INTO rol_modulo (id, id_rol, id_modulo, estado)
                             VALUES('${uuid.v4()}', (SELECT id FROM rol WHERE rol = 'ADMINISTRADOR'), (SELECT id FROM modulo WHERE url='/parametros'), 'ACTIVO')`);
 
+    await queryRunner.query(`INSERT INTO rol_modulo (id, id_rol, id_modulo, estado)
+                               VALUES('${uuid.v4()}', (SELECT id FROM rol WHERE rol = 'ADMINISTRADOR'),  (SELECT id FROM modulo WHERE url='/politicas'), 'ACTIVO')`);
 
     await queryRunner.query(`INSERT INTO rol_modulo (id, id_rol, id_modulo, estado)
                             VALUES('${uuid.v4()}', (SELECT id FROM rol WHERE rol = 'ENTIDAD'), (SELECT id FROM modulo WHERE url='/usuarios'), 'ACTIVO')`);

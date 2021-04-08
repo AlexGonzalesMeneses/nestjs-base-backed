@@ -9,6 +9,8 @@ export class modulo1611497480901 implements MigrationInterface {
                             VALUES('d561bd91-c406-4dd4-9d3f-fd9c19f5aba3', 'entidades','/entidades', 'Entidades', 'mdiDomain', 'ACTIVO')`);
     await queryRunner.query(`INSERT INTO modulo (id, nombre, url, label, icono, estado)
                             VALUES('d561bd91-c406-4dd4-9d3f-fd9c19f5aba4', 'parametros','/parametros', 'Parametros', 'mdiFileTree', 'ACTIVO')`);
+    await queryRunner.query(`INSERT INTO modulo (id, nombre, url, label, icono, estado)
+                                VALUES('d561bd91-c406-4dd4-9d3f-fd9c19f5aba5', 'politicas','/politicas', 'politicas', 'mdiServerSecurity', 'ACTIVO')`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
