@@ -3,11 +3,21 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class insertCasbinRules1617712857472 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/usuarios', 'read', 'frontend')`);
+                            VALUES('p', 'ADMINISTRADOR' , '/usuarios', 'read|update|create|delete', 'frontend')`);
     await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/parametros', 'read', 'frontend')`);
+                            VALUES('p', 'ADMINISTRADOR' , '/entidades', 'read|update|create|delete', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'ADMINISTRADOR' , '/parametros', 'read|update|create', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'ENTIDAD' , '/usuarios', 'read', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'ENTIDAD' , '/entidades', 'read|update', 'frontend')`);
     await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
                             VALUES('p', 'ENTIDAD' , '/parametros', 'read', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'USUARIO' , '/usuarios', 'read', 'frontend')`);
+    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
+                            VALUES('p', 'USUARIO' , '/entidades', 'read', 'frontend')`);
     await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
                             VALUES('p', 'ADMINISTRADOR' , '/api/parametros', 'GET', 'backend')`);
   }
