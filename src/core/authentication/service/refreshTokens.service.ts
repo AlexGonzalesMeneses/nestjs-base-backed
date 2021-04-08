@@ -99,7 +99,7 @@ export class RefreshTokensService {
   async removeByid(id: string) {
     const refreshToken = await this.refreshTokensRepository.findOne(id);
     if (!refreshToken) {
-      throw new NotFoundException(`refreshToken con id ${id} no encontrado`);
+      return {};
     }
     return this.refreshTokensRepository.remove(refreshToken);
   }
