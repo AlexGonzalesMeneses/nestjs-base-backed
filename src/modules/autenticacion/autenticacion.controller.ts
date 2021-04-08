@@ -30,10 +30,7 @@ export class AutenticacionController {
       httpOnly: true,
       // secure: true
       // domain: '.app.com',
-      // www.example.com
-      // api.example.com
-      // expires: new Date(Date.now() + ttl),
-      // maxAge: ttl,
+      expires: new Date(Date.now() + ttl),
       // path: '/token',
     });
     return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
