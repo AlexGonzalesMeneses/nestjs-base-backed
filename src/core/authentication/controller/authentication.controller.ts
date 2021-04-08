@@ -8,7 +8,6 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 import { Issuer } from 'openid-client';
 import { sendRefreshToken } from '../../../common/lib/http.module';
 
@@ -24,7 +23,6 @@ export class AuthenticationController {
   constructor(
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
-    private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -39,23 +37,6 @@ export class AuthenticationController {
       .send({ finalizado: true, mensaje: 'ok', datos: result.data });
   }
 
-  @Post('token')
-  async getAccessToken(@Request() req, @Res() res: Response) {
-    const jid = req.cookies['jid'];
-    const result = await this.refreshTokensService.createAccessToken(jid);
-    console.log(' result: ', result);
-    if (result.refresh_token) {
-      res.status(200).cookie('jid', result.refresh_token.id, {
-        httpOnly: true,
-      });
-      return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });
-    } else {
-      return res
-        .status(200)
-        .json({ finalizado: true, mensaje: 'ok', datos: result.data });
-    }
-  }
-
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-auth')
   async loginCiudadania() {
@@ -67,18 +48,9 @@ export class AuthenticationController {
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
+      sendRefreshToken(res, result.refresh_token.id);
       res
         .status(200)
-        .cookie('jid', result.refresh_token.id, {
-          httpOnly: true,
-          // secure: true
-          // domain: '.app.com',
-          // www.example.com
-          // api.example.com
-          // expires: new Date(Date.now() + ttl),
-          // maxAge: ttl,
-          // path: '/token',
-        })
         .redirect(
           `${process.env.URL_FRONTEND}/#/login?code=${result.data.access_token}`,
         );
