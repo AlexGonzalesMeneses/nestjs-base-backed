@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { UsuarioRol } from '../autorizacion/entity/usuario-rol.entity';
+import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { Persona } from '../persona/persona.entity';
 
 @Entity()

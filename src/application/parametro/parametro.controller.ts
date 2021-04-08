@@ -12,9 +12,9 @@ import { ParametroDto } from './dto/parametro.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Parametro } from './parametro.entity';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
-import { Roles } from '../autorizacion/rol.decorator';
-import { Rol } from '../autorizacion/rol.enum';
-import { CasbinGuard } from '../../core/authorization/casbin.guard';
+import { Roles } from '../../core/authorization/rol.decorator';
+import { RolEnum } from '../../core/authorization/rol.enum';
+import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
@@ -22,7 +22,7 @@ export class ParametroController {
   constructor(private parametroServicio: ParametroService) {}
 
   @Get()
-  @Roles(Rol.Admin)
+  @Roles(RolEnum.ADMINISTRADOR)
   recuperar(): Promise<Parametro[]> {
     return this.parametroServicio.recuperar();
   }
