@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import * as dayjs from 'dayjs';
 import { Issuer } from 'openid-client';
 
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -78,14 +77,22 @@ export class AuthenticationController {
   @Get('ciudadania-callback')
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
     if (req.user) {
-      const token = await this.autenticacionService.autenticarOidc(req.user);
+      const result = await this.autenticacionService.autenticarOidc(req.user);
       res
         .status(200)
-        .cookie('base.token', token, {
-          expires: dayjs.unix(req.user.exp).toDate(),
-          // httpOnly: true,
+        .cookie('jid', result.refresh_token.id, {
+          httpOnly: true,
+          // secure: true
+          // domain: '.app.com',
+          // www.example.com
+          // api.example.com
+          // expires: new Date(Date.now() + ttl),
+          // maxAge: ttl,
+          // path: '/token',
         })
-        .redirect(`${process.env.URL_FRONTEND}/#/login`);
+        .redirect(
+          `${process.env.URL_FRONTEND}/#/login?code=${result.data.access_token}`,
+        );
     } else {
       res.redirect(`${process.env.URL_FRONTEND}`);
     }

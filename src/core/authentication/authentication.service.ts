@@ -87,7 +87,20 @@ export class AuthenticationService {
 
   async autenticarOidc(user: any) {
     const payload = { id: user.id, roles: user.roles };
-
-    return this.jwtService.sign(payload);
+    // crear refresh_token
+    const ttl = parseInt(
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      10,
+    );
+    // return this.jwtService.sign(payload);
+    const refreshToken = await this.refreshTokensService.create(user.id, ttl);
+    // construir respuesta
+    const data = {
+      access_token: this.jwtService.sign(payload),
+    };
+    return {
+      refresh_token: { id: refreshToken.id, exp_in: ttl },
+      data,
+    };
   }
 }
