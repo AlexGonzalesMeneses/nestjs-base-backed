@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
 import * as dayjs from 'dayjs';
 import { Persona } from 'src/application/persona/persona.entity';
-import { AuthenticationService } from '../authentication.service';
+import { AuthenticationService } from '../service/authentication.service';
 
 export const buildOpenIdClient = async () => {
   const issuer = await Issuer.discover(process.env.OIDC_ISSUER);

@@ -11,12 +11,19 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Issuer } from 'openid-client';
 
+<<<<<<< HEAD:src/core/authentication/authentication.controller.ts
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OidcAuthGuard } from './guards/oidc-auth.guard';
 import { AuthenticationService } from './authentication.service';
 import { RefreshTokensService } from './refreshTokens.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+=======
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { OidcAuthGuard } from '../guards/oidc-auth.guard';
+import { AuthenticationService } from '../service/authentication.service';
+import { RefreshTokensService } from '../service/refreshTokens.service';
+>>>>>>> 702123d0d128e32fce257987cece875df0e3b141:src/core/authentication/controller/authentication.controller.ts
 
 @Controller()
 export class AuthenticationController {
@@ -30,7 +37,6 @@ export class AuthenticationController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
-    // return this.autenticacionService.autenticar(req.user);
     const ttl = parseInt(
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
       10,
@@ -41,10 +47,7 @@ export class AuthenticationController {
       httpOnly: true,
       // secure: true
       // domain: '.app.com',
-      // www.example.com
-      // api.example.com
-      // expires: new Date(Date.now() + ttl),
-      // maxAge: ttl,
+      expires: new Date(Date.now() + ttl),
       // path: '/token',
     });
     return res.send({ finalizado: true, mensaje: 'ok', datos: result.data });

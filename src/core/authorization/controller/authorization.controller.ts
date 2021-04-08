@@ -2,13 +2,13 @@ import { Body, Controller, Inject, Post, Get } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { AuthZManagementService } from 'nest-authz';
-import { successResponse } from '../../common/lib/http.module';
-import { totalRowsResponse } from '../../common/lib/http.module';
+import { successResponse } from '../../../common/lib/http.module';
+import { totalRowsResponse } from '../../../common/lib/http.module';
 import {
   SUCCESS_CREATE,
   SUCCESS_DELETE,
   SUCCESS_LIST,
-} from '../../common/constants';
+} from '../../../common/constants';
 
 @Controller('autorizacion')
 export class AuthorizationController {

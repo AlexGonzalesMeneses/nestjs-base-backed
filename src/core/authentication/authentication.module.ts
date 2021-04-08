@@ -3,8 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { UsuarioModule } from '../../application/usuario/usuario.module';
-import { AuthenticationController } from './authentication.controller';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationController } from './controller/authentication.controller';
+import { AuthenticationService } from './service/authentication.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { buildOpenIdClient, OidcStrategy } from './strategies/oidc.strategy';
@@ -12,8 +12,8 @@ import { SessionSerializer } from './session.serializer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioRepository } from '../../application/usuario/usuario.repository';
 
-import { RefreshTokensRepository } from './refreshTokens.repository';
-import { RefreshTokensService } from './refreshTokens.service';
+import { RefreshTokensRepository } from './repository/refreshTokens.repository';
+import { RefreshTokensService } from './service/refreshTokens.service';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',

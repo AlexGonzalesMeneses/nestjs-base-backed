@@ -1,7 +1,7 @@
 import { Controller, Delete, Param, UseGuards } from '@nestjs/common';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { OidcAuthGuard } from './guards/oidc-auth.guard';
-import { RefreshTokensService } from './refreshTokens.service';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { OidcAuthGuard } from '../guards/oidc-auth.guard';
+import { RefreshTokensService } from '../service/refreshTokens.service';
 
 @Controller('refreshtoken')
 export class RefreshTokensController {

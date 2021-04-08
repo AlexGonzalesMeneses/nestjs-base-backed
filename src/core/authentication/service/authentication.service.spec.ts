@@ -1,7 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsuarioService } from '../../application/usuario/usuario.service';
+import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { AuthenticationService } from './authentication.service';
 
 const resSign = 'aaa.bbb.ccc';
