@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+  Inject,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
@@ -8,6 +16,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { OidcAuthGuard } from './guards/oidc-auth.guard';
 import { AuthenticationService } from './authentication.service';
 import { RefreshTokensService } from './refreshTokens.service';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Controller()
 export class AuthenticationController {
@@ -15,6 +25,7 @@ export class AuthenticationController {
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -26,6 +37,7 @@ export class AuthenticationController {
       10,
     );
     const result = await this.autenticacionService.autenticar(req.user);
+    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
     res.status(200).cookie('jid', result.refresh_token.id, {
       httpOnly: true,
       // secure: true
@@ -81,19 +93,24 @@ export class AuthenticationController {
 
   @Get('logout')
   async logoutCiudadania(@Request() req, @Res() res: Response) {
-    console.log('---------------------->', req.cookies);
+    const jid = req.cookies.jid || '';
+    if (jid != '') {
+      this.refreshTokensService.removeByid(jid);
+    }
     const idToken = req.user ? req.user.idToken : null;
     // req.logout();
-
     req.session = null;
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
+    res.clearCookie('jid', jid);
+    const idUsuario = JSON.parse(
+      Buffer.from(req.headers.authorization.split('.')[1], 'base64').toString(),
+    ).id;
+    this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
 
     // TODO: probar con ciudadania para ver si hace el logout correctamente
     if (url && idToken) {
-      console.log('-------))))--------------->', url, idToken);
-
       res.redirect(
         url +
           '?post_logout_redirect_uri=' +
@@ -102,7 +119,7 @@ export class AuthenticationController {
           idToken,
       );
     } else {
-      return res.status(200);
+      return res.status(200).json();
       // return res.redirect(`${process.env.URL_FRONTEND}/#`);
     }
   }
