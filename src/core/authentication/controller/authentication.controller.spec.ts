@@ -83,6 +83,6 @@ describe('AuthenticationController', () => {
       finalizado: true,
       mensaje: 'ok',
     });
-    // expect(res.cookie).toHaveBeenCalledWith({ username: 'hugo' });
+    // expect(res.cookie).toHaveBeenCalledWith({ username: 'boss' });
   });
 });

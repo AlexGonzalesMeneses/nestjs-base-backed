@@ -26,6 +26,7 @@ export default [
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     migrations: ['database/seeds/*.ts'],
+    entities: ['src/**/*.entity.ts'],
     cli: {
       migrationsDir: 'database/seeds',
     },
