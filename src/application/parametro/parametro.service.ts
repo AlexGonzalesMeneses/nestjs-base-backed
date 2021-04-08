@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ParametroRepositorio } from './parametro.repositorio';
+import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { ParametroDto } from './dto/parametro.dto';
 
 @Injectable()
 export class ParametroService {
   constructor(
-    @InjectRepository(ParametroRepositorio)
-    private parametroRepositorio: ParametroRepositorio,
+    @InjectRepository(ParametroRepository)
+    private parametroRepositorio: ParametroRepository,
   ) {}
 
   async guardar(parametroDto: ParametroDto): Promise<Parametro> {

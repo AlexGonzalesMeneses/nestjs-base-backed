@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntidadRepositorio } from './entidad.repositorio';
+import { EntidadRepository } from './entidad.repository';
 import { Entidad } from './entidad.entity';
 import { EntidadDto } from './dto/entidad.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,8 +11,8 @@ import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 @Injectable()
 export class EntidadService {
   constructor(
-    @InjectRepository(EntidadRepositorio)
-    private entidadRepositorio: EntidadRepositorio,
+    @InjectRepository(EntidadRepository)
+    private entidadRepositorio: EntidadRepository,
   ) {}
 
   async recuperar(

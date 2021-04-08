@@ -3,7 +3,7 @@ import { Persona } from '../persona/persona.entity';
 import { Usuario } from './usuario.entity';
 
 @EntityRepository(Usuario)
-export class UsuarioRepositorio extends Repository<Usuario> {
+export class UsuarioRepository extends Repository<Usuario> {
   recuperar() {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')

@@ -10,7 +10,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { buildOpenIdClient, OidcStrategy } from './strategies/oidc.strategy';
 import { SessionSerializer } from './session.serializer';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuarioRepositorio } from '../../application/usuario/usuario.repositorio';
+import { UsuarioRepository } from '../../application/usuario/usuario.repository';
 
 import { RefreshTokensRepository } from './refreshTokens.repository';
 import { RefreshTokensService } from './refreshTokens.service';
@@ -38,7 +38,7 @@ const OidcStrategyFactory = {
     }),
     UsuarioModule,
     ConfigModule,
-    TypeOrmModule.forFeature([UsuarioRepositorio, RefreshTokensRepository]),
+    TypeOrmModule.forFeature([UsuarioRepository, RefreshTokensRepository]),
   ],
   controllers: [AuthenticationController],
   providers: [

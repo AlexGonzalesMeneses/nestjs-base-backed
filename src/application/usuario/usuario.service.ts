@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
-import { UsuarioRepositorio } from './usuario.repositorio';
+import { UsuarioRepository } from './usuario.repository';
 import { Usuario } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
@@ -9,14 +9,14 @@ import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
 import { STATUS_ACTIVE } from '../../common/constants';
-import { PersonaRepositorio } from '../persona/persona.repositorio';
+import { PersonaRepository } from '../persona/persona.repository';
 
 @Injectable()
 export class UsuarioService {
   constructor(
-    @InjectRepository(UsuarioRepositorio)
-    private usuarioRepositorio: UsuarioRepositorio,
-    private personaRepositorio: PersonaRepositorio,
+    @InjectRepository(UsuarioRepository)
+    private usuarioRepositorio: UsuarioRepository,
+    private personaRepositorio: PersonaRepository,
   ) {}
   // GET USERS
   /*   async recuperar(): Promise<Usuario[]> {

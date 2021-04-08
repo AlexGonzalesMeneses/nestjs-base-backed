@@ -85,7 +85,7 @@ export class AuthenticationController {
     const idToken = req.user ? req.user.idToken : null;
     // req.logout();
 
-    req.session = null
+    req.session = null;
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
