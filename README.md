@@ -18,6 +18,7 @@ Proyecto base backend con modulos:
 - Swagger
 - TypeORM
 - Winston
+- Casbin
 - Postgresql
 - Docker
 

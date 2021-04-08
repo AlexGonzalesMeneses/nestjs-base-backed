@@ -1,59 +1,102 @@
+import { CasbinRule } from 'src/core/authorization/entity/casbin.entity';
+import { RolEnum } from 'src/core/authorization/rol.enum';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class insertCasbinRules1617712857472 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/usuarios', 'read|update|create|delete', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/entidades', 'read|update|create|delete', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/parametros', 'read|update|create', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ENTIDAD' , '/usuarios', 'read', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ENTIDAD' , '/entidades', 'read|update', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ENTIDAD' , '/parametros', 'read', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'USUARIO' , '/usuarios', 'read', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'USUARIO' , '/entidades', 'read', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/api/parametros', 'GET', 'backend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/politicas', 'read|create|delete', 'frontend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/api/autorizacion/politicas', 'GET', 'backend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/api/autorizacion/politicas', 'POST', 'backend')`);
-    await queryRunner.query(`INSERT INTO casbin_rule (ptype, v0, v1, v2, v3)
-                            VALUES('p', 'ADMINISTRADOR' , '/api/autorizacion/politicas/eliminar', 'POST', 'backend')`);
+    const items = [
+      // FRONTEND
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/usuarios',
+        v2: 'read|update|create|delete',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/entidades',
+        v2: 'read|update|create|delete',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/parametros',
+        v2: 'read|update|create',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.TECNICO,
+        v1: '/usuarios',
+        v2: 'read',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.TECNICO,
+        v1: '/entidades',
+        v2: 'read|update',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.TECNICO,
+        v1: '/parametros',
+        v2: 'read',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.USUARIO,
+        v1: '/usuarios',
+        v2: 'read',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.USUARIO,
+        v1: '/entidades',
+        v2: 'read',
+        v3: 'frontend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/politicas',
+        v2: 'create|read|delete',
+        v3: 'frontend',
+      },
+      // BACKEND
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/parametros',
+        v2: 'GET',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/politicas',
+        v2: 'GET',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/politicas',
+        v2: 'POST',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/politicas/eliminar',
+        v2: 'POST',
+        v3: 'backend',
+      },
+    ];
+    const casbin = items.map((item) => {
+      const c = new CasbinRule();
+      c.ptype = 'p';
+      c.v0 = item.v0;
+      c.v1 = item.v1;
+      c.v2 = item.v2;
+      c.v3 = item.v3;
+      return c;
+    });
+    await queryRunner.manager.save(casbin);
   }
-
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/usuarios' AND v2='read' AND v3='frontend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/parametros' AND v2='read' AND v3='frontend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ENTIDAD' AND v1='/parametros' AND v2='read' AND v3='frontend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/parametros' AND v2='GET' AND v3='backend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/politicas' AND v2='read|create|delete' AND v3='frontend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/api/autorizacion/politicas' AND v2='GET' AND v3='backend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/api/autorizacion/politicas' AND v2='POST' AND v3='backend'
-    `);
-    await queryRunner.query(`
-      DELETE FROM casbin_rule WHERE ptype='p' AND v0='ADMINISTRADOR' AND v1='/api/autorizacion/politicas/eliminar' AND v2='POST' AND v3='backend'
-    `);
-  }
+  /* eslint-disable */
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }

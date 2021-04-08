@@ -18,6 +18,50 @@ export class insertsParametros1617820337609 implements MigrationInterface {
         grupo: 'TD',
         descripcion: 'Cédula de identidad de extranjero',
       },
+      // APPS
+      {
+        id: 3,
+        codigo: 'TAPP-B',
+        nombre: 'Backend',
+        grupo: 'TAPP',
+        descripcion: 'Backend',
+      },
+      {
+        id: 4,
+        codigo: 'TAPP-F',
+        nombre: 'Frontend',
+        grupo: 'TAPP',
+        descripcion: 'Frontend',
+      },
+      // ACCIONES
+      {
+        id: 5,
+        codigo: 'TACC-R',
+        nombre: 'read',
+        grupo: 'TACC',
+        descripcion: 'READ',
+      },
+      {
+        id: 6,
+        codigo: 'TACC-U',
+        nombre: 'update',
+        grupo: 'TACC',
+        descripcion: 'UPDATE',
+      },
+      {
+        id: 7,
+        codigo: 'TACC-C',
+        nombre: 'create',
+        grupo: 'TACC',
+        descripcion: 'CREATE',
+      },
+      {
+        id: 8,
+        codigo: 'TACC-D',
+        nombre: 'delete',
+        grupo: 'TACC',
+        descripcion: 'DELETE',
+      },
     ];
     await queryRunner.manager
       .createQueryBuilder()
@@ -25,9 +69,8 @@ export class insertsParametros1617820337609 implements MigrationInterface {
       .into('parametro')
       .values(parametros)
       .execute();
-    // await queryRunner.manager.insert(Parametro, parametros);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  /* eslint-disable */
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }
