@@ -9,9 +9,9 @@ import { nanoid } from 'nanoid';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 
-import { RefreshTokensRepository } from './refreshTokens.repository';
-import { RefreshTokens } from './refreshTokens.entity';
-import { UsuarioService } from '../../application/usuario/usuario.service';
+import { RefreshTokensRepository } from '../repository/refreshTokens.repository';
+import { RefreshTokens } from '../entity/refreshTokens.entity';
+import { UsuarioService } from '../../../application/usuario/usuario.service';
 
 import { Cron } from '@nestjs/schedule';
 

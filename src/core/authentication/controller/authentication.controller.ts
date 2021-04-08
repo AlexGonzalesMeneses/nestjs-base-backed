@@ -4,10 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import { Issuer } from 'openid-client';
 
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { OidcAuthGuard } from './guards/oidc-auth.guard';
-import { AuthenticationService } from './authentication.service';
-import { RefreshTokensService } from './refreshTokens.service';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { OidcAuthGuard } from '../guards/oidc-auth.guard';
+import { AuthenticationService } from '../service/authentication.service';
+import { RefreshTokensService } from '../service/refreshTokens.service';
 
 @Controller()
 export class AuthenticationController {
@@ -20,7 +20,6 @@ export class AuthenticationController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
-    // return this.autenticacionService.autenticar(req.user);
     const ttl = parseInt(
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
       10,

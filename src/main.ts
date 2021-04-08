@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
-import { Session } from './core/authentication/session.entity';
+import { Session } from './core/authentication/entity/session.entity';
 
 import {
   SWAGGER_API_DESCRIPTION,

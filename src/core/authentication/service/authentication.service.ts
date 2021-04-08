@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UsuarioService } from '../../application/usuario/usuario.service';
+import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
-import { STATUS_INACTIVE } from '../../common/constants';
-import { TextService } from '../../common/lib/text.service';
-import { Persona } from '../../application/persona/persona.entity';
+import { STATUS_INACTIVE } from '../../../common/constants';
+import { TextService } from '../../../common/lib/text.service';
+import { Persona } from '../../../application/persona/persona.entity';
 import { RefreshTokensService } from './refreshTokens.service';
 
 @Injectable()

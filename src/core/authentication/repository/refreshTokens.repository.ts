@@ -1,6 +1,6 @@
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 
-import { RefreshTokens } from './refreshTokens.entity';
+import { RefreshTokens } from '../entity/refreshTokens.entity';
 
 @EntityRepository(RefreshTokens)
 export class RefreshTokensRepository extends Repository<RefreshTokens> {
