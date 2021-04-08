@@ -13,7 +13,7 @@ import { ParametroDto } from './dto/parametro.dto';
 import { Parametro } from './parametro.entity';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { Roles } from '../../core/authorization/rol.decorator';
-import { Rol } from '../../core/authorization/rol.enum';
+import { RolEnum } from '../../core/authorization/rol.enum';
 import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
 
 @Controller('parametros')
@@ -22,7 +22,7 @@ export class ParametroController {
   constructor(private parametroServicio: ParametroService) {}
 
   @Get()
-  @Roles(Rol.Admin)
+  @Roles(RolEnum.ADMINISTRADOR)
   recuperar(): Promise<Parametro[]> {
     return this.parametroServicio.recuperar();
   }

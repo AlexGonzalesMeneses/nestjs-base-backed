@@ -1,4 +1,5 @@
-export enum Rol {
-  Usuario = 'usuario',
-  Admin = 'admin',
+export enum RolEnum {
+  USUARIO = 'USUARIO',
+  ADMINISTRADOR = 'ADMINISTRADOR',
+  TECNICO = 'TECNICO',
 }
