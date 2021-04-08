@@ -76,7 +76,7 @@ export class RefreshTokensService {
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
       10,
     );
-    const rft = parseInt(this.configService.get('ROTATE_REFRESH_TOKEN_IN'), 10);
+    const rft = parseInt(this.configService.get('REFRESH_TOKEN_ROTATE_IN'), 10);
 
     // crear rotacion de refresh token
     if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
