@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { STATUS_INACTIVE } from '../../../common/constants';
@@ -13,7 +12,6 @@ export class AuthenticationService {
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
     private readonly refreshTokensService: RefreshTokensService,
-    private readonly configService: ConfigService,
   ) {}
 
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
@@ -49,18 +47,14 @@ export class AuthenticationService {
 
     const payload = { id: user.id, roles: user.roles };
     // crear refresh_token
-    const ttl = parseInt(
-      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-      10,
-    );
-    const refreshToken = await this.refreshTokensService.create(user.id, ttl);
+    const refreshToken = await this.refreshTokensService.create(user.id);
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
     };
     return {
-      refresh_token: { id: refreshToken.id, exp_in: ttl },
+      refresh_token: { id: refreshToken.id },
       data,
     };
   }
@@ -88,17 +82,13 @@ export class AuthenticationService {
   async autenticarOidc(user: any) {
     const payload = { id: user.id, roles: user.roles };
     // crear refresh_token
-    const ttl = parseInt(
-      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-      10,
-    );
-    const refreshToken = await this.refreshTokensService.create(user.id, ttl);
+    const refreshToken = await this.refreshTokensService.create(user.id);
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
     };
     return {
-      refresh_token: { id: refreshToken.id, exp_in: ttl },
+      refresh_token: { id: refreshToken.id },
       data,
     };
   }
