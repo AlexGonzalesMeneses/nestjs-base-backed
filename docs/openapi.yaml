@@ -313,5 +313,36 @@ paths:
                       app:
                         type: string
                         example: 'frontend'
-                                
-                      
+    delete:
+      summary: Api para eliminar una politica
+      tags: ['autorizacion']
+      operationId: delete-api-autorizacion-politicas
+      description: Api para eliminar una politica
+      responses:
+        '204':
+          description: NOT_CONTENT
+      parameters:
+        - in: query
+          name: sujeto
+          schema:
+            type: string
+            example: ADMINISTRADOR
+          description: nombre del rol (SUJETO)
+        - in: query
+          name: objeto
+          schema:
+            type: string
+            example: RECURSO
+          description: nombre del recurso (OBJETO)
+        - in: query
+          name: accion
+          schema:
+            type: string
+            example: GET
+          description: nombre de la accion (ACCION)
+        - in: query
+          name: app
+          schema:
+            type: string
+            example: Backend
+          description: nombre de la aplicacion
