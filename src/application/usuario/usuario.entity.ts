@@ -1,4 +1,4 @@
-import { AbstractEntity } from 'src/common/dto/abstract-entity.dto';
+import { AbstractEntity } from '../../common/dto/abstract-entity.dto';
 import {
   Entity,
   PrimaryGeneratedColumn,
