@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
-import { Session } from './modules/autenticacion/session.entity';
+import { Session } from './core/authentication/entity/session.entity';
 
 import {
   SWAGGER_API_DESCRIPTION,
@@ -17,7 +17,7 @@ import {
   SWAGGER_API_CURRENT_VERSION,
   SWAGGER_API_ROOT,
 } from './common/constants';
-import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
+// import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -53,7 +53,7 @@ async function bootstrap() {
   app.use(helmet());
 
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
-  app.useGlobalInterceptors(new WrapResponseInterceptor());
+  // app.useGlobalInterceptors(new WrapResponseInterceptor());
   const port = configService.get('PORT');
   await app.listen(port);
   console.log(

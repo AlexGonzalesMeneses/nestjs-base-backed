@@ -1,14 +1,30 @@
+import { RolEnum } from 'src/core/authorization/rol.enum';
+import { Rol } from '../../src/core/authorization/entity/rol.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { TextService } from '../../src/common/lib/text.service';
 
 export class rol1611498173795 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`INSERT INTO rol (id, rol, estado)
-                              VALUES('526b78e9-2434-4d9d-b10e-c59a37fbde13', 'ADMINISTRADOR', 'ACTIVO')`);
-    await queryRunner.query(`INSERT INTO rol (id, rol, estado)
-                              VALUES('94abbf94-5cdd-4f52-ae5c-b8001a48a568', 'ENTIDAD', 'ACTIVO')`);
+    const items = [
+      {
+        rol: RolEnum.ADMINISTRADOR,
+      },
+      {
+        rol: RolEnum.TECNICO,
+      },
+      {
+        rol: RolEnum.USUARIO,
+      },
+    ];
+    const roles = items.map((item) => {
+      const r = new Rol();
+      r.id = TextService.textToUuid(item.rol);
+      r.rol = item.rol;
+      return r;
+    });
+    await queryRunner.manager.save(roles);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`TRUNCATE TABLE rol;`);
-  }
+  /* eslint-disable */
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }

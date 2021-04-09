@@ -18,35 +18,9 @@ Proyecto base backend con modulos:
 - Swagger
 - TypeORM
 - Winston
+- Casbin
 - Postgresql
 - Docker
-
-## Instalación
-
-1. Instalación de paquetes
-```bash
-$ npm install
-```
-2. Copiar el archivo .env.example y realizar las configuraciones necesarias
-```
-$ cp .env.example .env
-```
-## Ejecución
-- Ejecución en modo desarrollo
-```bash
-# development
-$ npm run start
-```
-- Ejecución en modo desarrollo (live-reload)
-```bash
-# watch mode
-$ npm run start:dev
-```
-- Ejecución en modo producción
-```bash
-# production mode
-$ npm run start:prod
-```
 
 ## Comandos Utiles
 ### Migraciones
@@ -59,7 +33,7 @@ $ npm run migrations:generate <nombre-migracion>
 ```bash
 $ npm run migrations:run
 ```
-
+### Seeders
 - Crear plantilla seeder
 ```bash
 $ npm run seeds:create
@@ -69,19 +43,18 @@ $ npm run seeds:create
 ```bash
 $ npm run seeds:run
 ```
-### Scripts
+## Scripts
 - Ejecución de contenedor con instancia postgres
 ```bash
 $ npm run start:database
 ```
-### Linterna
+## Linterna
 - Ejecucion de linterna eslint
 ```bash
 $ npm run lint
 ```
 
-
-### Test
+## Tests
 - Ejecución de test unitarios
 ```bash
 # unit tests
@@ -103,8 +76,8 @@ $ npm run test:cov
 Este proyecto incluye el directorio **docs** con mas detalle de:
 1. [Instalación y Configuración](/docs/INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
-4. [Documentacion de APIS](/docs/openapi.yaml)
-
+3. [Documentacion de APIS](/docs/openapi.yaml)
+4. [Documentacion de Permisos](/docs/permisos.md)
 
 ## Licencia
 

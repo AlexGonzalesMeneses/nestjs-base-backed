@@ -1,4 +1,4 @@
 export class TotalRowsResponseDto {
   total: number;
-  rows: any[];
+  filas: any[];
 }
