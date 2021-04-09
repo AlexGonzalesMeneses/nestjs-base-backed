@@ -27,8 +27,8 @@ export class UsuarioController extends AbstractController {
   // GET users
   @UseGuards(JwtAuthGuard)
   @Get()
-  async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    const result = await this.usuarioService.recuperar(paginacionQueryDto);
+  async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    const result = await this.usuarioService.listar(paginacionQueryDto);
     return this.successList(result);
   }
 

@@ -18,18 +18,12 @@ export class UsuarioService {
     private usuarioRepositorio: UsuarioRepository,
     private personaRepositorio: PersonaRepository,
   ) {}
+
   // GET USERS
-  /*   async recuperar(): Promise<Usuario[]> {
-    return this.usuarioRepositorio.recuperar();
-  } */
-  async recuperar(
+  async listar(
     @Query() paginacionQueryDto: PaginacionQueryDto,
   ): Promise<TotalRowsResponseDto> {
-    const { limite, pagina } = paginacionQueryDto;
-    const resultado = await this.usuarioRepositorio.findAndCount({
-      skip: pagina || 0,
-      take: limite || 10,
-    });
+    const resultado = await this.usuarioRepositorio.listar(paginacionQueryDto);
     return totalRowsResponse(resultado);
   }
 

@@ -1,9 +1,34 @@
+import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Persona } from '../persona/persona.entity';
 import { Usuario } from './usuario.entity';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
+  async listar(paginacionQueryDto: PaginacionQueryDto) {
+    const { limite, saltar } = paginacionQueryDto;
+    const queryBuilder = await this.createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
+      .leftJoinAndSelect('usuarioRol.rol', 'rol')
+      .leftJoinAndSelect('usuario.persona', 'persona')
+      .select([
+        'usuario.id',
+        'usuario.usuario',
+        'usuario.estado',
+        'usuarioRol',
+        'rol.rol',
+        'persona.nroDocumento',
+        'persona.nombres',
+        'persona.primerApellido',
+        'persona.segundoApellido',
+      ])
+      // .orderBy('usuario.fechaCreacion', orden)
+      .offset(saltar)
+      .limit(limite)
+      .getManyAndCount();
+    return queryBuilder;
+  }
+
   recuperar() {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')

@@ -1,4 +1,13 @@
-import { Body, Controller, Inject, Post, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Get,
+  Delete,
+  Query,
+  HttpCode,
+} from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { AuthZManagementService } from 'nest-authz';
@@ -36,11 +45,12 @@ export class AuthorizationController extends AbstractController {
     return this.successList(totalRowsResponse([resultado, resultado.length]));
   }
 
-  @Post('/politicas/eliminar')
-  async eliminarPolitica(@Body() politica) {
-    const { sujeto, objeto, accion, app } = politica;
+  @Delete('/politicas')
+  @HttpCode(204)
+  async eliminarPolitica(@Query() query) {
+    const { sujeto, objeto, accion, app } = query;
     await this.rbacSrv.removePolicy(sujeto, objeto, accion, app);
-    return this.successDelete(politica);
+    return this.successDelete(query);
   }
 
   @Get('/politicas/roles')

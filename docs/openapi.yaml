@@ -184,6 +184,25 @@ paths:
       tags: ['usuario']
       operationId: get-api-usuarios
       description: Api para obtener el listado de usuarios
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: string
+            example: 1
+          description: numero de la pagina a visualizar
+        - in: query
+          name: limite
+          schema:
+            type: string
+            example: 10
+          description: numero de filas a visualizar
+        - in: query
+          name: orden
+          schema:
+            type: string
+            example: ASC
+          description: tipo de orden a visualizar
       responses:
         '200':
           description: OK
@@ -215,6 +234,38 @@ paths:
                             estado:  
                               type: string
                               example: 'ACTIVO'
+                            persona:
+                              type: object
+                              properties:
+                                nroDocumento:
+                                  type: string
+                                  example: '1234567'
+                                nombres:
+                                  type: string
+                                  example: 'JUAN'
+                                primerApellido:
+                                  type: string
+                                  example: 'PEREZ'
+                                segundoApellido:
+                                  type: string
+                                  example: 'PEREZ'
+                            usuarioRol:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  estado:
+                                    type: string
+                                    example: 'ACTIVO'
+                                  id:
+                                    type: string
+                                    example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                                  rol:
+                                    type: object
+                                    properties:
+                                      rol: 
+                                        type: string
+                                        example: 'ADMINISTRADOR'
                       total:
                         type: number
                         example: 1
