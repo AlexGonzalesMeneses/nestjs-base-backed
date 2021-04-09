@@ -61,10 +61,9 @@ export class UsuarioService {
 
   async buscarUsuarioId(id: string): Promise<any> {
     const usuario = await this.usuarioRepositorio.buscarUsuarioId(id);
-
-    const roles = [];
+    let roles = [];
     if (usuario.usuarioRol.length) {
-      usuario.usuarioRol.map((usuarioRol) => {
+      roles = usuario.usuarioRol.map((usuarioRol) => {
         if (usuarioRol.estado === STATUS_ACTIVE) {
           const modulos = usuarioRol.rol.rolModulo.map((m) => {
             if (
@@ -74,7 +73,7 @@ export class UsuarioService {
               return m.modulo;
             }
           });
-          roles.push({ rol: usuarioRol.rol.rol, modulos });
+          return { rol: usuarioRol.rol.rol, modulos };
         }
       });
     }
