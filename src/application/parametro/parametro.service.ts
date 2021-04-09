@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { ParametroDto } from './dto/parametro.dto';
+import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { totalRowsResponse } from 'src/common/lib/http.module';
 
 @Injectable()
 export class ParametroService {
@@ -11,18 +13,13 @@ export class ParametroService {
     private parametroRepositorio: ParametroRepository,
   ) {}
 
-  async guardar(parametroDto: ParametroDto): Promise<Parametro> {
-    const { codigo, nombre, grupo, descripcion } = parametroDto;
-    const parametro = new Parametro();
-    parametro.codigo = codigo;
-    parametro.nombre = nombre;
-    parametro.grupo = grupo;
-    parametro.descripcion = descripcion;
-    const parametroCreado = await this.parametroRepositorio.save(parametro);
-    return parametroCreado;
+  async crear(parametroDto: ParametroDto): Promise<Parametro> {
+    const result = await this.parametroRepositorio.crear(parametroDto);
+    return result;
   }
 
-  async recuperar(): Promise<Parametro[]> {
-    return this.parametroRepositorio.find();
+  async listar(paginacionQueryDto: PaginacionQueryDto) {
+    const result = await this.parametroRepositorio.listar(paginacionQueryDto);
+    return totalRowsResponse(result);
   }
 }
