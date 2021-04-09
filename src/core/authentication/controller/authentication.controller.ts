@@ -77,18 +77,12 @@ export class AuthenticationController {
     ).id;
     this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
 
-    // TODO: probar con ciudadania para ver si hace el logout correctamente
     if (url && idToken) {
-      res.redirect(
-        url +
-          '?post_logout_redirect_uri=' +
-          process.env.OIDC_POST_LOGOUT_REDIRECT_URI +
-          '&id_token_hint=' +
-          idToken,
-      );
+      return res.status(200).json({
+        url: `${url}?post_logout_redirect_uri=${process.env.OIDC_POST_LOGOUT_REDIRECT_URI}&id_token_hint=${idToken}`,
+      });
     } else {
       return res.status(200).json();
-      // return res.redirect(`${process.env.URL_FRONTEND}/#`);
     }
   }
 }
