@@ -33,7 +33,11 @@ export class RefreshTokensService {
     return this.refreshTokensRepository.findById(id);
   }
 
-  async create(grantId: string, ttl: number): Promise<RefreshTokens> {
+  async create(grantId: string): Promise<RefreshTokens> {
+    const ttl = parseInt(
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      10,
+    );
     const currentDate = new Date();
     const refreshToken = this.refreshTokensRepository.create({
       id: nanoid(),
@@ -72,15 +76,11 @@ export class RefreshTokensService {
     }
 
     let newRefreshToken = null;
-    const ttl = parseInt(
-      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-      10,
-    );
     const rft = parseInt(this.configService.get('REFRESH_TOKEN_ROTATE_IN'), 10);
 
     // crear rotacion de refresh token
     if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
-      newRefreshToken = await this.create(refreshToken.grantId, ttl);
+      newRefreshToken = await this.create(refreshToken.grantId);
     }
     const payload = { id: usuario.id, roles };
     const data = {
@@ -90,9 +90,7 @@ export class RefreshTokensService {
 
     return {
       data,
-      refresh_token: newRefreshToken
-        ? { id: newRefreshToken.id, exp_in: ttl }
-        : null,
+      refresh_token: newRefreshToken ? { id: newRefreshToken.id } : null,
     };
   }
 

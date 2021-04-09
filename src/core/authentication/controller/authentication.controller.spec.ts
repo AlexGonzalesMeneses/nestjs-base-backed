@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
+
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
@@ -65,6 +67,12 @@ describe('AuthenticationController', () => {
           useValue: {
             create: jest.fn(() => refreshToken),
             createAccessToken: jest.fn(() => refreshToken),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            REFRESH_TOKEN_EXPIRES_IN: 100,
           },
         },
       ],

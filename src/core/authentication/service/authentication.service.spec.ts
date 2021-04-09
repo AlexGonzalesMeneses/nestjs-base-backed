@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { AuthenticationService } from './authentication.service';
+import { RefreshTokensService } from './refreshTokens.service';
 
 const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
@@ -13,6 +14,8 @@ const resBuscarUsuario = {
   estado: 'ACTIVO',
   usuarioRol: [],
 };
+
+const refreshToken = { resfresh_token: '1' };
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -36,6 +39,13 @@ describe('AuthenticationService', () => {
               .mockReturnValueOnce({ ...resBuscarUsuario, estado: 'INACTIVO' }),
           },
         },
+        {
+          provide: RefreshTokensService,
+          useValue: {
+            create: jest.fn(() => refreshToken),
+            createAccessToken: jest.fn(() => refreshToken),
+          },
+        },
       ],
     }).compile();
 
@@ -49,7 +59,7 @@ describe('AuthenticationService', () => {
     };
     const credenciales = await service.autenticarOidc(user);
     // expect(credenciales).toHaveProperty('access_token');
-    expect(credenciales).toEqual(resSign);
+    expect(credenciales?.data?.access_token).toEqual(resSign);
   });
 
   it('[validarUsuario] deberia validar un usuario exitosamente.', async () => {
