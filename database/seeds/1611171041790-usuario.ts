@@ -28,6 +28,8 @@ export class usuario1611171041790 implements MigrationInterface {
       u.usuario = item.usuario;
       u.contrasena = pass;
       u.persona = p;
+      u.fechaCreacion = new Date();
+      u.usuarioCreacion = '1';
       return u;
     });
     await queryRunner.manager.save(usuarios);

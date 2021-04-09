@@ -6,7 +6,7 @@ import { Usuario } from './usuario.entity';
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar } = paginacionQueryDto;
+    const { limite, saltar, orden } = paginacionQueryDto;
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -22,7 +22,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.primerApellido',
         'persona.segundoApellido',
       ])
-      // .orderBy('usuario.fechaCreacion', orden)
+      .orderBy('usuario.fechaCreacion', orden)
       .offset(saltar)
       .limit(limite)
       .getManyAndCount();
