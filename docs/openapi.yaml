@@ -397,3 +397,146 @@ paths:
             type: string
             example: Backend
           description: nombre de la aplicacion
+  /api/parametros:
+    get:
+      summary: Api para obtener el listado de parametros
+      tags: ['parametros']
+      operationId: get-api-parametros
+      description: Api para obtener el listado de parametros
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Registro(s) obtenido(s) con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      filas:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                            codigo:
+                              type: string 
+                              example: 'TD-1'
+                            nombre:  
+                              type: string
+                              example: 'Tipo de documento CI'
+                            grupo:
+                              type: string
+                              example: 'TD'
+                      total:
+                        type: number
+                        example: 1
+    post:
+      summary: Api para crear un nuevo parametro
+      tags: ['parametros']
+      operationId: post-api-parametros
+      description: Api para crear un nuevo parametro
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                codigo:
+                  type: string
+                  example: 'TD-2'
+                nombre:
+                  type: string
+                  example: 'Documento extranjeria'
+                grupo:
+                  type: string
+                  example: 'TD'
+                descripcion:
+                  type: string
+                  example: 'Tipo de documento de extranjeria'
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: 'Registro creado con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      codigo:
+                        type: string
+                        example: 'TD-1'
+                      nombre:
+                        type: string
+                        example: 'Documento extranjeria'
+                      grupo:
+                        type: string
+                        example: 'TD'
+                      descripcion:
+                        type: string
+                        example: 'Tipo de documento de extranjeria'
+                      id:
+                        type: string
+                        example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                      estado:
+                        type: string
+                        example: 'ACTIVO'
+  /api/parametros/{grupo}:
+    get:
+      summary: Api para obtener el listado de parametros por grupo
+      tags: ['parametros']
+      operationId: get-api-parametros-grupo
+      description: Api para obtener el listado de parametros por grupo
+      parameters:
+        - in: path
+          name: grupo
+          required: true
+          schema:
+            type: string
+            example: 'TD'
+          description: grupo de parametros
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Registro(s) obtenido(s) con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                        nombre:
+                          type: string
+                          example: 'Cedula de identidad'
+                        codigo:
+                          type: string
+                          example: 'TD-1'                     

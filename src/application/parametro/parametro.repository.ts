@@ -19,6 +19,17 @@ export class ParametroRepository extends Repository<Parametro> {
       .getManyAndCount();
     return queryBuilder;
   }
+
+  async listarPorGrupo(grupo: string) {
+    const queryBuilder = await this.createQueryBuilder('parametro')
+      .select(['parametro.id', 'parametro.codigo', 'parametro.nombre'])
+      .where('parametro.grupo = :grupo', {
+        grupo,
+      })
+      .getMany();
+    return queryBuilder;
+  }
+
   async crear(parametroDto: ParametroDto) {
     const { codigo, nombre, grupo, descripcion } = parametroDto;
 

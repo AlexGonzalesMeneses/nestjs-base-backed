@@ -1,3 +1,4 @@
+import { TextService } from 'src/common/lib/text.service';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class insertsParametros1617820337609 implements MigrationInterface {
@@ -5,14 +6,14 @@ export class insertsParametros1617820337609 implements MigrationInterface {
     // TIPO DOCUMENTO
     const parametros = [
       {
-        id: 1,
+        id: TextService.generateUuid(),
         codigo: 'TD-CI',
         nombre: 'Cédula de identidad',
         grupo: 'TD',
         descripcion: 'Cédula de Identidad',
       },
       {
-        id: 2,
+        id: TextService.generateUuid(),
         codigo: 'TD-CIE',
         nombre: 'Cédula de identidad de extranjero',
         grupo: 'TD',
@@ -20,14 +21,14 @@ export class insertsParametros1617820337609 implements MigrationInterface {
       },
       // APPS
       {
-        id: 3,
+        id: TextService.generateUuid(),
         codigo: 'TAPP-B',
         nombre: 'Backend',
         grupo: 'TAPP',
         descripcion: 'Backend',
       },
       {
-        id: 4,
+        id: TextService.generateUuid(),
         codigo: 'TAPP-F',
         nombre: 'Frontend',
         grupo: 'TAPP',
@@ -35,28 +36,28 @@ export class insertsParametros1617820337609 implements MigrationInterface {
       },
       // ACCIONES
       {
-        id: 5,
+        id: TextService.generateUuid(),
         codigo: 'TACC-R',
         nombre: 'read',
         grupo: 'TACC',
         descripcion: 'READ',
       },
       {
-        id: 6,
+        id: TextService.generateUuid(),
         codigo: 'TACC-U',
         nombre: 'update',
         grupo: 'TACC',
         descripcion: 'UPDATE',
       },
       {
-        id: 7,
+        id: TextService.generateUuid(),
         codigo: 'TACC-C',
         nombre: 'create',
         grupo: 'TACC',
         descripcion: 'CREATE',
       },
       {
-        id: 8,
+        id: TextService.generateUuid(),
         codigo: 'TACC-D',
         nombre: 'delete',
         grupo: 'TACC',

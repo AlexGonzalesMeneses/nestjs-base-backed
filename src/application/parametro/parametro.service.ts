@@ -22,4 +22,9 @@ export class ParametroService {
     const result = await this.parametroRepositorio.listar(paginacionQueryDto);
     return totalRowsResponse(result);
   }
+
+  async listarPorGrupo(grupo: string) {
+    const result = await this.parametroRepositorio.listarPorGrupo(grupo);
+    return result;
+  }
 }

@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   UseGuards,
   Query,
+  Param,
 } from '@nestjs/common';
 import { ParametroService } from './parametro.service';
 import { ParametroDto } from './dto/parametro.dto';
@@ -27,6 +28,13 @@ export class ParametroController extends AbstractController {
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.parametroServicio.listar(paginacionQueryDto);
+    return this.successList(result);
+  }
+
+  @Get('/:grupo')
+  async listarPorGrupo(@Param() params) {
+    const { grupo } = params;
+    const result = await this.parametroServicio.listarPorGrupo(grupo);
     return this.successList(result);
   }
 

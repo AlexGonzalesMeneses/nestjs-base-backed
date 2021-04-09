@@ -2,16 +2,16 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Parametro {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ length: 555 })
+  @Column({ length: 15, unique: true })
   codigo: string;
 
-  @Column({ length: 555 })
+  @Column({ length: 50 })
   nombre: string;
 
-  @Column({ length: 17 })
+  @Column({ length: 15 })
   grupo: string;
 
   @Column({ length: 255 })
