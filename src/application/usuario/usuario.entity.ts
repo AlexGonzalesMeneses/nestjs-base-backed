@@ -21,13 +21,20 @@ export class Usuario extends AbstractEntity {
   @Column({ length: 255 })
   contrasena: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({
+    type: 'enum',
+    enum: ['CREADO', 'ACTIVO', 'INACTIVO'],
+    default: 'CREADO',
+  })
   estado: string;
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
   public usuarioRol!: UsuarioRol[];
 
-  @ManyToOne(() => Persona, (persona) => persona.usuarios, { nullable: false })
+  @ManyToOne(() => Persona, (persona) => persona.usuarios, {
+    nullable: false,
+    cascade: true,
+  })
   @JoinColumn({
     name: 'id_persona',
     referencedColumnName: 'id',

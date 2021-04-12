@@ -269,6 +269,83 @@ paths:
                       total:
                         type: number
                         example: 1
+    post:
+      summary: Api para crear una nuevo usuario
+      tags: ['usuario']
+      operationId: post-api-usuarios
+      description: Api para crear un nuevo usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario:
+                  type: string
+                  example: '123456'
+                contrasena:
+                  type: string
+                  example: 'password'
+                persona:
+                  type: object
+                  properties:
+                    nombres:
+                      type: string
+                      example: 'JUAN'
+                    primerApellido:
+                      type: string
+                      example: 'PEREZ'
+                    segundoApellido:
+                      type: string
+                      example: 'PEREZ'
+                    nroDocumento:
+                      type: string
+                      example: '123456'
+                    fechaNacimiento:
+                      type: string
+                      example: '1999-11-11'
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: 'Registro creado con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      usuario:
+                        type: string
+                        example: '123456'
+                      estado:
+                        type: string
+                        example: 'CREADO'
+                      persona:
+                        type: object
+                        properties:
+                          nombres:
+                            type: string
+                            example: 'JUAN'
+                          primerApellido:
+                            type: string
+                            example: 'PEREZ'
+                          segundoApellido:
+                            type: string
+                            example: 'PEREZ'
+                          nroDocumento:
+                            type: string
+                            example: '123456'
+                          fechaNacimiento:
+                            type: string
+                            example: '1999-11-11'
+                          
   /api/autorizacion/politicas:
     get:
       summary: Api para obtener el listado de politicas

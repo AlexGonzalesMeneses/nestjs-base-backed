@@ -1,6 +1,7 @@
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Persona } from '../persona/persona.entity';
+import { UsuarioDto } from './dto/usuario.dto';
 import { Usuario } from './usuario.entity';
 
 @EntityRepository(Usuario)
@@ -83,5 +84,11 @@ export class UsuarioRepository extends Repository<Usuario> {
       .where('persona.tipoDocumento = :td', { td: persona.tipoDocumento })
       .andWhere('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
       .getOne();
+  }
+
+  async crear(usuarioDto: UsuarioDto, usuarioAuditoria: string) {
+    usuarioDto.usuarioCreacion = usuarioAuditoria;
+    await this.save(usuarioDto);
+    return usuarioDto;
   }
 }

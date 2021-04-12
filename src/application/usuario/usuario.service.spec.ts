@@ -1,10 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { plainToClass } from 'class-transformer';
+import { TextService } from '../../common/lib/text.service';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { PersonaRepository } from '../persona/persona.repository';
+import { UsuarioDto } from './dto/usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
 
-const resUsuario = {
+const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
   usuario: 'USUARIO',
   estado: 'ACTIVO',
@@ -66,6 +69,31 @@ const resUsuarioPerfil = {
   },
 };
 
+const resUsuarioCrear = {
+  usuario: 'usuario122',
+  contrasena: '123',
+  persona: {
+    nombres: 'juan',
+    primerApellido: 'perez',
+    segundoApellido: 'perez',
+    nroDocumento: '123456122',
+    fechaNacimiento: '1911-11-11',
+    tipoDocumentoOtro: null,
+    telefono: null,
+    genero: null,
+    observacion: null,
+    id: '18002fe5-759c-4493-a025-8cd38b61ffff',
+    tipoDocumento: 'CI',
+    estado: 'ACTIVO',
+  },
+  usuarioCreacion: 'd5de12df-3cc3-5a58-a742-be24030482d8',
+  fechaActualizacion: '2021-04-12T19:42:13.588Z',
+  usuarioActualizacion: null,
+  fechaCreacion: '2021-04-12T19:42:13.588Z',
+  id: '416be245-aeaa-47c7-bfe0-477961b18eec',
+  estado: 'ACTIVO',
+};
+
 describe('UsuarioService', () => {
   let service: UsuarioService;
   beforeEach(async () => {
@@ -75,8 +103,9 @@ describe('UsuarioService', () => {
         {
           provide: UsuarioRepository,
           useValue: {
-            listar: jest.fn(() => [[resUsuario], 1]),
+            listar: jest.fn(() => [[resUsuarioList], 1]),
             buscarUsuarioId: jest.fn(() => resUsuarioPerfil),
+            crear: jest.fn(() => resUsuarioCrear),
           },
         },
         {
@@ -106,5 +135,26 @@ describe('UsuarioService', () => {
     expect(usuarios).toHaveProperty('id');
     expect(usuarios).toHaveProperty('persona');
     expect(usuarios).toHaveProperty('roles');
+  });
+
+  it('[crear] Deberia crear un nuevo usuario', async () => {
+    const datosUsuario = {
+      usuario: 'usuario122',
+      contrasena: '123',
+      persona: {
+        nombres: 'juan',
+        primerApellido: 'perez',
+        segundoApellido: 'perez',
+        nroDocumento: '123456122',
+        fechaNacimiento: '1911-11-11',
+      },
+    };
+    const usuarioDto = plainToClass(UsuarioDto, datosUsuario);
+    const usuarioAuditoria = TextService.generateUuid();
+    const usuario = await service.crear(usuarioDto, usuarioAuditoria);
+
+    expect(usuario).toBeDefined();
+    expect(usuario).toHaveProperty('usuario');
+    expect(usuario.usuario).toEqual(usuarioDto.usuario);
   });
 });

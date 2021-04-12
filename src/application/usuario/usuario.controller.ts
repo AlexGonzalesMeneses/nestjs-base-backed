@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Request,
   UseGuards,
   UsePipes,
@@ -35,18 +36,24 @@ export class UsuarioController extends AbstractController {
   @UseGuards(JwtAuthGuard)
   @Get('perfil')
   async getProfile(@Request() req) {
-    const { id: idUsuario } = req.user;
+    const idUsuario = this.getUser(req);
     const result = await this.usuarioService.buscarUsuarioId(idUsuario);
     return this.successList(result);
   }
+
   //create user
   @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(ValidationPipe)
-  async guardar(@Body() usuarioDto: UsuarioDto) {
-    const result = await this.usuarioService.guardar(usuarioDto);
+  async crear(@Req() req: Request, @Body() usuarioDto: UsuarioDto) {
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.usuarioService.crear(
+      usuarioDto,
+      usuarioAuditoria,
+    );
     return this.successCreate(result);
   }
+
   //update user
   @UseGuards(JwtAuthGuard)
   @Patch(':id')

@@ -31,11 +31,12 @@ export class UsuarioService {
     return this.usuarioRepositorio.buscarUsuario(usuario);
   }
   // post method
-  async guardar(usuarioDto: UsuarioDto): Promise<Usuario> {
-    const persona = await this.preloadPersonaByNroDocumento(usuarioDto.persona);
-    usuarioDto.persona = { id: persona.id };
-    const usuario = this.usuarioRepositorio.create(usuarioDto);
-    return this.usuarioRepositorio.save(usuario);
+  async crear(usuarioDto: UsuarioDto, usuarioAuditoria: string) {
+    const result = await this.usuarioRepositorio.crear(
+      usuarioDto,
+      usuarioAuditoria,
+    );
+    return result;
   }
 
   // update method

@@ -29,7 +29,7 @@ export class Persona {
   @Column({ name: 'nro_documento', length: 50 })
   nroDocumento: string;
 
-  @Column({ name: 'fecha_nacimiento' })
+  @Column({ name: 'fecha_nacimiento', type: 'timestamptz' })
   fechaNacimiento: Date;
 
   @Column({ length: 50, nullable: true })
