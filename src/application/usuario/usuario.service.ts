@@ -39,6 +39,19 @@ export class UsuarioService {
     return result;
   }
 
+  async activar(idUsuario: string) {
+    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    if (usuario && ['CREADO', 'INACTIVO'].includes(usuario.estado)) {
+      // TODO: realizar validacion con segip
+      usuario.estado = 'ACTIVO';
+      const result = await this.usuarioRepositorio.save(usuario);
+      return { id: result.id, estado: result.estado };
+    }
+    throw new NotFoundException(
+      'El usuario no existe o no contiene un estado valido.',
+    );
+  }
+
   // update method
   async update(id: string, usuarioDto: UsuarioDto) {
     const usuario = await this.usuarioRepositorio.preload({

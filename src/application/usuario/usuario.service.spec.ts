@@ -6,6 +6,7 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { UsuarioDto } from './dto/usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
+import { NotFoundException } from '@nestjs/common';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -94,6 +95,11 @@ const resUsuarioCrear = {
   estado: 'ACTIVO',
 };
 
+const resUsuarioActivar = {
+  id: TextService.generateUuid(),
+  estado: 'CREADO',
+};
+
 describe('UsuarioService', () => {
   let service: UsuarioService;
   beforeEach(async () => {
@@ -106,6 +112,13 @@ describe('UsuarioService', () => {
             listar: jest.fn(() => [[resUsuarioList], 1]),
             buscarUsuarioId: jest.fn(() => resUsuarioPerfil),
             crear: jest.fn(() => resUsuarioCrear),
+            // preload: jest.fn(() => resUsuarioActivar),
+            preload: jest
+              .fn()
+              .mockReturnValueOnce(resUsuarioActivar)
+              .mockReturnValue(undefined)
+              .mockReturnValue({...resUsuarioActivar, estado: 'ACTIVO' }),
+            save: jest.fn(() => ({ ...resUsuarioActivar, estado: 'ACTIVO' })),
           },
         },
         {
@@ -156,5 +169,30 @@ describe('UsuarioService', () => {
     expect(usuario).toBeDefined();
     expect(usuario).toHaveProperty('usuario');
     expect(usuario.usuario).toEqual(usuarioDto.usuario);
+  });
+
+  it('[activar] Deberia activar un usuario en estado CREADO', async () => {
+    const usuario = await service.activar(TextService.generateUuid());
+
+    expect(usuario).toBeDefined();
+    expect(usuario).toHaveProperty('id');
+    expect(usuario).toHaveProperty('estado');
+    expect(usuario.estado).toEqual('ACTIVO');
+  });
+
+  it('[activar] Deberia lanzar una excepcion si el usuario no existe', async () => {
+    try {
+      await service.activar(TextService.generateUuid());
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+    }
+  });
+
+  it('[activar] Deberia lanzar una excepcion si el usuario no tiene un estado valido para activacion', async () => {
+    try {
+      await service.activar(TextService.generateUuid());
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+    }
   });
 });
