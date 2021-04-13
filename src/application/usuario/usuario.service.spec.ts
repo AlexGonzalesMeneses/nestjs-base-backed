@@ -117,7 +117,7 @@ describe('UsuarioService', () => {
               .fn()
               .mockReturnValueOnce(resUsuarioActivar)
               .mockReturnValue(undefined)
-              .mockReturnValue({...resUsuarioActivar, estado: 'ACTIVO' }),
+              .mockReturnValue({ ...resUsuarioActivar, estado: 'ACTIVO' }),
             save: jest.fn(() => ({ ...resUsuarioActivar, estado: 'ACTIVO' })),
           },
         },
