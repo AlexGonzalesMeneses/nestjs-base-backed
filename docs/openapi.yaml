@@ -616,4 +616,35 @@ paths:
                           example: 'Cedula de identidad'
                         codigo:
                           type: string
-                          example: 'TD-1'                     
+                          example: 'TD-1'
+  /api/roles:
+    get:
+      summary: Api para obtener el listado de roles
+      tags: ['parametros']
+      operationId: get-api-roles
+      description: Api para obtener el listado de roles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Registro(s) obtenido(s) con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                        rol:
+                          type: string 
+                          example: 'ADMINISTRADOR'

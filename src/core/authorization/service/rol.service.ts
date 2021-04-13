@@ -9,7 +9,8 @@ export class RolService {
     private rolRepositorio: RolRepository,
   ) {}
 
-  async recuperar(): Promise<Rol[]> {
-    return this.rolRepositorio.find();
+  async listar(): Promise<Rol[]> {
+    const result = await this.rolRepositorio.listar();
+    return result;
   }
 }
