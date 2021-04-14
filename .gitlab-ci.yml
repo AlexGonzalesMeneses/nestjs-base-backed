@@ -115,7 +115,7 @@ Desplegando container (Dev):
     - helm repo add --username "robot$"$IR_USER --password $IR_PASS repository $IR_CHART_REPO_URL
     - helm repo update
     - echo $CI_COMMIT_SHORT_SHA
-    - helm upgrade -i $CI_PROJECT_NAME repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
+    - helm upgrade -i $CI_PROJECT_NAME repository/$IR_CHART_NAME --kubeconfig ./config.yml -f values.yml -n development --debug --force --set gitlabCommit=$CI_COMMIT_SHORT_SHA
 Ejecutar migraciones de la base de datos (dev):
   image: node:14.16-stretch-slim
   stage: configurations

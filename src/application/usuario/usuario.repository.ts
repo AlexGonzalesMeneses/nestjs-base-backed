@@ -1,7 +1,10 @@
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
+import { TextService } from '../../common/lib/text.service';
+import { Rol } from '../../core/authorization/entity/rol.entity';
+import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Persona } from '../persona/persona.entity';
-import { UsuarioDto } from './dto/usuario.dto';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 
 @EntityRepository(Usuario)
@@ -86,9 +89,35 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  async crear(usuarioDto: UsuarioDto, usuarioAuditoria: string) {
-    usuarioDto.usuarioCreacion = usuarioAuditoria;
-    await this.save(usuarioDto);
-    return usuarioDto;
+  async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
+    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
+      // Rol
+      const rol = new Rol();
+      rol.id = idRol;
+
+      // UsuarioRol
+      const usuarioRol = new UsuarioRol();
+      usuarioRol.rol = rol;
+      return usuarioRol;
+    });
+
+    // Persona
+    const persona = new Persona();
+    persona.nombres = usuarioDto.persona.nombres;
+    persona.primerApellido = usuarioDto.persona.primerApellido;
+    persona.segundoApellido = usuarioDto.persona.segundoApellido;
+    persona.nroDocumento = usuarioDto.persona.nroDocumento;
+    persona.fechaNacimiento = usuarioDto.persona.fechaNacimiento;
+
+    // Usuario
+    const usuario = new Usuario();
+    usuario.persona = persona;
+    usuario.usuarioRol = usuarioRoles;
+
+    usuario.usuario = usuarioDto.persona.nroDocumento;
+    usuario.contrasena = TextService.encrypt(TextService.generateUuid());
+    usuario.usuarioCreacion = usuarioAuditoria;
+
+    return this.save(usuario);
   }
 }

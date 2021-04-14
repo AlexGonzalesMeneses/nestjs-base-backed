@@ -23,12 +23,14 @@ export class Usuario extends AbstractEntity {
 
   @Column({
     type: 'enum',
-    enum: ['CREADO', 'ACTIVO', 'INACTIVO'],
+    enum: ['CREADO', 'PENDIENTE', 'ACTIVO', 'INACTIVO'],
     default: 'CREADO',
   })
   estado: string;
 
-  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
+  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
+    cascade: true,
+  })
   public usuarioRol!: UsuarioRol[];
 
   @ManyToOne(() => Persona, (persona) => persona.usuarios, {

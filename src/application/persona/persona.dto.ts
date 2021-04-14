@@ -13,5 +13,5 @@ export class PersonaDto {
   segundoApellido: string;
 
   @IsString()
-  fechaNacimiento: Date;
+  fechaNacimiento: string;
 }

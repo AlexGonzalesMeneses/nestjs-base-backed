@@ -10,7 +10,7 @@ export class usuario1611171041789 implements MigrationInterface {
         primerApellido: 'PEREZ',
         segundoApellido: 'PEREZ',
         nroDocumento: '9270815',
-        fechaNacimiento: new Date('2002-02-09'),
+        fechaNacimiento: '2002-02-09',
         genero: 'M',
       },
       {
@@ -18,7 +18,7 @@ export class usuario1611171041789 implements MigrationInterface {
         primerApellido: 'PEREZ',
         segundoApellido: 'PEREZ',
         nroDocumento: '1765251',
-        fechaNacimiento: new Date('2002-02-09'),
+        fechaNacimiento: '2002-02-09',
         genero: 'F',
       },
       {
@@ -26,7 +26,7 @@ export class usuario1611171041789 implements MigrationInterface {
         primerApellido: 'PEREZ',
         segundoApellido: 'PEREZ',
         nroDocumento: '6114767',
-        fechaNacimiento: new Date('2002-02-09'),
+        fechaNacimiento: '2002-02-09',
         genero: 'M',
       },
     ];
