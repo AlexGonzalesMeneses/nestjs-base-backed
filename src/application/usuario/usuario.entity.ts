@@ -21,6 +21,9 @@ export class Usuario extends AbstractEntity {
   @Column({ length: 255 })
   contrasena: string;
 
+  @Column({ name: 'correo_electronico' })
+  correoElectronico: string;
+
   @Column({
     type: 'enum',
     enum: ['CREADO', 'PENDIENTE', 'ACTIVO', 'INACTIVO'],

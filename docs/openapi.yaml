@@ -317,12 +317,9 @@ paths:
             schema:
               type: object
               properties:
-                usuario:
+                correoElectronico:
                   type: string
-                  example: '123456'
-                contrasena:
-                  type: string
-                  example: 'password'
+                  example: '123456@yopmail.com'
                 persona:
                   type: object
                   properties:

@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
-import * as dayjs from 'dayjs';
+// import * as dayjs from 'dayjs';
 import { Persona } from 'src/application/persona/persona.entity';
 import { AuthenticationService } from '../service/authentication.service';
 

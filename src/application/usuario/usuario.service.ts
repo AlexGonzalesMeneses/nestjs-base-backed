@@ -11,6 +11,8 @@ import { Persona } from '../persona/persona.entity';
 import { STATUS_ACTIVE } from '../../common/constants';
 import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
+import { TextService } from '../../common/lib/text.service';
+import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 
 @Injectable()
 export class UsuarioService {
@@ -18,6 +20,7 @@ export class UsuarioService {
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     private personaRepositorio: PersonaRepository,
+    private readonly mensajeriaService: MensajeriaService,
   ) {}
 
   // GET USERS
@@ -48,13 +51,14 @@ export class UsuarioService {
       ['CREADO', 'INACTIVO', 'PENDIENTE'].includes(usuario.estado)
     ) {
       // TODO: realizar validacion con segip
-
-      // cambiar estado al usuario
-
-      // generar una nueva contrasena
+      // cambiar estado al usuario y generar una nueva contrasena
+      const contrasena = TextService.generateShortRandomText();
+      usuario.contrasena = TextService.encrypt(contrasena);
       usuario.estado = 'PENDIENTE';
       const result = await this.usuarioRepositorio.save(usuario);
+
       // si todo bien => enviar el mail con la contraseña antigua
+      await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
       return { id: result.id, estado: result.estado };
     }
     throw new NotFoundException(
@@ -62,6 +66,16 @@ export class UsuarioService {
     );
   }
 
+  private async enviarCorreoContrasenia(correo, contrasena) {
+    const asunto = 'Generacion de credenciales';
+    const mensaje = `La contraseña para su inicio de sesión es: ${contrasena}`;
+    const result = await this.mensajeriaService.sendEmail(
+      correo,
+      asunto,
+      mensaje,
+    );
+    return result.finalizado;
+  }
   // update method
   async update(id: string, usuarioDto: UsuarioDto) {
     const usuario = await this.usuarioRepositorio.preload({

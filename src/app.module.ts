@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),

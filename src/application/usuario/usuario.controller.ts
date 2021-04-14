@@ -59,7 +59,6 @@ export class UsuarioController extends AbstractController {
   @Patch('/activacion/:id')
   async activar(@Param() param) {
     const { id } = param;
-    console.log('id', id);
     const result = await this.usuarioService.activar(id);
     return this.successUpdate(result);
   }

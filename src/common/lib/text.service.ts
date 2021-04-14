@@ -35,4 +35,13 @@ export class TextService {
   static generateUuid(): string {
     return v4();
   }
+
+  /**
+   * Metodo para generar un texto aleatorio corto
+   * @returns string
+   */
+  static generateShortRandomText(): string {
+    const randomText = Math.random().toString(25).slice(-8).toUpperCase();
+    return randomText;
+  }
 }

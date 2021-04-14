@@ -6,7 +6,9 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
-import { NotFoundException } from '@nestjs/common';
+import { HttpService, NotFoundException } from '@nestjs/common';
+import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
+import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -122,10 +124,17 @@ describe('UsuarioService', () => {
           },
         },
         {
+          provide: MensajeriaService,
+          useValue: {
+            sendEmail: jest.fn(() => ({ finalizado: true })),
+          },
+        },
+        {
           provide: PersonaRepository,
           useValue: {},
         },
       ],
+      imports: [MensajeriaModule],
     }).compile();
 
     service = module.get<UsuarioService>(UsuarioService);

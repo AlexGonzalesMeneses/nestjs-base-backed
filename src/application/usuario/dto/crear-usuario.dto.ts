@@ -1,14 +1,15 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import { PersonaDto } from 'src/application/persona/persona.dto';
 // import { UsuarioRolDto } from './usuario-rol.dto';
 
 export class CrearUsuarioDto {
-  @IsNotEmpty()
-  usuario: string;
+  usuario?: string;
 
   estado?: string;
 
-  contrasena?: string;
+  @IsNotEmpty()
+  @IsEmail()
+  correoElectronico: string;
 
   persona: PersonaDto;
 
