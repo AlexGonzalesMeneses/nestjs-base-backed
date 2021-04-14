@@ -341,6 +341,11 @@ paths:
                     fechaNacimiento:
                       type: string
                       example: '1999-11-11'
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
       responses:
         '201':
           description: CREATED
@@ -358,30 +363,12 @@ paths:
                   datos:
                     type: object
                     properties:
-                      usuario:
+                      id:
                         type: string
-                        example: '123456'
+                        example: '81fd2f36-2857-41e5-aa7f-a8101297337d'
                       estado:
                         type: string
                         example: 'CREADO'
-                      persona:
-                        type: object
-                        properties:
-                          nombres:
-                            type: string
-                            example: 'JUAN'
-                          primerApellido:
-                            type: string
-                            example: 'PEREZ'
-                          segundoApellido:
-                            type: string
-                            example: 'PEREZ'
-                          nroDocumento:
-                            type: string
-                            example: '123456'
-                          fechaNacimiento:
-                            type: string
-                            example: '1999-11-11'
                           
   /api/autorizacion/politicas:
     get:

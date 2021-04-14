@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { TextService } from '../../common/lib/text.service';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { PersonaRepository } from '../persona/persona.repository';
-import { UsuarioDto } from './dto/usuario.dto';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
 import { NotFoundException } from '@nestjs/common';
@@ -92,7 +92,7 @@ const resUsuarioCrear = {
   usuarioActualizacion: null,
   fechaCreacion: '2021-04-12T19:42:13.588Z',
   id: '416be245-aeaa-47c7-bfe0-477961b18eec',
-  estado: 'ACTIVO',
+  estado: 'CREADO',
 };
 
 const resUsuarioActivar = {
@@ -162,13 +162,13 @@ describe('UsuarioService', () => {
         fechaNacimiento: '1911-11-11',
       },
     };
-    const usuarioDto = plainToClass(UsuarioDto, datosUsuario);
+    const usuarioDto = plainToClass(CrearUsuarioDto, datosUsuario);
     const usuarioAuditoria = TextService.generateUuid();
     const usuario = await service.crear(usuarioDto, usuarioAuditoria);
 
     expect(usuario).toBeDefined();
-    expect(usuario).toHaveProperty('usuario');
-    expect(usuario.usuario).toEqual(usuarioDto.usuario);
+    expect(usuario).toHaveProperty('id');
+    expect(usuario).toHaveProperty('estado');
   });
 
   it('[activar] Deberia activar un usuario en estado CREADO', async () => {

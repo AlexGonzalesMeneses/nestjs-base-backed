@@ -17,6 +17,7 @@ import { AbstractController } from 'src/common/dto/abstract-controller.dto';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { UsuarioDto } from './dto/usuario.dto';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
 
@@ -45,7 +46,7 @@ export class UsuarioController extends AbstractController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(ValidationPipe)
-  async crear(@Req() req: Request, @Body() usuarioDto: UsuarioDto) {
+  async crear(@Req() req: Request, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.crear(
       usuarioDto,

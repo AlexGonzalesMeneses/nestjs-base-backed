@@ -10,6 +10,7 @@ import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
 import { STATUS_ACTIVE } from '../../common/constants';
 import { PersonaRepository } from '../persona/persona.repository';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -30,21 +31,30 @@ export class UsuarioService {
   async buscarUsuario(usuario: string): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuario(usuario);
   }
-  // post method
-  async crear(usuarioDto: UsuarioDto, usuarioAuditoria: string) {
+
+  async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
     const result = await this.usuarioRepositorio.crear(
       usuarioDto,
       usuarioAuditoria,
     );
-    return result;
+    const { id, estado } = result;
+    return { id, estado };
   }
 
   async activar(idUsuario: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    if (usuario && ['CREADO', 'INACTIVO'].includes(usuario.estado)) {
+    if (
+      usuario &&
+      ['CREADO', 'INACTIVO', 'PENDIENTE'].includes(usuario.estado)
+    ) {
       // TODO: realizar validacion con segip
-      usuario.estado = 'ACTIVO';
+
+      // cambiar estado al usuario
+
+      // generar una nueva contrasena
+      usuario.estado = 'PENDIENTE';
       const result = await this.usuarioRepositorio.save(usuario);
+      // si todo bien => enviar el mail con la contraseña antigua
       return { id: result.id, estado: result.estado };
     }
     throw new NotFoundException(
