@@ -3,6 +3,7 @@ import {
   Controller,
   Inject,
   Post,
+  Patch,
   Get,
   Delete,
   Query,
@@ -28,6 +29,19 @@ export class AuthorizationController extends AbstractController {
     const { sujeto, objeto, accion, app } = politica;
     await this.rbacSrv.addPolicy(sujeto, objeto, accion, app);
     return this.successCreate(politica);
+  }
+
+  @Patch('/politicas')
+  async actualizarPolitica(@Body() politica, @Query() query) {
+    const { sujeto, objeto, accion, app } = politica;
+    await this.rbacSrv.removePolicy(
+      query.sujeto,
+      query.objeto,
+      query.accion,
+      query.app,
+    );
+    await this.rbacSrv.addPolicy(sujeto, objeto, accion, app);
+    return this.successUpdate(politica);
   }
 
   @Get('/politicas')

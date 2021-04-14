@@ -57,7 +57,7 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       {
         v0: RolEnum.ADMINISTRADOR,
         v1: '/politicas',
-        v2: 'create|read|delete',
+        v2: 'create|read|update|delete',
         v3: 'frontend',
       },
       // BACKEND
@@ -81,8 +81,14 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/politicas',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
         v1: '/api/autorizacion/politicas/eliminar',
-        v2: 'POST',
+        v2: 'DELETE',
         v3: 'backend',
       },
     ];
