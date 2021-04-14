@@ -1,13 +1,13 @@
 import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
 import { ConfigService } from '@nestjs/config';
+
+import { Logger } from 'nestjs-pino';
 
 @Controller()
 export class AppController {
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: Logger,
     @Inject(ConfigService) private readonly configService: ConfigService,
   ) {}
 

@@ -15,22 +15,21 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { Logger } from 'nestjs-pino';
 
 @Controller()
 export class AuthenticationController {
   constructor(
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
-    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
+    this.logger.log(`Usuario: ${result.data.id} ingreso al sistema`);
     sendRefreshToken(res, result.refresh_token.id);
     return res
       .status(200)
@@ -75,7 +74,7 @@ export class AuthenticationController {
     const idUsuario = JSON.parse(
       Buffer.from(req.headers.authorization.split('.')[1], 'base64').toString(),
     ).id;
-    this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
+    this.logger.log(`Usuario: ${idUsuario} salio del sistema`);
 
     if (url && idToken) {
       return res.status(200).json({

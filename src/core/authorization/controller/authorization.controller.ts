@@ -8,8 +8,8 @@ import {
   Query,
   HttpCode,
 } from '@nestjs/common';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { Logger } from 'nestjs-pino';
+
 import { AuthZManagementService } from 'nest-authz';
 import { totalRowsResponse } from '../../../common/lib/http.module';
 import { AbstractController } from 'src/common/dto/abstract-controller.dto';
@@ -17,7 +17,7 @@ import { AbstractController } from 'src/common/dto/abstract-controller.dto';
 @Controller('autorizacion')
 export class AuthorizationController extends AbstractController {
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: Logger,
     private readonly rbacSrv: AuthZManagementService,
   ) {
     super();

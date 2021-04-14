@@ -23,14 +23,13 @@ import {
   SUCCESS_UPDATE,
 } from '../../common/constants';
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { Logger } from 'nestjs-pino';
 
 @Controller('entidades')
 export class EntidadController {
   constructor(
     private entidadServicio: EntidadService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -45,7 +44,7 @@ export class EntidadController {
   @UsePipes(ValidationPipe)
   async guardar(@Body() entidadDto: EntidadDto) {
     if (process.env.NODE_ENV === 'development') {
-      this.logger.info(
+      this.logger.log(
         'Esto es un INFO deberia salir en console entorno dev....',
       );
     } else {

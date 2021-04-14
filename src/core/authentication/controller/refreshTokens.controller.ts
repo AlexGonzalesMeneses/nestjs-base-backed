@@ -9,8 +9,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { Logger } from 'nestjs-pino';
 
 import { sendRefreshToken } from '../../../common/lib/http.module';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -21,15 +20,15 @@ import { RefreshTokensService } from '../service/refreshTokens.service';
 export class RefreshTokensController {
   constructor(
     private readonly refreshTokensService: RefreshTokensService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Post('token')
   async getAccessToken(@Request() req, @Res() res: Response) {
-    this.logger.info('[getAccessToken] init...');
+    this.logger.log('[getAccessToken] init...');
     const jid = req.cookies['jid'];
     const result = await this.refreshTokensService.createAccessToken(jid);
-    this.logger.info('[getAccessToken] result: ', result);
+    this.logger.log('[getAccessToken] result: ');
 
     if (result.refresh_token) {
       sendRefreshToken(res, result.refresh_token.id);

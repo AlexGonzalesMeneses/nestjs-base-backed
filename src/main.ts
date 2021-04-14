@@ -10,6 +10,7 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
 import { Session } from './core/authentication/entity/session.entity';
+import { Logger } from 'nestjs-pino';
 
 import {
   SWAGGER_API_DESCRIPTION,
@@ -20,7 +21,8 @@ import {
 // import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: false });
+  app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
   // swagger
   createSwagger(app);
