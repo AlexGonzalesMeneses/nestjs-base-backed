@@ -6,7 +6,7 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
-import { HttpService, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 
