@@ -188,6 +188,48 @@ paths:
                       estado:
                         type: string
                         example: 'ACTIVO'
+  /api/usuarios/contrasena:
+    patch:
+      summary: Actualiza la contrasena de un usuario autenticado
+      tags: ['usuario']
+      operationId: get-api-v1-usuarios-activacion-id-contrasena
+      description: Api para actualizar la contrasena de un usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contrasenaActual:
+                  type: string
+                  example: 'contrasena'
+                contrasenaNueva:
+                  type: string
+                  example: 'contrasena-nueva'
+                
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Registro actualizado con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                      estado:
+                        type: string
+                        example: 'ACTIVO'
   /api/autorizacion/politicas/roles:
     get:
       summary: Api para obtener las politicas definidas en formato CASBIN
