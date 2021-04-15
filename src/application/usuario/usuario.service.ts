@@ -62,7 +62,7 @@ export class UsuarioService {
       usuario.estado = 'PENDIENTE';
       const result = await this.usuarioRepositorio.save(usuario);
 
-      // si todo bien => enviar el mail con la contraseña antigua
+      // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
       return { id: result.id, estado: result.estado };
     }
@@ -104,6 +104,23 @@ export class UsuarioService {
       );
     }
     throw new PreconditionFailedException(`Credenciales incorrectas!!!`);
+  }
+
+  async restaurarContrasena(idUsuario: string) {
+    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    if (usuario && ['ACTIVO'].includes(usuario.estado)) {
+      const contrasena = TextService.generateShortRandomText();
+      usuario.contrasena = TextService.encrypt(contrasena);
+      usuario.estado = 'PENDIENTE';
+      const result = await this.usuarioRepositorio.save(usuario);
+
+      // si todo bien => enviar el mail con la contraseña generada
+      await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
+      return { id: result.id, estado: result.estado };
+    }
+    throw new NotFoundException(
+      'El usuario no existe o no contiene un estado valido.',
+    );
   }
 
   // update method

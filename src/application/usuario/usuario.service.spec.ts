@@ -104,6 +104,11 @@ const resUsuarioActivar = {
   estado: 'CREADO',
 };
 
+const resUsuarioRestaurar = {
+  id: TextService.generateUuid(),
+  estado: 'ACTIVO',
+};
+
 describe('UsuarioService', () => {
   let service: UsuarioService;
   beforeEach(async () => {
@@ -120,8 +125,9 @@ describe('UsuarioService', () => {
             preload: jest
               .fn()
               .mockReturnValueOnce(resUsuarioActivar)
-              .mockReturnValue(undefined)
-              .mockReturnValue({ ...resUsuarioActivar, estado: 'ACTIVO' }),
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce({ ...resUsuarioActivar, estado: 'ACTIVO' })
+              .mockReturnValueOnce(resUsuarioRestaurar),
             save: jest.fn(() => ({ ...resUsuarioActivar, estado: 'ACTIVO' })),
           },
         },
@@ -249,4 +255,13 @@ describe('UsuarioService', () => {
       expect(error).toBeInstanceOf(PreconditionFailedException);
     }
   });
+
+  /* it('[restaurarContrasena] Deberia restaurar la contraseña de un usuario', async () => {
+    const idUsuario = TextService.generateUuid();
+    const result = await service.restaurarContrasena(idUsuario);
+    console.log('ssssss', result);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('id');
+  }); */
 });

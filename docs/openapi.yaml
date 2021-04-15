@@ -206,7 +206,6 @@ paths:
                 contrasenaNueva:
                   type: string
                   example: 'contrasena-nueva'
-                
       responses:
         '200':
           description: OK
@@ -230,6 +229,44 @@ paths:
                       estado:
                         type: string
                         example: 'ACTIVO'
+  /api/usuarios/contrasena/{id}:
+    patch:
+      summary: Restaura la contrasena de un usuario
+      tags: ['usuario']
+      operationId: get-api-v1-usuarios-contrasena-id
+      description: Api para restaurar la contrasena de un usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 'a9d1a5cc-4590-5c67-a0b2-a4b37b862802'
+          description: id de usuario
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Restauración de contraseña exitosa!!!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
+                      estado:
+                        type: string
+                        example: 'PENDIENTE'
+
   /api/autorizacion/politicas/roles:
     get:
       summary: Api para obtener las politicas definidas en formato CASBIN

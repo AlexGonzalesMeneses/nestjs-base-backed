@@ -77,6 +77,14 @@ export class UsuarioController extends AbstractController {
     return this.successUpdate(result);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('/contrasena/:id')
+  async restaurarContrasena(@Param() param) {
+    const { id: idUsuario } = param;
+    const result = await this.usuarioService.restaurarContrasena(idUsuario);
+    return this.successUpdate(result, 'Restauración de contraseña exitosa!!!');
+  }
+
   //update user
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
