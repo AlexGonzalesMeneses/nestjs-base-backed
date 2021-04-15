@@ -26,7 +26,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.primerApellido',
         'persona.segundoApellido',
         'persona.fechaNacimiento',
-        'persona.tipoDocumento'
+        'persona.tipoDocumento',
       ])
       .orderBy('usuario.fechaCreacion', orden)
       .offset(saltar)
