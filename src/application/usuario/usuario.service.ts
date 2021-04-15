@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Query } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  PreconditionFailedException,
+  Query,
+} from '@nestjs/common';
 import { UsuarioRepository } from './usuario.repository';
 import { Usuario } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -76,6 +81,31 @@ export class UsuarioService {
     );
     return result.finalizado;
   }
+
+  async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
+    const usuario = await this.usuarioRepositorio.buscarUsuarioId(idUsuario);
+    if (
+      usuario &&
+      usuario.contrasena === TextService.encrypt(contrasenaActual)
+    ) {
+      // validar que la contrasena nueva cumpla nivel de seguridad
+      if (TextService.validateLevelPassword(contrasenaNueva)) {
+        // guardar en bd
+        usuario.contrasena = TextService.encrypt(contrasenaNueva);
+        usuario.estado = 'ACTIVO';
+        const result = await this.usuarioRepositorio.save(usuario);
+        return {
+          id: result.id,
+          estado: result.estado,
+        };
+      }
+      throw new PreconditionFailedException(
+        'La contraseña nueva no cumple el nivel de seguridad necesario.',
+      );
+    }
+    throw new PreconditionFailedException(`Credenciales incorrectas!!!`);
+  }
+
   // update method
   async update(id: string, usuarioDto: UsuarioDto) {
     const usuario = await this.usuarioRepositorio.preload({
@@ -118,6 +148,7 @@ export class UsuarioService {
     return {
       id: usuario.id,
       usuario: usuario.usuario,
+      estado: usuario.estado,
       roles,
       persona: usuario.persona,
     };

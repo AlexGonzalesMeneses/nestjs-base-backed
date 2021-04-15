@@ -55,6 +55,7 @@ export class UsuarioController extends AbstractController {
     return this.successCreate(result);
   }
 
+  @UseGuards(JwtAuthGuard)
   // activar usuario
   @Patch('/activacion/:id')
   async activar(@Param() param) {
@@ -62,6 +63,20 @@ export class UsuarioController extends AbstractController {
     const result = await this.usuarioService.activar(id);
     return this.successUpdate(result);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/contrasena')
+  async actualizarContrasena(@Req() req: Request, @Body() body) {
+    const idUsuario = this.getUser(req);
+    const { contrasenaActual, contrasenaNueva } = body;
+    const result = await this.usuarioService.actualizarContrasena(
+      idUsuario,
+      contrasenaActual,
+      contrasenaNueva,
+    );
+    return this.successUpdate(result);
+  }
+
   //update user
   @UseGuards(JwtAuthGuard)
   @Patch(':id')

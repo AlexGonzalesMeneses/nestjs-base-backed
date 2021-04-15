@@ -62,6 +62,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       .select([
         'usuario.id',
         'usuario.usuario',
+        'usuario.contrasena',
         'usuario.estado',
         'persona.nombres',
         'persona.primerApellido',

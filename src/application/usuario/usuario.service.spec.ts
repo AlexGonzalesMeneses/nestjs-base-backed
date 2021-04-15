@@ -6,7 +6,7 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 
@@ -35,6 +35,8 @@ const resUsuarioPerfil = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
   usuario: 'USUARIO',
   estado: 'ACTIVO',
+  contrasena:
+    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
   usuarioRol: [
     {
       id: 'b320fe27-5644-5712-8423-198302b01e25',
@@ -202,6 +204,49 @@ describe('UsuarioService', () => {
       await service.activar(TextService.generateUuid());
     } catch (error) {
       expect(error).toBeInstanceOf(NotFoundException);
+    }
+  });
+
+  it('[actualizarContrasena] Deberia actualizar la contraseña de un usuario autenticado', async () => {
+    const idUsuario = TextService.generateUuid();
+    const contrasenaActual = '123';
+    const contrasenaNueva = 'Contr4seN1AS3gur4';
+    const result = await service.actualizarContrasena(
+      idUsuario,
+      contrasenaActual,
+      contrasenaNueva,
+    );
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('id');
+  });
+
+  it('[actualizarContrasena] Deberia lanzar una excepcion si la contraseña actual es incorrecta', async () => {
+    const idUsuario = TextService.generateUuid();
+    const contrasenaActual = '1234';
+    const contrasenaNueva = 'Contr4seN1AS3gur4';
+    try {
+      await service.actualizarContrasena(
+        idUsuario,
+        contrasenaActual,
+        contrasenaNueva,
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
+    }
+  });
+
+  it('[actualizarContrasena] Deberia lanzar una excepcion si la contraseña nueva no es segura', async () => {
+    const idUsuario = TextService.generateUuid();
+    const contrasenaActual = '1234';
+    const contrasenaNueva = 'password';
+    try {
+      await service.actualizarContrasena(
+        idUsuario,
+        contrasenaActual,
+        contrasenaNueva,
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
     }
   });
 });
