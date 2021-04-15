@@ -118,6 +118,7 @@ export class UsuarioService {
     return {
       id: usuario.id,
       usuario: usuario.usuario,
+      estado: usuario.estado,
       roles,
       persona: usuario.persona,
     };
