@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { STATUS_INACTIVE } from '../../../common/constants';
@@ -24,10 +29,9 @@ export class AuthenticationService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      if (respuesta.estado === STATUS_INACTIVE) {
-        throw new HttpException(
-          'El usuario se encuentra deshabilitado.',
-          HttpStatus.UNAUTHORIZED,
+      if (!['ACTIVO', 'PENDIENTE'].includes(respuesta.estado)) {
+        throw new UnauthorizedException(
+          `El usuario se encuentra en estado ${respuesta.estado}`,
         );
       }
       const roles = [];

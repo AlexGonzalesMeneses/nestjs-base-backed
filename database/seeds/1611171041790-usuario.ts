@@ -32,6 +32,7 @@ export class usuario1611171041790 implements MigrationInterface {
       u.correoElectronico = item.correoElectonico;
       u.contrasena = pass;
       u.fechaCreacion = new Date();
+      u.estado = 'ACTIVO';
       u.usuarioCreacion = '1';
       u.persona = p;
       return u;
