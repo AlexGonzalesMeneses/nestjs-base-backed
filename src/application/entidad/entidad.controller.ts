@@ -15,30 +15,25 @@ import { EntidadService } from './entidad.service';
 import { EntidadDto } from './dto/entidad.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entidad } from './entidad.entity';
-import { successResponse } from '../../common/lib/http.module';
-import {
-  SUCCESS_CREATE,
-  SUCCESS_DELETE,
-  SUCCESS_LIST,
-  SUCCESS_UPDATE,
-} from '../../common/constants';
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { AbstractController } from '../../common/dto/abstract-controller.dto';
 
 @Controller('entidades')
-export class EntidadController {
+export class EntidadController extends AbstractController {
   constructor(
     private entidadServicio: EntidadService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) {
+    super();
+  }
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    return successResponse(
-      await this.entidadServicio.recuperar(paginacionQueryDto),
-      SUCCESS_LIST,
-    );
+    const result = this.entidadServicio.recuperar(paginacionQueryDto);
+    return this.successList(result);
   }
 
   @Post()
@@ -53,26 +48,18 @@ export class EntidadController {
         'Esto es un ERROR deberia salir en archivo en entorno prod....',
       );
     }
-    return successResponse(
-      await this.entidadServicio.guardar(entidadDto),
-      SUCCESS_CREATE,
-    );
+    const result = this.entidadServicio.guardar(entidadDto);
+    return this.successCreate(result);
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() entidadDto: EntidadDto) {
-    // return this.entidadServicio.update(id, entidadDto);
-    return successResponse(
-      await this.entidadServicio.update(id, entidadDto),
-      SUCCESS_UPDATE,
-    );
+    const result = await this.entidadServicio.update(id, entidadDto);
+    return this.successUpdate(result);
   }
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    // return this.entidadServicio.remove(id);
-    return successResponse(
-      await this.entidadServicio.remove(id),
-      SUCCESS_DELETE,
-    );
+    const result = await this.entidadServicio.remove(id);
+    return this.successDelete(result);
   }
 }
