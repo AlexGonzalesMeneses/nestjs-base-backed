@@ -17,7 +17,7 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 
-@Controller('refreshtoken')
+@Controller()
 export class RefreshTokensController {
   constructor(
     private readonly refreshTokensService: RefreshTokensService,
