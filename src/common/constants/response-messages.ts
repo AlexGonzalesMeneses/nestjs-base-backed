@@ -1,6 +1,11 @@
 // response messages
-export const SUCCESS_DEFAULT = 'ok';
-export const SUCCESS_LIST = 'Registro(s) obtenido(s) con exito!';
-export const SUCCESS_CREATE = 'Registro creado con exito!';
-export const SUCCESS_UPDATE = 'Registro actualizado con exito!';
-export const SUCCESS_DELETE = 'Registro eliminado con exito!';
+
+export enum Messages {
+  SUCCESS_DEFAULT = 'ok',
+  SUCCESS_LIST = 'Registro(s) obtenido(s) con exito!',
+  SUCCESS_CREATE = 'Registro creado con exito!',
+  SUCCESS_UPDATE = 'Registro actualizado con exito!',
+  SUCCESS_DELETE = 'Registro eliminado con exito!',
+
+  SUCCESS_RESTART_PASSWORD = 'Restauración de contraseña exitosa!!!',
+}

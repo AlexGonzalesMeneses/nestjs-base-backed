@@ -20,6 +20,7 @@ import { UsuarioDto } from './dto/usuario.dto';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
+import { Messages } from '../../common/constants/response-messages';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -82,7 +83,7 @@ export class UsuarioController extends AbstractController {
   async restaurarContrasena(@Param() param) {
     const { id: idUsuario } = param;
     const result = await this.usuarioService.restaurarContrasena(idUsuario);
-    return this.successUpdate(result, 'Restauración de contraseña exitosa!!!');
+    return this.successUpdate(result, Messages.SUCCESS_RESTART_PASSWORD);
   }
 
   //update user

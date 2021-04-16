@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { ACTIVE, INACTIVE } from '../../common/constants/status';
+import { Status } from '../../common/constants';
 
-const enumStatus = [ACTIVE, INACTIVE];
+const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity()
 export class Parametro {
@@ -21,6 +21,6 @@ export class Parametro {
   @Column({ length: 255 })
   descripcion: string;
 
-  @Column({ type: 'enum', enum: enumStatus, default: ACTIVE })
+  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
 }

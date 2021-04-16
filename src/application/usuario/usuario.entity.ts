@@ -9,14 +9,14 @@ import {
 } from 'typeorm';
 import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { Persona } from '../persona/persona.entity';
-import {
-  ACTIVE,
-  CREATE,
-  INACTIVE,
-  PENDING,
-} from '../../common/constants/status';
+import { Status } from '../../common/constants';
 
-const enumStatus = [CREATE, PENDING, ACTIVE, INACTIVE];
+const enumStatus = [
+  Status.CREATE,
+  Status.PENDING,
+  Status.ACTIVE,
+  Status.INACTIVE,
+];
 
 @Entity()
 export class Usuario extends AbstractEntity {
@@ -35,7 +35,7 @@ export class Usuario extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: enumStatus,
-    default: CREATE,
+    default: Status.CREATE,
   })
   estado: string;
 

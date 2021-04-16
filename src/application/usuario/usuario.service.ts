@@ -13,12 +13,7 @@ import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
-import {
-  ACTIVE,
-  CREATE,
-  INACTIVE,
-  PENDING,
-} from '../../common/constants/status';
+import { Status } from '../../common/constants';
 import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
@@ -56,13 +51,13 @@ export class UsuarioService {
 
   async activar(idUsuario: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    const statusValid = [CREATE, INACTIVE, PENDING];
-    if (usuario && statusValid.includes(usuario.estado)) {
+    const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
+    if (usuario && statusValid.includes(usuario.estado as Status)) {
       // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
-      usuario.estado = 'PENDIENTE';
+      usuario.estado = Status.PENDING;
       const result = await this.usuarioRepositorio.save(usuario);
 
       // si todo bien => enviar el mail con la contraseña generada
@@ -95,7 +90,7 @@ export class UsuarioService {
       if (TextService.validateLevelPassword(contrasenaNueva)) {
         // guardar en bd
         usuario.contrasena = TextService.encrypt(contrasenaNueva);
-        usuario.estado = ACTIVE;
+        usuario.estado = Status.ACTIVE;
         const result = await this.usuarioRepositorio.save(usuario);
         return {
           id: result.id,
@@ -111,11 +106,11 @@ export class UsuarioService {
 
   async restaurarContrasena(idUsuario: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    const statusValid = [ACTIVE];
-    if (usuario && statusValid.includes(usuario.estado)) {
+    const statusValid = [Status.ACTIVE];
+    if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
-      usuario.estado = PENDING;
+      usuario.estado = Status.PENDING;
       const result = await this.usuarioRepositorio.save(usuario);
 
       // si todo bien => enviar el mail con la contraseña generada
@@ -153,9 +148,12 @@ export class UsuarioService {
     let roles = [];
     if (usuario.usuarioRol.length) {
       roles = usuario.usuarioRol.map((usuarioRol) => {
-        if (usuarioRol.estado === ACTIVE) {
+        if (usuarioRol.estado === Status.ACTIVE) {
           const modulos = usuarioRol.rol.rolModulo.map((m) => {
-            if (m.estado === ACTIVE && m.modulo.estado === ACTIVE) {
+            if (
+              m.estado === Status.ACTIVE &&
+              m.modulo.estado === Status.ACTIVE
+            ) {
               return m.modulo;
             }
           });

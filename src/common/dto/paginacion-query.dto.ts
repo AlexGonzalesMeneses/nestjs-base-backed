@@ -10,7 +10,7 @@ import {
   Min,
 } from 'class-validator';
 
-import { Orden } from '../constants/orden';
+import { Order } from '../constants';
 
 const LIMITE_MIN = 10;
 const LIMITE_MAX = 50;
@@ -52,12 +52,12 @@ export class PaginacionQueryDto {
   readonly filtro?: string;
 
   @ApiPropertyOptional({
-    enum: Orden,
-    default: Orden.ASC,
+    enum: Order,
+    default: Order.ASC,
   })
-  @IsEnum(Orden)
+  @IsEnum(Order)
   @IsOptional()
-  readonly orden?: Orden = Orden.ASC;
+  readonly orden?: Order = Order.ASC;
 
   get saltar(): number {
     return (this.pagina - 1) * this.limite;

@@ -6,11 +6,10 @@ import {
 } from '@nestjs/common';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
-import { INACTIVE } from '../../../common/constants/status';
 import { TextService } from '../../../common/lib/text.service';
 import { Persona } from '../../../application/persona/persona.entity';
 import { RefreshTokensService } from './refreshTokens.service';
-import { ACTIVE, PENDING } from '../../../common/constants/status';
+import { Status } from '../../../common/constants';
 
 @Injectable()
 export class AuthenticationService {
@@ -30,8 +29,8 @@ export class AuthenticationService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      const statusValid = [ACTIVE, PENDING];
-      if (!statusValid.includes(respuesta.estado)) {
+      const statusValid = [Status.ACTIVE, Status.PENDING];
+      if (!statusValid.includes(respuesta.estado as Status)) {
         throw new UnauthorizedException(
           `El usuario se encuentra en estado ${respuesta.estado}`,
         );
@@ -68,7 +67,7 @@ export class AuthenticationService {
   async validarUsuarioOidc(persona: Persona): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona);
     if (respuesta) {
-      if (respuesta.estado === INACTIVE) {
+      if (respuesta.estado === Status.INACTIVE) {
         throw new HttpException(
           'El usuario se encuentra deshabilitado.',
           HttpStatus.UNAUTHORIZED,
