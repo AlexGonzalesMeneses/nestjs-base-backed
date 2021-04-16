@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { UsuarioModule } from '../../application/usuario/usuario.module';
 import { AuthenticationController } from './controller/authentication.controller';
+import { RefreshTokensController } from './controller/refreshTokens.controller';
 import { AuthenticationService } from './service/authentication.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -40,7 +41,7 @@ const OidcStrategyFactory = {
     ConfigModule,
     TypeOrmModule.forFeature([UsuarioRepository, RefreshTokensRepository]),
   ],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, RefreshTokensController],
   providers: [
     AuthenticationService,
     RefreshTokensService,
