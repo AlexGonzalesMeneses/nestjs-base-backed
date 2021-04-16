@@ -18,8 +18,10 @@ export class UsuarioRepository extends Repository<Usuario> {
       .select([
         'usuario.id',
         'usuario.usuario',
+        'usuario.correoElectronico',
         'usuario.estado',
         'usuarioRol',
+        'rol.id',
         'rol.rol',
         'persona.nroDocumento',
         'persona.nombres',
