@@ -6,9 +6,10 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
-import { NotFoundException, PreconditionFailedException } from '@nestjs/common';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
+import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
+import { PreconditionFailedException } from '@nestjs/common';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -189,7 +190,9 @@ describe('UsuarioService', () => {
   });
 
   it('[activar] Deberia activar un usuario en estado CREADO', async () => {
-    const usuario = await service.activar(TextService.generateUuid());
+    const idUsuario = TextService.generateUuid();
+    const usuarioAuditoria = TextService.generateUuid();
+    const usuario = await service.activar(idUsuario, usuarioAuditoria);
 
     expect(usuario).toBeDefined();
     expect(usuario).toHaveProperty('id');
@@ -199,18 +202,32 @@ describe('UsuarioService', () => {
 
   it('[activar] Deberia lanzar una excepcion si el usuario no existe', async () => {
     try {
-      await service.activar(TextService.generateUuid());
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      await service.activar(idUsuario, usuarioAuditoria);
     } catch (error) {
-      expect(error).toBeInstanceOf(NotFoundException);
+      expect(error).toBeInstanceOf(EntityNotFoundException);
     }
   });
 
   it('[activar] Deberia lanzar una excepcion si el usuario no tiene un estado valido para activacion', async () => {
     try {
-      await service.activar(TextService.generateUuid());
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      await service.activar(idUsuario, usuarioAuditoria);
     } catch (error) {
-      expect(error).toBeInstanceOf(NotFoundException);
+      expect(error).toBeInstanceOf(EntityNotFoundException);
     }
+  });
+
+  it('[inactivar] Deberia inactivar un usuario en cualquier estado', async () => {
+    const idUsuario = TextService.generateUuid();
+    const usuarioAuditoria = TextService.generateUuid();
+    const usuario = await service.inactivar(idUsuario, usuarioAuditoria);
+
+    expect(usuario).toBeDefined();
+    expect(usuario).toHaveProperty('id');
+    expect(usuario).toHaveProperty('estado');
   });
 
   it('[actualizarContrasena] Deberia actualizar la contraseña de un usuario autenticado', async () => {

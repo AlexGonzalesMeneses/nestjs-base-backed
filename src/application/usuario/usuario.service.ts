@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  PreconditionFailedException,
-  Query,
-} from '@nestjs/common';
+import { Injectable, PreconditionFailedException, Query } from '@nestjs/common';
 import { UsuarioRepository } from './usuario.repository';
 import { Usuario } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +13,8 @@ import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
+import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
+import { Messages } from '../../common/constants/response-messages';
 
 @Injectable()
 export class UsuarioService {
@@ -49,7 +46,7 @@ export class UsuarioService {
     return { id, estado };
   }
 
-  async activar(idUsuario: string) {
+  async activar(idUsuario: string, usuarioAuditoria: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
@@ -58,15 +55,28 @@ export class UsuarioService {
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
       usuario.estado = Status.PENDING;
+      usuario.usuarioActualizacion = usuarioAuditoria;
       const result = await this.usuarioRepositorio.save(usuario);
 
       // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
       return { id: result.id, estado: result.estado };
     }
-    throw new NotFoundException(
-      'El usuario no existe o no contiene un estado valido.',
-    );
+    throw new EntityNotFoundException(Messages.INVALID_USER);
+  }
+
+  async inactivar(idUsuario: string, usuarioAuditoria: string) {
+    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    if (usuario) {
+      usuario.usuarioActualizacion = usuarioAuditoria;
+      usuario.estado = Status.INACTIVE;
+      const result = await this.usuarioRepositorio.save(usuario);
+      return {
+        id: result.id,
+        estado: result.estado,
+      };
+    }
+    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   private async enviarCorreoContrasenia(correo, contrasena) {
@@ -97,11 +107,9 @@ export class UsuarioService {
           estado: result.estado,
         };
       }
-      throw new PreconditionFailedException(
-        'La contraseña nueva no cumple el nivel de seguridad necesario.',
-      );
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE);
     }
-    throw new PreconditionFailedException(`Credenciales incorrectas!!!`);
+    throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS);
   }
 
   async restaurarContrasena(idUsuario: string) {
@@ -117,9 +125,7 @@ export class UsuarioService {
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
       return { id: result.id, estado: result.estado };
     }
-    throw new NotFoundException(
-      'El usuario no existe o no contiene un estado valido.',
-    );
+    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   // update method
@@ -129,7 +135,7 @@ export class UsuarioService {
       ...usuarioDto,
     });
     if (!usuario) {
-      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
     return this.usuarioRepositorio.save(usuario);
   }
@@ -138,7 +144,7 @@ export class UsuarioService {
   async remove(id: string) {
     const usuario = await this.usuarioRepositorio.findOne(id);
     if (!usuario) {
-      throw new NotFoundException(`usuario con id ${id} no encontrado`);
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
     return this.usuarioRepositorio.remove(usuario);
   }

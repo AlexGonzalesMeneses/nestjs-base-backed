@@ -56,12 +56,23 @@ export class UsuarioController extends AbstractController {
     return this.successCreate(result);
   }
 
-  @UseGuards(JwtAuthGuard)
   // activar usuario
+  @UseGuards(JwtAuthGuard)
   @Patch('/activacion/:id')
-  async activar(@Param() param) {
+  async activar(@Req() req, @Param() param) {
     const { id } = param;
-    const result = await this.usuarioService.activar(id);
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.usuarioService.activar(id, usuarioAuditoria);
+    return this.successUpdate(result);
+  }
+
+  // inactivar usuario
+  @UseGuards(JwtAuthGuard)
+  @Patch('/inactivacion/:id')
+  async inactivar(@Req() req, @Param() param) {
+    const { id } = param;
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.usuarioService.inactivar(id, usuarioAuditoria);
     return this.successUpdate(result);
   }
 
