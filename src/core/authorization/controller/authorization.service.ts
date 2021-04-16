@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
-import { totalRowsResponse } from 'src/common/lib/http.module';
+import { totalRowsResponse } from '../../../common/lib/http.module';
 
 @Injectable()
 export class AuthorizationServive {
@@ -25,11 +25,11 @@ export class AuthorizationServive {
 
   async actualizarPolitica(politica, politicaNueva) {
     const { sujeto, objeto, accion, app } = politicaNueva;
-    await this.elimininarPolitica(politica);
+    await this.eliminarPolitica(politica);
     await this.rbacSrv.addPolicy(sujeto, objeto, accion, app);
   }
 
-  async elimininarPolitica(politica) {
+  async eliminarPolitica(politica) {
     const { sujeto, objeto, accion, app } = politica;
     await this.rbacSrv.removePolicy(sujeto, objeto, accion, app);
     return politica;
