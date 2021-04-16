@@ -27,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse = {
       codigo: status,
       timestamp: new Date().toISOString(),
-      mensaje: this.filterMessage(status),
+      mensaje: this.filterMessage(status) || r.message,
       datos: {
         errores,
       },
@@ -37,7 +37,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   filterMessage(statusCode) {
     let message;
     switch (statusCode) {
-      case 404:
+      case 400:
         message = 'Error de validacion';
         break;
       case 401:
@@ -47,7 +47,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message = 'Recurso no encontrado';
         break;
       default:
-        message = 'Ocurrio un error desconocido';
+        message = null;
     }
     return message;
   }
