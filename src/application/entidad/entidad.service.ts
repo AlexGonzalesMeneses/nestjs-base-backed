@@ -18,11 +18,7 @@ export class EntidadService {
   async recuperar(
     @Query() paginacionQueryDto: PaginacionQueryDto,
   ): Promise<TotalRowsResponseDto> {
-    const { limite, pagina } = paginacionQueryDto;
-    const resultado = await this.entidadRepositorio.findAndCount({
-      skip: pagina || 0,
-      take: limite || 10,
-    });
+    const resultado = await this.entidadRepositorio.listar(paginacionQueryDto);
     return totalRowsResponse(resultado);
   }
 

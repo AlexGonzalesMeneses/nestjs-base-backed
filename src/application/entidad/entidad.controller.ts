@@ -32,7 +32,7 @@ export class EntidadController extends AbstractController {
 
   @Get()
   async recuperar(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    const result = this.entidadServicio.recuperar(paginacionQueryDto);
+    const result = await this.entidadServicio.recuperar(paginacionQueryDto);
     return this.successList(result);
   }
 
