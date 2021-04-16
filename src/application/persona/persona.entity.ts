@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Usuario } from '../usuario/usuario.entity';
+import { ACTIVE, INACTIVE } from '../../common/constants/status';
+
+const enumStatus = [ACTIVE, INACTIVE];
 
 @Entity()
 export class Persona {
@@ -41,7 +44,7 @@ export class Persona {
   @Column({ length: 255, nullable: true })
   observacion: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({ type: 'enum', enum: enumStatus, default: ACTIVE })
   estado: string;
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)

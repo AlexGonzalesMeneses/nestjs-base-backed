@@ -1,7 +1,3 @@
-// status
-export const STATUS_INACTIVE = 'INACTIVO';
-export const STATUS_ACTIVE = 'ACTIVO';
-
 // swagger config
 export const SWAGGER_API_ROOT = 'api/docs';
 export const SWAGGER_API_NAME = 'Proyecto base';

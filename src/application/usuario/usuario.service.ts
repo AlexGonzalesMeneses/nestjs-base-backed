@@ -13,7 +13,12 @@ import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
-import { STATUS_ACTIVE } from '../../common/constants';
+import {
+  ACTIVE,
+  CREATE,
+  INACTIVE,
+  PENDING,
+} from '../../common/constants/status';
 import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
@@ -51,10 +56,8 @@ export class UsuarioService {
 
   async activar(idUsuario: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    if (
-      usuario &&
-      ['CREADO', 'INACTIVO', 'PENDIENTE'].includes(usuario.estado)
-    ) {
+    const statusValid = [CREATE, INACTIVE, PENDING];
+    if (usuario && statusValid.includes(usuario.estado)) {
       // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
@@ -92,7 +95,7 @@ export class UsuarioService {
       if (TextService.validateLevelPassword(contrasenaNueva)) {
         // guardar en bd
         usuario.contrasena = TextService.encrypt(contrasenaNueva);
-        usuario.estado = 'ACTIVO';
+        usuario.estado = ACTIVE;
         const result = await this.usuarioRepositorio.save(usuario);
         return {
           id: result.id,
@@ -108,10 +111,11 @@ export class UsuarioService {
 
   async restaurarContrasena(idUsuario: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    if (usuario && ['ACTIVO'].includes(usuario.estado)) {
+    const statusValid = [ACTIVE];
+    if (usuario && statusValid.includes(usuario.estado)) {
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
-      usuario.estado = 'PENDIENTE';
+      usuario.estado = PENDING;
       const result = await this.usuarioRepositorio.save(usuario);
 
       // si todo bien => enviar el mail con la contraseña generada
@@ -149,12 +153,9 @@ export class UsuarioService {
     let roles = [];
     if (usuario.usuarioRol.length) {
       roles = usuario.usuarioRol.map((usuarioRol) => {
-        if (usuarioRol.estado === STATUS_ACTIVE) {
+        if (usuarioRol.estado === ACTIVE) {
           const modulos = usuarioRol.rol.rolModulo.map((m) => {
-            if (
-              m.estado === STATUS_ACTIVE &&
-              m.modulo.estado === STATUS_ACTIVE
-            ) {
+            if (m.estado === ACTIVE && m.modulo.estado === ACTIVE) {
               return m.modulo;
             }
           });

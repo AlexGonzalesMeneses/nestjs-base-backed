@@ -2,6 +2,7 @@ import { Persona } from 'src/application/persona/persona.entity';
 import { Usuario } from 'src/application/usuario/usuario.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { TextService } from '../../src/common/lib/text.service';
+import { ACTIVE } from '../../src/common/constants/status';
 
 export class usuario1611171041790 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -32,7 +33,7 @@ export class usuario1611171041790 implements MigrationInterface {
       u.correoElectronico = item.correoElectonico;
       u.contrasena = pass;
       u.fechaCreacion = new Date();
-      u.estado = 'ACTIVO';
+      u.estado = ACTIVE;
       u.usuarioCreacion = '1';
       u.persona = p;
       return u;

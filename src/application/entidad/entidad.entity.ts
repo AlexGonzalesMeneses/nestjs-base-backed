@@ -1,4 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ACTIVE, INACTIVE } from '../../common/constants/status';
+
+const enumStatus = [ACTIVE, INACTIVE];
 
 @Entity()
 export class Entidad {
@@ -35,6 +38,6 @@ export class Entidad {
   @Column({ name: 'codigo_portal_unico', length: 8, nullable: true })
   codigoPortalUnico: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({ type: 'enum', enum: enumStatus, default: ACTIVE })
   estado: string;
 }

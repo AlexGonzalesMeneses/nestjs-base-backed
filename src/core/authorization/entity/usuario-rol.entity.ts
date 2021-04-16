@@ -7,13 +7,16 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Rol } from './rol.entity';
+import { ACTIVE, INACTIVE } from '../../../common/constants/status';
+
+const enumStatus = [ACTIVE, INACTIVE];
 
 @Entity()
 export class UsuarioRol {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({ type: 'enum', enum: enumStatus, default: ACTIVE })
   estado: string;
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)

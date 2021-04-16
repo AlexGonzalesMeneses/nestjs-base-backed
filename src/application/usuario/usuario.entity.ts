@@ -9,6 +9,14 @@ import {
 } from 'typeorm';
 import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { Persona } from '../persona/persona.entity';
+import {
+  ACTIVE,
+  CREATE,
+  INACTIVE,
+  PENDING,
+} from '../../common/constants/status';
+
+const enumStatus = [CREATE, PENDING, ACTIVE, INACTIVE];
 
 @Entity()
 export class Usuario extends AbstractEntity {
@@ -26,8 +34,8 @@ export class Usuario extends AbstractEntity {
 
   @Column({
     type: 'enum',
-    enum: ['CREADO', 'PENDIENTE', 'ACTIVO', 'INACTIVO'],
-    default: 'CREADO',
+    enum: enumStatus,
+    default: CREATE,
   })
   estado: string;
 
