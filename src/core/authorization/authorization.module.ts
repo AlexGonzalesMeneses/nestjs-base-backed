@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorizationController } from './controller/authorization.controller';
+import { AuthorizationServive } from './controller/authorization.service';
 import { ModuloController } from './controller/modulo.controller';
 import { RolController } from './controller/rol.controller';
 import { ModuloRepository } from './repository/modulo.repository';
@@ -14,6 +15,6 @@ import { RolService } from './service/rol.service';
     ConfigModule,
   ],
   controllers: [AuthorizationController, RolController, ModuloController],
-  providers: [RolService, ModuloService, ConfigService],
+  providers: [RolService, ModuloService, ConfigService, AuthorizationServive],
 })
 export class AuthorizationModule {}
