@@ -179,15 +179,4 @@ export class UsuarioService {
   async buscarUsuarioPorCI(persona: Persona): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
   }
-
-  private async preloadPersonaByNroDocumento(persona: any): Promise<any> {
-    const existingPersona = await this.personaRepositorio.findOne({
-      nroDocumento: persona.nroDocumento,
-    });
-    if (existingPersona) {
-      return existingPersona;
-    }
-    const per = this.personaRepositorio.create(persona);
-    return this.personaRepositorio.save(per);
-  }
 }
