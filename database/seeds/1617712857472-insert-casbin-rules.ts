@@ -37,6 +37,12 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         v3: 'frontend',
       },
       {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/home',
+        v2: 'read',
+        v3: 'frontend',
+      },
+      {
         v0: RolEnum.TECNICO,
         v1: '/usuarios',
         v2: 'read',
