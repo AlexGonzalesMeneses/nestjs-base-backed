@@ -45,11 +45,6 @@ describe('AuthenticationController', () => {
                 nestWinstonModuleUtilities.format.nestLike(),
               ),
             }),
-            new winston.transports.File({
-              filename: process.env.ERROR_LOG_FILE_PATH || 'error.log',
-              level: 'error',
-            }),
-            new winston.transports.Http({}),
           ],
         }),
       ],

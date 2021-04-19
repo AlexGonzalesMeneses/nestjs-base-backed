@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { RolService } from '../service/rol.service';
-import { AbstractController } from 'src/common/dto/abstract-controller.dto';
+import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 
 @Controller('roles')
 export class RolController extends AbstractController {

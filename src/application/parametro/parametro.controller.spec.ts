@@ -20,7 +20,7 @@ const resListar = {
 };
 describe('ParametroController', () => {
   let controller: ParametroController;
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [ParametroController],

@@ -9,7 +9,6 @@ import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
 import { Persona } from '../persona/persona.entity';
 import { Status } from '../../common/constants';
-import { PersonaRepository } from '../persona/persona.repository';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
@@ -21,7 +20,6 @@ export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
-    private personaRepositorio: PersonaRepository,
     private readonly mensajeriaService: MensajeriaService,
   ) {}
 
@@ -112,13 +110,14 @@ export class UsuarioService {
     throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS);
   }
 
-  async restaurarContrasena(idUsuario: string) {
+  async restaurarContrasena(idUsuario: string, usuarioAuditoria: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
     const statusValid = [Status.ACTIVE];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
       usuario.estado = Status.PENDING;
+      usuario.usuarioActualizacion = usuarioAuditoria;
       const result = await this.usuarioRepositorio.save(usuario);
 
       // si todo bien => enviar el mail con la contraseña generada
@@ -138,15 +137,6 @@ export class UsuarioService {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
     return this.usuarioRepositorio.save(usuario);
-  }
-
-  // delete method
-  async remove(id: string) {
-    const usuario = await this.usuarioRepositorio.findOne(id);
-    if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER);
-    }
-    return this.usuarioRepositorio.remove(usuario);
   }
 
   async buscarUsuarioId(id: string): Promise<any> {

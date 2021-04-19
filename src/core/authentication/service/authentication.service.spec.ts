@@ -20,7 +20,7 @@ const refreshToken = { resfresh_token: '1' };
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthenticationService,

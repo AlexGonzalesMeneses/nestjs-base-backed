@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -13,8 +12,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AbstractController } from 'src/common/dto/abstract-controller.dto';
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { AbstractController } from '../../common/dto/abstract-controller.dto';
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { UsuarioDto } from './dto/usuario.dto';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
@@ -37,7 +36,7 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @Get('perfil')
-  async getProfile(@Request() req) {
+  async obtenerPerfil(@Request() req) {
     const idUsuario = this.getUser(req);
     const result = await this.usuarioService.buscarUsuarioId(idUsuario);
     return this.successList(result);
@@ -47,7 +46,7 @@ export class UsuarioController extends AbstractController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @UsePipes(ValidationPipe)
-  async crear(@Req() req: Request, @Body() usuarioDto: CrearUsuarioDto) {
+  async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.crear(
       usuarioDto,
@@ -78,7 +77,7 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/contrasena')
-  async actualizarContrasena(@Req() req: Request, @Body() body) {
+  async actualizarContrasena(@Req() req, @Body() body) {
     const idUsuario = this.getUser(req);
     const { contrasenaActual, contrasenaNueva } = body;
     const result = await this.usuarioService.actualizarContrasena(
@@ -91,9 +90,13 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/contrasena/:id')
-  async restaurarContrasena(@Param() param) {
+  async restaurarContrasena(@Req() req, @Param() param) {
+    const usuarioAuditoria = this.getUser(req);
     const { id: idUsuario } = param;
-    const result = await this.usuarioService.restaurarContrasena(idUsuario);
+    const result = await this.usuarioService.restaurarContrasena(
+      idUsuario,
+      usuarioAuditoria,
+    );
     return this.successUpdate(result, Messages.SUCCESS_RESTART_PASSWORD);
   }
 
@@ -103,13 +106,5 @@ export class UsuarioController extends AbstractController {
   async update(@Param('id') id: string, @Body() usuarioDto: UsuarioDto) {
     const result = await this.usuarioService.update(id, usuarioDto);
     return this.successCreate(result);
-  }
-
-  //delete user
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    const result = await this.usuarioService.remove(id);
-    return this.successDelete(result);
   }
 }

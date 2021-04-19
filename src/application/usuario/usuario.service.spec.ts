@@ -112,7 +112,7 @@ const resUsuarioRestaurar = {
 
 describe('UsuarioService', () => {
   let service: UsuarioService;
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsuarioService,
@@ -128,7 +128,10 @@ describe('UsuarioService', () => {
               .mockReturnValueOnce(resUsuarioActivar)
               .mockReturnValueOnce(undefined)
               .mockReturnValueOnce({ ...resUsuarioActivar, estado: 'ACTIVO' })
-              .mockReturnValueOnce(resUsuarioRestaurar),
+              .mockReturnValueOnce(resUsuarioActivar)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(resUsuarioRestaurar)
+              .mockReturnValueOnce(undefined),
             save: jest.fn(() => ({ ...resUsuarioActivar, estado: 'ACTIVO' })),
           },
         },
@@ -230,6 +233,16 @@ describe('UsuarioService', () => {
     expect(usuario).toHaveProperty('estado');
   });
 
+  it('[inactivar] Deberia lanzar una excepcion si el usuario no existe', async () => {
+    try {
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      await service.inactivar(idUsuario, usuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
+  });
+
   it('[actualizarContrasena] Deberia actualizar la contraseña de un usuario autenticado', async () => {
     const idUsuario = TextService.generateUuid();
     const contrasenaActual = '123';
@@ -273,12 +286,20 @@ describe('UsuarioService', () => {
     }
   });
 
-  /* it('[restaurarContrasena] Deberia restaurar la contraseña de un usuario', async () => {
+  it('[restaurarContrasena] Deberia restaurar la contraseña de un usuario', async () => {
     const idUsuario = TextService.generateUuid();
     const result = await service.restaurarContrasena(idUsuario);
-    console.log('ssssss', result);
 
     expect(result).toBeDefined();
     expect(result).toHaveProperty('id');
-  }); */
+  });
+
+  it('[restaurarContrasena] Deberia lanzar una excepcion si el usuario no existe', async () => {
+    try {
+      const idUsuario = TextService.generateUuid();
+      await service.restaurarContrasena(idUsuario);
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
+  });
 });

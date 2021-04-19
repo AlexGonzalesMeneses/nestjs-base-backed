@@ -4,7 +4,7 @@ import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
 import { UsuarioController } from './usuario.controller';
 import { PersonaRepository } from '../persona/persona.repository';
-import { MensajeriaModule } from 'src/core/external-services/mensajeria/mensajeria.module';
+import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 
 @Module({
   providers: [UsuarioService],
