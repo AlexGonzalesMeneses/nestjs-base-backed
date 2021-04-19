@@ -2,18 +2,26 @@ import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 
-import { Logger } from 'nestjs-pino';
+import { PinoLogger } from 'nestjs-pino';
 
 @Controller()
 export class AppController {
+  static staticLogger: PinoLogger;
+
   constructor(
-    private readonly logger: Logger,
+    private readonly logger: PinoLogger,
     @Inject(ConfigService) private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.logger.setContext(AppController.name);
+    AppController.staticLogger = this.logger;
+  }
 
   @Get('/estado')
   async verificarEstado(@Res() res: Response) {
-    this.logger.debug('estado()', AppController.name);
+    this.logger.info('log1');
+    this.logger.info('log2');
+    this.logger.info('log3');
+
     return res.status(HttpStatus.OK).json({
       estado: 'Servicio funcionando correctamente',
       commit_sha: this.configService.get('CI_COMMIT_SHORT_SHA'),
