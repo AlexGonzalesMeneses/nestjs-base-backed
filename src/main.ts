@@ -11,6 +11,7 @@ import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
 import { Session } from './core/authentication/entity/session.entity';
 import { Logger } from 'nestjs-pino';
+import { expressMiddleware } from 'cls-rtracer';
 
 import {
   SWAGGER_API_DESCRIPTION,
@@ -28,6 +29,9 @@ async function bootstrap() {
 
   // configuration app
   const repository = getConnection().getRepository(Session);
+  console.log('----------->', expressMiddleware);
+  app.use(expressMiddleware());
+
   app.use(
     session({
       secret: configService.get('SESSION_SECRET'),

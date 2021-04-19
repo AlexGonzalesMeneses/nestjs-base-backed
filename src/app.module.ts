@@ -6,7 +6,9 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
-
+import { LoggerModule } from 'nestjs-pino';
+import { LogService } from './core/logs/log.service';
+console.log(LogService);
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -15,15 +17,7 @@ import { ApplicationModule } from './application/application.module';
     ApplicationModule,
     // LoggerModule.forRoot(), // This works! :D
     LoggerModule.forRoot({
-      pinoHttp: {
-        logger: pino(
-          {
-            level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
-            prettyPrint: process.env.NODE_ENV !== 'production',
-          },
-          stream,
-        ),
-      },
+      pinoHttp: LogService.getPinoHttpConfig(),
     }),
   ],
   controllers: [AppController],
