@@ -55,7 +55,7 @@ const resUsuarioPerfil = {
                 id: 'b320fe27-5644-5712-8423-198302b01e25',
                 label: 'Usuarios',
                 url: '/usuarios',
-                icono: 'mdiAccountCog',
+                icono: 'manage_accounts',
                 nombre: 'usuarios',
                 estado: 'ACTIVO',
               },

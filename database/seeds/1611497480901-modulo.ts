@@ -8,31 +8,31 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: 'configuracion',
         url: '/configuracion',
         label: 'Configuracion',
-        icono: 'mdiCogOutline',
+        icono: 'settings',
       },
       {
         nombre: 'usuarios',
         url: '/usuarios',
         label: 'Usuarios',
-        icono: 'mdiAccountCog',
+        icono: 'manage_accounts',
       },
       {
         nombre: 'entidades',
         url: '/entidades',
         label: 'Entidades',
-        icono: 'mdiDomain',
+        icono: 'business',
       },
       {
         nombre: 'parametros',
         url: '/parametros',
         label: 'Parametros',
-        icono: 'mdiFileTree',
+        icono: 'tune',
       },
       {
         nombre: 'politicas',
         url: '/politicas',
         label: 'Politicas',
-        icono: 'mdiServerSecurity',
+        icono: 'verified_user',
       },
     ];
     const modulos = items.map((item) => {
