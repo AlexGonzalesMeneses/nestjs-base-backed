@@ -288,7 +288,11 @@ describe('UsuarioService', () => {
 
   it('[restaurarContrasena] Deberia restaurar la contraseña de un usuario', async () => {
     const idUsuario = TextService.generateUuid();
-    const result = await service.restaurarContrasena(idUsuario);
+    const usuarioAuditoria = TextService.generateUuid();
+    const result = await service.restaurarContrasena(
+      idUsuario,
+      usuarioAuditoria,
+    );
 
     expect(result).toBeDefined();
     expect(result).toHaveProperty('id');
@@ -297,7 +301,8 @@ describe('UsuarioService', () => {
   it('[restaurarContrasena] Deberia lanzar una excepcion si el usuario no existe', async () => {
     try {
       const idUsuario = TextService.generateUuid();
-      await service.restaurarContrasena(idUsuario);
+      const usuarioAuditoria = TextService.generateUuid();
+      await service.restaurarContrasena(idUsuario, usuarioAuditoria);
     } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
