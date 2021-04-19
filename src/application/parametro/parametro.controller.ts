@@ -15,8 +15,8 @@ import { ParametroDto } from './dto/parametro.dto';
 import { Parametro } from './parametro.entity';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { AbstractController } from 'src/common/dto/abstract-controller.dto';
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
+import { AbstractController } from '../../common/dto/abstract-controller.dto';
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)

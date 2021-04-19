@@ -18,7 +18,6 @@ import {
   SWAGGER_API_CURRENT_VERSION,
   SWAGGER_API_ROOT,
 } from './common/constants';
-// import { WrapResponseInterceptor } from './common/interceptors/wrap-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: false });
@@ -55,7 +54,6 @@ async function bootstrap() {
   app.use(helmet());
 
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
-  // app.useGlobalInterceptors(new WrapResponseInterceptor());
   const port = configService.get('PORT');
   await app.listen(port);
   console.log(

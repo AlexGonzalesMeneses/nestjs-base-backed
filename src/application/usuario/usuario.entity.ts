@@ -9,6 +9,14 @@ import {
 } from 'typeorm';
 import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { Persona } from '../persona/persona.entity';
+import { Status } from '../../common/constants';
+
+const enumStatus = [
+  Status.CREATE,
+  Status.PENDING,
+  Status.ACTIVE,
+  Status.INACTIVE,
+];
 
 @Entity()
 export class Usuario extends AbstractEntity {
@@ -21,13 +29,25 @@ export class Usuario extends AbstractEntity {
   @Column({ length: 255 })
   contrasena: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({ name: 'correo_electronico' })
+  correoElectronico: string;
+
+  @Column({
+    type: 'enum',
+    enum: enumStatus,
+    default: Status.CREATE,
+  })
   estado: string;
 
-  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
+  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
+    cascade: true,
+  })
   public usuarioRol!: UsuarioRol[];
 
-  @ManyToOne(() => Persona, (persona) => persona.usuarios, { nullable: false })
+  @ManyToOne(() => Persona, (persona) => persona.usuarios, {
+    nullable: false,
+    cascade: true,
+  })
   @JoinColumn({
     name: 'id_persona',
     referencedColumnName: 'id',

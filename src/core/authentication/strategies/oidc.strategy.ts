@@ -1,8 +1,8 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
-import * as dayjs from 'dayjs';
-import { Persona } from 'src/application/persona/persona.entity';
+// import * as dayjs from 'dayjs';
+import { Persona } from '../../../application/persona/persona.entity';
 import { AuthenticationService } from '../service/authentication.service';
 
 export const buildOpenIdClient = async () => {
@@ -44,15 +44,16 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         ci.numero_documento = ci.numero_documento.slice(0, -2);
       }
 
-      const fechaNacimiento = dayjs(
+      // TODO: verificar si es necesario enviar
+      /* const fechaNacimiento = dayjs(
         userinfo.fecha_nacimiento.toString(),
         'DD/MM/YYYY',
-      ).toDate();
+      ).toDate(); */
 
       const persona = new Persona();
       persona.tipoDocumento = ci.tipo_documento;
       persona.nroDocumento = ci.numero_documento;
-      persona.fechaNacimiento = fechaNacimiento;
+      // persona.fechaNacimiento = fechaNacimiento;
 
       const usuario = await this.autenticacionService.validarUsuarioOidc(
         persona,

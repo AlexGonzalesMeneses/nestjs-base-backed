@@ -4,29 +4,65 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { Messages } from '../constants/response-messages';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const status = exception.getStatus()
+    let status = exception.getStatus()
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
+    const r = <any>exception.getResponse();
+    let errores = [];
+    console.error('[error] %o', r);
+    if (Array.isArray(r.message)) {
+      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      const validationErrors = r.message;
+      errores = validationErrors;
+    }
 
     const errorResponse = {
       codigo: status,
       timestamp: new Date().toISOString(),
-      mensaje:
-        status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ? exception.message || 'Ocurrio un error...'
-          : 'Error Interno',
+      mensaje: this.isBusinessException(exception),
+      datos: {
+        errores,
+      },
     };
-    // logger
-    Logger.error('[error] %j', JSON.stringify(errorResponse));
     response.status(status).json(errorResponse);
+  }
+  public isBusinessException(exception: Error): any {
+    if (exception instanceof EntityNotFoundException) {
+      return exception.message;
+    } else {
+      const message = this.filterMessage(exception);
+      return message;
+    }
+  }
+
+  filterMessage(exception) {
+    let message;
+    switch (exception.constructor) {
+      case BadRequestException:
+        message = Messages.EXCEPTION_BAD_REQUEST;
+        break;
+      case UnauthorizedException:
+        message = Messages.EXCEPTION_UNAUTHORIZED;
+        break;
+      case NotFoundException:
+        message = Messages.EXCEPTION_NOT_FOUND;
+        break;
+      default:
+        message = Messages.EXCEPTION_DEFAULT;
+    }
+    return message;
   }
 }

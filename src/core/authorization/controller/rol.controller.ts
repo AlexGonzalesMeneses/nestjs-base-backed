@@ -1,15 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { RolService } from '../service/rol.service';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Rol } from '../entity/rol.entity';
+import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 
 @Controller('roles')
-export class RolController {
-  constructor(private rolService: RolService) {}
+export class RolController extends AbstractController {
+  constructor(private rolService: RolService) {
+    super();
+  }
 
   @Get()
-  recuperar(): Promise<Rol[]> {
-    // console.log(Rol);
-    return this.rolService.recuperar();
+  async listar() {
+    const result = await this.rolService.listar();
+    return this.successList(result);
   }
 }

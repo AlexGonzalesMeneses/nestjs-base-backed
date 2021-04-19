@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import { v5, v4 } from 'uuid';
+import zxcvbn from 'zxcvbn-typescript';
 
 export class TextService {
   /**
@@ -34,5 +35,23 @@ export class TextService {
 
   static generateUuid(): string {
     return v4();
+  }
+
+  /**
+   * Metodo para generar un texto aleatorio corto
+   * @returns string
+   */
+  static generateShortRandomText(): string {
+    const randomText = Math.random().toString(25).slice(-8).toUpperCase();
+    return randomText;
+  }
+
+  static validateLevelPassword(password: string) {
+    const SCORE_VALID = 3;
+    const result = zxcvbn(password);
+    if (result.score >= SCORE_VALID) {
+      return true;
+    }
+    return false;
   }
 }

@@ -1,6 +1,10 @@
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
+import { TextService } from '../../common/lib/text.service';
+import { Rol } from '../../core/authorization/entity/rol.entity';
+import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { Persona } from '../persona/persona.entity';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 
 @EntityRepository(Usuario)
@@ -14,13 +18,17 @@ export class UsuarioRepository extends Repository<Usuario> {
       .select([
         'usuario.id',
         'usuario.usuario',
+        'usuario.correoElectronico',
         'usuario.estado',
         'usuarioRol',
+        'rol.id',
         'rol.rol',
         'persona.nroDocumento',
         'persona.nombres',
         'persona.primerApellido',
         'persona.segundoApellido',
+        'persona.fechaNacimiento',
+        'persona.tipoDocumento',
       ])
       .orderBy('usuario.fechaCreacion', orden)
       .offset(saltar)
@@ -58,6 +66,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       .select([
         'usuario.id',
         'usuario.usuario',
+        'usuario.contrasena',
         'usuario.estado',
         'persona.nombres',
         'persona.primerApellido',
@@ -83,5 +92,38 @@ export class UsuarioRepository extends Repository<Usuario> {
       .where('persona.tipoDocumento = :td', { td: persona.tipoDocumento })
       .andWhere('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
       .getOne();
+  }
+
+  async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
+    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
+      // Rol
+      const rol = new Rol();
+      rol.id = idRol;
+
+      // UsuarioRol
+      const usuarioRol = new UsuarioRol();
+      usuarioRol.rol = rol;
+      return usuarioRol;
+    });
+
+    // Persona
+    const persona = new Persona();
+    persona.nombres = usuarioDto.persona.nombres;
+    persona.primerApellido = usuarioDto.persona.primerApellido;
+    persona.segundoApellido = usuarioDto.persona.segundoApellido;
+    persona.nroDocumento = usuarioDto.persona.nroDocumento;
+    persona.fechaNacimiento = usuarioDto.persona.fechaNacimiento;
+
+    // Usuario
+    const usuario = new Usuario();
+    usuario.persona = persona;
+    usuario.usuarioRol = usuarioRoles;
+
+    usuario.usuario = usuarioDto.persona.nroDocumento;
+    usuario.correoElectronico = usuarioDto.correoElectronico;
+    usuario.contrasena = TextService.encrypt(TextService.generateUuid());
+    usuario.usuarioCreacion = usuarioAuditoria;
+
+    return this.save(usuario);
   }
 }

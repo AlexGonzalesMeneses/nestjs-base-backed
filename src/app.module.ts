@@ -6,15 +6,6 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
-import { LoggerModule } from 'nestjs-pino';
-import pino from 'pino';
-import { createWriteStream } from 'pino-http-send';
-
-const stream = createWriteStream({
-  url: 'http://localhost:3005',
-  batchSize: 2,
-  log: true,
-});
 
 @Module({
   imports: [

@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Usuario } from '../usuario/usuario.entity';
+import { Status } from '../../common/constants';
+
+const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity()
 export class Persona {
@@ -29,8 +32,8 @@ export class Persona {
   @Column({ name: 'nro_documento', length: 50 })
   nroDocumento: string;
 
-  @Column({ name: 'fecha_nacimiento' })
-  fechaNacimiento: Date;
+  @Column({ name: 'fecha_nacimiento', type: 'date' })
+  fechaNacimiento: string;
 
   @Column({ length: 50, nullable: true })
   telefono: string;
@@ -41,7 +44,7 @@ export class Persona {
   @Column({ length: 255, nullable: true })
   observacion: string;
 
-  @Column({ type: 'enum', enum: ['ACTIVO', 'INACTIVO'], default: 'ACTIVO' })
+  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)

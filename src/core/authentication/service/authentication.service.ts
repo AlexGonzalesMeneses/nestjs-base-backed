@@ -1,10 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
-import { STATUS_INACTIVE } from '../../../common/constants';
 import { TextService } from '../../../common/lib/text.service';
 import { Persona } from '../../../application/persona/persona.entity';
 import { RefreshTokensService } from './refreshTokens.service';
+import { Status } from '../../../common/constants';
 
 @Injectable()
 export class AuthenticationService {
@@ -24,10 +29,10 @@ export class AuthenticationService {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      if (respuesta.estado === STATUS_INACTIVE) {
-        throw new HttpException(
-          'El usuario se encuentra deshabilitado.',
-          HttpStatus.UNAUTHORIZED,
+      const statusValid = [Status.ACTIVE, Status.PENDING];
+      if (!statusValid.includes(respuesta.estado as Status)) {
+        throw new UnauthorizedException(
+          `El usuario se encuentra en estado ${respuesta.estado}`,
         );
       }
       const roles = [];
@@ -62,7 +67,7 @@ export class AuthenticationService {
   async validarUsuarioOidc(persona: Persona): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona);
     if (respuesta) {
-      if (respuesta.estado === STATUS_INACTIVE) {
+      if (respuesta.estado === Status.INACTIVE) {
         throw new HttpException(
           'El usuario se encuentra deshabilitado.',
           HttpStatus.UNAUTHORIZED,

@@ -17,7 +17,7 @@ export class MensajeriaService {
     };
     try {
       const { data: response } = await this.httpService
-        .post('/correo', smsBody)
+        .post('/sms', smsBody)
         .toPromise();
       return response;
     } catch (error) {

@@ -1,20 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { PersonaDto } from 'src/application/persona/persona.dto';
 export class UsuarioDto {
-  @ApiProperty()
   @IsNotEmpty()
   usuario: string;
 
-  @ApiProperty()
   @IsNotEmpty()
   contrasena: string;
 
-  @ApiProperty()
-  estado: string;
+  estado?: string;
 
-  @ApiProperty()
-  persona: any;
+  persona: PersonaDto;
 
+  usuarioCreacion?: string;
   /*   @ApiProperty()
   email: string;
 

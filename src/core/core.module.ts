@@ -10,5 +10,6 @@ import { ExternalServicesModule } from './external-services/external.module';
     AuthorizationModule,
     AuthenticationModule,
   ],
+  exports: [ExternalServicesModule],
 })
 export class CoreModule {}

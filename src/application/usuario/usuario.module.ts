@@ -4,11 +4,15 @@ import { UsuarioRepository } from './usuario.repository';
 import { UsuarioService } from './usuario.service';
 import { UsuarioController } from './usuario.controller';
 import { PersonaRepository } from '../persona/persona.repository';
+import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 
 @Module({
   providers: [UsuarioService],
   exports: [UsuarioService],
-  imports: [TypeOrmModule.forFeature([UsuarioRepository, PersonaRepository])],
+  imports: [
+    TypeOrmModule.forFeature([UsuarioRepository, PersonaRepository]),
+    MensajeriaModule,
+  ],
   controllers: [UsuarioController],
 })
 export class UsuarioModule {}
