@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception';
 import { Messages } from '../constants/response-messages';
 
 @Catch(HttpException)
@@ -40,7 +41,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json(errorResponse);
   }
   public isBusinessException(exception: Error): any {
-    if (exception instanceof EntityNotFoundException) {
+    if (
+      exception instanceof EntityNotFoundException ||
+      exception instanceof EntityUnauthorizedException
+    ) {
       return exception.message;
     } else {
       const message = this.filterMessage(exception);

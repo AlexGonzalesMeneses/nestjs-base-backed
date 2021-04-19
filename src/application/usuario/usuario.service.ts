@@ -78,11 +78,10 @@ export class UsuarioService {
   }
 
   private async enviarCorreoContrasenia(correo, contrasena) {
-    const asunto = 'Generacion de credenciales';
     const mensaje = `La contraseña para su inicio de sesión es: ${contrasena}`;
     const result = await this.mensajeriaService.sendEmail(
       correo,
-      asunto,
+      Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
       mensaje,
     );
     return result.finalizado;
@@ -168,5 +167,35 @@ export class UsuarioService {
 
   async buscarUsuarioPorCI(persona: Persona): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+  }
+
+  async actualizarContadorBloqueos(idUsuario: string, intento: number) {
+    const usuario = await this.usuarioRepositorio.actualizarContadorBloqueos(
+      idUsuario,
+      intento,
+    );
+    return usuario;
+  }
+
+  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
+    const usuario = await this.usuarioRepositorio.actualizarDatosBloqueo(
+      idUsuario,
+      codigo,
+      fechaBloqueo,
+    );
+    return usuario;
+  }
+
+  async desbloquearCuenta(codigo: string) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoDesbloqueo(
+      codigo,
+    );
+    if (usuario?.fechaBloqueo) {
+      usuario.fechaBloqueo = null;
+      usuario.intentos = 0;
+      usuario.codigoDesbloqueo = null;
+      await this.usuarioRepositorio.save(usuario);
+    }
+    return usuario;
   }
 }

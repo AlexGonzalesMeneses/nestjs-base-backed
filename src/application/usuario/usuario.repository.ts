@@ -126,4 +126,28 @@ export class UsuarioRepository extends Repository<Usuario> {
 
     return this.save(usuario);
   }
+
+  async actualizarContadorBloqueos(idUsuario, intento) {
+    const usuario = new Usuario();
+    usuario.id = idUsuario;
+    usuario.intentos = intento;
+
+    return this.save(usuario);
+  }
+
+  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
+    const usuario = new Usuario();
+    usuario.id = idUsuario;
+    usuario.codigoDesbloqueo = codigo;
+    usuario.fechaBloqueo = fechaBloqueo;
+
+    return this.save(usuario);
+  }
+
+  buscarPorCodigoDesbloqueo(codigo: string) {
+    return getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .where('usuario.codigoDesbloqueo = :codigo', { codigo })
+      .getOne();
+  }
 }

@@ -15,6 +15,7 @@ import { UsuarioRepository } from '../../application/usuario/usuario.repository'
 
 import { RefreshTokensRepository } from './repository/refreshTokens.repository';
 import { RefreshTokensService } from './service/refreshTokens.service';
+import { MensajeriaModule } from '../external-services/mensajeria/mensajeria.module';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
@@ -40,6 +41,7 @@ const OidcStrategyFactory = {
     UsuarioModule,
     ConfigModule,
     TypeOrmModule.forFeature([UsuarioRepository, RefreshTokensRepository]),
+    MensajeriaModule,
   ],
   controllers: [AuthenticationController, RefreshTokensController],
   providers: [

@@ -16,7 +16,13 @@ export enum Messages {
 
   // business login messages
   SUCCESS_RESTART_PASSWORD = 'Restauración de contraseña exitosa!!!',
+  INVALID_USER_CREDENTIALS = 'Usuario o contraseña invalidos.',
   INVALID_USER = 'El usuario no existe o no contiene un estado valido.',
   INVALID_CREDENTIALS = 'Credenciales incorrectas!!!',
+  INACTIVE_USER = 'El usuario se encuentra INACTIVO',
   INVALID_PASSWORD_SCORE = 'La contraseña nueva no cumple el nivel de seguridad necesario.',
+  USER_BLOCKED = 'Usuario bloqueado por muchos intentos de sesión fallidos, revise su correo electrónico.',
+  SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales',
+  SUBJECT_EMAIL_ACCOUNT_LOCKED = 'Bloqueo de cuenta temporal',
+  SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
 }
