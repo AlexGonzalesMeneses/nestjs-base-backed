@@ -8,6 +8,7 @@ export class LogService {
   // constructor() { }
   static getStream() {
     const streams = [
+      { stream: process.stdout },
       { stream: fs.createWriteStream('/tmp/info.stream.out') },
       { level: 'debug', stream: fs.createWriteStream('/tmp/debug.stream.out') },
       { level: 'fatal', stream: fs.createWriteStream('/tmp/fatal.stream.out') },
