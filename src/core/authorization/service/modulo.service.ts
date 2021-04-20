@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuloRepository } from '../repository/modulo.repository';
-import { Modulo } from '../entity/modulo.entity';
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
+import { totalRowsResponse } from '../../../common/lib/http.module';
+import { CrearModuloDto } from '../dto/crear-modulo.dto';
 @Injectable()
 export class ModuloService {
   constructor(
@@ -9,7 +11,18 @@ export class ModuloService {
     private moduloRepositorio: ModuloRepository,
   ) {}
 
-  async recuperar(): Promise<Modulo[]> {
-    return this.moduloRepositorio.find();
+  async listar(paginacionQueryDto: PaginacionQueryDto) {
+    const result = await this.moduloRepositorio.listar(paginacionQueryDto);
+    return totalRowsResponse(result);
+  }
+
+  async listarTodo() {
+    const result = await this.moduloRepositorio.listarTodo();
+    return result;
+  }
+
+  async crear(moduloDto: CrearModuloDto) {
+    const result = await this.moduloRepositorio.crear(moduloDto);
+    return result;
   }
 }
