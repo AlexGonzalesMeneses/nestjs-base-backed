@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
+import * as fs from 'fs';
 
 @Injectable()
 export class LogService {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   // constructor() { }
-
+  static getStream() {
+    const streams = [
+      { stream: fs.createWriteStream('/tmp/info.stream.out') },
+      { level: 'debug', stream: fs.createWriteStream('/tmp/debug.stream.out') },
+      { level: 'fatal', stream: fs.createWriteStream('/tmp/fatal.stream.out') },
+    ];
+    return streams;
+  }
   static getLoggerConfig() {
     return {
       pinoHttp: this.getPinoHttpConfig(),
