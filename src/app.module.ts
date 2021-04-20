@@ -13,7 +13,6 @@ import { multistream } from 'pino-multi-stream';
 
 @Module({
   imports: [
-    // LoggerModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: [
         LogService.getPinoHttpConfig(),
