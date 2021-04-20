@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthZManagementService } from 'nest-authz';
 import { AuthorizationController } from './authorization.controller';
-import { AuthorizationServive } from './authorization.service';
+import { AuthorizationService } from './authorization.service';
 
 const resPolitica = {
   sujeto: 'ADMINISTRADOR',
@@ -24,7 +24,7 @@ describe('AuthorizationController', () => {
       controllers: [AuthorizationController],
       providers: [
         {
-          provide: AuthorizationServive,
+          provide: AuthorizationService,
           useValue: {
             listarPoliticas: jest.fn(() => resListar),
             obtenerRoles: jest.fn(() => [resListarCasbin]),

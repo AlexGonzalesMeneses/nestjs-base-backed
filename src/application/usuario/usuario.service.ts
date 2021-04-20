@@ -14,6 +14,7 @@ import { TextService } from '../../common/lib/text.service';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../common/constants/response-messages';
+import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 
 @Injectable()
 export class UsuarioService {
@@ -21,6 +22,7 @@ export class UsuarioService {
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     private readonly mensajeriaService: MensajeriaService,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   // GET USERS
@@ -78,18 +80,19 @@ export class UsuarioService {
   }
 
   private async enviarCorreoContrasenia(correo, contrasena) {
-    const asunto = 'Generacion de credenciales';
     const mensaje = `La contraseña para su inicio de sesión es: ${contrasena}`;
     const result = await this.mensajeriaService.sendEmail(
       correo,
-      asunto,
+      Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
       mensaje,
     );
     return result.finalizado;
   }
 
   async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
-    const usuario = await this.usuarioRepositorio.buscarUsuarioId(idUsuario);
+    const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
+      idUsuario,
+    );
     if (
       usuario &&
       usuario.contrasena === TextService.encrypt(contrasenaActual)
@@ -140,22 +143,23 @@ export class UsuarioService {
   }
 
   async buscarUsuarioId(id: string): Promise<any> {
-    const usuario = await this.usuarioRepositorio.buscarUsuarioId(id);
+    const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id);
     let roles = [];
-    if (usuario.usuarioRol.length) {
-      roles = usuario.usuarioRol.map((usuarioRol) => {
-        if (usuarioRol.estado === Status.ACTIVE) {
-          const modulos = usuarioRol.rol.rolModulo.map((m) => {
-            if (
-              m.estado === Status.ACTIVE &&
-              m.modulo.estado === Status.ACTIVE
-            ) {
-              return m.modulo;
-            }
-          });
-          return { rol: usuarioRol.rol.rol, modulos };
-        }
-      });
+    if (usuario?.usuarioRol?.length) {
+      roles = await Promise.all(
+        usuario.usuarioRol.map(async (usuarioRol) => {
+          const { rol } = usuarioRol.rol;
+          const modulos = await this.authorizationService.obtenerPermisosPorRol(
+            rol,
+          );
+          return {
+            rol,
+            modulos,
+          };
+        }),
+      );
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
     return {
       id: usuario.id,
@@ -168,5 +172,35 @@ export class UsuarioService {
 
   async buscarUsuarioPorCI(persona: Persona): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+  }
+
+  async actualizarContadorBloqueos(idUsuario: string, intento: number) {
+    const usuario = await this.usuarioRepositorio.actualizarContadorBloqueos(
+      idUsuario,
+      intento,
+    );
+    return usuario;
+  }
+
+  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
+    const usuario = await this.usuarioRepositorio.actualizarDatosBloqueo(
+      idUsuario,
+      codigo,
+      fechaBloqueo,
+    );
+    return usuario;
+  }
+
+  async desbloquearCuenta(codigo: string) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoDesbloqueo(
+      codigo,
+    );
+    if (usuario?.fechaBloqueo) {
+      usuario.fechaBloqueo = null;
+      usuario.intentos = 0;
+      usuario.codigoDesbloqueo = null;
+      await this.usuarioRepositorio.save(usuario);
+    }
+    return usuario;
   }
 }

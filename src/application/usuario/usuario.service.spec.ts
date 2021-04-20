@@ -10,6 +10,7 @@ import { MensajeriaService } from '../../core/external-services/mensajeria/mensa
 import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { PreconditionFailedException } from '@nestjs/common';
+import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -55,7 +56,7 @@ const resUsuarioPerfil = {
                 id: 'b320fe27-5644-5712-8423-198302b01e25',
                 label: 'Usuarios',
                 url: '/usuarios',
-                icono: 'manage_accounts',
+                icono: 'mdiAccountCog',
                 nombre: 'usuarios',
                 estado: 'ACTIVO',
               },
@@ -110,6 +111,15 @@ const resUsuarioRestaurar = {
   estado: 'ACTIVO',
 };
 
+const resModulo = {
+  id: 'b320fe27-5644-5712-8423-198302b01e25',
+  label: 'Usuarios',
+  url: '/usuarios',
+  icono: 'manage_accounts',
+  nombre: 'usuarios',
+  estado: 'ACTIVO',
+};
+
 describe('UsuarioService', () => {
   let service: UsuarioService;
   beforeAll(async () => {
@@ -120,7 +130,7 @@ describe('UsuarioService', () => {
           provide: UsuarioRepository,
           useValue: {
             listar: jest.fn(() => [[resUsuarioList], 1]),
-            buscarUsuarioId: jest.fn(() => resUsuarioPerfil),
+            buscarUsuarioRolPorId: jest.fn(() => resUsuarioPerfil),
             crear: jest.fn(() => resUsuarioCrear),
             // preload: jest.fn(() => resUsuarioActivar),
             preload: jest
@@ -144,6 +154,12 @@ describe('UsuarioService', () => {
         {
           provide: PersonaRepository,
           useValue: {},
+        },
+        {
+          provide: AuthorizationService,
+          useValue: {
+            obtenerPermisosPorRol: jest.fn(() => [resModulo]),
+          },
         },
       ],
       imports: [MensajeriaModule],

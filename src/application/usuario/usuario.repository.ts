@@ -55,14 +55,12 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  buscarUsuarioId(id: string) {
+  buscarUsuarioRolPorId(id: string) {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
-      .leftJoinAndSelect('rol.rolModulo', 'rolModulo')
-      .leftJoinAndSelect('rolModulo.modulo', 'modulo')
       .select([
         'usuario.id',
         'usuario.usuario',
@@ -76,8 +74,6 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.fechaNacimiento',
         'usuarioRol',
         'rol',
-        'rolModulo',
-        'modulo',
       ])
       .where({ id })
       .getOne();
@@ -125,5 +121,29 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.usuarioCreacion = usuarioAuditoria;
 
     return this.save(usuario);
+  }
+
+  async actualizarContadorBloqueos(idUsuario, intento) {
+    const usuario = new Usuario();
+    usuario.id = idUsuario;
+    usuario.intentos = intento;
+
+    return this.save(usuario);
+  }
+
+  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
+    const usuario = new Usuario();
+    usuario.id = idUsuario;
+    usuario.codigoDesbloqueo = codigo;
+    usuario.fechaBloqueo = fechaBloqueo;
+
+    return this.save(usuario);
+  }
+
+  buscarPorCodigoDesbloqueo(codigo: string) {
+    return getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .where('usuario.codigoDesbloqueo = :codigo', { codigo })
+      .getOne();
   }
 }

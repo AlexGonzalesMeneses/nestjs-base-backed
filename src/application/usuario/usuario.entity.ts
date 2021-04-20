@@ -39,6 +39,26 @@ export class Usuario extends AbstractEntity {
   })
   estado: string;
 
+  @Column({
+    type: 'integer',
+    default: 0,
+  })
+  intentos: number;
+
+  @Column({
+    name: 'codigo_desbloqueo',
+    length: 100,
+    nullable: true,
+  })
+  codigoDesbloqueo: string;
+
+  @Column({
+    name: 'fecha_bloqueo',
+    type: 'timestamptz',
+    nullable: true,
+  })
+  fechaBloqueo: Date;
+
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,
   })

@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UsuarioRol } from './usuario-rol.entity';
-import { RolModulo } from './rol-modulo.entity';
 import { Status } from '../../../common/constants';
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
@@ -18,7 +17,4 @@ export class Rol {
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)
   public usuarioRol!: UsuarioRol[];
-
-  @OneToMany(() => RolModulo, (rolModulo) => rolModulo.rol)
-  public rolModulo!: RolModulo[];
 }

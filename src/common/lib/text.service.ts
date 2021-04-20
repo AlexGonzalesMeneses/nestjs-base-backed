@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
+import { Configurations } from '../constants';
 
 export class TextService {
   /**
@@ -47,9 +48,8 @@ export class TextService {
   }
 
   static validateLevelPassword(password: string) {
-    const SCORE_VALID = 3;
     const result = zxcvbn(password);
-    if (result.score >= SCORE_VALID) {
+    if (result.score >= Configurations.SCORE_PASSWORD) {
       return true;
     }
     return false;

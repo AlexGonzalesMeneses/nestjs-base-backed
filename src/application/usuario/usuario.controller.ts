@@ -8,6 +8,7 @@ import {
   Query,
   Req,
   Request,
+  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -20,10 +21,14 @@ import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
 import { Messages } from '../../common/constants/response-messages';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
-  constructor(private usuarioService: UsuarioService) {
+  constructor(
+    private usuarioService: UsuarioService,
+    private readonly configService: ConfigService,
+  ) {
     super();
   }
   // GET users
@@ -106,5 +111,14 @@ export class UsuarioController extends AbstractController {
   async update(@Param('id') id: string, @Body() usuarioDto: UsuarioDto) {
     const result = await this.usuarioService.update(id, usuarioDto);
     return this.successCreate(result);
+  }
+
+  @Get('desbloqueo')
+  async desbloquearCuenta(@Query() query, @Res() res) {
+    const { q } = query;
+    await this.usuarioService.desbloquearCuenta(q);
+    return res
+      .status(200)
+      .redirect(`${this.configService.get('URL_FRONTEND')}/#/login`);
   }
 }

@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { Status } from '../../common/constants';
@@ -53,6 +54,7 @@ describe('UsuarioController', () => {
             restaurarContrasena: jest.fn(() => resUsuario),
           },
         },
+        ConfigService,
       ],
     }).compile();
 
