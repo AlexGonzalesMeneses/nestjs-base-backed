@@ -8,11 +8,19 @@ import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
 import { LoggerModule } from 'nestjs-pino';
 import { LogService } from './core/logs/log.service';
+
+import * as fs from 'fs';
+import { multistream } from 'pino-multi-stream';
+const streams = [
+  { stream: fs.createWriteStream('/tmp/info.stream.out') },
+  { level: 'debug', stream: fs.createWriteStream('/tmp/debug.stream.out') },
+  { level: 'fatal', stream: fs.createWriteStream('/tmp/fatal.stream.out') },
+];
 @Module({
   imports: [
     // LoggerModule.forRoot(),
     LoggerModule.forRoot({
-      pinoHttp: LogService.getPinoHttpConfig(),
+      pinoHttp: [LogService.getPinoHttpConfig(), multistream(streams)],
     }),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
