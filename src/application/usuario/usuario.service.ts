@@ -14,6 +14,7 @@ import { TextService } from '../../common/lib/text.service';
 import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../common/constants/response-messages';
+import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 
 @Injectable()
 export class UsuarioService {
@@ -21,6 +22,7 @@ export class UsuarioService {
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     private readonly mensajeriaService: MensajeriaService,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   // GET USERS
@@ -139,22 +141,23 @@ export class UsuarioService {
   }
 
   async buscarUsuarioId(id: string): Promise<any> {
-    const usuario = await this.usuarioRepositorio.buscarUsuarioId(id);
+    const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id);
     let roles = [];
-    if (usuario.usuarioRol.length) {
-      roles = usuario.usuarioRol.map((usuarioRol) => {
-        if (usuarioRol.estado === Status.ACTIVE) {
-          const modulos = usuarioRol.rol.rolModulo.map((m) => {
-            if (
-              m.estado === Status.ACTIVE &&
-              m.modulo.estado === Status.ACTIVE
-            ) {
-              return m.modulo;
-            }
-          });
-          return { rol: usuarioRol.rol.rol, modulos };
-        }
-      });
+    if (usuario?.usuarioRol?.length) {
+      roles = await Promise.all(
+        usuario.usuarioRol.map(async (usuarioRol) => {
+          const { rol } = usuarioRol.rol;
+          const modulos = await this.authorizationService.obtenerPermisosPorRol(
+            rol,
+          );
+          return {
+            rol,
+            modulos,
+          };
+        }),
+      );
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
     return {
       id: usuario.id,

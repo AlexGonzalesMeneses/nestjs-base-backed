@@ -83,6 +83,30 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
+  buscarUsuarioRolPorId(id: string) {
+    return getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
+      .leftJoinAndSelect('usuario.persona', 'persona')
+      .leftJoinAndSelect('usuarioRol.rol', 'rol')
+      .select([
+        'usuario.id',
+        'usuario.usuario',
+        'usuario.contrasena',
+        'usuario.estado',
+        'persona.nombres',
+        'persona.primerApellido',
+        'persona.segundoApellido',
+        'persona.tipoDocumento',
+        'persona.nroDocumento',
+        'persona.fechaNacimiento',
+        'usuarioRol',
+        'rol',
+      ])
+      .where({ id })
+      .getOne();
+  }
+
   buscarUsuarioPorCI(persona: Persona) {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')

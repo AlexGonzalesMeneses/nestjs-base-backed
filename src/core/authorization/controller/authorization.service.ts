@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AuthZManagementService } from 'nest-authz';
+import { AuthZManagementService, AuthZRBACService } from 'nest-authz';
 import { totalRowsResponse } from '../../../common/lib/http.module';
-
+import { ModuloService } from '../service/modulo.service';
 @Injectable()
-export class AuthorizationServive {
-  constructor(private readonly rbacSrv: AuthZManagementService) {}
+export class AuthorizationService {
+  constructor(
+    private readonly rbacSrv: AuthZManagementService,
+    private readonly rbacSrv1: AuthZRBACService,
+    private readonly moduloService: ModuloService,
+  ) {}
 
   async listarPoliticas() {
     const politicas = await this.rbacSrv.getPolicy();
@@ -36,7 +40,17 @@ export class AuthorizationServive {
   }
 
   async obtenerRoles() {
-    const result = await this.rbacSrv.getPolicy();
+    const result = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
     return result;
+  }
+
+  async obtenerPermisosPorRol(rol: string) {
+    const politicas = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
+    const modulos = await this.moduloService.listarTodo();
+    const politicasRol = politicas.filter((politica) => politica[0] === rol);
+    const politicasModulo = politicasRol
+      .map((politica) => modulos.find((modulo) => modulo.url === politica[1]))
+      .filter(Boolean);
+    return politicasModulo;
   }
 }

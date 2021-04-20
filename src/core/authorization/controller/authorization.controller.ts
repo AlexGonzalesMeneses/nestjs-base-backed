@@ -9,11 +9,11 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
-import { AuthorizationServive } from './authorization.service';
+import { AuthorizationService } from './authorization.service';
 
 @Controller('autorizacion')
 export class AuthorizationController extends AbstractController {
-  constructor(private readonly authorizationService: AuthorizationServive) {
+  constructor(private readonly authorizationService: AuthorizationService) {
     super();
   }
 
