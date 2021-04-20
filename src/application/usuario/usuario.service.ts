@@ -90,7 +90,9 @@ export class UsuarioService {
   }
 
   async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
-    const usuario = await this.usuarioRepositorio.buscarUsuarioId(idUsuario);
+    const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
+      idUsuario,
+    );
     if (
       usuario &&
       usuario.contrasena === TextService.encrypt(contrasenaActual)
