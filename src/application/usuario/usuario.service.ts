@@ -115,7 +115,7 @@ export class UsuarioService {
 
   async restaurarContrasena(idUsuario: string, usuarioAuditoria: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
-    const statusValid = [Status.ACTIVE];
+    const statusValid = [Status.ACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
       usuario.contrasena = TextService.encrypt(contrasena);
