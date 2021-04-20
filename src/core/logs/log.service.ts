@@ -37,8 +37,9 @@ export class LogService {
       },
       serializers: {
         req(req) {
-          req.body = req.raw.body;
-          return req;
+          return {
+            id: req.id,
+          };
         },
       },
       redact: {
