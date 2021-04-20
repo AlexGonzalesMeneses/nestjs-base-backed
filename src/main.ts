@@ -29,7 +29,6 @@ async function bootstrap() {
 
   // configuration app
   const repository = getConnection().getRepository(Session);
-  console.log('----------->', expressMiddleware);
   app.use(expressMiddleware());
 
   app.use(

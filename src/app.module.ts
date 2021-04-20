@@ -8,17 +8,16 @@ import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
 import { LoggerModule } from 'nestjs-pino';
 import { LogService } from './core/logs/log.service';
-console.log(LogService);
 @Module({
   imports: [
+    // LoggerModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: LogService.getPinoHttpConfig(),
+    }),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     CoreModule,
     ApplicationModule,
-    // LoggerModule.forRoot(), // This works! :D
-    LoggerModule.forRoot({
-      pinoHttp: LogService.getPinoHttpConfig(),
-    }),
   ],
   controllers: [AppController],
   providers: [
