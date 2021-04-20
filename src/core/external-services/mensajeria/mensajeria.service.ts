@@ -1,5 +1,6 @@
 import { HttpException, HttpService, Injectable } from '@nestjs/common';
 import { catchError, map } from 'rxjs/operators';
+import { ExternalServiceException } from '../../../common/exceptions/external-service.exception';
 
 @Injectable()
 export class MensajeriaService {
@@ -43,17 +44,16 @@ export class MensajeriaService {
       asunto: subject,
       contenido: content,
     };
-
-    const response = this.httpService
-      .post('/correo', emailBody)
-      .pipe(
-        map((response) => response.data),
-        catchError((error) => {
-          throw new HttpException(error.response.data, error.response.status);
-        }),
-      )
-      .toPromise();
-    return response;
+    try {
+      const response = await this.httpService
+        .post('/correo', emailBody)
+        .pipe(map((response) => response.data))
+        .toPromise();
+      console.log(response.data);
+      return { finalizado: true };
+    } catch (error) {
+      throw new ExternalServiceException('MENSAJERIA', error);
+    }
   }
 
   /**

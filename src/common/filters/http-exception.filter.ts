@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception';
 import { Messages } from '../constants/response-messages';
+import { ExternalServiceException } from '../exceptions/external-service.exception';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -43,7 +44,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
   public isBusinessException(exception: Error): any {
     if (
       exception instanceof EntityNotFoundException ||
-      exception instanceof EntityUnauthorizedException
+      exception instanceof EntityUnauthorizedException ||
+      exception instanceof ExternalServiceException
     ) {
       return exception.message;
     } else {
