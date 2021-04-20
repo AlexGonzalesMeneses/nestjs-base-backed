@@ -9,9 +9,17 @@ export class LogService {
   static getStream() {
     const streams = [
       { stream: process.stdout },
-      { stream: fs.createWriteStream('/tmp/info.stream.out') },
-      { level: 'debug', stream: fs.createWriteStream('/tmp/debug.stream.out') },
-      { level: 'fatal', stream: fs.createWriteStream('/tmp/fatal.stream.out') },
+      {
+        stream: fs.createWriteStream(process.env.LOG_PATH + '/out.log'),
+      },
+      {
+        level: 'error',
+        stream: fs.createWriteStream(process.env.LOG_PATH + '/error.log'),
+      },
+      {
+        level: 'fatal',
+        stream: fs.createWriteStream(process.env.LOG_PATH + '/fatal.log'),
+      },
     ];
     return streams;
   }
