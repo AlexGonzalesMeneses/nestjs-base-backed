@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
-import { ParametroDto } from './dto/parametro.dto';
+import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { ParametroRepository } from './parametro.repository';
 import { ParametroService } from './parametro.service';
 
@@ -47,7 +47,7 @@ describe('ParametroService', () => {
   });
 
   it('[crear] Deberia crear un nuevo parametro', async () => {
-    const parametro = new ParametroDto();
+    const parametro = new CrearParametroDto();
     parametro.codigo = resParametro.codigo;
     parametro.nombre = resParametro.nombre;
     parametro.grupo = resParametro.grupo;

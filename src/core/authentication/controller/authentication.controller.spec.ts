@@ -3,12 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
-
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from 'nest-winston';
-import * as winston from 'winston';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 
 const resAutenticar = {
   refresh_token: '123',
@@ -36,18 +31,7 @@ describe('AuthenticationController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        WinstonModule.forRoot({
-          transports: [
-            new winston.transports.Console({
-              format: winston.format.combine(
-                winston.format.timestamp(),
-                nestWinstonModuleUtilities.format.nestLike(),
-              ),
-            }),
-          ],
-        }),
-      ],
+      imports: [LoggerModule.forRoot()],
       controllers: [AuthenticationController],
       providers: [
         {
@@ -70,6 +54,7 @@ describe('AuthenticationController', () => {
             REFRESH_TOKEN_EXPIRES_IN: 100,
           },
         },
+        PinoLogger,
       ],
     }).compile();
 

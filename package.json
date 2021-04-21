@@ -56,7 +56,6 @@
     "helmet": "^4.4.1",
     "nanoid": "^3.1.22",
     "nest-authz": "^2.1.0",
-    "nest-winston": "^1.4.0",
     "nestjs-pino": "^1.4.0",
     "openid-client": "^4.2.3",
     "passport": "^0.4.1",
@@ -75,7 +74,6 @@
     "typeorm": "^0.2.30",
     "typeorm-adapter": "^1.4.0",
     "typeorm-store": "^1.2.0",
-    "winston": "^3.3.3",
     "wkhtmltopdf": "^0.3.4",
     "zxcvbn-typescript": "^5.0.1"
   },

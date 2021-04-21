@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Request,
-  Res,
-  UseGuards,
-  Inject,
-} from '@nestjs/common';
+import { Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { Issuer } from 'openid-client';
 import { sendRefreshToken } from '../../../common/lib/http.module';
@@ -29,7 +21,7 @@ export class AuthenticationController {
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
-    this.logger.log(`Usuario: ${result.data.id} ingreso al sistema`);
+    this.logger.debug(`Usuario: ${result.data.id} ingreso al sistema`);
     sendRefreshToken(res, result.refresh_token.id);
     return res
       .status(200)

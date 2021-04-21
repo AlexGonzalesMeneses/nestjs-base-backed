@@ -6,7 +6,6 @@ import {
   Post,
   Request,
   Res,
-  Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Logger } from 'nestjs-pino';

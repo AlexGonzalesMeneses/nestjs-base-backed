@@ -2,9 +2,11 @@
 
 export enum Messages {
   // generic Messages exceptions
-  EXCEPTION_BAD_REQUEST = 'Error de validación',
+  EXCEPTION_BAD_REQUEST = 'La solicitud no se puede completar, error de validación',
   EXCEPTION_UNAUTHORIZED = 'Usuario no autorizado',
+  EXCEPTION_FORBIDDEN = 'No tiene permisos para el recurso solicitado.',
   EXCEPTION_NOT_FOUND = 'Recurso no encontrado',
+  EXCEPTION_PRECONDITION_FAILED = 'La solicitud no cumple una condición previa.',
   EXCEPTION_DEFAULT = 'Ocurrio un error desconocido',
 
   // generic messages success

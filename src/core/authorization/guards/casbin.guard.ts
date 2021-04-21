@@ -3,12 +3,12 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
-import { AuthZManagementService } from 'nest-authz';
-
+import { AUTHZ_ENFORCER } from 'nest-authz';
 @Injectable()
 export class CasbinGuard implements CanActivate {
-  constructor(private readonly rbacSrv: AuthZManagementService) {}
+  constructor(@Inject(AUTHZ_ENFORCER) private enforcer) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const {
@@ -17,11 +17,13 @@ export class CasbinGuard implements CanActivate {
       method: action,
     } = context.switchToHttp().getRequest();
     if (!user) {
-      throw new ForbiddenException('No autorizado');
+      throw new ForbiddenException();
     }
-    const app = 'backend';
+    console.log('----------*****--------');
+    console.log(await this.enforcer.getPolicy());
+    console.log('----------*****---------');
     for (const rol of user.roles) {
-      if (await this.rbacSrv.hasPolicy(rol, resource, action, app)) return true;
+      if (await this.enforcer.enforce(rol, resource, action)) return true;
     }
     return false;
   }

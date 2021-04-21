@@ -4,6 +4,7 @@ import { plainToClass } from 'class-transformer';
 import { Status } from '../../common/constants';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { TextService } from '../../common/lib/text.service';
+import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioController } from './usuario.controller';
 import { UsuarioService } from './usuario.service';
@@ -126,10 +127,11 @@ describe('UsuarioController', () => {
   });
 
   it('[acualizarContrasena] Deberia actualizar la contrasena de un usuario', async () => {
-    const body = {
+    const datosBody = {
       constrasenaActual: TextService.generateShortRandomText(),
       contrasenaNueva: TextService.generateShortRandomText(),
     };
+    const body = plainToClass(ActualizarContrasenaDto, datosBody);
     const usuario = await controller.actualizarContrasena(mockRequest, body);
 
     expect(usuario).toBeDefined();

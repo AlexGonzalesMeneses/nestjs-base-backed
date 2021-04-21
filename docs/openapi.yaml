@@ -120,16 +120,25 @@ paths:
                                     example: 'Usuarios'
                                   url:
                                     type: string
-                                    example: '/usuarios'
-                                  icono:
-                                    type: string
-                                    example: 'mdiAccountCog'
+                                    example: '/usuarios'                                  
                                   nombre:
                                     type: string
                                     example: 'usuarios'
                                   estado:
                                     type: string
                                     example: 'ACTIVO'
+                                  propiedades:
+                                    type: object
+                                    properties:
+                                      icono: 
+                                        type: string
+                                        example: 'mdiAccountCog'
+                                      color_light:
+                                        type: string
+                                        example: '#3F1929'
+                                      color_dark:
+                                        type: string
+                                        example: '#3F1929'
                       persona:
                         type: object
                         properties:
