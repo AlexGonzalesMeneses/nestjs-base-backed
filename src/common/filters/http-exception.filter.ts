@@ -7,6 +7,8 @@ import {
   NotFoundException,
   BadRequestException,
   UnauthorizedException,
+  PreconditionFailedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
@@ -26,15 +28,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let errores = [];
     console.error('[error] %o', r);
     if (Array.isArray(r.message)) {
-      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      status = HttpStatus.BAD_REQUEST;
       const validationErrors = r.message;
       errores = validationErrors;
     }
-
+    const mensaje = this.isBusinessException(exception);
     const errorResponse = {
       codigo: status,
-      timestamp: new Date().toISOString(),
-      mensaje: this.isBusinessException(exception),
+      timestamp: Math.floor(Date.now() / 1000),
+      mensaje,
       datos: {
         errores,
       },
@@ -65,6 +67,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         break;
       case NotFoundException:
         message = Messages.EXCEPTION_NOT_FOUND;
+        break;
+      case PreconditionFailedException:
+        message = exception.message || Messages.EXCEPTION_PRECONDITION_FAILED;
+        break;
+      case ForbiddenException:
+        message = Messages.EXCEPTION_FORBIDDEN;
         break;
       default:
         message = Messages.EXCEPTION_DEFAULT;

@@ -1,5 +1,5 @@
-import { HttpException, HttpService, Injectable } from '@nestjs/common';
-import { catchError, map } from 'rxjs/operators';
+import { HttpService, Injectable } from '@nestjs/common';
+import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../common/exceptions/external-service.exception';
 
 @Injectable()
@@ -12,23 +12,18 @@ export class MensajeriaService {
    * @param content contenido
    */
   async sendSms(cellphone: string, content: string) {
-    const smsBody = {
-      para: [cellphone],
-      contenido: content,
-    };
     try {
-      const { data: response } = await this.httpService
+      const smsBody = {
+        para: [cellphone],
+        contenido: content,
+      };
+      const response = await this.httpService
         .post('/sms', smsBody)
+        .pipe(map((res) => res.data))
         .toPromise();
       return response;
     } catch (error) {
-      if (error.response) {
-        throw new Error(error.response.data);
-      } else if (error.request) {
-        throw new Error(error.request);
-      } else {
-        throw new Error(error.message);
-      }
+      throw new ExternalServiceException('MENSAJERIA:SMS', error);
     }
   }
 
@@ -39,20 +34,19 @@ export class MensajeriaService {
    * @param content contenido
    */
   async sendEmail(email: string, subject: string, content: string) {
-    const emailBody = {
-      para: [email],
-      asunto: subject,
-      contenido: content,
-    };
     try {
+      const emailBody = {
+        para: [email],
+        asunto: subject,
+        contenido: content,
+      };
       const response = await this.httpService
         .post('/correo', emailBody)
-        .pipe(map((response) => response.data))
+        .pipe(map((res) => res.data))
         .toPromise();
-      console.log(response.data);
-      return { finalizado: true };
+      return response;
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA', error);
+      throw new ExternalServiceException('MENSAJERIA:CORREO', error);
     }
   }
 
@@ -61,16 +55,15 @@ export class MensajeriaService {
    * @param id Identificador de solicitud sms
    */
   async getReportSms(id: string) {
-    const response = this.httpService
-      .get(`/sms/reporte/${id}`)
-      .pipe(
-        map((response) => response.data),
-        catchError((error) => {
-          throw new HttpException(error.response.data, error.response.status);
-        }),
-      )
-      .toPromise();
-    return response;
+    try {
+      const response = this.httpService
+        .get(`/sms/reporte/${id}`)
+        .pipe(map((res) => res.data))
+        .toPromise();
+      return response;
+    } catch (error) {
+      throw new ExternalServiceException('MENSAJERIA:SMS', error);
+    }
   }
 
   /**
@@ -78,15 +71,14 @@ export class MensajeriaService {
    * @param id Identificador de solicitud correo
    */
   async getReportEmail(id: string) {
-    const response = this.httpService
-      .get(`/correo/reporte/${id}`)
-      .pipe(
-        map((response) => response.data),
-        catchError((error) => {
-          throw new HttpException(error.response.data, error.response.status);
-        }),
-      )
-      .toPromise();
-    return response;
+    try {
+      const response = this.httpService
+        .get(`/correo/reporte/${id}`)
+        .pipe(map((res) => res.data))
+        .toPromise();
+      return response;
+    } catch (error) {
+      throw new ExternalServiceException('MENSAJERIA:CORREO', error);
+    }
   }
 }
