@@ -17,7 +17,7 @@ Proyecto base backend con modulos:
 - Passport
 - Swagger
 - TypeORM
-- Winston
+- PinoJs
 - Casbin
 - Postgresql
 - Docker
