@@ -1,7 +1,7 @@
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import { Modulo } from '../entity/modulo.entity';
-import { CrearModuloDto } from '../dto/crear-modulo.dto';
+import { CrearModuloDto, PropiedadesDto } from '../dto/crear-modulo.dto';
 @EntityRepository(Modulo)
 export class ModuloRepository extends Repository<Modulo> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
@@ -19,11 +19,16 @@ export class ModuloRepository extends Repository<Modulo> {
   }
 
   async crear(moduloDto: CrearModuloDto) {
+    const propiedades = new PropiedadesDto();
+    propiedades.icono = moduloDto.propiedades.icono;
+    propiedades.color_dark = moduloDto.propiedades.color_dark;
+    propiedades.color_light = moduloDto.propiedades.color_light;
+
     const modulo = new Modulo();
     modulo.label = moduloDto.label;
     modulo.url = moduloDto.url;
-    modulo.icono = moduloDto.icono;
     modulo.nombre = moduloDto.nombre;
+    modulo.propiedades = propiedades;
 
     return this.save(modulo);
   }

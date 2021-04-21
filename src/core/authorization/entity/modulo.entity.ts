@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Status } from '../../../common/constants';
+import { PropiedadesDto } from '../dto/crear-modulo.dto';
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
@@ -15,10 +16,12 @@ export class Modulo {
   url: string;
 
   @Column({ length: 50, unique: true })
-  icono: string;
-
-  @Column({ length: 50, unique: true })
   nombre: string;
+
+  @Column({
+    type: 'jsonb',
+  })
+  propiedades: PropiedadesDto;
 
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
