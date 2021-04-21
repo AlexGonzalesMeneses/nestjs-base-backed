@@ -10,13 +10,12 @@ import {
   Param,
 } from '@nestjs/common';
 import { ParametroService } from './parametro.service';
-import { ParametroDto } from './dto/parametro.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Parametro } from './parametro.entity';
+import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../common/dto/abstract-controller.dto';
+import { ParamGrupoDto } from './dto/grupo.dto';
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
@@ -31,8 +30,9 @@ export class ParametroController extends AbstractController {
     return this.successList(result);
   }
 
+  @UsePipes(ValidationPipe)
   @Get('/:grupo')
-  async listarPorGrupo(@Param() params) {
+  async listarPorGrupo(@Param() params: ParamGrupoDto) {
     const { grupo } = params;
     const result = await this.parametroServicio.listarPorGrupo(grupo);
     return this.successList(result);
@@ -40,7 +40,7 @@ export class ParametroController extends AbstractController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async crear(@Body() parametroDto: ParametroDto) {
+  async crear(@Body() parametroDto: CrearParametroDto) {
     const result = await this.parametroServicio.crear(parametroDto);
     return this.successCreate(result);
   }

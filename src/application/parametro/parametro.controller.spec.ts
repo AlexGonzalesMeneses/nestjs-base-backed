@@ -1,9 +1,11 @@
+import { CanActivate } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { AuthZManagementService } from 'nest-authz';
+import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { TextService } from '../../common/lib/text.service';
-import { ParametroDto } from './dto/parametro.dto';
+import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { ParametroController } from './parametro.controller';
 import { ParametroService } from './parametro.service';
 
@@ -21,6 +23,9 @@ const resListar = {
 describe('ParametroController', () => {
   let controller: ParametroController;
   beforeAll(async () => {
+    const mock_ForceFailGuard: CanActivate = {
+      canActivate: jest.fn(() => true),
+    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [ParametroController],
@@ -38,7 +43,10 @@ describe('ParametroController', () => {
           useValue: {},
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(CasbinGuard)
+      .useValue(mock_ForceFailGuard)
+      .compile();
 
     controller = module.get<ParametroController>(ParametroController);
   });
@@ -55,9 +63,9 @@ describe('ParametroController', () => {
   });
 
   it('[listarPorGrupo] Deberia listar parametros por grupo', async () => {
-    const mockRequest = () => ({
-      param: { grupo: 'TD' },
-    });
+    const mockRequest = {
+      grupo: 'TD',
+    };
     const result = await controller.listarPorGrupo(mockRequest);
     expect(result).toBeDefined();
     expect(result).toHaveProperty('finalizado');
@@ -73,7 +81,7 @@ describe('ParametroController', () => {
       grupo: 'TD',
       descripcion: 'Pasaporte',
     };
-    const parametroDto = plainToClass(ParametroDto, parametro);
+    const parametroDto = plainToClass(CrearParametroDto, parametro);
     const result = await controller.crear(parametroDto);
     expect(result).toBeDefined();
     expect(result).toHaveProperty('finalizado');

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
-import { ParametroDto } from './dto/parametro.dto';
+import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
 
@@ -13,7 +13,7 @@ export class ParametroService {
     private parametroRepositorio: ParametroRepository,
   ) {}
 
-  async crear(parametroDto: ParametroDto): Promise<Parametro> {
+  async crear(parametroDto: CrearParametroDto): Promise<Parametro> {
     const result = await this.parametroRepositorio.crear(parametroDto);
     return result;
   }

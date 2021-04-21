@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ParametroDto {
+export class CrearParametroDto {
   id: number;
   @ApiProperty()
   @IsNotEmpty()

@@ -22,6 +22,8 @@ import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { UsuarioService } from './usuario.service';
 import { Messages } from '../../common/constants/response-messages';
 import { ConfigService } from '@nestjs/config';
+import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
+import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -63,26 +65,37 @@ export class UsuarioController extends AbstractController {
   // activar usuario
   @UseGuards(JwtAuthGuard)
   @Patch('/activacion/:id')
-  async activar(@Req() req, @Param() param) {
-    const { id } = param;
+  @UsePipes(ValidationPipe)
+  async activar(@Req() req, @Param() params: ParamUuidDto) {
+    const { id: idUsuario } = params;
     const usuarioAuditoria = this.getUser(req);
-    const result = await this.usuarioService.activar(id, usuarioAuditoria);
+    const result = await this.usuarioService.activar(
+      idUsuario,
+      usuarioAuditoria,
+    );
     return this.successUpdate(result);
   }
 
   // inactivar usuario
   @UseGuards(JwtAuthGuard)
   @Patch('/inactivacion/:id')
-  async inactivar(@Req() req, @Param() param) {
-    const { id } = param;
+  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
+    const { id: idUsuario } = param;
     const usuarioAuditoria = this.getUser(req);
-    const result = await this.usuarioService.inactivar(id, usuarioAuditoria);
+    const result = await this.usuarioService.inactivar(
+      idUsuario,
+      usuarioAuditoria,
+    );
     return this.successUpdate(result);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('/contrasena')
-  async actualizarContrasena(@Req() req, @Body() body) {
+  @UsePipes(ValidationPipe)
+  async actualizarContrasena(
+    @Req() req,
+    @Body() body: ActualizarContrasenaDto,
+  ) {
     const idUsuario = this.getUser(req);
     const { contrasenaActual, contrasenaNueva } = body;
     const result = await this.usuarioService.actualizarContrasena(
@@ -95,7 +108,8 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/contrasena/:id')
-  async restaurarContrasena(@Req() req, @Param() param) {
+  @UsePipes(ValidationPipe)
+  async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
     const usuarioAuditoria = this.getUser(req);
     const { id: idUsuario } = param;
     const result = await this.usuarioService.restaurarContrasena(
@@ -114,9 +128,10 @@ export class UsuarioController extends AbstractController {
   }
 
   @Get('desbloqueo')
-  async desbloquearCuenta(@Query() query, @Res() res) {
-    const { q } = query;
-    await this.usuarioService.desbloquearCuenta(q);
+  @UsePipes(ValidationPipe)
+  async desbloquearCuenta(@Query() query: ParamUuidDto, @Res() res) {
+    const { id: idDesbloqueo } = query;
+    await this.usuarioService.desbloquearCuenta(idDesbloqueo);
     return res
       .status(200)
       .redirect(`${this.configService.get('URL_FRONTEND')}/#/login`);

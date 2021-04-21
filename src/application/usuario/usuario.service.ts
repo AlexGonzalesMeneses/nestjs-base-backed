@@ -46,7 +46,7 @@ export class UsuarioService {
     return { id, estado };
   }
 
-  async activar(idUsuario: string, usuarioAuditoria: string) {
+  async activar(idUsuario, usuarioAuditoria: string) {
     const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {

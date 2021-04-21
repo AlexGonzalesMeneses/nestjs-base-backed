@@ -1,6 +1,6 @@
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { EntityRepository, Repository } from 'typeorm';
-import { ParametroDto } from './dto/parametro.dto';
+import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { Parametro } from './parametro.entity';
 
 @EntityRepository(Parametro)
@@ -30,7 +30,7 @@ export class ParametroRepository extends Repository<Parametro> {
     return queryBuilder;
   }
 
-  async crear(parametroDto: ParametroDto) {
+  async crear(parametroDto: CrearParametroDto) {
     const { codigo, nombre, grupo, descripcion } = parametroDto;
 
     const parametro = new Parametro();
