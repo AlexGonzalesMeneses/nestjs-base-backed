@@ -27,11 +27,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             adapter,
           );
           await enforcer.enableLog(true);
-          await enforcer.loadFilteredPolicy({
+          /* await enforcer.loadFilteredPolicy({
             ptype: 'p',
             v3: 'backend',
-          });
-
+          }); */
+          await enforcer.loadPolicy();
           return enforcer;
         },
         inject: [ConfigService],
