@@ -39,6 +39,7 @@ export class LogService {
       serializers: {
         err: pino.stdSerializers.err,
         req: (req) => {
+          req.body = req.raw.body;
           return { id: req.id, method: req.method, url: req.url };
         },
         res: pino.stdSerializers.res,
@@ -65,11 +66,15 @@ export class LogService {
           return `Request completed - ${res.req.id} ${JSON.stringify(
             res.req.headers,
           )}`;
-        } else if (res.err) {
-          return `Request ${JSON.stringify(res.req)} errored with - ${
-            res.err.name
-          } : reason:${res.err.message}`;
         }
+        return `Request - errored with - ${JSON.stringify(res.req)}`;
+      },
+      customErrorMessage: function (error, res) {
+        return `Error: ${
+          res.statusCode
+        } Datos de la Peticion ->>> { "headers":"${JSON.stringify(
+          res.req.headers,
+        )}, "body": ${JSON.stringify(res.req.body)} }`;
       },
       customAttributeKeys: {
         req: `request`,
