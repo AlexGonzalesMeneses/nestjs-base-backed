@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
 import * as fs from 'fs';
+import pino from 'pino';
 
 @Injectable()
 export class LogService {
@@ -36,11 +37,11 @@ export class LogService {
         return req.id || id();
       },
       serializers: {
-        req(req) {
-          return {
-            id: req.id,
-          };
+        err: pino.stdSerializers.err,
+        req: (req) => {
+          return { id: req.id, method: req.method, url: req.url };
         },
+        res: pino.stdSerializers.res,
       },
       redact: {
         paths: (process.env.LOG_HIDE || '').split(' '),
@@ -61,16 +62,20 @@ export class LogService {
       },
       customSuccessMessage: (res) => {
         if (res.statusCode <= 304) {
-          return `Request completed - ${res.statusMessage}`;
+          return `Request completed - ${res.req.id} ${JSON.stringify(
+            res.req.headers,
+          )}`;
         } else if (res.err) {
-          return `Request errored with - ${res.err.name} : reason:${res.err.message}`;
+          return `Request ${JSON.stringify(res.req)} errored with - ${
+            res.err.name
+          } : reason:${res.err.message}`;
         }
       },
       customAttributeKeys: {
         req: `request`,
         res: `response`,
         err: `error`,
-        responseTime: `timeTakenForCompletion:ms`,
+        responseTime: `Tiempo de la transaccion:ms`,
       },
       prettyPrint: process.env.NODE_ENV !== 'production',
     };
