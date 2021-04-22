@@ -7,21 +7,26 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
-import { Logger } from 'nestjs-pino';
+import { PinoLogger } from 'nestjs-pino';
 
 @Controller()
 export class AuthenticationController {
+  static staticLogger: PinoLogger;
+
   constructor(
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
-    private readonly logger: Logger,
-  ) {}
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(AuthenticationController.name);
+    AuthenticationController.staticLogger = this.logger;
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Request() req, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
-    this.logger.debug(`Usuario: ${result.data.id} ingreso al sistema`);
+    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
     sendRefreshToken(res, result.refresh_token.id);
     return res
       .status(200)
@@ -66,7 +71,7 @@ export class AuthenticationController {
     const idUsuario = JSON.parse(
       Buffer.from(req.headers.authorization.split('.')[1], 'base64').toString(),
     ).id;
-    this.logger.log(`Usuario: ${idUsuario} salio del sistema`);
+    this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
 
     if (url && idToken) {
       return res.status(200).json({
