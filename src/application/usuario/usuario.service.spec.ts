@@ -261,8 +261,8 @@ describe('UsuarioService', () => {
 
   it('[actualizarContrasena] Deberia actualizar la contraseña de un usuario autenticado', async () => {
     const idUsuario = TextService.generateUuid();
-    const contrasenaActual = '123';
-    const contrasenaNueva = 'Contr4seN1AS3gur4';
+    const contrasenaActual = TextService.btoa(encodeURI('123'));
+    const contrasenaNueva = TextService.btoa(encodeURI('Contr4seN1AS3gur4'));
     const result = await service.actualizarContrasena(
       idUsuario,
       contrasenaActual,
@@ -274,8 +274,8 @@ describe('UsuarioService', () => {
 
   it('[actualizarContrasena] Deberia lanzar una excepcion si la contraseña actual es incorrecta', async () => {
     const idUsuario = TextService.generateUuid();
-    const contrasenaActual = '1234';
-    const contrasenaNueva = 'Contr4seN1AS3gur4';
+    const contrasenaActual = TextService.btoa(encodeURI('1234'));
+    const contrasenaNueva = TextService.btoa(encodeURI('Contr4seN1AS3gur4'));
     try {
       await service.actualizarContrasena(
         idUsuario,

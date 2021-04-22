@@ -95,12 +95,14 @@ export class UsuarioService {
     );
     if (
       usuario &&
-      usuario.contrasena === TextService.encrypt(contrasenaActual)
+      usuario.contrasena ===
+        TextService.encrypt(TextService.decodeBase64(contrasenaActual))
     ) {
       // validar que la contrasena nueva cumpla nivel de seguridad
-      if (TextService.validateLevelPassword(contrasenaNueva)) {
+      const contrasena = TextService.decodeBase64(contrasenaNueva);
+      if (TextService.validateLevelPassword(contrasena)) {
         // guardar en bd
-        usuario.contrasena = TextService.encrypt(contrasenaNueva);
+        usuario.contrasena = TextService.encrypt(contrasena);
         usuario.estado = Status.ACTIVE;
         const result = await this.usuarioRepositorio.save(usuario);
         return {

@@ -7,6 +7,7 @@ import { RefreshTokensService } from './refreshTokens.service';
 import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
 import { Configurations } from '../../../common/constants';
 import * as dayjs from 'dayjs';
+import { TextService } from '../../../common/lib/text.service';
 
 const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
@@ -91,14 +92,17 @@ describe('AuthenticationService', () => {
   });
 
   it('[validarUsuario] deberia validar un usuario exitosamente.', async () => {
-    const usuario = await service.validarUsuario('user', '123');
+    const usuario = await service.validarUsuario(
+      'user',
+      TextService.btoa(encodeURI('123')),
+    );
 
     expect(usuario).toHaveProperty('id');
   });
 
   it('[validarUsuario] deberia lanzar una excepcion para un usuario con contrasena erronea.', async () => {
     try {
-      await service.validarUsuario('user', '1234');
+      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
     } catch (error) {
       expect(error instanceof EntityUnauthorizedException);
       expect(error.status).toEqual(401);
@@ -107,7 +111,7 @@ describe('AuthenticationService', () => {
 
   it('[validarUsuario] deberia lanzar una excepcion para un usuario INACTIVO.', async () => {
     try {
-      await service.validarUsuario('user', '123');
+      await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
     } catch (error) {
       expect(error instanceof EntityUnauthorizedException);
       expect(error.status).toEqual(401);
@@ -116,7 +120,7 @@ describe('AuthenticationService', () => {
 
   it('[validarUsuario] deberia lanzar una excepcion si excedio el limite de intentos erroneos de inicio de sesion.', async () => {
     try {
-      await service.validarUsuario('user', '123');
+      await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
     } catch (error) {
       expect(error instanceof EntityUnauthorizedException);
       expect(error.status).toEqual(401);
@@ -124,14 +128,14 @@ describe('AuthenticationService', () => {
   });
 
   it('[validarUsuario] deberia restablecer el limite de intentos si inicio sesion correctamente.', async () => {
-    await service.validarUsuario('user', '123');
+    await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
 
     expect(usuarioService.actualizarContadorBloqueos).toBeCalled();
   });
 
   it('[validarUsuario] deberia permitir iniciar sesion si la fecha limite bloqueo ya expiro.', async () => {
     try {
-      await service.validarUsuario('user', '1234');
+      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
     } catch (error) {
       expect(error instanceof EntityUnauthorizedException);
       expect(usuarioService.actualizarDatosBloqueo).toBeCalled();

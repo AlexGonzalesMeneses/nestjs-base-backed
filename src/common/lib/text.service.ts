@@ -54,4 +54,13 @@ export class TextService {
     }
     return false;
   }
+
+  static decodeBase64 = (base64) => {
+    const text = TextService.atob(base64);
+    return decodeURI(text);
+  };
+
+  static atob = (a) => Buffer.from(a, 'base64').toString('ascii');
+
+  static btoa = (b) => Buffer.from(b).toString('base64');
 }

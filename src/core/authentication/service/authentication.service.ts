@@ -71,7 +71,7 @@ export class AuthenticationService {
         throw new EntityUnauthorizedException(Messages.USER_BLOCKED);
       }
 
-      const pass = TextService.encrypt(contrasena);
+      const pass = TextService.encrypt(TextService.decodeBase64(contrasena));
       if (respuesta.contrasena !== pass) {
         await this.generarIntentoBloqueo(respuesta);
         throw new EntityUnauthorizedException(
