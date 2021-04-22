@@ -67,7 +67,11 @@ export class LogService {
             res.req.headers,
           )}`;
         }
-        return `Request - errored with - ${JSON.stringify(res.req)}`;
+        return `Error: ${
+          res.statusCode
+        } Datos de la Peticion ->>> { "headers":"${JSON.stringify(
+          res.req.headers,
+        )}, "body": ${JSON.stringify(res.req.body)} }`;
       },
       customErrorMessage: function (error, res) {
         return `Error: ${
