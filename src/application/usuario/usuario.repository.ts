@@ -117,7 +117,7 @@ export class UsuarioRepository extends Repository<Usuario> {
 
     usuario.usuario = usuarioDto.persona.nroDocumento;
     usuario.correoElectronico = usuarioDto.correoElectronico;
-    usuario.contrasena = TextService.encrypt(TextService.generateUuid());
+    usuario.contrasena = await TextService.encrypt(TextService.generateUuid());
     usuario.usuarioCreacion = usuarioAuditoria;
 
     return this.save(usuario);

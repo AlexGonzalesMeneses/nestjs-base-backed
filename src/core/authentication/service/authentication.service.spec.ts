@@ -13,8 +13,7 @@ const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
   id: 11111,
   usuario: 'user',
-  contrasena:
-    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+  contrasena: '$2b$10$Tq95LTM6Ofo0oEbD8J4/E.8xr13SVbNYXfX7y1Q.IconhxfHuKRVe',
   estado: 'ACTIVO',
   usuarioRol: [],
   intentos: 0,

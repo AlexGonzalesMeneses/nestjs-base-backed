@@ -53,7 +53,7 @@ export class UsuarioService {
       // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
-      usuario.contrasena = TextService.encrypt(contrasena);
+      usuario.contrasena = await TextService.encrypt(contrasena);
       usuario.estado = Status.PENDING;
       usuario.usuarioActualizacion = usuarioAuditoria;
       const result = await this.usuarioRepositorio.save(usuario);
@@ -90,19 +90,16 @@ export class UsuarioService {
   }
 
   async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
+    const hash = TextService.decodeBase64(contrasenaActual);
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
       idUsuario,
     );
-    if (
-      usuario &&
-      usuario.contrasena ===
-        TextService.encrypt(TextService.decodeBase64(contrasenaActual))
-    ) {
+    if (usuario && (await TextService.compare(hash, usuario.contrasena))) {
       // validar que la contrasena nueva cumpla nivel de seguridad
       const contrasena = TextService.decodeBase64(contrasenaNueva);
       if (TextService.validateLevelPassword(contrasena)) {
         // guardar en bd
-        usuario.contrasena = TextService.encrypt(contrasena);
+        usuario.contrasena = await TextService.encrypt(contrasena);
         usuario.estado = Status.ACTIVE;
         const result = await this.usuarioRepositorio.save(usuario);
         return {
@@ -120,7 +117,7 @@ export class UsuarioService {
     const statusValid = [Status.ACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
-      usuario.contrasena = TextService.encrypt(contrasena);
+      usuario.contrasena = await TextService.encrypt(contrasena);
       usuario.estado = Status.PENDING;
       usuario.usuarioActualizacion = usuarioAuditoria;
       const result = await this.usuarioRepositorio.save(usuario);

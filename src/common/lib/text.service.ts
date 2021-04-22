@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { hash, compare } from 'bcrypt';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
 import { Configurations } from '../constants';
@@ -8,8 +8,17 @@ export class TextService {
    * Metodo para encriptar un password
    * @param password contraeña
    */
-  static encrypt(password: string): string {
-    return createHash('sha256').update(password).digest('hex');
+  static async encrypt(password: string) {
+    const hashText = await hash(password, Configurations.SALT_ROUNDS);
+    return hashText;
+  }
+
+  static async compare(passwordInPlainText, hashedPassword) {
+    const isPasswordMatching = await compare(
+      passwordInPlainText,
+      hashedPassword,
+    );
+    return isPasswordMatching;
   }
 
   static nano(template: string, data: string): string {

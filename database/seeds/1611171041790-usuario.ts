@@ -6,7 +6,8 @@ import { Status } from '../../src/common/constants';
 
 export class usuario1611171041790 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const pass = TextService.encrypt('123');
+    const DEFAULT_PASS = '123';
+    const pass = await TextService.encrypt(DEFAULT_PASS);
     const items = [
       {
         usuario: 'ADMINISTRADOR',
