@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AuthZManagementService, AuthZRBACService } from 'nest-authz';
+import { AuthZManagementService } from 'nest-authz';
 import { totalRowsResponse } from '../../../common/lib/http.module';
 import { ModuloService } from '../service/modulo.service';
 @Injectable()
 export class AuthorizationService {
   constructor(
     private readonly rbacSrv: AuthZManagementService,
-    private readonly rbacSrv1: AuthZRBACService,
     private readonly moduloService: ModuloService,
   ) {}
 

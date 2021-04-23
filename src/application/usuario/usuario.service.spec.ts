@@ -37,8 +37,7 @@ const resUsuarioPerfil = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
   usuario: 'USUARIO',
   estado: 'ACTIVO',
-  contrasena:
-    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+  contrasena: '$2b$10$iz67dPnZkJDpaKarHtch6.2kaWyIaKeOf2bqtBuil6N//dBq6wJQS',
   usuarioRol: [
     {
       id: 'b320fe27-5644-5712-8423-198302b01e25',

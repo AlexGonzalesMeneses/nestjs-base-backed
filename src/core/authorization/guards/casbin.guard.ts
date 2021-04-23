@@ -19,9 +19,6 @@ export class CasbinGuard implements CanActivate {
     if (!user) {
       throw new ForbiddenException();
     }
-    console.log('----------*****--------');
-    console.log(await this.enforcer.getPolicy());
-    console.log('----------*****---------');
     for (const rol of user.roles) {
       if (await this.enforcer.enforce(rol, resource, action)) return true;
     }
