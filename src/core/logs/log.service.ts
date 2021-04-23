@@ -2,14 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
 import * as fs from 'fs';
 import pino from 'pino';
+import { createWriteStream } from 'pino-http-send';
 
 @Injectable()
 export class LogService {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   // constructor() { }
   static getStream() {
+    const streamHttp = createWriteStream({
+      url: 'https://dev.iop.agetic.gob.bo/elk/logs',
+      headers: {
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJqdXhBZjZRM1FqUlZFdHhXclJaRzZmODUwTWRpeUx0VCIsInVzZXIiOiJkZXYtYmFja2VuZC1iYXNlLWxvZ3MiLCJleHAiOjE3MTMwOTk4NDB9.AIzMscSUWxm3TSw2pIVfn7YsejgE_Rv33X_3SRXQmYs',
+      },
+    });
     const streams = [
       { stream: process.stdout },
+      { stream: streamHttp },
+
       {
         stream: fs.createWriteStream(process.env.LOG_PATH + '/out.log'),
       },
@@ -86,7 +96,7 @@ export class LogService {
         err: `error`,
         responseTime: `Tiempo de la transaccion:ms`,
       },
-      prettyPrint: process.env.NODE_ENV !== 'production',
+      prettyPrint: false, //process.env.NODE_ENV !== 'production',
     };
   }
 }
