@@ -73,20 +73,20 @@ export class LogService {
       },
       customSuccessMessage: (res) => {
         if (res.statusCode <= 304) {
-          return `Request completed - ${res.req.id} ${JSON.stringify(
+          return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
             res.req.headers,
           )}`;
         }
-        return `Error: ${
+        return `Peticion concluida - : ${
           res.statusCode
-        } Datos de la Peticion ->>> { "headers":"${JSON.stringify(
+        } Datos de la Peticion: { "headers":"${JSON.stringify(
           res.req.headers,
         )}, "body": ${JSON.stringify(res.req.body)} }`;
       },
       customErrorMessage: function (error, res) {
-        return `Error: ${
+        return `Peticion concluida - ${
           res.statusCode
-        } Datos de la Peticion ->>> { "headers":"${JSON.stringify(
+        } Datos de la Peticion: { "headers":"${JSON.stringify(
           res.req.headers,
         )}, "body": ${JSON.stringify(res.req.body)} }`;
       },
