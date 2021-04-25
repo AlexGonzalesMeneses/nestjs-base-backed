@@ -15,9 +15,16 @@ import { EntityNotFoundException } from '../exceptions/entity-not-found.exceptio
 import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception';
 import { Messages } from '../constants/response-messages';
 import { ExternalServiceException } from '../exceptions/external-service.exception';
+import { PinoLogger } from 'nestjs-pino';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  static staticLogger: PinoLogger;
+
+  constructor(private readonly logger: PinoLogger) {
+    this.logger.setContext(HttpExceptionFilter.name);
+    HttpExceptionFilter.staticLogger = this.logger;
+  }
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -26,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       : HttpStatus.INTERNAL_SERVER_ERROR;
     const r = <any>exception.getResponse();
     let errores = [];
-    console.error('[error] %o', r);
+    this.logger.error('[error] %o', r);
     if (Array.isArray(r.message)) {
       status = HttpStatus.BAD_REQUEST;
       const validationErrors = r.message;
