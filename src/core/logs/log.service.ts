@@ -80,6 +80,7 @@ export class LogService {
         censor: '*****',
       },
       level: 'info',
+      timestamp: pino.stdTimeFunctions.isoTime,
       customLogLevel: (res, err) => {
         if (err) {
           if (res.statusCode >= 500) {
