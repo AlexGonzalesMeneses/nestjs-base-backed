@@ -7,10 +7,10 @@ import { multistream } from 'pino-multi-stream';
 
 @Injectable()
 export class LogService {
-  static logsLogstashUrl: string = process.env.LOG_URL;
-  static logsLogstashToken: string = process.env.LOG_URL_TOKEN;
-  static logsFilePath: string = process.env.LOG_PATH;
-  static logsEstadarOut: string = process.env.LOG_STD_OUT;
+  static logsLogstashUrl: string = process.env.LOG_URL || '';
+  static logsLogstashToken: string = process.env.LOG_URL_TOKEN || '';
+  static logsFilePath: string = process.env.LOG_PATH || '';
+  static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true';
 
   static sistemName = process.env.npm_package_name || 'APP';
 
@@ -27,8 +27,8 @@ export class LogService {
           ]
         : [];
 
-    const StreamDisk =
-      this.sistemName.length > 1
+    const streamDisk =
+      this.logsFilePath.length > 2
         ? [
             {
               stream: fs.createWriteStream(
@@ -50,13 +50,10 @@ export class LogService {
           ]
         : [];
 
-    const streamsEstandar = this.logsEstadarOut
+    const streamsEstandar = this.logsEstandarOut
       ? [{ stream: process.stdout }]
       : [];
-
-    // const listaStreamsTotal =streamsEstandar.concat(StreamDisk.concat(streamHttp));
-
-    return multistream();
+    return multistream([...streamsEstandar, ...streamDisk, ...streamHttp]);
   }
   static getLoggerConfig() {
     return {
@@ -120,7 +117,10 @@ export class LogService {
         err: `error`,
         responseTime: `Tiempo de la transaccion:ms`,
       },
-      prettyPrint: false, //process.env.NODE_ENV !== 'production',
+      prettyPrint:
+        this.logsFilePath.length > 2 || this.logsLogstashUrl.length > 5
+          ? false
+          : true, //false, //process.env.NODE_ENV !== 'production',
     };
   }
 }
