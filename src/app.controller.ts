@@ -18,10 +18,7 @@ export class AppController {
 
   @Get('/estado')
   async verificarEstado(@Res() res: Response) {
-    this.logger.info('log1');
-    this.logger.info('log2');
-    this.logger.info('log3');
-
+    this.logger.info('Consulta del estado');
     return res.status(HttpStatus.OK).json({
       estado: 'Servicio funcionando correctamente',
       commit_sha: this.configService.get('CI_COMMIT_SHORT_SHA'),
