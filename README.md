@@ -12,15 +12,15 @@ Proyecto base backend con modulos:
   - Generación de reportes
 
 ## Tecnologías
-- Nestjs
-- Jest
-- Passport
-- Swagger
-- TypeORM
-- PinoJs
-- Casbin
-- Postgresql
-- Docker
+- [NestJS](https://nestjs.com/)
+- [Jest](https://jestjs.io/)
+- [Passport.js](http://www.passportjs.org/)
+- [OpenApi](https://www.openapis.org/)
+- [TypeORM](https://typeorm.io/)
+- [PinoJs](https://getpino.io/#/)
+- [Casbin](https://casbin.org/)
+- [Postgresql](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
 
 ## Comandos Utiles
 ### Migraciones
