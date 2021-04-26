@@ -9,15 +9,10 @@ import { ApplicationModule } from './application/application.module';
 import { LoggerModule } from 'nestjs-pino';
 import { LogService } from './core/logs/log.service';
 
-import { multistream } from 'pino-multi-stream';
-
 @Module({
   imports: [
     LoggerModule.forRoot({
-      pinoHttp: [
-        LogService.getPinoHttpConfig(),
-        multistream(LogService.getStream()),
-      ],
+      pinoHttp: [LogService.getPinoHttpConfig(), LogService.getStream()],
     }),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
