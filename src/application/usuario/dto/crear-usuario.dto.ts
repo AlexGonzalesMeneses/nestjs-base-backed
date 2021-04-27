@@ -1,5 +1,7 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from '../../../common/validation';
 import { PersonaDto } from '../../../application/persona/persona.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CrearUsuarioDto {
   usuario?: string;
@@ -10,6 +12,8 @@ export class CrearUsuarioDto {
   @IsEmail()
   correoElectronico: string;
 
+  @ValidateNested()
+  @Type(() => PersonaDto)
   persona: PersonaDto;
 
   @IsNotEmpty()
