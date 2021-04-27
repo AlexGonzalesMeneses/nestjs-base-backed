@@ -1,4 +1,5 @@
 import { ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -9,6 +10,7 @@ import {
 export class PersonaDto {
   @IsNotEmpty()
   @NroDocumento()
+  @Transform(({ value }) => value?.trim())
   nroDocumento: string;
 
   @IsNotEmpty()

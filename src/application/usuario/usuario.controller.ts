@@ -52,7 +52,7 @@ export class UsuarioController extends AbstractController {
   //create user
   @UseGuards(JwtAuthGuard)
   @Post()
-  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
   async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.crear(
