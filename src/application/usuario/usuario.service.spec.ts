@@ -132,7 +132,7 @@ describe('UsuarioService', () => {
             buscarUsuarioRolPorId: jest.fn(() => resUsuarioPerfil),
             crear: jest.fn(() => resUsuarioCrear),
             // preload: jest.fn(() => resUsuarioActivar),
-            preload: jest
+            findOne: jest
               .fn()
               .mockReturnValueOnce(resUsuarioActivar)
               .mockReturnValueOnce(undefined)
@@ -141,7 +141,7 @@ describe('UsuarioService', () => {
               .mockReturnValueOnce(undefined)
               .mockReturnValueOnce(resUsuarioRestaurar)
               .mockReturnValueOnce(undefined),
-            save: jest.fn(() => ({ ...resUsuarioActivar, estado: 'ACTIVO' })),
+            update: jest.fn(() => ({})),
           },
         },
         {
@@ -215,7 +215,7 @@ describe('UsuarioService', () => {
     expect(usuario).toBeDefined();
     expect(usuario).toHaveProperty('id');
     expect(usuario).toHaveProperty('estado');
-    expect(usuario.estado).toEqual('ACTIVO');
+    expect(usuario.estado).toEqual('PENDIENTE');
   });
 
   it('[activar] Deberia lanzar una excepcion si el usuario no existe', async () => {

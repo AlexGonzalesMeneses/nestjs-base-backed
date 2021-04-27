@@ -143,6 +143,7 @@ export class UsuarioRepository extends Repository<Usuario> {
   buscarPorCodigoDesbloqueo(codigo: string) {
     return getRepository(Usuario)
       .createQueryBuilder('usuario')
+      .select(['usuario.id', 'usuario.estado'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
   }

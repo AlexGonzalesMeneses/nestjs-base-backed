@@ -15,6 +15,7 @@ import { MensajeriaService } from '../../core/external-services/mensajeria/mensa
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../common/constants/response-messages';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
+import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -47,33 +48,35 @@ export class UsuarioService {
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
-    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
-      usuario.contrasena = await TextService.encrypt(contrasena);
-      usuario.estado = Status.PENDING;
-      usuario.usuarioActualizacion = usuarioAuditoria;
-      const result = await this.usuarioRepositorio.save(usuario);
-
+      const usuarioDto = new ActualizarUsuarioDto();
+      usuarioDto.contrasena = await TextService.encrypt(contrasena);
+      usuarioDto.estado = Status.PENDING;
+      usuarioDto.usuarioActualizacion = usuarioAuditoria;
+      // const result = await this.usuarioRepositorio.save(usuario);
+      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
-      return { id: result.id, estado: result.estado };
+      return { id: idUsuario, estado: usuarioDto.estado };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   async inactivar(idUsuario: string, usuarioAuditoria: string) {
-    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     if (usuario) {
-      usuario.usuarioActualizacion = usuarioAuditoria;
-      usuario.estado = Status.INACTIVE;
-      const result = await this.usuarioRepositorio.save(usuario);
+      const usuarioDto = new ActualizarUsuarioDto();
+      usuarioDto.usuarioActualizacion = usuarioAuditoria;
+      usuarioDto.estado = Status.INACTIVE;
+      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       return {
-        id: result.id,
-        estado: result.estado,
+        id: idUsuario,
+        estado: usuarioDto.estado,
       };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
@@ -99,12 +102,13 @@ export class UsuarioService {
       const contrasena = TextService.decodeBase64(contrasenaNueva);
       if (TextService.validateLevelPassword(contrasena)) {
         // guardar en bd
-        usuario.contrasena = await TextService.encrypt(contrasena);
-        usuario.estado = Status.ACTIVE;
-        const result = await this.usuarioRepositorio.save(usuario);
+        const usuarioDto = new ActualizarUsuarioDto();
+        usuarioDto.contrasena = await TextService.encrypt(contrasena);
+        usuarioDto.estado = Status.ACTIVE;
+        await this.usuarioRepositorio.update(idUsuario, usuarioDto);
         return {
-          id: result.id,
-          estado: result.estado,
+          id: idUsuario,
+          estado: usuarioDto.estado,
         };
       }
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE);
@@ -113,18 +117,19 @@ export class UsuarioService {
   }
 
   async restaurarContrasena(idUsuario: string, usuarioAuditoria: string) {
-    const usuario = await this.usuarioRepositorio.preload({ id: idUsuario });
+    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.ACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
-      usuario.contrasena = await TextService.encrypt(contrasena);
-      usuario.estado = Status.PENDING;
-      usuario.usuarioActualizacion = usuarioAuditoria;
-      const result = await this.usuarioRepositorio.save(usuario);
+      const usuarioDto = new ActualizarUsuarioDto();
+      usuarioDto.contrasena = await TextService.encrypt(contrasena);
+      usuarioDto.estado = Status.PENDING;
+      usuarioDto.usuarioActualizacion = usuarioAuditoria;
+      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
 
       // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
-      return { id: result.id, estado: result.estado };
+      return { id: idUsuario, estado: usuarioDto.estado };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
@@ -195,11 +200,15 @@ export class UsuarioService {
       codigo,
     );
     if (usuario?.fechaBloqueo) {
-      usuario.fechaBloqueo = null;
-      usuario.intentos = 0;
-      usuario.codigoDesbloqueo = null;
-      await this.usuarioRepositorio.save(usuario);
+      const usuarioDto = new ActualizarUsuarioDto();
+      usuarioDto.fechaBloqueo = null;
+      usuarioDto.intentos = 0;
+      usuarioDto.codigoDesbloqueo = null;
+      await this.usuarioRepositorio.update(usuario.id, usuarioDto);
     }
-    return usuario;
+    return {
+      id: usuario.id,
+      estado: usuario.estado,
+    };
   }
 }
