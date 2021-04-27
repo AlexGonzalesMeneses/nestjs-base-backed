@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import * as validator from 'class-validator';
-import { IsNroDoc as _IsNroDoc } from './isNroDoc.decorator';
+import { IsNroDoc as _IsNroDoc } from './is-nro-doc.validator';
 import { ValidationMessageEnum } from './i18n/es.enum';
 
 const make = (_function, _message) => (validationOptions?: validator.ValidationOptions): PropertyDecorator => 
