@@ -2,6 +2,7 @@
 import * as validator from 'class-validator';
 import { NroDocumento as _NroDocumento } from './nro-documento.validator';
 import { NombreApellido as _NombreApellido } from  './nombre-apellido.validator';
+import { CorreoLista as _CorreoLista } from './correo-lista.validator';
 import { ValidationMessageEnum } from './i18n/es.enum';
 
 const make = (_function, _message) => (validationOptions?: validator.ValidationOptions): PropertyDecorator => 
@@ -108,3 +109,4 @@ export const IsInstance = makeWithOptions(validator.IsInstance, ValidationMessag
 // CUSTOM VALIDATION
 export const NroDocumento = _NroDocumento;
 export const NombreApellido = _NombreApellido;
+export const CorreoLista = _CorreoLista;

@@ -73,4 +73,5 @@ export enum ValidationMessageEnum {
   // CUSTOM
   NRO_DOC = '$property debe ser un número de documento válido.',
   NOMBRE_APELLIDO = '$property debe contener caracteres válidos.',
+  CORREO_LISTA = '$property no contiene un dominio de correo permitido.',
 }
