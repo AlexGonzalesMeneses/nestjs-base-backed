@@ -71,5 +71,6 @@ export enum ValidationMessageEnum {
   ARRAY_UNIQUE = 'Todos los elementos de $property deben ser únicos.',
   IS_INSTANCE = 'El decorador $IS_INSTANCE espera y el objeto como valor, pero tiene un valor incorrecto.',
   // CUSTOM
-  IS_NRO_DOC = '$property debe ser un número de documento válido.',
+  NRO_DOC = '$property debe ser un número de documento válido.',
+  NOMBRE_APELLIDO = '$property debe contener caracteres válidos.',
 }

@@ -1,11 +1,11 @@
 import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
 import { ValidationMessageEnum } from './i18n/es.enum';
 
-const nroDocComp = /(-[A-Za-z0-9]{2}){0,1}/;
-const nroDocExt = /([eE][-]{1}){0,1}/;
-const nroDoc = /[0-9]{4,10}/;
+const comp = /(-[A-Za-z0-9]{2}){0,1}/;
+const ext = /([eE][-]{1}){0,1}/;
+const doc = /[0-9]{4,10}/;
 
-export const IS_NRO_DOC = 'isNroDoc';
+export const NRO_DOC = 'nroDocumento';
 
 /**
  * Verifica si una cadena es un numero de documento valido
@@ -15,7 +15,7 @@ export const IS_NRO_DOC = 'isNroDoc';
  *  - extranjero (true defecto)
  * @returns Si el valor dado no es una cadena, devuelve falso.
  */
-export function isNroDoc(
+export function nroDocumento(
   value: string,
   {
     complemento = true,
@@ -24,26 +24,26 @@ export function isNroDoc(
 ): boolean {
   const regex = new RegExp(
     '^' +
-      (extranjero ? nroDocExt.source : '') +
-      nroDoc.source +
-      (complemento ? nroDocComp.source : '') +
+      (extranjero ? ext.source : '') +
+      doc.source +
+      (complemento ? comp.source : '') +
       '$',
   );
   return regex.test(value);
 }
 
-export function IsNroDoc(
+export function NroDocumento(
   options?: any,
   validationsOptions?: ValidationOptions,
 ): PropertyDecorator {
   return ValidateBy(
     {
-      name: 'IS_NRO_DOC',
+      name: 'NRO_DOC',
       constraints: [],
       validator: {
-        validate: (value): boolean => isNroDoc(value, options),
+        validate: (value): boolean => nroDocumento(value, options),
         defaultMessage: buildMessage(
-          () => ValidationMessageEnum.IS_NRO_DOC,
+          () => ValidationMessageEnum.NRO_DOC,
           validationsOptions,
         ),
       },

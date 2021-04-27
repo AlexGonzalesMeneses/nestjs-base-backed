@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import * as validator from 'class-validator';
-import { IsNroDoc as _IsNroDoc } from './is-nro-doc.validator';
+import { NroDocumento as _NroDocumento } from './nro-documento.validator';
+import { NombreApellido as _NombreApellido } from  './nombre-apellido.validator';
 import { ValidationMessageEnum } from './i18n/es.enum';
 
 const make = (_function, _message) => (validationOptions?: validator.ValidationOptions): PropertyDecorator => 
@@ -105,4 +106,5 @@ export const IsInstance = makeWithOptions(validator.IsInstance, ValidationMessag
 // OTHER DECORATORS
 
 // CUSTOM VALIDATION
-export const IsNroDoc = _IsNroDoc;
+export const NroDocumento = _NroDocumento;
+export const NombreApellido = _NombreApellido;
