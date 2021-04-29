@@ -82,6 +82,52 @@ Ejecutando tests de covertura:
 #     - npm run test:e2e
 #   allow_failure: true
 
+Generando reporte de calidad sonarqube:
+  image: sonarsource/sonar-scanner-cli:4.1
+  stage: testing
+  except:
+    refs:
+      - master
+  tags:
+    - backend-base-nestjs
+  script:
+    - npm run test:cov
+    - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=$CI_PROJECT_NAME -Dsonar.sources=src -Dsonar.host.url=$TEST_REPO_URL -Dsonar.login=$TEST_REPO_TOKEN -Dsonar.exclusions=/node_modules/ -Dsonar.tests=test -Dsonar.test.inclusions=test/*.js -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info -Dsonar.testExecutionReportPaths=test-report.xml -Dsonar.projectVersion=v0.1.0
+
+Ejecutando scan de seguridad trivy:
+  image: docker:19.03.12
+  stage: testing
+  except:
+    refs:
+      - master
+  tags:
+    - backend-base-nestjs
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE_NAME: "$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    TRIVY_URL_VERSION: https://api.github.com/repos/aquasecurity/trivy/releases/latest
+    REPORT: trivy-report_$CI_COMMIT_SHORT_SHA.json
+  services:
+    - name: docker:19.03.12-dind
+  before_script:
+    - docker info
+    - export TRIVY_VERSION=$(wget -qO - "$TRIVY_URL_VERSION"|grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+    - echo $TRIVY_VERSION
+    - export TRIVY_URL=https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_linux-64bit.tar.gz
+    - echo $TRIVY_URL
+    - wget --no-verbose $TRIVY_URL -O - |tar -zxvf -
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker images
+    - ./trivy --version
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --format template --template "@contrib/gitlab.tpl" -o $REPORT $IMAGE_NAME
+    - ./trivy --exit-code 0 --cache-dir .trivycache/ --no-progress --severity HIGH $IMAGE_NAME
+    - ./trivy --exit-code 1 --cache-dir .trivycache/ --severity CRITICAL --no-progress $IMAGE_NAME
+  artifacts:
+    paths:
+      - $REPORT
+
 Generando imagen docker (Dev):
   image: gcr.io/kaniko-project/executor:v1.3.0-debug
   stage: deployment
