@@ -9,6 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build && npm run copy:statics",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "setup": "rm database/migrations/*; npm run schema:drop;npm run migrations:generate init;npm run migrations:run;npm run seeds:run",
     "start": "nest start && npm run copy:statics",
     "start:dev": "NODE_ENV=development npm run copy:statics && nest start --watch",
     "start:database": "./scripts/database.sh",
