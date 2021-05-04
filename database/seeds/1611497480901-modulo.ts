@@ -6,16 +6,6 @@ export class modulo1611497480901 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const items = [
       {
-        nombre: 'configuracion',
-        url: '/configuracion',
-        label: 'Configuracion',
-        icono: 'settings',
-        propiedades: {
-          color_light: '#3F1929',
-          color_dark: '#AE6DAB',
-        },
-      },
-      {
         nombre: 'usuarios',
         url: '/usuarios',
         label: 'Usuarios',
@@ -36,6 +26,16 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
+        nombre: 'configuraciones',
+        url: '/configuraciones',
+        label: 'Configuraciones Generales',
+        icono: 'settings',
+        propiedades: {
+          color_light: '#3F1929',
+          color_dark: '#AE6DAB',
+        },
+      },
+      {
         nombre: 'parametros',
         url: '/parametros',
         label: 'Parametros',
@@ -44,6 +44,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#312403',
           color_dark: '#B77346',
         },
+        fidModulo: TextService.textToUuid('configuraciones'),
       },
       {
         nombre: 'politicas',
@@ -54,6 +55,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
+        fidModulo: TextService.textToUuid('configuraciones'),
       },
     ];
     const modulos = items.map((item) => {
@@ -62,7 +64,11 @@ export class modulo1611497480901 implements MigrationInterface {
       m.nombre = item.nombre;
       m.url = item.url;
       m.label = item.label;
-
+      if (item.fidModulo) {
+        const submodulo = new Modulo();
+        submodulo.id = item.fidModulo;
+        m.fidModulo = submodulo;
+      }
       const propiedades = new PropiedadesDto();
       propiedades.color_dark = item.propiedades.color_dark;
       propiedades.color_light = item.propiedades.color_light;

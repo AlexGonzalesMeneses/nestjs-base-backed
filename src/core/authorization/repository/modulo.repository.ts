@@ -18,6 +18,13 @@ export class ModuloRepository extends Repository<Modulo> {
     return queryBuilder;
   }
 
+  obtenerModulosSubmodulos() {
+    return this.createQueryBuilder('modulo')
+      .leftJoinAndSelect('modulo.subModulo', 'subModulo')
+      .where('modulo.fid_modulo is NULL')
+      .getMany();
+  }
+
   async crear(moduloDto: CrearModuloDto) {
     const propiedades = new PropiedadesDto();
     propiedades.icono = moduloDto.propiedades.icono;

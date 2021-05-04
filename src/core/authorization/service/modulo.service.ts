@@ -17,7 +17,7 @@ export class ModuloService {
   }
 
   async listarTodo() {
-    const result = await this.moduloRepositorio.listarTodo();
+    const result = await this.moduloRepositorio.obtenerModulosSubmodulos();
     return result;
   }
 

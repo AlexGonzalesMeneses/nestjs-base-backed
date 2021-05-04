@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { Status } from '../../../common/constants';
 import { PropiedadesDto } from '../dto/crear-modulo.dto';
 
@@ -25,4 +32,11 @@ export class Modulo {
 
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
+
+  @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
+  subModulo: Modulo[];
+
+  @ManyToOne(() => Modulo, (modulo) => modulo.subModulo)
+  @JoinColumn({ name: 'fid_modulo', referencedColumnName: 'id' })
+  fidModulo: Modulo;
 }
