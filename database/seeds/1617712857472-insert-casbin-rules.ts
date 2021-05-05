@@ -14,12 +14,6 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.ADMINISTRADOR,
-        v1: '/entidades',
-        v2: 'read|update|create|delete',
-        v3: 'frontend',
-      },
-      {
-        v0: RolEnum.ADMINISTRADOR,
         v1: '/parametros',
         v2: 'read|update|create',
         v3: 'frontend',
@@ -50,12 +44,6 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.TECNICO,
-        v1: '/entidades',
-        v2: 'read|update',
-        v3: 'frontend',
-      },
-      {
-        v0: RolEnum.TECNICO,
         v1: '/parametros',
         v2: 'read',
         v3: 'frontend',
@@ -69,12 +57,6 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       {
         v0: RolEnum.USUARIO,
         v1: '/usuarios',
-        v2: 'read',
-        v3: 'frontend',
-      },
-      {
-        v0: RolEnum.USUARIO,
-        v1: '/entidades',
         v2: 'read',
         v3: 'frontend',
       },

@@ -16,16 +16,6 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
-        nombre: 'entidades',
-        url: '/entidades',
-        label: 'Entidades',
-        icono: 'business',
-        propiedades: {
-          color_light: '#BDA5AD',
-          color_dark: '#BDA5AD',
-        },
-      },
-      {
         nombre: 'configuraciones',
         url: '/configuraciones',
         label: 'Configuraciones Generales',
