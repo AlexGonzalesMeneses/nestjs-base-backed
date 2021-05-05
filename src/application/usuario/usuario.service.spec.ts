@@ -11,6 +11,7 @@ import { MensajeriaModule } from '../../core/external-services/mensajeria/mensaj
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { PreconditionFailedException } from '@nestjs/common';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
+import { Messages } from '../../common/constants/response-messages';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -130,6 +131,15 @@ describe('UsuarioService', () => {
           useValue: {
             listar: jest.fn(() => [[resUsuarioList], 1]),
             buscarUsuarioRolPorId: jest.fn(() => resUsuarioPerfil),
+            buscarUsuarioPorCI: jest
+              .fn()
+              .mockReturnValueOnce({ id: TextService.generateUuid() })
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(undefined),
+            buscarUsuarioPorCorreo: jest
+              .fn()
+              .mockReturnValueOnce({ id: TextService.generateUuid() })
+              .mockReturnValueOnce(undefined),
             crear: jest.fn(() => resUsuarioCrear),
             // preload: jest.fn(() => resUsuarioActivar),
             findOne: jest
@@ -142,6 +152,7 @@ describe('UsuarioService', () => {
               .mockReturnValueOnce(resUsuarioRestaurar)
               .mockReturnValueOnce(undefined),
             update: jest.fn(() => ({})),
+            runTransaction: jest.fn(),
           },
         },
         {
@@ -186,6 +197,48 @@ describe('UsuarioService', () => {
     expect(usuarios).toHaveProperty('roles');
   });
 
+  it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo nro de documento', async () => {
+    const datosUsuario = {
+      usuario: 'usuario122',
+      contrasena: '123',
+      persona: {
+        nombres: 'juan',
+        primerApellido: 'perez',
+        segundoApellido: 'perez',
+        nroDocumento: '123456122',
+        fechaNacimiento: '1911-11-11',
+      },
+    };
+    const usuarioDto = plainToClass(CrearUsuarioDto, datosUsuario);
+    const usuarioAuditoria = TextService.generateUuid();
+    try {
+      await service.crear(usuarioDto, usuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
+      expect(error.message).toEqual(Messages.EXISTING_USER);
+    }
+  });
+  it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo correo electronico', async () => {
+    const datosUsuario = {
+      usuario: 'usuario122',
+      contrasena: '123',
+      persona: {
+        nombres: 'juan',
+        primerApellido: 'perez',
+        segundoApellido: 'perez',
+        nroDocumento: '123456122',
+        fechaNacimiento: '1911-11-11',
+      },
+    };
+    const usuarioDto = plainToClass(CrearUsuarioDto, datosUsuario);
+    const usuarioAuditoria = TextService.generateUuid();
+    try {
+      await service.crear(usuarioDto, usuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
+      expect(error.message).toEqual(Messages.EXISTING_EMAIL);
+    }
+  });
   it('[crear] Deberia crear un nuevo usuario', async () => {
     const datosUsuario = {
       usuario: 'usuario122',

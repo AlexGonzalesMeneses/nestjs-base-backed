@@ -1,8 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
-// import * as dayjs from 'dayjs';
-import { Persona } from '../../../application/persona/persona.entity';
+import { PersonaDto } from 'src/application/persona/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
 
 export const buildOpenIdClient = async () => {
@@ -50,7 +49,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         'DD/MM/YYYY',
       ).toDate(); */
 
-      const persona = new Persona();
+      const persona = new PersonaDto();
       persona.tipoDocumento = ci.tipo_documento;
       persona.nroDocumento = ci.numero_documento;
       // persona.fechaNacimiento = fechaNacimiento;

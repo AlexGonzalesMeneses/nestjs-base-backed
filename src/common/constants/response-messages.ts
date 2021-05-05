@@ -27,4 +27,6 @@ export enum Messages {
   SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales',
   SUBJECT_EMAIL_ACCOUNT_LOCKED = 'Bloqueo de cuenta temporal',
   SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
+  EXISTING_USER = 'Ya existe un usuario registrado con el mismo número de documento.',
+  EXISTING_EMAIL = 'Ya existe un usuario registrado con el mismo correo electrónico.',
 }
