@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { TextService } from '../../../common/lib/text.service';
-import { Persona } from '../../../application/persona/persona.entity';
 import { RefreshTokensService } from './refreshTokens.service';
 import { Status, Configurations } from '../../../common/constants';
 import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
 import { Messages } from '../../../common/constants/response-messages';
 import * as dayjs from 'dayjs';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
+import { PersonaDto } from 'src/application/persona/persona.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -115,7 +115,7 @@ export class AuthenticationService {
     };
   }
 
-  async validarUsuarioOidc(persona: Persona): Promise<any> {
+  async validarUsuarioOidc(persona: PersonaDto): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona);
     if (respuesta) {
       if (respuesta.estado === Status.INACTIVE) {

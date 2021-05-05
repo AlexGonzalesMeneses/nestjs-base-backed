@@ -2,15 +2,17 @@ import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { TextService } from '../../common/lib/text.service';
 import { Rol } from '../../core/authorization/entity/rol.entity';
 import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
-import { EntityRepository, getRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Persona } from '../persona/persona.entity';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
+import { PersonaDto } from '../persona/persona.dto';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, orden } = paginacionQueryDto;
+    this.createQueryBuilder().useTransaction;
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -38,8 +40,7 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   recuperar() {
-    return getRepository(Usuario)
-      .createQueryBuilder('usuario')
+    return this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .getMany();
@@ -47,8 +48,7 @@ export class UsuarioRepository extends Repository<Usuario> {
 
   buscarUsuario(usuario: string) {
     // return Usuario.findOne({ usuario });
-    return getRepository(Usuario)
-      .createQueryBuilder('usuario')
+    return this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where({ usuario: usuario })
@@ -56,8 +56,7 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   buscarUsuarioRolPorId(id: string) {
-    return getRepository(Usuario)
-      .createQueryBuilder('usuario')
+    return this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -79,17 +78,20 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  buscarUsuarioPorCI(persona: Persona) {
-    return getRepository(Usuario)
-      .createQueryBuilder('usuario')
+  buscarUsuarioPorCI(persona: PersonaDto) {
+    return this.createQueryBuilder('usuario')
       .innerJoin('usuario.persona', 'persona')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
-      .where('persona.tipoDocumento = :td', { td: persona.tipoDocumento })
-      .andWhere('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
+      .where('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
       .getOne();
   }
 
+  buscarUsuarioPorCorreo(correo: string) {
+    return this.createQueryBuilder('usuario')
+      .where('usuario.correoElectronico = :correo', { correo })
+      .getOne();
+  }
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
       // Rol
@@ -141,10 +143,13 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   buscarPorCodigoDesbloqueo(codigo: string) {
-    return getRepository(Usuario)
-      .createQueryBuilder('usuario')
+    return this.createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
+  }
+
+  async runTransaction(op) {
+    return this.manager.transaction(op);
   }
 }

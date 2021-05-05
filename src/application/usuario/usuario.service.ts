@@ -7,7 +7,6 @@ import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
 import { UsuarioDto } from './dto/usuario.dto';
-import { Persona } from '../persona/persona.entity';
 import { Status } from '../../common/constants';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
@@ -16,6 +15,7 @@ import { EntityNotFoundException } from '../../common/exceptions/entity-not-foun
 import { Messages } from '../../common/constants/response-messages';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
+import { PersonaDto } from '../persona/persona.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -39,12 +39,25 @@ export class UsuarioService {
   }
 
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
-    const result = await this.usuarioRepositorio.crear(
-      usuarioDto,
-      usuarioAuditoria,
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
+      usuarioDto.persona,
     );
-    const { id, estado } = result;
-    return { id, estado };
+    if (!usuario) {
+      // verificar si el correo no esta registrado
+      const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+        usuarioDto.correoElectronico,
+      );
+      if (!correo) {
+        const result = await this.usuarioRepositorio.crear(
+          usuarioDto,
+          usuarioAuditoria,
+        );
+        const { id, estado } = result;
+        return { id, estado };
+      }
+      throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
+    }
+    throw new PreconditionFailedException(Messages.EXISTING_USER);
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
@@ -125,15 +138,21 @@ export class UsuarioService {
       usuarioDto.contrasena = await TextService.encrypt(contrasena);
       usuarioDto.estado = Status.PENDING;
       usuarioDto.usuarioActualizacion = usuarioAuditoria;
-      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
 
-      // si todo bien => enviar el mail con la contraseña generada
-      await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
+      const op = async (transaction) => {
+        const repositorio = transaction.getRepository(Usuario);
+        await repositorio.update(idUsuario, usuarioDto);
+        // si todo bien => enviar el mail con la contraseña generada
+        await this.enviarCorreoContrasenia(
+          usuario.correoElectronico,
+          contrasena,
+        );
+      };
+      await this.usuarioRepositorio.runTransaction(op);
       return { id: idUsuario, estado: usuarioDto.estado };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
-
   // update method
   async update(id: string, usuarioDto: UsuarioDto) {
     const usuario = await this.usuarioRepositorio.preload({
@@ -174,7 +193,7 @@ export class UsuarioService {
     };
   }
 
-  async buscarUsuarioPorCI(persona: Persona): Promise<Usuario> {
+  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario> {
     return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
   }
 
