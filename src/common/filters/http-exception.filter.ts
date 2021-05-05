@@ -41,6 +41,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
     const mensaje = this.isBusinessException(exception);
     const errorResponse = {
+      finalizado: false,
       codigo: status,
       timestamp: Math.floor(Date.now() / 1000),
       mensaje,
