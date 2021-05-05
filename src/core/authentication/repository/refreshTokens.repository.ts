@@ -17,7 +17,7 @@ export class RefreshTokensRepository extends Repository<RefreshTokens> {
       .createQueryBuilder('RefreshTokens')
       .delete()
       .from(RefreshTokens)
-      .where('expires_at > :now', { now })
+      .where('expires_at < :now', { now })
       .execute();
   }
 }
