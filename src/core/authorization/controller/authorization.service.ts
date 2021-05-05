@@ -10,7 +10,12 @@ export class AuthorizationService {
   ) {}
 
   async listarPoliticas(tipo: string) {
-    const politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
+    let politicas;
+    if (tipo) {
+      politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
+    } else {
+      politicas = await this.rbacSrv.getPolicy();
+    }
     const result = politicas.map((politica) => ({
       sujeto: politica[0],
       objeto: politica[1],
