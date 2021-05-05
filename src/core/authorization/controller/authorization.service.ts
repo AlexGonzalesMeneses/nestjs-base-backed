@@ -9,8 +9,8 @@ export class AuthorizationService {
     private readonly moduloService: ModuloService,
   ) {}
 
-  async listarPoliticas() {
-    const politicas = await this.rbacSrv.getPolicy();
+  async listarPoliticas(tipo: string) {
+    const politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
     const result = politicas.map((politica) => ({
       sujeto: politica[0],
       objeto: politica[1],

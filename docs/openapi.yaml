@@ -498,6 +498,13 @@ paths:
       tags: ['autorizacion']
       operationId: get-api-autorizacion-politicas
       description: Api para obtener el listado de politicas
+      parameters:
+        - in: query
+          name: tipo
+          schema:
+            type: string
+            example: frontend
+          description: tipo de politica
       responses:
         '200':
           description: OK
