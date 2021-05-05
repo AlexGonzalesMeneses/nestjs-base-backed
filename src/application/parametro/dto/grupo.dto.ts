@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from '../../../common/validation';
 
 export class ParamGrupoDto {
   @IsString()

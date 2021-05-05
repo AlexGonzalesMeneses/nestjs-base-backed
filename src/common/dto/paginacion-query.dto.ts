@@ -8,7 +8,7 @@ import {
   IsString,
   Max,
   Min,
-} from 'class-validator';
+} from '../validation';
 
 import { Order } from '../constants';
 

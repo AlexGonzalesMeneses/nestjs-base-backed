@@ -13,6 +13,8 @@ export class PersonaDto {
   @Transform(({ value }) => value?.trim())
   nroDocumento: string;
 
+  tipoDocumento?: string;
+
   @IsNotEmpty()
   @NombreApellido()
   nombres: string;

@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from '../../../common/validation';
 import { PersonaDto } from 'src/application/persona/persona.dto';
 export class UsuarioDto {
   @IsNotEmpty()

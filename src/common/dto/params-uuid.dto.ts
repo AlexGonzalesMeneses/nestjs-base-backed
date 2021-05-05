@@ -1,4 +1,4 @@
-import { IsUUID } from 'class-validator';
+import { IsUUID } from '../../common/validation';
 
 export class ParamUuidDto {
   @IsUUID()

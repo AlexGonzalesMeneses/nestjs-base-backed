@@ -1,4 +1,4 @@
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, Matches } from '../../../../common/validation';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SegipPersonaDTO {

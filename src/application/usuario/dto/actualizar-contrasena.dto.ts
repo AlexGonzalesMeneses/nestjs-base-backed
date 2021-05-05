@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from '../../../common/validation';
 
 export class ActualizarContrasenaDto {
   @IsString()
