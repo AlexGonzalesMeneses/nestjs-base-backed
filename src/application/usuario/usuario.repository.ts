@@ -7,6 +7,7 @@ import { Persona } from '../persona/persona.entity';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 import { PersonaDto } from '../persona/persona.dto';
+import { Status } from '../../common/constants';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
@@ -33,6 +34,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.fechaNacimiento',
         'persona.tipoDocumento',
       ])
+      .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
       .orderBy('usuario.fechaCreacion', orden)
       .offset(saltar)
       .limit(limite)
