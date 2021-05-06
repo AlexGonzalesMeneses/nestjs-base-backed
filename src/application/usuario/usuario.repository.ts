@@ -153,6 +153,16 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
+  actualizarDatosPersona(persona: PersonaDto) {
+    return this.createQueryBuilder()
+      .update(Persona)
+      .set(persona)
+      .where('nroDocumento = :nroDocumento', {
+        nroDocumento: persona.nroDocumento,
+      })
+      .execute();
+  }
+
   async runTransaction(op) {
     return this.manager.transaction(op);
   }

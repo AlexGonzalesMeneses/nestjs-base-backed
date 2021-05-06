@@ -343,4 +343,11 @@ export class UsuarioService {
       estado: usuario.estado,
     };
   }
+
+  async actualizarDatosPersona(datosPersona: PersonaDto) {
+    const usuario = await this.usuarioRepositorio.actualizarDatosPersona(
+      datosPersona,
+    );
+    return usuario;
+  }
 }
