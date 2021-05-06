@@ -12,8 +12,7 @@ import { Status } from '../../common/constants';
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, orden } = paginacionQueryDto;
-    this.createQueryBuilder().useTransaction;
+    const { limite, saltar } = paginacionQueryDto;
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -35,9 +34,8 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.tipoDocumento',
       ])
       .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
-      .orderBy('usuario.fechaCreacion', orden)
-      .offset(saltar)
-      .limit(limite)
+      .skip(saltar)
+      .take(limite)
       .getManyAndCount();
     return queryBuilder;
   }
@@ -122,6 +120,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.usuarioRol = usuarioRoles;
 
     usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
     usuario.correoElectronico = usuarioDto?.correoElectronico;
     usuario.contrasena = await TextService.encrypt(TextService.generateUuid());
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;

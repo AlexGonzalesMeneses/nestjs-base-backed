@@ -72,6 +72,7 @@ export class UsuarioService {
     persona.nroDocumento = usuarioDto.usuario;
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
     if (!usuario) {
+      usuarioDto.estado = Status.ACTIVE;
       const result = await this.usuarioRepositorio.crear(
         usuarioDto as CrearUsuarioDto,
         usuarioAuditoria,
