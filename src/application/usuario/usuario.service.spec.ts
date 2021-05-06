@@ -12,6 +12,7 @@ import { EntityNotFoundException } from '../../common/exceptions/entity-not-foun
 import { PreconditionFailedException } from '@nestjs/common';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 import { Messages } from '../../common/constants/response-messages';
+import { UsuarioRolRepository } from './usuario-rol.repository';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -154,6 +155,10 @@ describe('UsuarioService', () => {
             update: jest.fn(() => ({})),
             runTransaction: jest.fn(),
           },
+        },
+        {
+          provide: UsuarioRolRepository,
+          useValue: {},
         },
         {
           provide: MensajeriaService,

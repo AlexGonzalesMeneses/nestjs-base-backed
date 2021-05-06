@@ -6,7 +6,6 @@ import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
-import { UsuarioDto } from './dto/usuario.dto';
 import { Status } from '../../common/constants';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
@@ -16,12 +15,16 @@ import { Messages } from '../../common/constants/response-messages';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
 import { PersonaDto } from '../persona/persona.dto';
+import { UsuarioRolRepository } from './usuario-rol.repository';
+import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
+    @InjectRepository(UsuarioRolRepository)
+    private usuarioRolRepositorio: UsuarioRolRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
   ) {}
@@ -153,16 +156,87 @@ export class UsuarioService {
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
-  // update method
-  async update(id: string, usuarioDto: UsuarioDto) {
-    const usuario = await this.usuarioRepositorio.preload({
-      id: id,
-      ...usuarioDto,
-    });
-    if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER);
+
+  async actualizarDatos(id: string, usuarioDto: ActualizarUsuarioRolDto) {
+    // 1. verificar que exista el usuario
+    const usuario = await this.usuarioRepositorio.findOne(id);
+    if (usuario) {
+      const { correoElectronico, roles } = usuarioDto;
+      // 2. verificar que el email no este registrado
+      if (correoElectronico) {
+        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+          correoElectronico,
+        );
+        if (existe) {
+          throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
+        }
+        const actualizarUsuarioDto = new ActualizarUsuarioDto();
+        actualizarUsuarioDto.correoElectronico = correoElectronico;
+        await this.usuarioRepositorio.update(id, actualizarUsuarioDto);
+      }
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
+          id,
+        );
+        const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
+          usuarioRoles,
+          roles,
+        );
+        // ACTIVAR roles inactivos
+        if (inactivos.length > 0) {
+          await this.usuarioRolRepositorio.activarOInactivar(
+            id,
+            inactivos,
+            Status.ACTIVE,
+          );
+        }
+        // INACTIVAR roles activos
+        if (activos.length > 0) {
+          await this.usuarioRolRepositorio.activarOInactivar(
+            id,
+            activos,
+            Status.INACTIVE,
+          );
+        }
+        // CREAR nuevos roles
+        if (nuevos.length > 0) {
+          await this.usuarioRolRepositorio.crear(id, nuevos);
+        }
+      }
+      return { id };
     }
-    return this.usuarioRepositorio.save(usuario);
+    throw new EntityNotFoundException(Messages.INVALID_USER);
+  }
+
+  private verificarUsuarioRoles(usuarioRoles, roles) {
+    const inactivos = roles.filter((rol) =>
+      usuarioRoles.some(
+        (usuarioRol) =>
+          usuarioRol.rol.id === rol && usuarioRol.estado === Status.INACTIVE,
+      ),
+    );
+
+    const activos = usuarioRoles
+      .map((usuarioRol) =>
+        roles.every(
+          (rol) =>
+            rol !== usuarioRol.rol.id && usuarioRol.estado === Status.ACTIVE,
+        )
+          ? usuarioRol.rol.id
+          : null,
+      )
+      .filter(Boolean);
+
+    const nuevos = roles.filter((rol) =>
+      usuarioRoles.every((usuarioRol) => usuarioRol.rol.id !== rol),
+    );
+
+    return {
+      activos,
+      inactivos,
+      nuevos,
+    };
   }
 
   async buscarUsuarioId(id: string): Promise<any> {

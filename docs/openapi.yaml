@@ -492,6 +492,54 @@ paths:
                         type: string
                         example: 'CREADO'
                           
+  /api/usuarios/{id}:
+    patch:
+      summary: Actualiza datos de un usuario
+      tags: ['usuario']
+      operationId: patch-api-v1-usuarios-id
+      description: Api para actualizar datos de un usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 'a9d1a5cc-4590-5c67-a0b2-a4b37b862802'
+          description: id de usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                correoElectronico:
+                  type: string
+                  example: 'correo@yopmail.com'
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Registro actualizado con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
   /api/autorizacion/politicas:
     get:
       summary: Api para obtener el listado de politicas
