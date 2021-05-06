@@ -29,7 +29,10 @@ export class Usuario extends AbstractEntity {
   @Column({ length: 255 })
   contrasena: string;
 
-  @Column({ name: 'correo_electronico' })
+  @Column({ name: 'ciudadania_digital', default: false })
+  ciudadaniaDigital: boolean;
+
+  @Column({ name: 'correo_electronico', nullable: true })
   correoElectronico: string;
 
   @Column({

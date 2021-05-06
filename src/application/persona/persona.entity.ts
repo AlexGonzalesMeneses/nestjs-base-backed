@@ -9,7 +9,7 @@ export class Persona {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   nombres: string;
 
   @Column({ name: 'primer_apellido', length: 100, nullable: true })
@@ -32,7 +32,7 @@ export class Persona {
   @Column({ name: 'nro_documento', length: 50 })
   nroDocumento: string;
 
-  @Column({ name: 'fecha_nacimiento', type: 'date' })
+  @Column({ name: 'fecha_nacimiento', type: 'date', nullable: true })
   fechaNacimiento: string;
 
   @Column({ length: 50, nullable: true })

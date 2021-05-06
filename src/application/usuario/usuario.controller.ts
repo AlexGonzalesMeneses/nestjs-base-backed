@@ -24,6 +24,7 @@ import { ConfigService } from '@nestjs/config';
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
 import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
+import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -61,6 +62,21 @@ export class UsuarioController extends AbstractController {
   async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.crear(
+      usuarioDto,
+      usuarioAuditoria,
+    );
+    return this.successCreate(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/ciudadania')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async crearConCiudadania(
+    @Req() req,
+    @Body() usuarioDto: CrearUsuarioCiudadaniaDto,
+  ) {
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.usuarioService.crearConCiudadania(
       usuarioDto,
       usuarioAuditoria,
     );

@@ -106,20 +106,22 @@ export class UsuarioRepository extends Repository<Usuario> {
 
     // Persona
     const persona = new Persona();
-    persona.nombres = usuarioDto.persona.nombres;
-    persona.primerApellido = usuarioDto.persona.primerApellido;
-    persona.segundoApellido = usuarioDto.persona.segundoApellido;
-    persona.nroDocumento = usuarioDto.persona.nroDocumento;
-    persona.fechaNacimiento = usuarioDto.persona.fechaNacimiento;
+    persona.nombres = usuarioDto?.persona?.nombres ?? null;
+    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null;
+    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null;
+    persona.nroDocumento =
+      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
 
     // Usuario
     const usuario = new Usuario();
     usuario.persona = persona;
     usuario.usuarioRol = usuarioRoles;
 
-    usuario.usuario = usuarioDto.persona.nroDocumento;
-    usuario.correoElectronico = usuarioDto.correoElectronico;
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    usuario.correoElectronico = usuarioDto?.correoElectronico;
     usuario.contrasena = await TextService.encrypt(TextService.generateUuid());
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
     return this.save(usuario);

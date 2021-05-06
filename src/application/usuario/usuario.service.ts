@@ -17,6 +17,7 @@ import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
 import { PersonaDto } from '../persona/persona.dto';
 import { UsuarioRolRepository } from './usuario-rol.repository';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
+import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -63,6 +64,24 @@ export class UsuarioService {
     throw new PreconditionFailedException(Messages.EXISTING_USER);
   }
 
+  async crearConCiudadania(
+    usuarioDto: CrearUsuarioCiudadaniaDto,
+    usuarioAuditoria: string,
+  ) {
+    const persona = new PersonaDto();
+    persona.nroDocumento = usuarioDto.usuario;
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+    if (!usuario) {
+      const result = await this.usuarioRepositorio.crear(
+        usuarioDto as CrearUsuarioDto,
+        usuarioAuditoria,
+      );
+      const { id, estado } = result;
+      return { id, estado };
+    }
+    throw new PreconditionFailedException(Messages.EXISTING_USER);
+  }
+
   async activar(idUsuario, usuarioAuditoria: string) {
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
@@ -74,7 +93,6 @@ export class UsuarioService {
       usuarioDto.contrasena = await TextService.encrypt(contrasena);
       usuarioDto.estado = Status.PENDING;
       usuarioDto.usuarioActualizacion = usuarioAuditoria;
-      // const result = await this.usuarioRepositorio.save(usuario);
       await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);

@@ -17,6 +17,8 @@ export class CrearUsuarioDto {
   @Type(() => PersonaDto)
   persona: PersonaDto;
 
+  ciudadaniaDigital?: boolean = false;
+
   @IsNotEmpty()
   roles: Array<string>;
 
