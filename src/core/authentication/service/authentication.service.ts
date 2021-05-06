@@ -86,11 +86,13 @@ export class AuthenticationService {
       if (!statusValid.includes(respuesta.estado as Status)) {
         throw new EntityUnauthorizedException(Messages.INVALID_USER);
       }
-      const roles = [];
+      let roles = [];
       if (respuesta.usuarioRol.length) {
-        respuesta.usuarioRol.map((usuarioRol) => {
-          roles.push(usuarioRol.rol.rol);
-        });
+        roles = respuesta.usuarioRol
+          .map((usuarioRol) =>
+            usuarioRol.estado === Status.ACTIVE ? usuarioRol.rol.rol : null,
+          )
+          .filter(Boolean);
       }
 
       return { id: respuesta.id, roles };
