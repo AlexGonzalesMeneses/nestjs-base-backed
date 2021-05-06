@@ -396,6 +396,9 @@ paths:
                             estado:  
                               type: string
                               example: 'ACTIVO'
+                            ciudadaniaDigital:  
+                              type: boolean
+                              example: false
                             persona:
                               type: object
                               properties:
@@ -491,7 +494,49 @@ paths:
                       estado:
                         type: string
                         example: 'CREADO'
-                          
+  /api/usuarios/ciudadania:
+    post:
+      summary: Api para crear una nuevo usuario relacionado con ciudadania digital
+      tags: ['usuario']
+      operationId: post-api-usuarios-ciudadania
+      description: Api para crear un nuevo usuario relacionado con ciudadania digital
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario:
+                  type: string
+                  example: '123456'
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: 'Registro creado con exito!'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: '81fd2f36-2857-41e5-aa7f-a8101297337d'
+                      estado:
+                        type: string
+                        example: 'CREADO'
   /api/usuarios/{id}:
     patch:
       summary: Actualiza datos de un usuario

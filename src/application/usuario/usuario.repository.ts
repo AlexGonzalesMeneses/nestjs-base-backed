@@ -22,6 +22,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'usuario.usuario',
         'usuario.correoElectronico',
         'usuario.estado',
+        'usuario.ciudadaniaDigital',
         'usuarioRol',
         'rol.id',
         'rol.rol',
