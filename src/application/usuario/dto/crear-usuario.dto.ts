@@ -8,6 +8,8 @@ export class CrearUsuarioDto {
 
   estado?: string;
 
+  contrasena?: string;
+
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()

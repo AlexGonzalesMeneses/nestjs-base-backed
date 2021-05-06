@@ -13,6 +13,7 @@ import { PreconditionFailedException } from '@nestjs/common';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 import { Messages } from '../../common/constants/response-messages';
 import { UsuarioRolRepository } from './usuario-rol.repository';
+import { SegipService } from '../../core/external-services/iop/segip/segip.service';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -164,6 +165,12 @@ describe('UsuarioService', () => {
           provide: MensajeriaService,
           useValue: {
             sendEmail: jest.fn(() => ({ finalizado: true })),
+          },
+        },
+        {
+          provide: SegipService,
+          useValue: {
+            contrastar: jest.fn(() => ({ finalizado: true })),
           },
         },
         {

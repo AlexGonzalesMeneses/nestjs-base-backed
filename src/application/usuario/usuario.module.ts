@@ -8,6 +8,7 @@ import { MensajeriaModule } from '../../core/external-services/mensajeria/mensaj
 import { ConfigModule } from '@nestjs/config';
 import { AuthorizationModule } from '../../core/authorization/authorization.module';
 import { UsuarioRolRepository } from './usuario-rol.repository';
+import { IopModule } from '../../core/external-services/iop/iop.module';
 
 @Module({
   providers: [UsuarioService],
@@ -19,6 +20,7 @@ import { UsuarioRolRepository } from './usuario-rol.repository';
       UsuarioRolRepository,
     ]),
     MensajeriaModule,
+    IopModule,
     ConfigModule,
     AuthorizationModule,
   ],

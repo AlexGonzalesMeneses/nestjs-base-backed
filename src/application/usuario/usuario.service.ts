@@ -18,6 +18,7 @@ import { PersonaDto } from '../persona/persona.dto';
 import { UsuarioRolRepository } from './usuario-rol.repository';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
 import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
+import { SegipService } from '../../core/external-services/iop/segip/segip.service';
 
 @Injectable()
 export class UsuarioService {
@@ -28,6 +29,7 @@ export class UsuarioService {
     private usuarioRolRepositorio: UsuarioRolRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
+    private readonly segipServices: SegipService,
   ) {}
 
   // GET USERS
@@ -52,12 +54,27 @@ export class UsuarioService {
         usuarioDto.correoElectronico,
       );
       if (!correo) {
-        const result = await this.usuarioRepositorio.crear(
-          usuarioDto,
-          usuarioAuditoria,
-        );
-        const { id, estado } = result;
-        return { id, estado };
+        // contrastacion segip
+        const { persona } = usuarioDto;
+        const contrastaSegip = await this.segipServices.contrastar(persona);
+        if (contrastaSegip?.finalizado) {
+          // guardar
+          const contrasena = TextService.generateShortRandomText();
+          usuarioDto.contrasena = await TextService.encrypt(contrasena);
+          usuarioDto.estado = Status.PENDING;
+          const result = await this.usuarioRepositorio.crear(
+            usuarioDto,
+            usuarioAuditoria,
+          );
+          // enviar correo con credenciales
+          await this.enviarCorreoContrasenia(
+            usuarioDto.correoElectronico,
+            contrasena,
+          );
+          const { id, estado } = result;
+          return { id, estado };
+        }
+        throw new PreconditionFailedException(contrastaSegip.mensaje);
       }
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
     }
@@ -87,7 +104,6 @@ export class UsuarioService {
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
-      // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
       const usuarioDto = new ActualizarUsuarioDto();

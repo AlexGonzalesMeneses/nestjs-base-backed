@@ -16,5 +16,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   providers: [SegipService],
+  exports: [SegipService],
 })
 export class SegipModule {}
