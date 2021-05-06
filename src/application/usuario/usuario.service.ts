@@ -264,15 +264,19 @@ export class UsuarioService {
       roles = await Promise.all(
         usuario.usuarioRol.map(async (usuarioRol) => {
           const { rol } = usuarioRol.rol;
-          const modulos = await this.authorizationService.obtenerPermisosPorRol(
-            rol,
-          );
-          return {
-            rol,
-            modulos,
-          };
+          if (usuarioRol.estado === Status.ACTIVE) {
+            const modulos = await this.authorizationService.obtenerPermisosPorRol(
+              rol,
+            );
+            return {
+              rol,
+              modulos,
+            };
+          }
+          return false;
         }),
       );
+      roles = roles.filter(Boolean);
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
