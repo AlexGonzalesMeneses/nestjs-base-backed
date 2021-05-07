@@ -12,6 +12,7 @@ export class CrearUsuarioCiudadaniaDto {
   @IsNotEmpty()
   roles: Array<string>;
 
+  @Transform(() => true)
   ciudadaniaDigital?: boolean = true;
 
   usuarioCreacion?: string;
