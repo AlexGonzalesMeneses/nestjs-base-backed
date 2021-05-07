@@ -58,7 +58,6 @@ export class UsuarioService {
         const { persona } = usuarioDto;
         const contrastaSegip = await this.segipServices.contrastar(persona);
         if (contrastaSegip?.finalizado) {
-          // guardar
           const contrasena = TextService.generateShortRandomText();
           usuarioDto.contrasena = await TextService.encrypt(contrasena);
           usuarioDto.estado = Status.PENDING;
@@ -198,7 +197,10 @@ export class UsuarioService {
     if (usuario) {
       const { correoElectronico, roles } = usuarioDto;
       // 2. verificar que el email no este registrado
-      if (correoElectronico) {
+      if (
+        correoElectronico &&
+        correoElectronico !== usuario.correoElectronico
+      ) {
         const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
           correoElectronico,
         );
@@ -211,39 +213,42 @@ export class UsuarioService {
       }
       if (roles.length > 0) {
         // realizar reglas de roles
-        const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
-          id,
-        );
-        const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
-          usuarioRoles,
-          roles,
-        );
-        // ACTIVAR roles inactivos
-        if (inactivos.length > 0) {
-          await this.usuarioRolRepositorio.activarOInactivar(
-            id,
-            inactivos,
-            Status.ACTIVE,
-          );
-        }
-        // INACTIVAR roles activos
-        if (activos.length > 0) {
-          await this.usuarioRolRepositorio.activarOInactivar(
-            id,
-            activos,
-            Status.INACTIVE,
-          );
-        }
-        // CREAR nuevos roles
-        if (nuevos.length > 0) {
-          await this.usuarioRolRepositorio.crear(id, nuevos);
-        }
+        await this.actualizarRoles(id, roles);
       }
       return { id };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
+  private async actualizarRoles(id, roles) {
+    const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
+      id,
+    );
+    const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
+      usuarioRoles,
+      roles,
+    );
+    // ACTIVAR roles inactivos
+    if (inactivos.length > 0) {
+      await this.usuarioRolRepositorio.activarOInactivar(
+        id,
+        inactivos,
+        Status.ACTIVE,
+      );
+    }
+    // INACTIVAR roles activos
+    if (activos.length > 0) {
+      await this.usuarioRolRepositorio.activarOInactivar(
+        id,
+        activos,
+        Status.INACTIVE,
+      );
+    }
+    // CREAR nuevos roles
+    if (nuevos.length > 0) {
+      await this.usuarioRolRepositorio.crear(id, nuevos);
+    }
+  }
   private verificarUsuarioRoles(usuarioRoles, roles) {
     const inactivos = roles.filter((rol) =>
       usuarioRoles.some(
