@@ -2,16 +2,18 @@
 [![pipeline status](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/badges/develop/pipeline.svg)](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/-/commits/develop)
 
 ## Descripción
-Proyecto base backend con modulos:
+El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
+
   - Autenticación JWT
   - Autenticación con Ciudadania Digital
-  - Roles, Modulos, usuarios
-  - Parametricas
+  - Roles, Módulos, usuarios
+  - Paramétricas
   - Cliente para Interoperabilidad
   - Cliente para Mensajería Electrónica
   - Generación de reportes
 
 ## Tecnologías
+
 - [NestJS](https://nestjs.com/)
 - [Jest](https://jestjs.io/)
 - [Passport.js](http://www.passportjs.org/)
@@ -22,7 +24,8 @@ Proyecto base backend con modulos:
 - [Postgresql](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/)
 
-## Comandos Utiles
+## Comandos Útiles
+
 ### Migraciones
 - Generación de migraciones
 ```bash
@@ -33,6 +36,7 @@ $ npm run migrations:generate <nombre-migracion>
 ```bash
 $ npm run migrations:run
 ```
+
 ### Seeders
 - Crear plantilla seeder
 ```bash
@@ -43,11 +47,13 @@ $ npm run seeds:create
 ```bash
 $ npm run seeds:run
 ```
+
 ## Scripts
 - Ejecución de contenedor con instancia postgres
 ```bash
 $ npm run start:database
 ```
+
 ## Linterna
 - Ejecucion de linterna eslint
 ```bash
@@ -72,9 +78,10 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
 ## Documentación
-Este proyecto incluye el directorio **docs** con mas detalle de:
-1. [Instalación y Configuración](/docs/INSTALL.md)
+Este proyecto incluye el directorio **docs** con más detalle de:
+1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
 3. [Documentacion de APIS](/docs/openapi.yaml)
 4. [Documentacion de Permisos](/docs/permisos.md)

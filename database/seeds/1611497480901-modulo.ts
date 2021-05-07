@@ -28,7 +28,7 @@ export class modulo1611497480901 implements MigrationInterface {
       {
         nombre: 'parametros',
         url: '/parametros',
-        label: 'Parametros',
+        label: 'Parámetros',
         icono: 'tune',
         propiedades: {
           color_light: '#312403',
