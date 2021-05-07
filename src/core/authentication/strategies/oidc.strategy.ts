@@ -4,6 +4,8 @@ import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
 import { PersonaDto } from 'src/application/persona/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
 import * as dayjs from 'dayjs';
+import * as customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export const buildOpenIdClient = async () => {
   const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
@@ -46,6 +48,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       const fechaNacimiento = dayjs(
         userinfo.fecha_nacimiento.toString(),
         'DD/MM/YYYY',
+        true,
       ).format('YYYY-MM-DD');
 
       const persona = new PersonaDto();

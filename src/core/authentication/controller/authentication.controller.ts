@@ -8,6 +8,7 @@ import { OidcAuthGuard } from '../guards/oidc-auth.guard';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 import { PinoLogger } from 'nestjs-pino';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller()
 export class AuthenticationController {
@@ -55,6 +56,7 @@ export class AuthenticationController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logoutCiudadania(@Request() req, @Res() res: Response) {
     const jid = req.cookies.jid || '';
