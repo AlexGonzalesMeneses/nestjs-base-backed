@@ -40,3 +40,5 @@ requests.http
 src/logs
 database/migrations/
 documentation
+
+package-lock.json
