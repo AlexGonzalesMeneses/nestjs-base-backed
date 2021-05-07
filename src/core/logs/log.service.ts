@@ -23,6 +23,7 @@ export class LogService {
               headers: {
                 Authorization: this.logsLogstashToken,
               },
+              batchSize: 1,
             }),
           ]
         : [];

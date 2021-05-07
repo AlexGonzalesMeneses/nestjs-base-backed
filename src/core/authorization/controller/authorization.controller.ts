@@ -33,8 +33,8 @@ export class AuthorizationController extends AbstractController {
   }
 
   @Get('/politicas')
-  async listarPoliticas() {
-    const result = await this.authorizationService.listarPoliticas();
+  async listarPoliticas(@Query() query) {
+    const result = await this.authorizationService.listarPoliticas(query);
     return this.successList(result);
   }
 

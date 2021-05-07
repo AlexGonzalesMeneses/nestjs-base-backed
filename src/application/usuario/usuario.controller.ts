@@ -16,7 +16,6 @@ import {
 import { AbstractController } from '../../common/dto/abstract-controller.dto';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
-import { UsuarioDto } from './dto/usuario.dto';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
@@ -24,6 +23,8 @@ import { Messages } from '../../common/constants/response-messages';
 import { ConfigService } from '@nestjs/config';
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
 import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
+import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
+import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -35,6 +36,11 @@ export class UsuarioController extends AbstractController {
   }
   // GET users
   @UseGuards(JwtAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  )
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.usuarioService.listar(paginacionQueryDto);
@@ -56,6 +62,21 @@ export class UsuarioController extends AbstractController {
   async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.crear(
+      usuarioDto,
+      usuarioAuditoria,
+    );
+    return this.successCreate(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/ciudadania')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async crearConCiudadania(
+    @Req() req,
+    @Body() usuarioDto: CrearUsuarioCiudadaniaDto,
+  ) {
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.usuarioService.crearConCiudadania(
       usuarioDto,
       usuarioAuditoria,
     );
@@ -90,8 +111,8 @@ export class UsuarioController extends AbstractController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('/contrasena')
   @UsePipes(ValidationPipe)
+  @Patch('/contrasena')
   async actualizarContrasena(
     @Req() req,
     @Body() body: ActualizarContrasenaDto,
@@ -107,8 +128,8 @@ export class UsuarioController extends AbstractController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('/contrasena/:id')
   @UsePipes(ValidationPipe)
+  @Patch('/contrasena/:id')
   async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
     const usuarioAuditoria = this.getUser(req);
     const { id: idUsuario } = param;
@@ -122,9 +143,16 @@ export class UsuarioController extends AbstractController {
   //update user
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() usuarioDto: UsuarioDto) {
-    const result = await this.usuarioService.update(id, usuarioDto);
-    return this.successCreate(result);
+  async actualizarDatos(
+    @Param() param: ParamUuidDto,
+    @Body() usuarioDto: ActualizarUsuarioRolDto,
+  ) {
+    const { id: idUsuario } = param;
+    const result = await this.usuarioService.actualizarDatos(
+      idUsuario,
+      usuarioDto,
+    );
+    return this.successUpdate(result);
   }
 
   @Get('desbloqueo')

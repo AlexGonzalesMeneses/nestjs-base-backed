@@ -8,6 +8,8 @@ export class CrearUsuarioDto {
 
   estado?: string;
 
+  contrasena?: string;
+
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()
@@ -16,6 +18,8 @@ export class CrearUsuarioDto {
   @ValidateNested()
   @Type(() => PersonaDto)
   persona: PersonaDto;
+
+  ciudadaniaDigital?: boolean = false;
 
   @IsNotEmpty()
   roles: Array<string>;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
 import { totalRowsResponse } from '../../../common/lib/http.module';
 import { ModuloService } from '../service/modulo.service';
@@ -9,15 +9,27 @@ export class AuthorizationService {
     private readonly moduloService: ModuloService,
   ) {}
 
-  async listarPoliticas() {
-    const politicas = await this.rbacSrv.getPolicy();
+  async listarPoliticas(@Query() query) {
+    const { tipo, limite, pagina } = query;
+    let politicas;
+    if (tipo) {
+      politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
+    } else {
+      politicas = await this.rbacSrv.getPolicy();
+    }
     const result = politicas.map((politica) => ({
       sujeto: politica[0],
       objeto: politica[1],
       accion: politica[2],
       app: politica[3],
     }));
-    return totalRowsResponse([result, result.length]);
+    if (!limite || !pagina) {
+      return totalRowsResponse([result, result.length]);
+    }
+    const i = limite * (pagina - 1);
+    const f = limite * pagina;
+    const subset = result.slice(i, f);
+    return totalRowsResponse([subset, result.length]);
   }
 
   async crearPolitica(politica) {

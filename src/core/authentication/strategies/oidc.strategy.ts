@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
 import { PersonaDto } from 'src/application/persona/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
+import * as dayjs from 'dayjs';
 
 export const buildOpenIdClient = async () => {
   const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
@@ -36,24 +37,26 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   async validate(tokenset: TokenSet): Promise<any> {
     try {
       const userinfo = await this.client.userinfo(tokenset);
-
       const ci = <documentoIdentidad>userinfo.documento_identidad;
       if (/[a-z]/i.test(ci.numero_documento)) {
         ci.complemento = ci.numero_documento.slice(-2);
         ci.numero_documento = ci.numero_documento.slice(0, -2);
       }
 
-      // TODO: verificar si es necesario enviar
-      /* const fechaNacimiento = dayjs(
+      const fechaNacimiento = dayjs(
         userinfo.fecha_nacimiento.toString(),
         'DD/MM/YYYY',
-      ).toDate(); */
+      ).format('YYYY-MM-DD');
 
       const persona = new PersonaDto();
       persona.tipoDocumento = ci.tipo_documento;
       persona.nroDocumento = ci.numero_documento;
-      // persona.fechaNacimiento = fechaNacimiento;
-
+      persona.fechaNacimiento = fechaNacimiento;
+      const nombre = <nombre>userinfo.nombre;
+      persona.nombres = nombre.nombres;
+      persona.primerApellido = nombre.primer_apellido;
+      persona.segundoApellido = nombre.segundo_apellido;
+      // const correoElectronico = userinfo.email;
       const usuario = await this.autenticacionService.validarUsuarioOidc(
         persona,
       );
@@ -77,4 +80,10 @@ export interface documentoIdentidad {
   tipo_documento: string;
   numero_documento: string;
   complemento: string;
+}
+
+export interface nombre {
+  nombres: string;
+  primer_apellido: string;
+  segundo_apellido: string;
 }

@@ -43,7 +43,7 @@ describe('AuthorizationController', () => {
   });
 
   it('[listar] Deberia listar politicas en formato filas y total', async () => {
-    const result = await controller.listarPoliticas();
+    const result = await controller.listarPoliticas('frontend');
     expect(result).toBeDefined();
     expect(result).toHaveProperty('finalizado');
     expect(result).toHaveProperty('mensaje');

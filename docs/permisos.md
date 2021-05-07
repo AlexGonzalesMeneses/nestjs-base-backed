@@ -31,9 +31,5 @@
 |POST /usuarios|x||
 |PATCH /usuarios/:id|x||
 |DELETE /usuarios/:id|x||
-|GET /entidades|x|x|
-|POST /entidades|x|x|
-|PATCH /entidades/:id|x|x|
-|DELETE /entidades/:id|x|x|
 |GET /parametricas|x|x|
 |POST /parametricas|x|x|

@@ -7,12 +7,12 @@ import { Persona } from '../persona/persona.entity';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 import { PersonaDto } from '../persona/persona.dto';
+import { Status } from '../../common/constants';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, orden } = paginacionQueryDto;
-    this.createQueryBuilder().useTransaction;
+    const { limite, saltar } = paginacionQueryDto;
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -22,6 +22,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'usuario.usuario',
         'usuario.correoElectronico',
         'usuario.estado',
+        'usuario.ciudadaniaDigital',
         'usuarioRol',
         'rol.id',
         'rol.rol',
@@ -32,9 +33,9 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.fechaNacimiento',
         'persona.tipoDocumento',
       ])
-      .orderBy('usuario.fechaCreacion', orden)
-      .offset(saltar)
-      .limit(limite)
+      .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
+      .skip(saltar)
+      .take(limite)
       .getManyAndCount();
     return queryBuilder;
   }
@@ -106,20 +107,23 @@ export class UsuarioRepository extends Repository<Usuario> {
 
     // Persona
     const persona = new Persona();
-    persona.nombres = usuarioDto.persona.nombres;
-    persona.primerApellido = usuarioDto.persona.primerApellido;
-    persona.segundoApellido = usuarioDto.persona.segundoApellido;
-    persona.nroDocumento = usuarioDto.persona.nroDocumento;
-    persona.fechaNacimiento = usuarioDto.persona.fechaNacimiento;
+    persona.nombres = usuarioDto?.persona?.nombres ?? null;
+    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null;
+    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null;
+    persona.nroDocumento =
+      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
 
     // Usuario
     const usuario = new Usuario();
     usuario.persona = persona;
     usuario.usuarioRol = usuarioRoles;
 
-    usuario.usuario = usuarioDto.persona.nroDocumento;
-    usuario.correoElectronico = usuarioDto.correoElectronico;
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
+    usuario.correoElectronico = usuarioDto?.correoElectronico;
     usuario.contrasena = await TextService.encrypt(TextService.generateUuid());
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
     return this.save(usuario);
@@ -147,6 +151,16 @@ export class UsuarioRepository extends Repository<Usuario> {
       .select(['usuario.id', 'usuario.estado'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
+  }
+
+  actualizarDatosPersona(persona: PersonaDto) {
+    return this.createQueryBuilder()
+      .update(Persona)
+      .set(persona)
+      .where('nroDocumento = :nroDocumento', {
+        nroDocumento: persona.nroDocumento,
+      })
+      .execute();
   }
 
   async runTransaction(op) {

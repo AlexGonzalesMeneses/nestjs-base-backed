@@ -6,7 +6,6 @@ import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
-import { UsuarioDto } from './dto/usuario.dto';
 import { Status } from '../../common/constants';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { TextService } from '../../common/lib/text.service';
@@ -16,14 +15,21 @@ import { Messages } from '../../common/constants/response-messages';
 import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
 import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
 import { PersonaDto } from '../persona/persona.dto';
+import { UsuarioRolRepository } from './usuario-rol.repository';
+import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
+import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
+import { SegipService } from '../../core/external-services/iop/segip/segip.service';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
+    @InjectRepository(UsuarioRolRepository)
+    private usuarioRolRepositorio: UsuarioRolRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
+    private readonly segipServices: SegipService,
   ) {}
 
   // GET USERS
@@ -48,14 +54,48 @@ export class UsuarioService {
         usuarioDto.correoElectronico,
       );
       if (!correo) {
-        const result = await this.usuarioRepositorio.crear(
-          usuarioDto,
-          usuarioAuditoria,
-        );
-        const { id, estado } = result;
-        return { id, estado };
+        // contrastacion segip
+        const { persona } = usuarioDto;
+        const contrastaSegip = await this.segipServices.contrastar(persona);
+        if (contrastaSegip?.finalizado) {
+          // guardar
+          const contrasena = TextService.generateShortRandomText();
+          usuarioDto.contrasena = await TextService.encrypt(contrasena);
+          usuarioDto.estado = Status.PENDING;
+          const result = await this.usuarioRepositorio.crear(
+            usuarioDto,
+            usuarioAuditoria,
+          );
+          // enviar correo con credenciales
+          await this.enviarCorreoContrasenia(
+            usuarioDto.correoElectronico,
+            contrasena,
+          );
+          const { id, estado } = result;
+          return { id, estado };
+        }
+        throw new PreconditionFailedException(contrastaSegip.mensaje);
       }
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
+    }
+    throw new PreconditionFailedException(Messages.EXISTING_USER);
+  }
+
+  async crearConCiudadania(
+    usuarioDto: CrearUsuarioCiudadaniaDto,
+    usuarioAuditoria: string,
+  ) {
+    const persona = new PersonaDto();
+    persona.nroDocumento = usuarioDto.usuario;
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+    if (!usuario) {
+      usuarioDto.estado = Status.ACTIVE;
+      const result = await this.usuarioRepositorio.crear(
+        usuarioDto as CrearUsuarioDto,
+        usuarioAuditoria,
+      );
+      const { id, estado } = result;
+      return { id, estado };
     }
     throw new PreconditionFailedException(Messages.EXISTING_USER);
   }
@@ -64,14 +104,12 @@ export class UsuarioService {
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
-      // TODO: realizar validacion con segip
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
       const usuarioDto = new ActualizarUsuarioDto();
       usuarioDto.contrasena = await TextService.encrypt(contrasena);
       usuarioDto.estado = Status.PENDING;
       usuarioDto.usuarioActualizacion = usuarioAuditoria;
-      // const result = await this.usuarioRepositorio.save(usuario);
       await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       // si todo bien => enviar el mail con la contraseña generada
       await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
@@ -153,16 +191,87 @@ export class UsuarioService {
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
-  // update method
-  async update(id: string, usuarioDto: UsuarioDto) {
-    const usuario = await this.usuarioRepositorio.preload({
-      id: id,
-      ...usuarioDto,
-    });
-    if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER);
+
+  async actualizarDatos(id: string, usuarioDto: ActualizarUsuarioRolDto) {
+    // 1. verificar que exista el usuario
+    const usuario = await this.usuarioRepositorio.findOne(id);
+    if (usuario) {
+      const { correoElectronico, roles } = usuarioDto;
+      // 2. verificar que el email no este registrado
+      if (correoElectronico) {
+        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+          correoElectronico,
+        );
+        if (existe) {
+          throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
+        }
+        const actualizarUsuarioDto = new ActualizarUsuarioDto();
+        actualizarUsuarioDto.correoElectronico = correoElectronico;
+        await this.usuarioRepositorio.update(id, actualizarUsuarioDto);
+      }
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
+          id,
+        );
+        const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
+          usuarioRoles,
+          roles,
+        );
+        // ACTIVAR roles inactivos
+        if (inactivos.length > 0) {
+          await this.usuarioRolRepositorio.activarOInactivar(
+            id,
+            inactivos,
+            Status.ACTIVE,
+          );
+        }
+        // INACTIVAR roles activos
+        if (activos.length > 0) {
+          await this.usuarioRolRepositorio.activarOInactivar(
+            id,
+            activos,
+            Status.INACTIVE,
+          );
+        }
+        // CREAR nuevos roles
+        if (nuevos.length > 0) {
+          await this.usuarioRolRepositorio.crear(id, nuevos);
+        }
+      }
+      return { id };
     }
-    return this.usuarioRepositorio.save(usuario);
+    throw new EntityNotFoundException(Messages.INVALID_USER);
+  }
+
+  private verificarUsuarioRoles(usuarioRoles, roles) {
+    const inactivos = roles.filter((rol) =>
+      usuarioRoles.some(
+        (usuarioRol) =>
+          usuarioRol.rol.id === rol && usuarioRol.estado === Status.INACTIVE,
+      ),
+    );
+
+    const activos = usuarioRoles
+      .map((usuarioRol) =>
+        roles.every(
+          (rol) =>
+            rol !== usuarioRol.rol.id && usuarioRol.estado === Status.ACTIVE,
+        )
+          ? usuarioRol.rol.id
+          : null,
+      )
+      .filter(Boolean);
+
+    const nuevos = roles.filter((rol) =>
+      usuarioRoles.every((usuarioRol) => usuarioRol.rol.id !== rol),
+    );
+
+    return {
+      activos,
+      inactivos,
+      nuevos,
+    };
   }
 
   async buscarUsuarioId(id: string): Promise<any> {
@@ -172,15 +281,19 @@ export class UsuarioService {
       roles = await Promise.all(
         usuario.usuarioRol.map(async (usuarioRol) => {
           const { rol } = usuarioRol.rol;
-          const modulos = await this.authorizationService.obtenerPermisosPorRol(
-            rol,
-          );
-          return {
-            rol,
-            modulos,
-          };
+          if (usuarioRol.estado === Status.ACTIVE) {
+            const modulos = await this.authorizationService.obtenerPermisosPorRol(
+              rol,
+            );
+            return {
+              rol,
+              modulos,
+            };
+          }
+          return false;
         }),
       );
+      roles = roles.filter(Boolean);
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
@@ -229,5 +342,12 @@ export class UsuarioService {
       id: usuario.id,
       estado: usuario.estado,
     };
+  }
+
+  async actualizarDatosPersona(datosPersona: PersonaDto) {
+    const usuario = await this.usuarioRepositorio.actualizarDatosPersona(
+      datosPersona,
+    );
+    return usuario;
   }
 }
