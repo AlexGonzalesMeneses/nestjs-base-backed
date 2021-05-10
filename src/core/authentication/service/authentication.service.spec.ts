@@ -8,6 +8,8 @@ import { EntityUnauthorizedException } from '../../../common/exceptions/entity-u
 import { Configurations } from '../../../common/constants';
 import * as dayjs from 'dayjs';
 import { TextService } from '../../../common/lib/text.service';
+import { Persona } from '../../../application/persona/persona.entity';
+import { plainToClass } from 'class-transformer';
 
 const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
@@ -15,8 +17,22 @@ const resBuscarUsuario = {
   usuario: 'user',
   contrasena: '$2b$10$Tq95LTM6Ofo0oEbD8J4/E.8xr13SVbNYXfX7y1Q.IconhxfHuKRVe',
   estado: 'ACTIVO',
-  usuarioRol: [],
+  usuarioRol: [
+    {
+      estado: 'ACTIVO',
+      rol: {
+        rol: 'ADMINISTRADOR',
+      },
+    },
+  ],
   intentos: 0,
+};
+
+const resPersona = {
+  nombres: 'JUAN',
+  primerApellido: 'PEREZ',
+  segundoApellido: 'PEREZ',
+  fechaNacimiento: '1999-11-11',
 };
 
 const refreshToken = { resfresh_token: '1' };
@@ -58,6 +74,19 @@ describe('AuthenticationService', () => {
               }),
             actualizarDatosBloqueo: jest.fn(() => ({})),
             actualizarContadorBloqueos: jest.fn(() => ({})),
+            buscarUsuarioPorCI: jest
+              .fn()
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce({
+                ...resBuscarUsuario,
+                estado: 'INACTIVO',
+                persona: resPersona,
+              })
+              .mockReturnValueOnce({
+                ...resBuscarUsuario,
+                estado: 'ACTIVO',
+                persona: resPersona,
+              }),
           },
         },
         {
@@ -140,5 +169,28 @@ describe('AuthenticationService', () => {
       expect(usuarioService.actualizarDatosBloqueo).toBeCalled();
       expect(usuarioService.actualizarContadorBloqueos).toBeCalled();
     }
+  });
+
+  it('[validarUsuarioOidc] Deberia retornar null cuando no existe el usuario.', async () => {
+    const persona = plainToClass(Persona, resPersona);
+
+    const result = await service.validarUsuarioOidc(persona);
+    expect(result).toBeFalsy();
+  });
+
+  it('[validarUsuarioOidc] Deberia retornar excepcion si el usuario esta INACTIVO.', async () => {
+    try {
+      const persona = plainToClass(Persona, resPersona);
+      await service.validarUsuarioOidc(persona);
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityUnauthorizedException);
+    }
+  });
+
+  it('[validarUsuarioOidc] Deberia retornar el id si el usuario esta ACTIVO.', async () => {
+    const persona = plainToClass(Persona, resPersona);
+    const result = await service.validarUsuarioOidc(persona);
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('id');
   });
 });

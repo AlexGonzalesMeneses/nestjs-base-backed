@@ -46,7 +46,6 @@ export class AuthenticationService {
       ) {
         return false;
       }
-      return true;
     }
     return false;
   }
