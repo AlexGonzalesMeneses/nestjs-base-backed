@@ -119,13 +119,20 @@ export class AuthenticationService {
 
   async validarUsuarioOidc(persona: PersonaDto): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona);
-
     if (respuesta) {
-      if (respuesta.estado === Status.INACTIVE) {
+      const { estado, persona: datosPersona } = respuesta;
+      if (estado === Status.INACTIVE) {
         throw new EntityUnauthorizedException(Messages.INACTIVE_USER);
       }
       // actualizar datos persona
-      await this.usuarioService.actualizarDatosPersona(persona);
+      if (
+        datosPersona.nombres !== persona.nombres &&
+        datosPersona.primerApellido !== persona.primerApellido &&
+        datosPersona.segundoApellido !== persona.segundoApellido &&
+        datosPersona.fechaNacimiento !== persona.fechaNacimiento
+      ) {
+        await this.usuarioService.actualizarDatosPersona(persona);
+      }
       const roles = [];
       if (respuesta.usuarioRol.length) {
         respuesta.usuarioRol.map((usuarioRol) => {
