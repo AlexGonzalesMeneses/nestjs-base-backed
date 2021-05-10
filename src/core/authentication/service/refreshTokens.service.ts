@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { nanoid } from 'nanoid';
@@ -16,6 +12,9 @@ import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { Cron } from '@nestjs/schedule';
 
 import * as dotenv from 'dotenv';
+import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
+import { Messages } from '../../../common/constants/response-messages';
+import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
 
 dotenv.config();
 
@@ -56,11 +55,15 @@ export class RefreshTokensService {
     );
 
     if (!refreshToken) {
-      throw new NotFoundException();
+      throw new EntityNotFoundException(
+        Messages.EXCEPTION_REFRESH_TOKEN_NOT_FOUND,
+      );
     }
 
     if (!dayjs().isBefore(dayjs(refreshToken.expiresAt))) {
-      throw new UnauthorizedException();
+      throw new EntityUnauthorizedException(
+        Messages.EXCEPTION_REFRESH_TOKEN_EXPIRED,
+      );
     }
 
     // usuario

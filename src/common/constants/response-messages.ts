@@ -8,6 +8,8 @@ export enum Messages {
   EXCEPTION_NOT_FOUND = 'Recurso no encontrado',
   EXCEPTION_PRECONDITION_FAILED = 'La solicitud no cumple una condición previa.',
   EXCEPTION_DEFAULT = 'Ocurrio un error desconocido',
+  EXCEPTION_REFRESH_TOKEN_NOT_FOUND = 'Sesión finalizada.',
+  EXCEPTION_REFRESH_TOKEN_EXPIRED = 'Sesión expirada por inactividad.',
 
   // generic messages success
   SUCCESS_DEFAULT = 'ok',

@@ -81,7 +81,7 @@ export class UsuarioRepository extends Repository<Usuario> {
 
   buscarUsuarioPorCI(persona: PersonaDto) {
     return this.createQueryBuilder('usuario')
-      .innerJoin('usuario.persona', 'persona')
+      .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
