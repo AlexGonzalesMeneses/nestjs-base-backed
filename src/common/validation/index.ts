@@ -52,8 +52,8 @@ export const IsNumberString = makeWithOptions(validator.IsNumberString, Validati
 // STRING VALIDATION
 export const Contains = makeWithOptions(validator.Contains, ValidationMessageEnum.CONTAINS);
 export const NotContains = makeWithOptions(validator.NotContains, ValidationMessageEnum.NOT_CONTAINS);
-export const IsAlpha = make(validator.IsAlpha, ValidationMessageEnum.IS_ALPHA);
-export const IsAlphanumeric = make(validator.IsAlphanumeric, ValidationMessageEnum.IS_ALPHA_NUMERIC);
+export const IsAlpha = makeWithOptions(validator.IsAlpha, ValidationMessageEnum.IS_ALPHA);
+export const IsAlphanumeric = makeWithOptions(validator.IsAlphanumeric, ValidationMessageEnum.IS_ALPHA_NUMERIC);
 export const IsDecimal = makeWithOptions(validator.IsDecimal, ValidationMessageEnum.IS_DECIMAL);
 export const IsAscii = make(validator.IsAscii, ValidationMessageEnum.IS_ASCII);
 export const IsBase32 = make(validator.IsBase32, ValidationMessageEnum.IS_BASE32);
