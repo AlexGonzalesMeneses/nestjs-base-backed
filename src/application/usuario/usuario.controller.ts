@@ -157,11 +157,9 @@ export class UsuarioController extends AbstractController {
 
   @Get('desbloqueo')
   @UsePipes(ValidationPipe)
-  async desbloquearCuenta(@Query() query: ParamUuidDto, @Res() res) {
+  async desbloquearCuenta(@Query() query: ParamUuidDto) {
     const { id: idDesbloqueo } = query;
-    await this.usuarioService.desbloquearCuenta(idDesbloqueo);
-    return res
-      .status(200)
-      .redirect(`${this.configService.get('URL_FRONTEND')}/#/login`);
+    const result = await this.usuarioService.desbloquearCuenta(idDesbloqueo);
+    return this.successCreate(result, Messages.SUCCESS_ACCOUNT_UNLOCK);
   }
 }

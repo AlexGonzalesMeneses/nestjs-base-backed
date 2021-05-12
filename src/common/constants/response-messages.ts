@@ -2,7 +2,7 @@
 
 export enum Messages {
   // generic Messages exceptions
-  EXCEPTION_BAD_REQUEST = 'La solicitud no se puede completar, error de validación',
+  EXCEPTION_BAD_REQUEST = 'La solicitud no se puede completar, existen errores de validación.',
   EXCEPTION_UNAUTHORIZED = 'Usuario no autorizado',
   EXCEPTION_FORBIDDEN = 'No tiene permisos para el recurso solicitado.',
   EXCEPTION_NOT_FOUND = 'Recurso no encontrado',
@@ -20,6 +20,7 @@ export enum Messages {
 
   // business login messages
   SUCCESS_RESTART_PASSWORD = 'Restauración de contraseña exitosa!!!',
+  SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
   INVALID_USER_CREDENTIALS = 'Usuario o contraseña invalidos.',
   INVALID_USER = 'El usuario no existe o no contiene un estado valido.',
   INVALID_CREDENTIALS = 'Credenciales incorrectas!!!',
@@ -28,7 +29,6 @@ export enum Messages {
   USER_BLOCKED = 'Usuario bloqueado por muchos intentos de sesión fallidos, revise su correo electrónico.',
   SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales',
   SUBJECT_EMAIL_ACCOUNT_LOCKED = 'Bloqueo de cuenta temporal',
-  SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
   EXISTING_USER = 'Ya existe un usuario registrado con el mismo número de documento.',
   EXISTING_EMAIL = 'Ya existe un usuario registrado con el mismo correo electrónico.',
 }

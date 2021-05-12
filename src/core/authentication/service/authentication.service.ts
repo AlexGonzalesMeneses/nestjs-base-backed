@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UsuarioService } from '../../../application/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { TextService } from '../../../common/lib/text.service';
@@ -9,6 +9,7 @@ import { Messages } from '../../../common/constants/response-messages';
 import * as dayjs from 'dayjs';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
 import { PersonaDto } from 'src/application/persona/persona.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthenticationService {
@@ -17,6 +18,7 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly mensajeriaService: MensajeriaService,
+    @Inject(ConfigService) private readonly configService: ConfigService,
   ) {}
 
   private async verificarBloqueo(usuario) {
@@ -37,7 +39,9 @@ export class AuthenticationService {
         this.mensajeriaService.sendEmail(
           usuario.correoElectronico,
           Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-          `El link de desbloqueo es su cuenta es: ${codigo}`,
+          `El link de desbloqueo es su cuenta es: ${this.configService.get(
+            'URL_FRONTEND',
+          )}/#/desbloqueo?q=${codigo}`,
         );
         return true;
       } else if (

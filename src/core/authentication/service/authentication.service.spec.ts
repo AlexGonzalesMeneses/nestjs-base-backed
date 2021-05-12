@@ -10,6 +10,7 @@ import * as dayjs from 'dayjs';
 import { TextService } from '../../../common/lib/text.service';
 import { Persona } from '../../../application/persona/persona.entity';
 import { plainToClass } from 'class-transformer';
+import { ConfigService } from '@nestjs/config';
 
 const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
@@ -44,6 +45,7 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ConfigService,
         AuthenticationService,
         {
           provide: JwtService,

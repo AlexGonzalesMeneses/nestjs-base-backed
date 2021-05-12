@@ -343,10 +343,7 @@ export class UsuarioService {
       usuarioDto.codigoDesbloqueo = null;
       await this.usuarioRepositorio.update(usuario.id, usuarioDto);
     }
-    return {
-      id: usuario.id,
-      estado: usuario.estado,
-    };
+    return { codigo };
   }
 
   async actualizarDatosPersona(datosPersona: PersonaDto) {
