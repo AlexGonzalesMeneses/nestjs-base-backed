@@ -122,7 +122,9 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
     usuario.estado = usuarioDto?.estado ?? Status.CREATE;
     usuario.correoElectronico = usuarioDto?.correoElectronico;
-    usuario.contrasena = await TextService.encrypt(TextService.generateUuid());
+    usuario.contrasena =
+      usuarioDto?.contrasena ??
+      (await TextService.encrypt(TextService.generateUuid()));
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
@@ -148,7 +150,7 @@ export class UsuarioRepository extends Repository<Usuario> {
 
   buscarPorCodigoDesbloqueo(codigo: string) {
     return this.createQueryBuilder('usuario')
-      .select(['usuario.id', 'usuario.estado'])
+      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
   }

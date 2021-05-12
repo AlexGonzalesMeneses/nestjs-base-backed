@@ -49,6 +49,8 @@ export class AuthenticationService {
         dayjs().isAfter(usuario.fechaBloqueo)
       ) {
         return false;
+      } else {
+        return true;
       }
     }
     return false;
