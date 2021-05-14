@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthZManagementService } from 'nest-authz';
 import { AuthorizationController } from './authorization.controller';

@@ -8,7 +8,6 @@ import {
   Query,
   Req,
   Request,
-  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -20,7 +19,6 @@ import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from './usuario.service';
 import { Messages } from '../../common/constants/response-messages';
-import { ConfigService } from '@nestjs/config';
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
 import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
@@ -28,10 +26,7 @@ import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
-  constructor(
-    private usuarioService: UsuarioService,
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private usuarioService: UsuarioService) {
     super();
   }
   // GET users

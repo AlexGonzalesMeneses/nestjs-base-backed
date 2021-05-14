@@ -1,10 +1,8 @@
-import { CanActivate } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { Response } from 'express';
 import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule } from '@nestjs/config';
-import { validateOrReject } from 'class-validator';
 
 describe('App controller', () => {
   let controller: AppController;

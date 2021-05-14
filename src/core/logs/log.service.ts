@@ -62,6 +62,40 @@ export class LogService {
     };
   }
 
+  static customSuccessMessage(res) {
+    if (res.statusCode <= 304) {
+      return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
+        res.req.headers,
+      )}`;
+    }
+    return `Peticion concluida - : ${
+      res.statusCode
+    } Datos de la Peticion: { "headers":"${JSON.stringify(
+      res.req.headers,
+    )}, "body": ${JSON.stringify(res.req.body)} }`;
+  }
+
+  static customErrorMessage(err, res) {
+    return `Peticion concluida - ${
+      res.statusCode
+    } Datos de la Peticion: { "headers":"${JSON.stringify(
+      res.req.headers,
+    )}, "body": ${JSON.stringify(res.req.body)} }`;
+  }
+
+  static customLogLevel(res, err) {
+    if (err) {
+      if (res.statusCode >= 500) {
+        return 'error';
+      } else if (res.statusCode > 304 && res.statusCode < 500) {
+        return 'warn';
+      } else {
+        return 'error';
+      }
+    }
+    return 'info';
+  }
+
   static getPinoHttpConfig() {
     return {
       name: this.sistemName,
@@ -82,37 +116,9 @@ export class LogService {
       },
       level: 'info',
       timestamp: pino.stdTimeFunctions.isoTime,
-      customLogLevel: (res, err) => {
-        if (err) {
-          if (res.statusCode >= 500) {
-            return 'error';
-          } else if (res.statusCode > 304 && res.statusCode < 500) {
-            return 'warn';
-          } else {
-            return 'error';
-          }
-        }
-        return 'info';
-      },
-      customSuccessMessage: (res) => {
-        if (res.statusCode <= 304) {
-          return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
-            res.req.headers,
-          )}`;
-        }
-        return `Peticion concluida - : ${
-          res.statusCode
-        } Datos de la Peticion: { "headers":"${JSON.stringify(
-          res.req.headers,
-        )}, "body": ${JSON.stringify(res.req.body)} }`;
-      },
-      customErrorMessage: function (error, res) {
-        return `Peticion concluida - ${
-          res.statusCode
-        } Datos de la Peticion: { "headers":"${JSON.stringify(
-          res.req.headers,
-        )}, "body": ${JSON.stringify(res.req.body)} }`;
-      },
+      customLogLevel: this.customLogLevel,
+      customSuccessMessage: this.customSuccessMessage,
+      customErrorMessage: this.customErrorMessage,
       customAttributeKeys: {
         req: `request`,
         res: `response`,
