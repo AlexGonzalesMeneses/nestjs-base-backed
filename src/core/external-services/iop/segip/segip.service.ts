@@ -2,7 +2,22 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception';
 import * as dayjs from 'dayjs';
-import { PersonaDto } from 'src/application/persona/persona.dto';
+import { PersonaDto } from '../../../../application/persona/persona.dto';
+import { UtilService } from '../../../../common/lib/util.service';
+
+enum CodigoResSegipEnum {
+  NO_PROCESADO = '0', // No se realizo la búsqueda
+  NO_ENCONTRADO = '1', // No se encontró el registro [persona ú documento]
+  ENCONTRADO = '2', // Encontrado
+  MULTIPLICIDAD = '3', // Se encontró mas de un registro [persona ú documento]
+  OBSERVADO = '4', // Registro con observacion
+}
+
+enum EstadosDatosEnum {
+  NO_CORRESPONDE = 0, // Dato no coincide
+  CORRESPONDE = 1, // Dato coincide
+  NO_VERIFICADO = 2, // Dato no verificado
+}
 
 @Injectable()
 export class SegipService {
@@ -12,31 +27,12 @@ export class SegipService {
    * @title Contrastación
    * @description Metodo para verificar si la información de una persona coincide con un registro en el SEGIP
    * @param datosPersona Objeto de datos con la información de la persona
+   * @param retornarPrimerError Bandera para retornar primer error en contrastacion o retornar todos
    */
-  async contrastar(datosPersona: PersonaDto) {
+  async contrastar(datosPersona: PersonaDto, retornarPrimerError = true) {
     try {
-      const datosCampos = {
-        Complemento: '',
-        NumeroDocumento: datosPersona.nroDocumento,
-        Nombres: datosPersona.nombres,
-        PrimerApellido: datosPersona.primerApellido || '--',
-        SegundoApellido: datosPersona.segundoApellido || '--',
-        FechaNacimiento: dayjs(datosPersona.fechaNacimiento).format(
-          'DD/MM/YYYY',
-        ),
-      };
-      if (datosPersona.nroDocumento.includes('-')) {
-        datosCampos.NumeroDocumento = datosPersona.nroDocumento
-          .split('-')
-          .shift();
-        datosCampos.Complemento =
-          datosPersona.nroDocumento.split('-').pop() || '';
-      }
-      const campos = Object.keys(datosCampos)
-        .map((dato) => {
-          return `"${dato}":"${datosCampos[dato]}"`;
-        })
-        .join(', ');
+      const datosCampos = this.armarDatosPersona(datosPersona);
+      const campos = UtilService.armarQueryParams(datosCampos);
 
       const urlContrastacion = encodeURI(
         `/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`,
@@ -46,53 +42,85 @@ export class SegipService {
         .pipe(map((response) => response.data))
         .toPromise();
 
-      const resultado = respuesta.ConsultaDatoPersonaContrastacionResult;
+      const resultado = respuesta?.ConsultaDatoPersonaContrastacionResult;
       if (resultado) {
-        if (resultado.CodigoRespuesta === '2') {
-          const losDatos = JSON.parse(resultado.ContrastacionEnFormatoJson);
-          if (losDatos.NumeroDocumento === 0) {
-            throw new Error(`Servicio Segip: Numero de documento no coincide`);
-          } else if (losDatos.Complemento === 0) {
-            throw new Error(`Servicio Segip: Complemento no coincide`);
-          } else if (losDatos.Nombres === 0) {
-            throw new Error(`Servicio Segip: Nombres no coincide`);
-          } else if (losDatos.PrimerApellido === 0) {
-            throw new Error(`Servicio Segip: Primero apellido no coincide`);
-          } else if (losDatos.SegundoApellido === 0) {
-            throw new Error(`Servicio Segip: Segundo apellido no coincide`);
-          } else if (losDatos.FechaNacimiento === 0) {
-            throw new Error(`Servicio Segip: Fecha de nacimiento no coincide`);
+        if (resultado.CodigoRespuesta === CodigoResSegipEnum.ENCONTRADO) {
+          const datosRespuesta = JSON.parse(
+            resultado.ContrastacionEnFormatoJson,
+          );
+          const observaciones = this.procesarRespuesta(datosRespuesta);
+          if (observaciones.length > 0) {
+            const observacionesFormato = retornarPrimerError
+              ? observaciones[0]
+              : observaciones.join(', ');
+            return this.armarRespuesta(
+              false,
+              `No coincide ${observacionesFormato}`,
+            );
           }
-          return {
-            finalizado: true,
-            mensaje: resultado.DescripcionRespuesta,
-          };
-        } else if (resultado.CodigoRespuesta === '3') {
-          throw new Error(`Servicio Segip: ${resultado.DescripcionRespuesta}`);
-        } else if (resultado.CodigoRespuesta === '4') {
-          throw new Error(`Servicio Segip: ${resultado.DescripcionRespuesta}`);
-        } else if (resultado.CodigoRespuesta === '1') {
-          throw new Error(`Servicio Segip: ${resultado.DescripcionRespuesta}`);
-        } else if (resultado.CodigoRespuesta === '0') {
-          throw new Error(`Servicio Segip: ${resultado.DescripcionRespuesta}`);
+          return this.armarRespuesta(true, resultado.DescripcionRespuesta);
+        } else if (
+          [
+            CodigoResSegipEnum.NO_PROCESADO,
+            CodigoResSegipEnum.NO_ENCONTRADO,
+            CodigoResSegipEnum.MULTIPLICIDAD,
+            CodigoResSegipEnum.OBSERVADO,
+          ].includes(resultado.CodigoRespuesta)
+        ) {
+          return this.armarRespuesta(false, resultado.DescripcionRespuesta);
         }
       }
-      throw new Error(
-        'Servicio Segip: No se han podido obtener los datos solicitados',
-      );
     } catch (error) {
-      console.log('error', error);
-      if (error.message.startsWith('Servicio Segip:')) {
-        return {
-          finalizado: false,
-          mensaje: error.message,
-        };
-      }
       throw new ExternalServiceException('SEGIP:CONTRASTACION', error);
-      /* return {
-        resultado: false,
-        mensaje: 'Ocurrió un problema al obtener los datos de la persona',
-      }; */
     }
+  }
+
+  private armarDatosPersona(datosPersona) {
+    const datosCampos = {
+      Complemento: '',
+      NumeroDocumento: datosPersona.nroDocumento,
+      Nombres: datosPersona.nombres,
+      PrimerApellido: datosPersona.primerApellido || '--',
+      SegundoApellido: datosPersona.segundoApellido || '--',
+      FechaNacimiento: dayjs(datosPersona.fechaNacimiento).format('DD/MM/YYYY'),
+    };
+    if (datosPersona.nroDocumento.includes('-')) {
+      datosCampos.NumeroDocumento = datosPersona.nroDocumento
+        .split('-')
+        .shift();
+      datosCampos.Complemento =
+        datosPersona.nroDocumento.split('-').pop() || '';
+    }
+    return datosCampos;
+  }
+
+  private procesarRespuesta(respuesta) {
+    const datosIncorrectos = [];
+    if (respuesta?.NumeroDocumento === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Número de documento');
+    }
+    if (respuesta?.Complemento === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Complemento');
+    }
+    if (respuesta?.Nombres === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Nombre(s)');
+    }
+    if (respuesta?.PrimerApellido === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Primer Apellido');
+    }
+    if (respuesta?.SegundoApellido === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Segundo Apellido');
+    }
+    if (respuesta?.FechaNacimiento === EstadosDatosEnum.NO_CORRESPONDE) {
+      datosIncorrectos.push('Fecha de Nacimiento');
+    }
+    return datosIncorrectos;
+  }
+
+  private armarRespuesta(exito, mensaje) {
+    return {
+      finalizado: exito,
+      mensaje: `Servicio Segip: ${mensaje}`,
+    };
   }
 }
