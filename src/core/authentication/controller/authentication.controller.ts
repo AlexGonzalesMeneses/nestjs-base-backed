@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { Issuer } from 'openid-client';
 import { sendRefreshToken } from '../../../common/lib/http.module';
@@ -9,6 +17,7 @@ import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 import { PinoLogger } from 'nestjs-pino';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AuthenticationController {
@@ -18,6 +27,7 @@ export class AuthenticationController {
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly logger: PinoLogger,
+    @Inject(ConfigService) private readonly configService: ConfigService,
   ) {
     this.logger.setContext(AuthenticationController.name);
     AuthenticationController.staticLogger = this.logger;
@@ -49,10 +59,12 @@ export class AuthenticationController {
       res
         .status(200)
         .redirect(
-          `${process.env.URL_FRONTEND}/#/login?code=${result.data.access_token}`,
+          `${this.configService.get('URL_FRONTEND')}/#/login?code=${
+            result.data.access_token
+          }`,
         );
     } else {
-      res.redirect(`${process.env.URL_FRONTEND}`);
+      res.redirect(this.configService.get('URL_FRONTEND'));
     }
   }
 
@@ -66,7 +78,7 @@ export class AuthenticationController {
     const idToken = req.user ? req.user.idToken : null;
     // req.logout();
     req.session = null;
-    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+    const issuer = await Issuer.discover(this.configService.get('OIDC_ISSUER'));
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
     res.clearCookie('jid', jid);
@@ -77,7 +89,9 @@ export class AuthenticationController {
 
     if (url && idToken) {
       return res.status(200).json({
-        url: `${url}?post_logout_redirect_uri=${process.env.OIDC_POST_LOGOUT_REDIRECT_URI}&id_token_hint=${idToken}`,
+        url: `${url}?post_logout_redirect_uri=${this.configService.get(
+          'OIDC_POST_LOGOUT_REDIRECT_URI',
+        )}&id_token_hint=${idToken}`,
       });
     } else {
       return res.status(200).json();
