@@ -9,9 +9,9 @@ import { EntityUnauthorizedException } from '../../../common/exceptions/entity-u
 import { Messages } from '../../../common/constants/response-messages';
 import * as dayjs from 'dayjs';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
-import { PersonaDto } from 'src/application/persona/persona.dto';
+import { PersonaDto } from '../../../application/persona/persona.dto';
 import { ConfigService } from '@nestjs/config';
-import { TemplateEmailService } from 'src/common/templates/templates-email.service';
+import { TemplateEmailService } from '../../../common/templates/templates-email.service';
 
 @Injectable()
 export class AuthenticationService {
