@@ -40,3 +40,7 @@ requests.http
 src/logs
 database/migrations/
 documentation
+src/common/params/index.ts
+
+
+

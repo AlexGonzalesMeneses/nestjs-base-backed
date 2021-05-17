@@ -24,7 +24,7 @@ $ cp .env.sample .env
 
 3. Revisar el archivo creado `.env` y configurar las variables necesarias. Los ejemplos se encuentran en el archivo `.env.sample` de configuración.
 
-`NOTA: PARA MAYOR DETALLE REVISAR LA ÚLTIMA VERSIÓN DEL ARCHIVO .env.sample`.
+**NOTA**: PARA MAYOR DETALLE REVISAR LA ÚLTIMA VERSIÓN DEL ARCHIVO .env.sample.
 
 **Datos de despliegue**
 - NODE_ENV: ambiente de despliegue.
@@ -38,7 +38,7 @@ $ cp .env.sample .env
 - DB_PORT: puerto de despliegue de la base de datos.
 - PATH_SUBDOMAIN: `api` - mantener.
 
-**Configuración de tiempo de los tokens**
+**Configuración para módulo de autenticación**
 - JWT_SECRET: Llave para generar los tokens de autorización. Genera una llave fuerte para producción.
 - JWT_EXPIRES_IN: Tiempo de expiración del token de autorización en milisegundos.
 - REFRESH_TOKEN_NAME: `jid`
@@ -52,15 +52,15 @@ $ cp .env.sample .env
 - MSJ_URL: URL de consumo al servicio de Mensajería Electrónico (Alertín).
 - MSJ_TOKEN: TOKEN de consumo al servicio de Mensajería Electrónico (Alertín).
 
-**Configuración para el servicio de Mensajería Electrónica (Alertín), si se utliza en el sistema**
+**Configuración para el servicio SEGIP de IOP, si corresponde**
 - IOP_SEGIP_URL: URL de consumo al servicio interoperabilidad de SEGIP.
 - IOP_SEGIP_TOKEN: Token de consumo al servicio interoperabilidad de SEGIP.
 
-**Configuración para el servicio SIN de de IOP, si corresponde**
+**Configuración para el servicio SIN de IOP, si corresponde**
 - IOP_SIN_URL:
 - IOP_SIN_TOKEN:
 
-**Configuración para el consumo de Ciudadanía Digital**
+**Configuración para la integracion de autenticación con Ciudadanía Digital**
 - OIDC_ISSUER
 - OIDC_CLIENT_ID
 - OIDC_CLIENT_SECRET
@@ -84,6 +84,12 @@ $ cp .env.sample .env
 - LOG_STD_OUT:
 - REFRESH_TOKEN_REVISIONS=`*/5 * * * *`
 
+4. Copiar el archivo src/common/params/index.ts.sample y realizar las configuraciones necesarias.
+```
+$ cp src/common/params/index.ts.sample src/common/params/index.ts
+```
+
+5. Revisar el archivo creado `index.ts` y configurar las variables necesarias. Los ejemplos se encuentran en el archivo `index.ts.sample` de parametros de configuración.
 
 ## Preparación
 

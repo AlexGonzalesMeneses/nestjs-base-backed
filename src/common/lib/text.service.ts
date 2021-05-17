@@ -1,8 +1,7 @@
 import { hash, compare } from 'bcrypt';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
-import { Configurations } from '../constants';
-
+import { Configurations } from '../../common/params';
 export class TextService {
   /**
    * Metodo para encriptar un password

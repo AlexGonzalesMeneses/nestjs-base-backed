@@ -18,7 +18,7 @@ export enum Messages {
   SUCCESS_UPDATE = 'Registro actualizado con exito!',
   SUCCESS_DELETE = 'Registro eliminado con exito!',
 
-  // business login messages
+  // business logic messages
   SUCCESS_RESTART_PASSWORD = 'Restauración de contraseña exitosa!!!',
   SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
   INVALID_USER_CREDENTIALS = 'Usuario o contraseña invalidos.',
