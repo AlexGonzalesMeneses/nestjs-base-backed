@@ -151,7 +151,7 @@ export class UsuarioService {
 
   private async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
     const url = this.configService.get('URL_FRONTEND');
-    const template = TemplateEmailService.obtenerPlantillaActivacionCuenta(
+    const template = TemplateEmailService.armarPlantillaActivacionCuenta(
       url,
       usuario,
       contrasena,

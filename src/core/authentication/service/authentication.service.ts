@@ -11,6 +11,7 @@ import * as dayjs from 'dayjs';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
 import { PersonaDto } from 'src/application/persona/persona.dto';
 import { ConfigService } from '@nestjs/config';
+import { TemplateEmailService } from 'src/common/templates/templates-email.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -38,12 +39,16 @@ export class AuthenticationService {
           fechaBloqueo,
         );
         // enviar codigo por email
+        const urlDesbloqueo = `${this.configService.get(
+          'URL_FRONTEND',
+        )}/#/desbloqueo?q=${codigo}`;
+        const template = TemplateEmailService.armarPlantillaBloqueoCuenta(
+          urlDesbloqueo,
+        );
         this.mensajeriaService.sendEmail(
           usuario.correoElectronico,
           Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-          `El link de desbloqueo es su cuenta es: ${this.configService.get(
-            'URL_FRONTEND',
-          )}/#/desbloqueo?q=${codigo}`,
+          template,
         );
         return true;
       } else if (
