@@ -2,7 +2,8 @@
 [![pipeline status](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/badges/develop/pipeline.svg)](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/-/commits/develop)
 
 ## Descripción
- Proyecto Base
+ Proyecto Base para el inicio de proyectos
+
 ## Tabla de contenido
 * [Tecnologías](#tecnologias)
 * [Funcionalidades](#funcionalidades)
@@ -30,14 +31,17 @@ El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
   - Autenticación JWT
   - Autenticación con Ciudadania Digital
   - Refresh Token
-  - Roles, Módulos, usuarios
+  - Autorización (Roles, Módulos, Usuarios, Permisos)
   - Paramétricas
-  - Cliente para Interoperabilidad
+  - Clientes para Interoperabilidad (SEGIP, SIN)
   - Cliente para Mensajería Electrónica
-  - Generación de reportes
+  - Proveedores de:
+    - Logger
+    - Reportes
+    - Manejo de errores
 
 ## Documentación
-Este proyecto incluye la documentación relacionada al proyecto, según la siguiente lista:
+Documentación relacionada al proyecto:
 1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
 3. [Documentacion de APIS](/docs/openapi.yaml)
