@@ -77,6 +77,11 @@ export class AuthenticationService {
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuario(usuario);
     if (respuesta) {
+      // verificar si la cuenta contiene un estado valido
+      const statusValid = [Status.ACTIVE, Status.PENDING];
+      if (!statusValid.includes(respuesta.estado as Status)) {
+        throw new EntityUnauthorizedException(Messages.INVALID_USER);
+      }
       // verificar si la cuenta esta bloqueada
       const verificacionBloqueo = await this.verificarBloqueo(respuesta);
       if (verificacionBloqueo) {
@@ -93,10 +98,6 @@ export class AuthenticationService {
       // si se logra autenticar con exito => reiniciar contador de intentos a 0
       if (respuesta.intentos > 0) {
         this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0);
-      }
-      const statusValid = [Status.ACTIVE, Status.PENDING];
-      if (!statusValid.includes(respuesta.estado as Status)) {
-        throw new EntityUnauthorizedException(Messages.INVALID_USER);
       }
       let roles = [];
       if (respuesta.usuarioRol.length) {
