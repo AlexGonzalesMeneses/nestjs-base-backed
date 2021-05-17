@@ -3,6 +3,7 @@ import { generarPDF, descargarPDF } from '../../common/lib/pdf.module';
 
 @Injectable()
 export class ReporteService {
+  // eslint-disable-next-line max-params
   async generar(plantilla: string, parametros: any, ruta: string, config: any) {
     await generarPDF(plantilla, parametros, ruta, config);
     return ruta;

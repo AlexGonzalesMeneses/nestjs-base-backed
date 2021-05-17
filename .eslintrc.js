@@ -24,5 +24,6 @@ module.exports = {
     'max-lines-per-function': ["error", { 'max': 50, 'skipComments': true, 'skipBlankLines': true }],
     'max-lines': ['error', {'max': 400, 'skipBlankLines': true, 'skipComments': true}],
     'max-depth': ['error', 4],
+    'max-params': ['error', 3]
   },
 };

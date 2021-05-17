@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-params
 export const generarPDF = async function (
   urlEjsPlantilla: string,
   objParametros: any,

@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthenticationService {
+  // eslint-disable-next-line max-params
   constructor(
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,

@@ -20,6 +20,7 @@ dotenv.config();
 
 @Injectable()
 export class RefreshTokensService {
+  // eslint-disable-next-line max-params
   constructor(
     @InjectRepository(RefreshTokensRepository)
     private refreshTokensRepository: RefreshTokensRepository,

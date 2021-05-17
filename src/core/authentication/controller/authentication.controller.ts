@@ -23,6 +23,7 @@ import { ConfigService } from '@nestjs/config';
 export class AuthenticationController {
   static staticLogger: PinoLogger;
 
+  // eslint-disable-next-line max-params
   constructor(
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,

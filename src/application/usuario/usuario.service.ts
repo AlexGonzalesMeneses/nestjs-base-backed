@@ -24,6 +24,7 @@ import { TemplateEmailService } from '../../common/templates/templates-email.ser
 
 @Injectable()
 export class UsuarioService {
+  // eslint-disable-next-line max-params
   constructor(
     @InjectRepository(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
@@ -69,10 +70,13 @@ export class UsuarioService {
             usuarioAuditoria,
           );
           // enviar correo con credenciales
+          const datosCorreo = {
+            correo: usuarioDto.correoElectronico,
+            asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+          };
           await this.enviarCorreoContrasenia(
-            Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+            datosCorreo,
             usuarioDto.persona.nroDocumento,
-            usuarioDto.correoElectronico,
             contrasena,
           );
           const { id, estado } = result;
@@ -116,10 +120,13 @@ export class UsuarioService {
       usuarioDto.usuarioActualizacion = usuarioAuditoria;
       await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       // si todo bien => enviar el mail con la contraseña generada
+      const datosCorreo = {
+        correo: usuario.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+      };
       await this.enviarCorreoContrasenia(
-        Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+        datosCorreo,
         usuario.usuario,
-        usuario.correoElectronico,
         contrasena,
       );
       return { id: idUsuario, estado: usuarioDto.estado };
@@ -142,7 +149,7 @@ export class UsuarioService {
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
-  private async enviarCorreoContrasenia(asunto, usuario, correo, contrasena) {
+  private async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
     const url = this.configService.get('URL_FRONTEND');
     const template = TemplateEmailService.obtenerPlantillaActivacionCuenta(
       url,
@@ -150,8 +157,8 @@ export class UsuarioService {
       contrasena,
     );
     const result = await this.mensajeriaService.sendEmail(
-      correo,
-      asunto,
+      datosCorreo.correo,
+      datosCorreo.asunto,
       template,
     );
     return result.finalizado;
@@ -195,10 +202,13 @@ export class UsuarioService {
         const repositorio = transaction.getRepository(Usuario);
         await repositorio.update(idUsuario, usuarioDto);
         // si todo bien => enviar el mail con la contraseña generada
+        const datosCorreo = {
+          correo: usuario.correoElectronico,
+          asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
+        };
         await this.enviarCorreoContrasenia(
-          Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
+          datosCorreo,
           usuario.usuario,
-          usuario.correoElectronico,
           contrasena,
         );
       };
