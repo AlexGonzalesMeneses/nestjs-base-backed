@@ -1,4 +1,3 @@
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { TextService } from '../../common/lib/text.service';
 import { Rol } from '../../core/authorization/entity/rol.entity';
 import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
@@ -8,11 +7,13 @@ import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 import { Usuario } from './usuario.entity';
 import { PersonaDto } from '../persona/persona.dto';
 import { Status } from '../../common/constants';
+import { FiltrosUsuarioDto } from './dto/filtros-usuario.dto';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
-  async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar } = paginacionQueryDto;
+  async listar(paginacionQueryDto: FiltrosUsuarioDto) {
+    const { limite, saltar, filtro, rol } = paginacionQueryDto;
+    console.log('rol', rol);
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -34,8 +35,19 @@ export class UsuarioRepository extends Repository<Usuario> {
         'persona.tipoDocumento',
       ])
       .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
-      .skip(saltar)
-      .take(limite)
+      .andWhere(rol ? 'rol.id IN(:...roles)' : '1=1', {
+        roles: rol,
+      })
+      .andWhere(
+        filtro
+          ? 'persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro'
+          : '1=1',
+        {
+          filtro: `%${filtro}%`,
+        },
+      )
+      .offset(saltar)
+      .limit(limite)
       .getManyAndCount();
     return queryBuilder;
   }

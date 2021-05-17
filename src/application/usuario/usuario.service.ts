@@ -2,7 +2,6 @@ import { Injectable, PreconditionFailedException, Query } from '@nestjs/common';
 import { UsuarioRepository } from './usuario.repository';
 import { Usuario } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
 import { totalRowsResponse } from '../../common/lib/http.module';
@@ -21,6 +20,7 @@ import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 import { SegipService } from '../../core/external-services/iop/segip/segip.service';
 import { ConfigService } from '@nestjs/config';
 import { TemplateEmailService } from '../../common/templates/templates-email.service';
+import { FiltrosUsuarioDto } from './dto/filtros-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -38,7 +38,7 @@ export class UsuarioService {
 
   // GET USERS
   async listar(
-    @Query() paginacionQueryDto: PaginacionQueryDto,
+    @Query() paginacionQueryDto: FiltrosUsuarioDto,
   ): Promise<TotalRowsResponseDto> {
     const resultado = await this.usuarioRepositorio.listar(paginacionQueryDto);
     return totalRowsResponse(resultado);

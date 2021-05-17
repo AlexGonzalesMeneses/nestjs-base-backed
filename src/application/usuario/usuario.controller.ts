@@ -13,7 +13,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AbstractController } from '../../common/dto/abstract-controller.dto';
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,6 +22,7 @@ import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
 import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
 import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
+import { FiltrosUsuarioDto } from './dto/filtros-usuario.dto';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -37,7 +37,7 @@ export class UsuarioController extends AbstractController {
     }),
   )
   @Get()
-  async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+  async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
     const result = await this.usuarioService.listar(paginacionQueryDto);
     return this.successList(result);
   }

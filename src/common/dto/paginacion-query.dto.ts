@@ -16,7 +16,7 @@ const LIMITE_MIN = 10;
 const LIMITE_MAX = 50;
 const PAGINA_MIN = 1;
 
-export class PaginacionQueryDto {
+export abstract class PaginacionQueryDto {
   @ApiPropertyOptional({
     minimum: LIMITE_MIN,
     maximum: LIMITE_MAX,
