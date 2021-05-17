@@ -27,8 +27,9 @@ export enum Messages {
   INACTIVE_USER = 'El usuario se encuentra INACTIVO',
   INVALID_PASSWORD_SCORE = 'La contraseña nueva no cumple el nivel de seguridad necesario.',
   USER_BLOCKED = 'Usuario bloqueado por muchos intentos de sesión fallidos, revise su correo electrónico.',
-  SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales',
-  SUBJECT_EMAIL_ACCOUNT_LOCKED = 'Bloqueo de cuenta temporal',
+  SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales.',
+  SUBJECT_EMAIL_ACCOUNT_RESET = 'Restauración de contraseña.',
+  SUBJECT_EMAIL_ACCOUNT_LOCKED = 'Bloqueo de cuenta temporal.',
   EXISTING_USER = 'Ya existe un usuario registrado con el mismo número de documento.',
   EXISTING_EMAIL = 'Ya existe un usuario registrado con el mismo correo electrónico.',
 }

@@ -19,6 +19,8 @@ import { UsuarioRolRepository } from './usuario-rol.repository';
 import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
 import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
 import { SegipService } from '../../core/external-services/iop/segip/segip.service';
+import { ConfigService } from '@nestjs/config';
+import { TemplateEmailService } from '../../common/templates/templates-email.service';
 
 @Injectable()
 export class UsuarioService {
@@ -30,6 +32,7 @@ export class UsuarioService {
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
+    private configService: ConfigService,
   ) {}
 
   // GET USERS
@@ -67,6 +70,8 @@ export class UsuarioService {
           );
           // enviar correo con credenciales
           await this.enviarCorreoContrasenia(
+            Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+            usuarioDto.persona.nroDocumento,
             usuarioDto.correoElectronico,
             contrasena,
           );
@@ -111,7 +116,12 @@ export class UsuarioService {
       usuarioDto.usuarioActualizacion = usuarioAuditoria;
       await this.usuarioRepositorio.update(idUsuario, usuarioDto);
       // si todo bien => enviar el mail con la contraseña generada
-      await this.enviarCorreoContrasenia(usuario.correoElectronico, contrasena);
+      await this.enviarCorreoContrasenia(
+        Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+        usuario.usuario,
+        usuario.correoElectronico,
+        contrasena,
+      );
       return { id: idUsuario, estado: usuarioDto.estado };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
@@ -132,12 +142,17 @@ export class UsuarioService {
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
-  private async enviarCorreoContrasenia(correo, contrasena) {
-    const mensaje = `La contraseña para su inicio de sesión es: ${contrasena}`;
+  private async enviarCorreoContrasenia(asunto, usuario, correo, contrasena) {
+    const url = this.configService.get('URL_FRONTEND');
+    const template = TemplateEmailService.obtenerPlantillaActivacionCuenta(
+      url,
+      usuario,
+      contrasena,
+    );
     const result = await this.mensajeriaService.sendEmail(
       correo,
-      Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-      mensaje,
+      asunto,
+      template,
     );
     return result.finalizado;
   }
@@ -181,6 +196,8 @@ export class UsuarioService {
         await repositorio.update(idUsuario, usuarioDto);
         // si todo bien => enviar el mail con la contraseña generada
         await this.enviarCorreoContrasenia(
+          Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
+          usuario.usuario,
           usuario.correoElectronico,
           contrasena,
         );
