@@ -114,7 +114,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       // UsuarioRol
       const usuarioRol = new UsuarioRol();
       usuarioRol.rol = rol;
-      usuarioRol.usuarioActualizacion = usuarioAuditoria;
+      usuarioRol.usuarioCreacion = usuarioAuditoria;
 
       return usuarioRol;
     });
