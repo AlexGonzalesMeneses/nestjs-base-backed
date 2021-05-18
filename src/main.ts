@@ -54,8 +54,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+  app.use(helmet.hidePoweredBy());
   app.use(helmet());
-
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
   const port = configService.get('PORT');
   await app.listen(port);
