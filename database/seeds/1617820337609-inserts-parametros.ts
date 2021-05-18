@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { TextService } from 'src/common/lib/text.service';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 

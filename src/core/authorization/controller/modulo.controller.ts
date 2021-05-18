@@ -2,12 +2,10 @@ import { Body, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Controller, Get } from '@nestjs/common';
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Modulo } from '../entity/modulo.entity';
 import { ModuloService } from '../service/modulo.service';
 import { CrearModuloDto } from '../dto/crear-modulo.dto';
 
-@Controller('modulos')
+@Controller('autorizacion/modulos')
 export class ModuloController extends AbstractController {
   constructor(private moduloService: ModuloService) {
     super();

@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { RolService } from '../service/rol.service';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 
-@Controller('roles')
+@Controller('autorizacion/roles')
 export class RolController extends AbstractController {
   constructor(private rolService: RolService) {
     super();

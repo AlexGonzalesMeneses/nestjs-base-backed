@@ -1,35 +1,79 @@
-## PERMISOS
-### Backend
+# Proyecto Base - PERMISOS
+El proyecto base actualmente cuenta con roles y permisos de ejemplo
 
-#### RUTAS sin autenticacion
-|verbo|ruta|
-|-|-|
-|GET|/estado|
-|POST|/auth|
-|GET|/ciudadania-auth|
+#### Roles
+- ADMINISTRADOR
+- TECNICO
+- USUARIO
 
-#### Rutas - Usuario loggeado
-|verbo|ruta|
-|-|-|
-|GET|/usuarios/profile|
-|GET|/parametros/grupo/:grupo|
-|GET|/autorizacion/politicas/roles|
-|POST|/token|
-|GET|/logout|
-
-#### Rutas - Roles
-|ruta/roles|ADMINISTRADOR|TECNICO|
+#### RUTAS sin autenticación
+|verbo|ruta|descripcion
 |-|-|-|
-|GET /autorizacion/politicas|x||
-|POST /autorizacion/politicas|x||
-|POST /autorizacion/politicas/eliminar|x||
-|GET /roles|x||
-|GET /modulos|x||
-|GET /ciudadania-callback|||
-|GET /usuarios|x||
-|GET /usuarios/profile|x||
-|POST /usuarios|x||
-|PATCH /usuarios/:id|x||
-|DELETE /usuarios/:id|x||
-|GET /parametricas|x|x|
-|POST /parametricas|x|x|
+|GET|/estado|Verificar el estado de la aplicación|
+|POST|/auth|Autenticacion usuario y contraseña|
+|GET|/ciudadania-auth|Autenticación con ciudadania digital|
+|GET|/ciudadania-callback|Ruta para redirección de ciudadania digital|
+|GET|/usuarios/desbloqueo|Ruta para desbloqueo de cuenta|
+#### RUTAS con autenticación (acciones sobre la misma cuenta)
+|VERBO|ruta|descripción|
+|-|-|-|
+|GET|/usuarios/perfil| Obtener informacion del perfil autenticado|
+|PATCH|/usuarios/contrasena/actualizacion*|Actualizar la contraseña del perfil autenticado|
+
+#### Rutas con autenticación (configuraciones y paramétricas)
+|verbo|ruta| descripcion|
+|-|-|-|
+|GET|/parametros/grupo/:grupo|Obtener parametricas por grupo|
+|GET|/autorizacion/politicas/roles|Lista politicas de permisos para frontend|
+|POST|/autenticacion/token*|Obtener un nuevo access token|
+|GET|/autenticacion/logout*|Cierre de sesión|
+|DELETE|/autenticacion/:id/refresh-token*|Eliminar un refresh token|
+
+#### Rutas con autenticación (especificas por rol)
+|ruta/roles|ADMINISTRADOR|TECNICO|USUARIO
+|-|-|-|-|
+|GET /autorizacion/politicas|x|||
+|POST /autorizacion/politicas|x|||
+|PATCH /autorizacion/politicas|x|||
+|DELETE /autorizacion/politicas|x|||
+|GET /autorizacion/roles*|x|x||
+|GET /autorizacion/modulos*|x|x||
+|GET /usuarios|x|x||
+|POST /usuarios|x|||
+|PATCH /usuarios/:id|x|||
+|DELETE /usuarios/:id|x|||
+|POST /usuarios/ciudadania/activacion*|x|||
+|PATCH /usuarios/:id/inactivacion*|x|||
+|PATCH /usuarios/:id/activacion*|x|||
+|PATCH /usuarios/:id/contrasena*|x|||
+|GET /parametros|x|x||
+|POST /parametros|x|x||
+
+#### Permisos - Formato casbin
+```
+ADMINISTRADOR, /api/autorizacion/politicas, GET|POST
+ADMINISTRADOR, /api/autorizacion/politicas/:id, PATCH|DELETE
+ADMINISTRADOR, /api/autorizacion/roles, GET
+ADMINISTRADOR, /api/autorizacion/modulos, GET
+ADMINISTRADOR, /api/usuarios, GET|POST
+ADMINISTRADOR, /api/usuarios/:id, PATCH|DELETE
+ADMINISTRADOR, /api/usuarios/ciudadania, POST
+ADMINISTRADOR, /api/usuarios/activacion/:id, PATCH
+ADMINISTRADOR, /api/usuarios/inactivacion/:id, PATCH
+ADMINISTRADOR, /api/usuarios/contrasena/:id, PATCH
+ADMINISTRADOR, /api/parametros, GET|POST
+TECNICO, /api/autorizacion/roles, GET
+TECNICO, /api/autorizacion/modulos, GET
+TECNICO, /api/usuarios, GET
+TECNICO, /api/parametros, GET|POST
+*, /api/parametros/grupo/:grupo, GET
+*, /api/autorizacion/politicas/roles, GET
+*, /usuarios/perfil, GET
+*, /usuarios/contrasena, PATCH
+```
+
+
+POST /usuario/:id
+POST /usuario/activacion/otro
+
+/usuario/123233
