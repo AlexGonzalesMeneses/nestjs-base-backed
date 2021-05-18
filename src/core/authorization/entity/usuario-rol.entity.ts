@@ -8,11 +8,12 @@ import {
 } from 'typeorm';
 import { Rol } from './rol.entity';
 import { Status } from '../../../common/constants';
+import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity()
-export class UsuarioRol {
+export class UsuarioRol extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

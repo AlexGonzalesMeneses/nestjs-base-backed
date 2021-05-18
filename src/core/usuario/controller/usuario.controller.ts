@@ -139,13 +139,16 @@ export class UsuarioController extends AbstractController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async actualizarDatos(
+    @Req() req,
     @Param() param: ParamUuidDto,
     @Body() usuarioDto: ActualizarUsuarioRolDto,
   ) {
     const { id: idUsuario } = param;
+    const usuarioAuditoria = this.getUser(req);
     const result = await this.usuarioService.actualizarDatos(
       idUsuario,
       usuarioDto,
+      usuarioAuditoria,
     );
     return this.successUpdate(result);
   }

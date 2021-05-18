@@ -34,6 +34,7 @@ export class usuarioRol1611516017924 implements MigrationInterface {
 
       const ur = new UsuarioRol();
       ur.id = TextService.generateUuid();
+      ur.usuarioCreacion = '1';
       ur.rol = r;
       ur.usuario = u;
       return ur;

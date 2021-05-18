@@ -218,7 +218,11 @@ export class UsuarioService {
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
-  async actualizarDatos(id: string, usuarioDto: ActualizarUsuarioRolDto) {
+  async actualizarDatos(
+    id: string,
+    usuarioDto: ActualizarUsuarioRolDto,
+    usuarioAuditoria: string,
+  ) {
     // 1. verificar que exista el usuario
     const usuario = await this.usuarioRepositorio.findOne(id);
     if (usuario) {
@@ -236,18 +240,19 @@ export class UsuarioService {
         }
         const actualizarUsuarioDto = new ActualizarUsuarioDto();
         actualizarUsuarioDto.correoElectronico = correoElectronico;
+        actualizarUsuarioDto.usuarioActualizacion = usuarioAuditoria;
         await this.usuarioRepositorio.update(id, actualizarUsuarioDto);
       }
       if (roles.length > 0) {
         // realizar reglas de roles
-        await this.actualizarRoles(id, roles);
+        await this.actualizarRoles(id, roles, usuarioAuditoria);
       }
       return { id };
     }
     throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
-  private async actualizarRoles(id, roles) {
+  private async actualizarRoles(id, roles, usuarioAuditoria) {
     const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
       id,
     );
@@ -257,25 +262,18 @@ export class UsuarioService {
     );
     // ACTIVAR roles inactivos
     if (inactivos.length > 0) {
-      await this.usuarioRolRepositorio.activarOInactivar(
-        id,
-        inactivos,
-        Status.ACTIVE,
-      );
+      await this.usuarioRolRepositorio.activar(id, inactivos, usuarioAuditoria);
     }
     // INACTIVAR roles activos
     if (activos.length > 0) {
-      await this.usuarioRolRepositorio.activarOInactivar(
-        id,
-        activos,
-        Status.INACTIVE,
-      );
+      await this.usuarioRolRepositorio.inactivar(id, activos, usuarioAuditoria);
     }
     // CREAR nuevos roles
     if (nuevos.length > 0) {
-      await this.usuarioRolRepositorio.crear(id, nuevos);
+      await this.usuarioRolRepositorio.crear(id, nuevos, usuarioAuditoria);
     }
   }
+
   private verificarUsuarioRoles(usuarioRoles, roles) {
     const inactivos = roles.filter((rol) =>
       usuarioRoles.some(
