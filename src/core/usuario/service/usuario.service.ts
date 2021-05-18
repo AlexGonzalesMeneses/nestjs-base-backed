@@ -21,6 +21,7 @@ import { SegipService } from '../../external-services/iop/segip/segip.service';
 import { ConfigService } from '@nestjs/config';
 import { TemplateEmailService } from '../../../common/templates/templates-email.service';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
+import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception';
 
 @Injectable()
 export class UsuarioService {
@@ -109,6 +110,7 @@ export class UsuarioService {
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
+    this.verificarPermisos(idUsuario, usuarioAuditoria);
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
@@ -135,6 +137,7 @@ export class UsuarioService {
   }
 
   async inactivar(idUsuario: string, usuarioAuditoria: string) {
+    this.verificarPermisos(idUsuario, usuarioAuditoria);
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     if (usuario) {
       const usuarioDto = new ActualizarUsuarioDto();
@@ -164,6 +167,12 @@ export class UsuarioService {
     return result.finalizado;
   }
 
+  private verificarPermisos(usuarioAuditoria, id) {
+    if (usuarioAuditoria === id) {
+      throw new EntityForbiddenException();
+    }
+  }
+
   async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
     const hash = TextService.decodeBase64(contrasenaActual);
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
@@ -189,6 +198,7 @@ export class UsuarioService {
   }
 
   async restaurarContrasena(idUsuario: string, usuarioAuditoria: string) {
+    this.verificarPermisos(idUsuario, usuarioAuditoria);
     const usuario = await this.usuarioRepositorio.findOne(idUsuario);
     const statusValid = [Status.ACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
@@ -223,6 +233,7 @@ export class UsuarioService {
     usuarioDto: ActualizarUsuarioRolDto,
     usuarioAuditoria: string,
   ) {
+    this.verificarPermisos(id, usuarioAuditoria);
     // 1. verificar que exista el usuario
     const usuario = await this.usuarioRepositorio.findOne(id);
     if (usuario) {

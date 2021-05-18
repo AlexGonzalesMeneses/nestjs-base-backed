@@ -16,6 +16,7 @@ import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.e
 import { Messages } from '../constants/response-messages';
 import { ExternalServiceException } from '../exceptions/external-service.exception';
 import { PinoLogger } from 'nestjs-pino';
+import { EntityForbiddenException } from '../exceptions/entity-forbidden.exception';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -55,6 +56,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (
       exception instanceof EntityNotFoundException ||
       exception instanceof EntityUnauthorizedException ||
+      exception instanceof EntityForbiddenException ||
       exception instanceof ExternalServiceException
     ) {
       return exception.message;
