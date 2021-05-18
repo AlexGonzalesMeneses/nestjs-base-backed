@@ -1,4 +1,4 @@
-import { Usuario } from 'src/application/usuario/usuario.entity';
+import { Usuario } from 'src/core/usuario/entity/usuario.entity';
 import { TextService } from 'src/common/lib/text.service';
 import { Rol } from 'src/core/authorization/entity/rol.entity';
 import { UsuarioRol } from 'src/core/authorization/entity/usuario-rol.entity';
@@ -40,7 +40,7 @@ export class usuarioRol1611516017924 implements MigrationInterface {
     });
     await queryRunner.manager.save(usuarioRol);
   }
- 
+
   /* eslint-disable */
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

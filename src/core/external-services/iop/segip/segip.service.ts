@@ -2,9 +2,10 @@ import { Injectable, HttpService } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception';
 import * as dayjs from 'dayjs';
-import { PersonaDto } from '../../../../application/persona/persona.dto';
+import { PersonaDto } from '../../../usuario/dto/persona.dto';
 import { UtilService } from '../../../../common/lib/util.service';
 
+// Respuestas codigos segip
 enum CodigoResSegipEnum {
   NO_PROCESADO = '0', // No se realizo la búsqueda
   NO_ENCONTRADO = '1', // No se encontró el registro [persona ú documento]
@@ -13,6 +14,7 @@ enum CodigoResSegipEnum {
   OBSERVADO = '4', // Registro con observacion
 }
 
+// Respuestas codigos datos contrastacion
 enum EstadosDatosEnum {
   NO_CORRESPONDE = 0, // Dato no coincide
   CORRESPONDE = 1, // Dato coincide

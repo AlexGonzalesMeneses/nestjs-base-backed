@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, CorreoLista } from '../../../common/validation';
-import { PersonaDto } from '../../../application/persona/persona.dto';
+import { PersonaDto } from './persona.dto';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 

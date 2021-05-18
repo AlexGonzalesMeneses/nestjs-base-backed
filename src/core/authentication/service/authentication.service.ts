@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UsuarioService } from '../../../application/usuario/usuario.service';
+import { UsuarioService } from '../../usuario/service/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { TextService } from '../../../common/lib/text.service';
 import { RefreshTokensService } from './refreshTokens.service';
@@ -9,7 +9,7 @@ import { EntityUnauthorizedException } from '../../../common/exceptions/entity-u
 import { Messages } from '../../../common/constants/response-messages';
 import * as dayjs from 'dayjs';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
-import { PersonaDto } from '../../../application/persona/persona.dto';
+import { PersonaDto } from '../../usuario/dto/persona.dto';
 import { ConfigService } from '@nestjs/config';
 import { TemplateEmailService } from '../../../common/templates/templates-email.service';
 

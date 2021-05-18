@@ -1,26 +1,26 @@
 import { Injectable, PreconditionFailedException, Query } from '@nestjs/common';
-import { UsuarioRepository } from './usuario.repository';
-import { Usuario } from './usuario.entity';
+import { UsuarioRepository } from '../repository/usuario.repository';
+import { Usuario } from '../entity/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TotalRowsResponseDto } from '../../common/dto/total-rows-response.dto';
-import { totalRowsResponse } from '../../common/lib/http.module';
-import { Status } from '../../common/constants';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto';
-import { TextService } from '../../common/lib/text.service';
-import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
-import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
-import { Messages } from '../../common/constants/response-messages';
-import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
-import { ActualizarUsuarioDto } from './dto/actualizar-usuario.dto';
-import { PersonaDto } from '../persona/persona.dto';
-import { UsuarioRolRepository } from './usuario-rol.repository';
-import { ActualizarUsuarioRolDto } from './dto/actualizar-usuario-rol.dto';
-import { CrearUsuarioCiudadaniaDto } from './dto/crear-usuario-ciudadania.dto';
-import { SegipService } from '../../core/external-services/iop/segip/segip.service';
+import { TotalRowsResponseDto } from '../../../common/dto/total-rows-response.dto';
+import { totalRowsResponse } from '../../../common/lib/http.module';
+import { Status } from '../../../common/constants';
+import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
+import { TextService } from '../../../common/lib/text.service';
+import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service';
+import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
+import { Messages } from '../../../common/constants/response-messages';
+import { AuthorizationService } from '../../authorization/controller/authorization.service';
+import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto';
+import { PersonaDto } from '../dto/persona.dto';
+import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
+import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto';
+import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto';
+import { SegipService } from '../../external-services/iop/segip/segip.service';
 import { ConfigService } from '@nestjs/config';
-import { TemplateEmailService } from '../../common/templates/templates-email.service';
-import { FiltrosUsuarioDto } from './dto/filtros-usuario.dto';
+import { TemplateEmailService } from '../../../common/templates/templates-email.service';
+import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 
 @Injectable()
 export class UsuarioService {

@@ -1,5 +1,5 @@
 import { IsNotEmpty } from '../../../common/validation';
-import { PersonaDto } from 'src/application/persona/persona.dto';
+import { PersonaDto } from './persona.dto';
 export class UsuarioDto {
   @IsNotEmpty()
   usuario: string;

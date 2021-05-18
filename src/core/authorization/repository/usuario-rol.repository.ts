@@ -1,7 +1,7 @@
-import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
+import { UsuarioRol } from '../entity/usuario-rol.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { Usuario } from './usuario.entity';
-import { Rol } from '../../core/authorization/entity/rol.entity';
+import { Usuario } from '../../usuario/entity/usuario.entity';
+import { Rol } from '../entity/rol.entity';
 
 @EntityRepository(UsuarioRol)
 export class UsuarioRolRepository extends Repository<UsuarioRol> {

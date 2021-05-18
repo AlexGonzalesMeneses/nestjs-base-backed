@@ -5,7 +5,7 @@ import {
   IsString,
   NombreApellido,
   NroDocumento,
-} from '../../common/validation';
+} from '../../../common/validation';
 
 export class PersonaDto {
   @IsNotEmpty()

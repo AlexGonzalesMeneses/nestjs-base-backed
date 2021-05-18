@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { RefreshTokensRepository } from '../repository/refreshTokens.repository';
 import { RefreshTokens } from '../entity/refreshTokens.entity';
-import { UsuarioService } from '../../../application/usuario/usuario.service';
+import { UsuarioService } from '../../usuario/service/usuario.service';
 
 import { Cron } from '@nestjs/schedule';
 

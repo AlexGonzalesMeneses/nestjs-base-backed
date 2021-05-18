@@ -2,13 +2,13 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
-import { Status } from '../../common/constants';
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
-import { TextService } from '../../common/lib/text.service';
-import { ActualizarContrasenaDto } from './dto/actualizar-contrasena.dto';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto';
+import { Status } from '../../../common/constants';
+import { TextService } from '../../../common/lib/text.service';
+import { ActualizarContrasenaDto } from '../dto/actualizar-contrasena.dto';
+import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
 import { UsuarioController } from './usuario.controller';
-import { UsuarioService } from './usuario.service';
+import { UsuarioService } from '../service/usuario.service';
+import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 
 const resUsuario = {
   id: TextService.generateUuid(),
@@ -65,7 +65,7 @@ describe('UsuarioController', () => {
   });
 
   it('[listar] Deberia listar usuarios', async () => {
-    const pagination = new PaginacionQueryDto();
+    const pagination = new FiltrosUsuarioDto();
     const result = await controller.listar(pagination);
 
     expect(service.listar).toBeCalled();

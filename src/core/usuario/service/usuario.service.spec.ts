@@ -1,21 +1,21 @@
 /* eslint-disable max-lines-per-function */
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
-import { TextService } from '../../common/lib/text.service';
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
-import { PersonaRepository } from '../persona/persona.repository';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto';
-import { UsuarioRepository } from './usuario.repository';
+import { TextService } from '../../../common/lib/text.service';
+import { PersonaRepository } from '../repository/persona.repository';
+import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
+import { UsuarioRepository } from '../repository/usuario.repository';
 import { UsuarioService } from './usuario.service';
-import { MensajeriaService } from '../../core/external-services/mensajeria/mensajeria.service';
-import { MensajeriaModule } from '../../core/external-services/mensajeria/mensajeria.module';
-import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
+import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service';
+import { MensajeriaModule } from '../../external-services/mensajeria/mensajeria.module';
+import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
 import { PreconditionFailedException } from '@nestjs/common';
-import { AuthorizationService } from '../../core/authorization/controller/authorization.service';
-import { Messages } from '../../common/constants/response-messages';
-import { UsuarioRolRepository } from './usuario-rol.repository';
-import { SegipService } from '../../core/external-services/iop/segip/segip.service';
+import { AuthorizationService } from '../../authorization/controller/authorization.service';
+import { Messages } from '../../../common/constants/response-messages';
+import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
+import { SegipService } from '../../external-services/iop/segip/segip.service';
 import { ConfigService } from '@nestjs/config';
+import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -194,7 +194,7 @@ describe('UsuarioService', () => {
   });
 
   it('[listar] Deberia obtener la lista de usuarios', async () => {
-    const paginacion = new PaginacionQueryDto();
+    const paginacion = new FiltrosUsuarioDto();
     const usuarios = await service.listar(paginacion);
     expect(usuarios).toHaveProperty('filas');
     expect(usuarios).toHaveProperty('total');

@@ -3,7 +3,7 @@ import { HttpModule, HttpService } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { PersonaDto } from '../../../../application/persona/persona.dto';
+import { PersonaDto } from '../../../../core/usuario/dto/persona.dto';
 import { SegipService } from './segip.service';
 import { plainToClass } from 'class-transformer';
 

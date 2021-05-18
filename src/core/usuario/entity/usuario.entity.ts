@@ -1,4 +1,4 @@
-import { AbstractEntity } from '../../common/dto/abstract-entity.dto';
+import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,9 +7,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
-import { Persona } from '../persona/persona.entity';
-import { Status } from '../../common/constants';
+import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
+import { Persona } from './persona.entity';
+import { Status } from '../../../common/constants';
 
 const enumStatus = [
   Status.CREATE,

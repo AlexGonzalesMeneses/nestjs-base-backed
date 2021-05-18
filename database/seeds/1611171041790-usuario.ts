@@ -1,5 +1,5 @@
-import { Persona } from 'src/application/persona/persona.entity';
-import { Usuario } from 'src/application/usuario/usuario.entity';
+import { Persona } from 'src/core/usuario/entity/persona.entity';
+import { Usuario } from 'src/core/usuario/entity/usuario.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { TextService } from '../../src/common/lib/text.service';
 import { Status } from '../../src/common/constants';

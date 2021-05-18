@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { UsuarioModule } from '../../application/usuario/usuario.module';
+import { UsuarioModule } from '../usuario/usuario.module';
 import { AuthenticationController } from './controller/authentication.controller';
 import { RefreshTokensController } from './controller/refreshTokens.controller';
 import { AuthenticationService } from './service/authentication.service';
@@ -11,7 +11,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { buildOpenIdClient, OidcStrategy } from './strategies/oidc.strategy';
 import { SessionSerializer } from './session.serializer';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuarioRepository } from '../../application/usuario/usuario.repository';
+import { UsuarioRepository } from '../usuario/repository/usuario.repository';
 
 import { RefreshTokensRepository } from './repository/refreshTokens.repository';
 import { RefreshTokensService } from './service/refreshTokens.service';

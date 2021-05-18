@@ -1,4 +1,4 @@
-import { Persona } from 'src/application/persona/persona.entity';
+import { Persona } from 'src/core/usuario/entity/persona.entity';
 import { TextService } from 'src/common/lib/text.service';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 

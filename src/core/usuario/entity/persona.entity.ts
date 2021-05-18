@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Usuario } from '../usuario/usuario.entity';
-import { Status } from '../../common/constants';
+import { Usuario } from './usuario.entity';
+import { Status } from '../../../common/constants';
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 

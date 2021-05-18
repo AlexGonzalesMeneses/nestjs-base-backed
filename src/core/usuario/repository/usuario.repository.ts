@@ -1,13 +1,13 @@
-import { TextService } from '../../common/lib/text.service';
-import { Rol } from '../../core/authorization/entity/rol.entity';
-import { UsuarioRol } from '../../core/authorization/entity/usuario-rol.entity';
+import { TextService } from '../../../common/lib/text.service';
+import { Rol } from '../../authorization/entity/rol.entity';
+import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { Persona } from '../persona/persona.entity';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto';
-import { Usuario } from './usuario.entity';
-import { PersonaDto } from '../persona/persona.dto';
-import { Status } from '../../common/constants';
-import { FiltrosUsuarioDto } from './dto/filtros-usuario.dto';
+import { Persona } from '../entity/persona.entity';
+import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
+import { Usuario } from '../entity/usuario.entity';
+import { PersonaDto } from '../dto/persona.dto';
+import { Status } from '../../../common/constants';
+import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
