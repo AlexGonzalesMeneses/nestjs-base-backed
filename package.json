@@ -32,7 +32,7 @@
     "schema:drop": "npm run typeorm -- schema:drop -c connection",
     "rimraf": "./node_modules/rimraf/bin.js",
     "copy:statics": "cpx 'src/core/config/authorization/*.{conf, csv}' 'dist/src/core/config/authorization'",
-    "compodoc": "compodoc -p tsconfig.json -o --language es-ES",
+    "compodoc": "compodoc -p tsconfig.json -o --language es-ES --disableCoverage --customLogo 'docs/imagenes/logoAgetic.png' --hideGenerator",
     "db:diagram": "ts-node ./node_modules/.bin/typeorm-uml ormconfig.ts -c connection -d docs/ERD.png"
   },
   "dependencies": {
