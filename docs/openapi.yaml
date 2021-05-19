@@ -70,7 +70,7 @@ paths:
                       id:
                         type: string
                         example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
-  /api/usuarios/perfil:
+  /api/usuarios/cuenta/perfil:
     get:
       summary: Obtiene la informacion del perfil del usuario
       tags: ['usuario']
@@ -139,6 +139,8 @@ paths:
                                       color_dark:
                                         type: string
                                         example: '#3F1929'
+                                  subModulo:
+                                    type: array
                       persona:
                         type: object
                         properties:
@@ -160,7 +162,7 @@ paths:
                           fechaNacimiento:
                             type: string
                             example: '2002-02-09T00:00:00.000Z'
-  /api/usuarios/activacion/{id}:
+  /api/usuarios/{id}/activacion:
     patch:
       summary: Activa un usuario
       tags: ['usuario']
@@ -197,7 +199,7 @@ paths:
                       estado:
                         type: string
                         example: 'ACTIVO'
-  /api/usuarios/inactivacion/{id}:
+  /api/usuarios/{id}/inactivacion:
     patch:
       summary: Inactiva un usuario
       tags: ['usuario']
@@ -234,7 +236,7 @@ paths:
                       estado:
                         type: string
                         example: 'INACTIVO'
-  /api/usuarios/contrasena:
+  /api/usuarios/cuenta/contrasena:
     patch:
       summary: Actualiza la contrasena de un usuario autenticado
       tags: ['usuario']
@@ -275,7 +277,37 @@ paths:
                       estado:
                         type: string
                         example: 'ACTIVO'
-  /api/usuarios/contrasena/{id}:
+  /api/usuarios/cuenta/desbloqueo:
+    get:
+      summary: Desbloquea una cuenta bloqueada por muchos intentos fallidos
+      tags: ['usuario']
+      operationId: get-api-v1-usuarios-cuenta-desbloqueo
+      description: Api para desbloquear una cuenta
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 'a9d1a5cc-4590-5c67-a0b2-a4b37b862802'
+          description: id de desbloqueo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                    example: 'Cuenta desbloqueada exitosamente.'
+                  finalizado:
+                    type: boolean
+                    example: true
+                  datos:
+                    type: object
+  /api/usuarios/{id}/restauracion:
     patch:
       summary: Restaura la contrasena de un usuario
       tags: ['usuario']
@@ -313,7 +345,7 @@ paths:
                         type: string
                         example: 'PENDIENTE'
 
-  /api/autorizacion/politicas/roles:
+  /api/autorizacion/permisos:
     get:
       summary: Api para obtener las politicas definidas en formato CASBIN
       tags: ['autorizacion']
@@ -494,7 +526,7 @@ paths:
                       estado:
                         type: string
                         example: 'CREADO'
-  /api/usuarios/ciudadania:
+  /api/usuarios/cuenta/ciudadania:
     post:
       summary: Api para crear una nuevo usuario relacionado con ciudadania digital
       tags: ['usuario']
@@ -821,7 +853,7 @@ paths:
                       estado:
                         type: string
                         example: 'ACTIVO'
-  /api/parametros/{grupo}:
+  /api/parametros/{grupo}/listado:
     get:
       summary: Api para obtener el listado de parametros por grupo
       tags: ['parametros']
@@ -863,7 +895,7 @@ paths:
                         codigo:
                           type: string
                           example: 'TD-1'
-  /api/roles:
+  /api/autorizacion/roles:
     get:
       summary: Api para obtener el listado de roles
       tags: ['parametros']

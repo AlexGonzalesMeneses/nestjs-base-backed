@@ -159,6 +159,6 @@ export class UsuarioController extends AbstractController {
   async desbloquearCuenta(@Query() query: ParamUuidDto) {
     const { id: idDesbloqueo } = query;
     const result = await this.usuarioService.desbloquearCuenta(idDesbloqueo);
-    return this.successCreate(result, Messages.SUCCESS_ACCOUNT_UNLOCK);
+    return this.successUpdate(result, Messages.SUCCESS_ACCOUNT_UNLOCK);
   }
 }

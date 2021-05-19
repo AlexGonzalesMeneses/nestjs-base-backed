@@ -41,23 +41,22 @@ El proyecto base actualmente cuenta con roles y permisos de ejemplo
 |GET /usuarios|x|x||
 |POST /usuarios|x|||
 |PATCH /usuarios/:id|x|||
-|DELETE /usuarios/:id|x|||
-|POST /usuarios/ciudadania/activacion*|x|||
-|PATCH /usuarios/:id/inactivacion*|x|||
-|PATCH /usuarios/:id/activacion*|x|||
-|PATCH /usuarios/:id/contrasena*|x|||
+|POST /usuarios/cuenta/ciudadania|x|||
+|PATCH /usuarios/:id/inactivacion|x|||
+|PATCH /usuarios/:id/activacion|x|||
+|PATCH /usuarios/:id/contrasena|x|||
 |GET /parametros|x|x||
 |POST /parametros|x|x||
 
 #### Permisos - Formato casbin
 ```
-ADMINISTRADOR, /api/autorizacion/politicas, GET|POST
-ADMINISTRADOR, /api/autorizacion/politicas/:id, PATCH|DELETE
+ADMINISTRADOR, /api/autorizacion/politicas, GET|POST|DELETE
+ADMINISTRADOR, /api/autorizacion/politicas/:id, PATCH
 ADMINISTRADOR, /api/autorizacion/roles, GET
 ADMINISTRADOR, /api/autorizacion/modulos, GET
 ADMINISTRADOR, /api/usuarios, GET|POST
-ADMINISTRADOR, /api/usuarios/:id, PATCH|DELETE
-ADMINISTRADOR, /api/usuarios/ciudadania/activacion, POST
+ADMINISTRADOR, /api/usuarios/:id, PATCH
+ADMINISTRADOR, /api/usuarios/cuenta/ciudadania, POST
 ADMINISTRADOR, /api/usuarios/:id/activacion, PATCH
 ADMINISTRADOR, /api/usuarios/:id/inactivacion, PATCH
 ADMINISTRADOR, /api/usuarios/:id/restauracion, PATCH
