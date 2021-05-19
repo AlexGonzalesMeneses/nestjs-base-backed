@@ -57,12 +57,6 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.USUARIO,
-        v1: '/usuarios',
-        v2: 'read',
-        v3: 'frontend',
-      },
-      {
-        v0: RolEnum.USUARIO,
         v1: '/perfil',
         v2: 'read|update',
         v3: 'frontend',
@@ -173,7 +167,7 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.TODOS,
-        v1: '/usuarios/cuenta/perfil',
+        v1: '/api/usuarios/cuenta/perfil',
         v2: 'GET',
         v3: 'backend',
       },
