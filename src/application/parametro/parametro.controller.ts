@@ -31,7 +31,7 @@ export class ParametroController extends AbstractController {
   }
 
   @UsePipes(ValidationPipe)
-  @Get('/:grupo')
+  @Get('/:grupo/listado')
   async listarPorGrupo(@Param() params: ParamGrupoDto) {
     const { grupo } = params;
     const result = await this.parametroServicio.listarPorGrupo(grupo);

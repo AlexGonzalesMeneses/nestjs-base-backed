@@ -45,7 +45,7 @@ export class AuthorizationController extends AbstractController {
     return this.successDelete(result);
   }
 
-  @Get('/politicas/roles')
+  @Get('/permisos')
   async obtenerRoles() {
     const result = await this.authorizationService.obtenerRoles();
     return this.successList(result);
