@@ -80,7 +80,7 @@ export class UsuarioController extends AbstractController {
 
   // activar usuario
   @UseGuards(JwtAuthGuard)
-  @Patch('/activacion/:id')
+  @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
   async activar(@Req() req, @Param() params: ParamUuidDto) {
     const { id: idUsuario } = params;
@@ -94,7 +94,7 @@ export class UsuarioController extends AbstractController {
 
   // inactivar usuario
   @UseGuards(JwtAuthGuard)
-  @Patch('/inactivacion/:id')
+  @Patch('/:id/inactivacion')
   async inactivar(@Req() req, @Param() param: ParamUuidDto) {
     const { id: idUsuario } = param;
     const usuarioAuditoria = this.getUser(req);
@@ -124,7 +124,7 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
-  @Patch('/contrasena/:id')
+  @Patch('/:id/restauracion')
   async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
     const usuarioAuditoria = this.getUser(req);
     const { id: idUsuario } = param;
