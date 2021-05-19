@@ -43,7 +43,7 @@ export class UsuarioController extends AbstractController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('perfil')
+  @Get('/cuenta/perfil')
   async obtenerPerfil(@Request() req) {
     const idUsuario = this.getUser(req);
     const result = await this.usuarioService.buscarUsuarioId(idUsuario);
@@ -107,7 +107,7 @@ export class UsuarioController extends AbstractController {
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
-  @Patch('/contrasena')
+  @Patch('/cuenta/contrasena')
   async actualizarContrasena(
     @Req() req,
     @Body() body: ActualizarContrasenaDto,
@@ -153,7 +153,7 @@ export class UsuarioController extends AbstractController {
     return this.successUpdate(result);
   }
 
-  @Get('desbloqueo')
+  @Get('cuenta/desbloqueo')
   @UsePipes(ValidationPipe)
   async desbloquearCuenta(@Query() query: ParamUuidDto) {
     const { id: idDesbloqueo } = query;
