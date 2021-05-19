@@ -7,10 +7,14 @@ import {
   Delete,
   Query,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../../../core/authentication/guards/jwt-auth.guard';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 import { AuthorizationService } from './authorization.service';
+import { CasbinGuard } from '../guards/casbin.guard';
 
+@UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
 export class AuthorizationController extends AbstractController {
   constructor(private readonly authorizationService: AuthorizationService) {

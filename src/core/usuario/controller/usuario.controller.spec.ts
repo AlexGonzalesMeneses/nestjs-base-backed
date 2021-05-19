@@ -9,6 +9,8 @@ import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
 import { UsuarioController } from './usuario.controller';
 import { UsuarioService } from '../service/usuario.service';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
+import { CanActivate } from '@nestjs/common';
+import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard';
 
 const resUsuario = {
   id: TextService.generateUuid(),
@@ -40,6 +42,9 @@ describe('UsuarioController', () => {
   let controller: UsuarioController;
   let service: UsuarioService;
   beforeAll(async () => {
+    const mock_ForceFailGuard: CanActivate = {
+      canActivate: jest.fn(() => true),
+    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [UsuarioController],
@@ -58,7 +63,10 @@ describe('UsuarioController', () => {
         },
         ConfigService,
       ],
-    }).compile();
+    })
+      .overrideGuard(CasbinGuard)
+      .useValue(mock_ForceFailGuard)
+      .compile();
 
     controller = module.get<UsuarioController>(UsuarioController);
     service = module.get<UsuarioService>(UsuarioService);

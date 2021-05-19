@@ -13,12 +13,15 @@ export class CasbinGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const {
       user,
-      originalUrl: resource,
+      originalUrl,
+      query,
+      route,
       method: action,
     } = context.switchToHttp().getRequest();
     if (!user) {
       throw new ForbiddenException();
     }
+    const resource = Object.keys(query).length ? route.path : originalUrl;
     for (const rol of user.roles) {
       if (await this.enforcer.enforce(rol, resource, action)) return true;
     }

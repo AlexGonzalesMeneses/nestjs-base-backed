@@ -23,6 +23,7 @@ import { ActualizarContrasenaDto } from '../dto/actualizar-contrasena.dto';
 import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto';
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
+import { CasbinGuard } from '../../authorization/guards/casbin.guard';
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
@@ -30,7 +31,7 @@ export class UsuarioController extends AbstractController {
     super();
   }
   // GET users
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -42,7 +43,7 @@ export class UsuarioController extends AbstractController {
     return this.successList(result);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Get('/cuenta/perfil')
   async obtenerPerfil(@Request() req) {
     const idUsuario = this.getUser(req);
@@ -51,7 +52,7 @@ export class UsuarioController extends AbstractController {
   }
 
   //create user
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
@@ -63,8 +64,8 @@ export class UsuarioController extends AbstractController {
     return this.successCreate(result);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('/ciudadania')
+  @UseGuards(JwtAuthGuard, CasbinGuard)
+  @Post('/cuenta/ciudadania')
   @UsePipes(new ValidationPipe({ transform: true }))
   async crearConCiudadania(
     @Req() req,
@@ -79,7 +80,7 @@ export class UsuarioController extends AbstractController {
   }
 
   // activar usuario
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
   async activar(@Req() req, @Param() params: ParamUuidDto) {
@@ -93,7 +94,7 @@ export class UsuarioController extends AbstractController {
   }
 
   // inactivar usuario
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
   async inactivar(@Req() req, @Param() param: ParamUuidDto) {
     const { id: idUsuario } = param;
@@ -105,7 +106,7 @@ export class UsuarioController extends AbstractController {
     return this.successUpdate(result);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(ValidationPipe)
   @Patch('/cuenta/contrasena')
   async actualizarContrasena(
@@ -122,7 +123,7 @@ export class UsuarioController extends AbstractController {
     return this.successUpdate(result);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(ValidationPipe)
   @Patch('/:id/restauracion')
   async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
@@ -136,7 +137,7 @@ export class UsuarioController extends AbstractController {
   }
 
   //update user
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch(':id')
   async actualizarDatos(
     @Req() req,

@@ -1,6 +1,8 @@
 /* eslint-disable max-lines-per-function */
+import { CanActivate } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthZManagementService } from 'nest-authz';
+import { CasbinGuard } from '../guards/casbin.guard';
 import { AuthorizationController } from './authorization.controller';
 import { AuthorizationService } from './authorization.service';
 
@@ -20,6 +22,9 @@ const resListarCasbin = ['ADMINISTRADOR', '/usuarios', 'GET', 'backend'];
 describe('AuthorizationController', () => {
   let controller: AuthorizationController;
   beforeEach(async () => {
+    const mock_ForceFailGuard: CanActivate = {
+      canActivate: jest.fn(() => true),
+    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [AuthorizationController],
@@ -38,7 +43,10 @@ describe('AuthorizationController', () => {
           useValue: {},
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(CasbinGuard)
+      .useValue(mock_ForceFailGuard)
+      .compile();
 
     controller = module.get<AuthorizationController>(AuthorizationController);
   });
