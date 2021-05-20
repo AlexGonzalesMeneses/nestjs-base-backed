@@ -146,11 +146,9 @@ export class AuthenticationService {
       ) {
         await this.usuarioService.actualizarDatosPersona(persona);
       }
-      const roles = [];
+      let roles = [];
       if (respuesta.usuarioRol.length) {
-        respuesta.usuarioRol.map((usuarioRol) => {
-          roles.push(usuarioRol.rol.rol);
-        });
+        roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol);
       }
       return { id: respuesta.id, roles };
     }

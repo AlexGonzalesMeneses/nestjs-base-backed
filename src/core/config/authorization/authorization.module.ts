@@ -21,16 +21,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             password: configService.get('DB_PASSWORD'),
             database: configService.get('DB_DATABASE'),
             logging: configService.get('NODE_ENV') === 'development',
+            synchronize: false,
           });
           const enforcer = await newEnforcer(
             join(__dirname, 'model.conf'),
             adapter,
           );
-          await enforcer.enableLog(true);
-          /* await enforcer.loadFilteredPolicy({
-            ptype: 'p',
-            v3: 'backend',
-          }); */
+          enforcer.enableLog(true);
           await enforcer.loadPolicy();
           return enforcer;
         },
