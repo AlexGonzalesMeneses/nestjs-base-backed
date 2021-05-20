@@ -8,12 +8,16 @@ import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 export const buildOpenIdClient = async () => {
-  const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
-  const client = new issuer.Client({
-    client_id: process.env.OIDC_CLIENT_ID,
-    client_secret: process.env.OIDC_CLIENT_SECRET,
-  });
-  return client;
+  try {
+    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+    const client = new issuer.Client({
+      client_id: process.env.OIDC_CLIENT_ID,
+      client_secret: process.env.OIDC_CLIENT_SECRET,
+    });
+    return client;
+  } catch (error) {
+    console.error('Error al conectar a ciudadania:', error.message);
+  }
 };
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
