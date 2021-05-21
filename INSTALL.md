@@ -126,6 +126,12 @@ $ npm run start:prod
 
 ## Ejecución con PM2
 
+Generar archivos para producción.
+
+```
+$ npm run build
+```
+
 Para ambientes de producción se recomienda levantar la aplicación con el manejador de procesos `pm2`. Ejemplo:
 
 ```sh
