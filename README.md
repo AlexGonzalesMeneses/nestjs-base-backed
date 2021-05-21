@@ -96,16 +96,26 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-### Otros
-- Ejecución de contenedor con instancia postgres
+### Comandos útiles
+
+
+1. Ejecución de contenedor con instancia postgres
+Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos de conexión a la base de datos de la cual se quiere generar el diagrama:
+
+> Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+
+
 ```bash
 $ npm run start:database
 ```
-- Generación del diagrama ERD
+
+2. Generación del diagrama ERD
 ```bash
+
 $ npm run db:diagram
 ```
-- Generación de documentación
+
+3. Generación de documentación
 ```bash
 $ npm run compodoc
 ```

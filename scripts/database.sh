@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-SERVER="backend_base_db";
+SERVER="localhost";
 PW="postgres";
-DB="postgres";
+DB="base_db";
 
 echo "Deteniendo y removiendo instancia anterior de [$SERVER] e iniciando una nueva"
 (docker kill $SERVER || :) && \
