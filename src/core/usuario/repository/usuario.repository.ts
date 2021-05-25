@@ -13,7 +13,6 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
     const { limite, saltar, filtro, rol } = paginacionQueryDto;
-    console.log('rol', rol);
     const queryBuilder = await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')

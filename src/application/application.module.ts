@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ParametroModule } from './parametro/parametro.module';
-import { ReporteModule } from './reporte/reporte.module';
 
 @Module({
-  imports: [ParametroModule, ReporteModule],
+  imports: [ParametroModule],
 })
 export class ApplicationModule {}
