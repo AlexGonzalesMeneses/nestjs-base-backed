@@ -1,7 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { hash, compare } from 'bcrypt';
+import { nanoid } from 'nanoid';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
 import { Configurations } from '../../common/params';
+@Injectable()
 export class TextService {
   /**
    * Metodo para encriptar un password
@@ -53,6 +56,10 @@ export class TextService {
   static generateShortRandomText(): string {
     const randomText = Math.random().toString(25).slice(-8).toUpperCase();
     return randomText;
+  }
+
+  static generateNanoId(): string {
+    return nanoid();
   }
 
   static validateLevelPassword(password: string) {

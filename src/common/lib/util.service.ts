@@ -1,3 +1,6 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export class UtilService {
   /**
    * Metodo para encriptar un password

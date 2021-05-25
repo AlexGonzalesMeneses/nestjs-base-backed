@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { TextService } from 'src/common/lib/text.service';
 import { PropiedadesDto } from 'src/core/authorization/dto/crear-modulo.dto';
 import { Modulo } from 'src/core/authorization/entity/modulo.entity';

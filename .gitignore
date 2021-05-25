@@ -41,6 +41,5 @@ src/logs
 database/migrations/
 documentation
 src/common/params/index.ts
-
-
-
+sonar-project.properties
+sonar-project.properties.sample
