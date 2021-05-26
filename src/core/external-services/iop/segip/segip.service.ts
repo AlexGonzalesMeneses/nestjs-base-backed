@@ -50,17 +50,15 @@ export class SegipService {
           const datosRespuesta = JSON.parse(
             resultado.ContrastacionEnFormatoJson,
           );
-          const observaciones = this.procesarRespuesta(datosRespuesta);
-          if (observaciones.length > 0) {
-            const observacionesFormato = retornarPrimerError
-              ? observaciones[0]
-              : observaciones.join(', ');
-            return this.armarRespuesta(
-              false,
-              `No coincide ${observacionesFormato}`,
-            );
-          }
-          return this.armarRespuesta(true, resultado.DescripcionRespuesta);
+          const observaciones = this.procesarRespuesta(
+            datosRespuesta,
+            retornarPrimerError,
+          );
+          const exito = observaciones.length === 0;
+          const mensaje = exito
+            ? resultado.DescripcionRespuesta
+            : `No coincide ${observaciones.join(', ')}`;
+          return this.armarRespuesta(exito, mensaje);
         } else if (
           [
             CodigoResSegipEnum.NO_PROCESADO,
@@ -96,7 +94,7 @@ export class SegipService {
     return datosCampos;
   }
 
-  private procesarRespuesta(respuesta) {
+  private procesarRespuesta(respuesta, retornarPrimerError) {
     const datosIncorrectos = [];
     if (respuesta?.NumeroDocumento === EstadosDatosEnum.NO_CORRESPONDE) {
       datosIncorrectos.push('Número de documento');
@@ -116,7 +114,10 @@ export class SegipService {
     if (respuesta?.FechaNacimiento === EstadosDatosEnum.NO_CORRESPONDE) {
       datosIncorrectos.push('Fecha de Nacimiento');
     }
-    return datosIncorrectos;
+    if (datosIncorrectos.length > 0) {
+      return retornarPrimerError ? [datosIncorrectos[0]] : datosIncorrectos;
+    }
+    return [];
   }
 
   private armarRespuesta(exito, mensaje) {
