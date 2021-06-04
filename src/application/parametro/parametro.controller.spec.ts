@@ -16,10 +16,8 @@ const resParametro = {
   grupo: 'TD',
 };
 
-const resListar = {
-  total: 1,
-  filas: [resParametro],
-};
+const resListar = [1, resParametro];
+
 describe('ParametroController', () => {
   let controller: ParametroController;
   beforeAll(async () => {

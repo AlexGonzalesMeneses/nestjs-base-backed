@@ -34,10 +34,9 @@ describe('ParametroService', () => {
   it('[listar] Deberia obtener la lista de parametros', async () => {
     const paginacion = new PaginacionQueryDto();
     const parametros = await service.listar(paginacion);
-    expect(parametros).toHaveProperty('filas');
-    expect(parametros).toHaveProperty('total');
-    expect(parametros.filas).toBeInstanceOf(Array);
-    expect(parametros.total).toBeDefined();
+
+    expect(parametros).toBeInstanceOf(Array);
+    expect(parametros.length).toEqual(2);
   });
 
   it('[listarPorGrupo] Deberia obtener la lista de parametros por grupo', async () => {

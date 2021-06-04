@@ -18,10 +18,7 @@ const resUsuario = {
   estado: 'ACTIVO',
 };
 
-const resListar = {
-  total: 1,
-  filas: [resUsuario],
-};
+const resListar = [1, resUsuario];
 
 const resPerfil = {
   id: TextService.generateUuid(),

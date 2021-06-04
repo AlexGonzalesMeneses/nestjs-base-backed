@@ -195,10 +195,9 @@ describe('UsuarioService', () => {
   it('[listar] Deberia obtener la lista de usuarios', async () => {
     const paginacion = new FiltrosUsuarioDto();
     const usuarios = await service.listar(paginacion);
-    expect(usuarios).toHaveProperty('filas');
-    expect(usuarios).toHaveProperty('total');
-    expect(usuarios.filas).toBeInstanceOf(Array);
-    expect(usuarios.total).toBeDefined();
+
+    expect(usuarios).toBeInstanceOf(Array);
+    expect(usuarios.length).toEqual(2);
   });
 
   it('[buscarUsuarioId] Deberia obtener la informacion relacionada al usuario', async () => {

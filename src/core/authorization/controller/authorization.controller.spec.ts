@@ -12,10 +12,7 @@ const resPolitica = {
   app: 'backend',
 };
 
-const resListar = {
-  total: 1,
-  filas: [resPolitica],
-};
+const resListar = [1, resPolitica];
 
 const resListarCasbin = ['ADMINISTRADOR', '/usuarios', 'GET', 'backend'];
 describe('AuthorizationController', () => {
