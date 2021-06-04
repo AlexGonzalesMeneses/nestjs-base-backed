@@ -6,11 +6,13 @@ import {
   Post,
   Request,
   Res,
+  Inject,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { Logger } from 'nestjs-pino';
 
-import { sendRefreshToken } from '../../../common/lib/http.module';
+import { CookieService } from '../../../common/lib/cookie.service';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
 import { RefreshTokensService } from '../service/refreshTokens.service';
@@ -19,6 +21,7 @@ import { RefreshTokensService } from '../service/refreshTokens.service';
 export class RefreshTokensController {
   constructor(
     private readonly refreshTokensService: RefreshTokensService,
+    @Inject(ConfigService) private readonly configService: ConfigService,
     private readonly logger: Logger,
   ) {}
 
@@ -30,7 +33,13 @@ export class RefreshTokensController {
     this.logger.log('[getAccessToken] result: ');
 
     if (result.refresh_token) {
-      sendRefreshToken(res, result.refresh_token.id);
+      // sendRefreshToken(res, result.refresh_token.id);
+      const refreshToken = result.refresh_token.id;
+      res.cookie(
+        this.configService.get('REFRESH_TOKEN_NAME'),
+        refreshToken,
+        CookieService.makeConfig(this.configService),
+      );
     }
     return res
       .status(200)

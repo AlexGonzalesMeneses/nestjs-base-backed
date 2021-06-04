@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Issuer } from 'openid-client';
-import { sendRefreshToken } from '../../../common/lib/http.module';
+import { CookieService } from '../../../common/lib/cookie.service';
 
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { OidcAuthGuard } from '../guards/oidc-auth.guard';
@@ -39,8 +39,14 @@ export class AuthenticationController {
   async login(@Request() req, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
     this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
-    sendRefreshToken(res, result.refresh_token.id);
+    /* sendRefreshToken(res, result.refresh_token.id); */
+    const refreshToken = result.refresh_token.id;
     return res
+      .cookie(
+        this.configService.get('REFRESH_TOKEN_NAME'),
+        refreshToken,
+        CookieService.makeConfig(this.configService),
+      )
       .status(200)
       .send({ finalizado: true, mensaje: 'ok', datos: result.data });
   }
@@ -56,8 +62,14 @@ export class AuthenticationController {
   async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
-      sendRefreshToken(res, result.refresh_token.id);
+      // sendRefreshToken(res, result.refresh_token.id);
+      const refreshToken = result.refresh_token.id;
       res
+        .cookie(
+          this.configService.get('REFRESH_TOKEN_NAME'),
+          refreshToken,
+          CookieService.makeConfig(this.configService),
+        )
         .status(200)
         .redirect(
           `${this.configService.get('URL_FRONTEND')}/#/login?code=${

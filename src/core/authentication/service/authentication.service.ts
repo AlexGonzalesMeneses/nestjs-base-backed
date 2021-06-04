@@ -42,9 +42,8 @@ export class AuthenticationService {
         const urlDesbloqueo = `${this.configService.get(
           'URL_FRONTEND',
         )}/#/desbloqueo?q=${codigo}`;
-        const template = TemplateEmailService.armarPlantillaBloqueoCuenta(
-          urlDesbloqueo,
-        );
+        const template =
+          TemplateEmailService.armarPlantillaBloqueoCuenta(urlDesbloqueo);
         this.mensajeriaService.sendEmail(
           usuario.correoElectronico,
           Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
