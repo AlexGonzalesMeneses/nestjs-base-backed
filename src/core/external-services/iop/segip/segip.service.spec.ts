@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import { HttpModule, HttpService } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';

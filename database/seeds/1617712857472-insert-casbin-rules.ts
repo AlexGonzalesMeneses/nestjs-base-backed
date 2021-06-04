@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import { CasbinRule } from 'src/core/authorization/entity/casbin.entity';
 import { RolEnum } from 'src/core/authorization/rol.enum';
 import { MigrationInterface, QueryRunner } from 'typeorm';

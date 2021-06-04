@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';

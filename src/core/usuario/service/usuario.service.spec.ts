@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { TextService } from '../../../common/lib/text.service';
