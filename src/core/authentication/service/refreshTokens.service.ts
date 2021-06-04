@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { nanoid } from 'nanoid';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 
@@ -15,6 +14,7 @@ import * as dotenv from 'dotenv';
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../../common/constants/response-messages';
 import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
+import { TextService } from '../../../common/lib/text.service';
 
 dotenv.config();
 
@@ -40,7 +40,7 @@ export class RefreshTokensService {
     );
     const currentDate = new Date();
     const refreshToken = this.refreshTokensRepository.create({
-      id: nanoid(),
+      id: TextService.generateNanoId(),
       grantId,
       iat: currentDate,
       expiresAt: new Date(currentDate.getTime() + ttl),

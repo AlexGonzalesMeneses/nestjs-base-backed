@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { hash, compare } from 'bcrypt';
-import { nanoid } from 'nanoid';
+import { nanoid, customAlphabet } from 'nanoid';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
 import { Configurations } from '../../common/params';
@@ -53,9 +53,12 @@ export class TextService {
    * Metodo para generar un texto aleatorio corto
    * @returns string
    */
-  static generateShortRandomText(): string {
-    const randomText = Math.random().toString(25).slice(-8).toUpperCase();
-    return randomText;
+  static generateShortRandomText(length = 8): string {
+    const nanoid = customAlphabet(
+      '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      length,
+    );
+    return nanoid();
   }
 
   static generateNanoId(): string {
