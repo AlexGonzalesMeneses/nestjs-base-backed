@@ -48,12 +48,7 @@ describe('AuthenticationController', () => {
             createAccessToken: jest.fn(() => refreshToken),
           },
         },
-        {
-          provide: ConfigService,
-          useValue: {
-            REFRESH_TOKEN_EXPIRES_IN: 100,
-          },
-        },
+        ConfigService,
         PinoLogger,
       ],
     }).compile();
