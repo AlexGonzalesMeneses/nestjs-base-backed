@@ -23,16 +23,6 @@ export class TextService {
     return isPasswordMatching;
   }
 
-  static nano(template: string, data: string): string {
-    return template.replace(/\{([\w.]*)\}/g, function (str, key) {
-      const keys = key.split('.');
-      let v = data[keys.shift()];
-      for (let i = 0, l = keys.length; i < l; i++) {
-        v = v[keys[i]];
-      }
-      return typeof v !== 'undefined' && v !== null ? v : '';
-    });
-  }
   /**
    * Metodo para convertir un texto a formato uuid
    * @param text Texto
@@ -50,7 +40,7 @@ export class TextService {
   }
 
   /**
-   * Metodo para generar un texto aleatorio corto
+   * Metodo para generar un texto aleatorio corto de acuerdo a un alfabeto
    * @returns string
    */
   static generateShortRandomText(length = 8): string {
@@ -61,6 +51,10 @@ export class TextService {
     return nanoid();
   }
 
+  /**
+   * Metodo para generar un texto aleatorio corto
+   * @returns string
+   */
   static generateNanoId(): string {
     return nanoid();
   }
