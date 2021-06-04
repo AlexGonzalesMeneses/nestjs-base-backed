@@ -1,6 +1,5 @@
 import { Injectable, Query } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
-import { totalRowsResponse } from '../../../common/lib/http.module';
 import { ModuloService } from '../service/modulo.service';
 @Injectable()
 export class AuthorizationService {
@@ -24,12 +23,12 @@ export class AuthorizationService {
       app: politica[3],
     }));
     if (!limite || !pagina) {
-      return totalRowsResponse([result, result.length]);
+      return [result, result.length];
     }
     const i = limite * (pagina - 1);
     const f = limite * pagina;
     const subset = result.slice(i, f);
-    return totalRowsResponse([subset, result.length]);
+    return [subset, result.length];
   }
 
   async crearPolitica(politica) {

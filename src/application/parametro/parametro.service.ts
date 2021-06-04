@@ -4,7 +4,6 @@ import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
-import { totalRowsResponse } from '../../common/lib/http.module';
 
 @Injectable()
 export class ParametroService {
@@ -20,7 +19,7 @@ export class ParametroService {
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.parametroRepositorio.listar(paginacionQueryDto);
-    return totalRowsResponse(result);
+    return result;
   }
 
   async listarPorGrupo(grupo: string) {

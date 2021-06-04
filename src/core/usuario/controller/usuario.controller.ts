@@ -40,7 +40,7 @@ export class UsuarioController extends AbstractController {
   @Get()
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
     const result = await this.usuarioService.listar(paginacionQueryDto);
-    return this.successList(result);
+    return this.successListRows(result);
   }
 
   @UseGuards(JwtAuthGuard, CasbinGuard)

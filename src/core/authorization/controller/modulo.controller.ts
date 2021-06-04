@@ -24,7 +24,7 @@ export class ModuloController extends AbstractController {
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.moduloService.listar(paginacionQueryDto);
-    return this.successList(result);
+    return this.successListRows(result);
   }
 
   @Post()

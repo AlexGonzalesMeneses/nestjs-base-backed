@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuloRepository } from '../repository/modulo.repository';
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
-import { totalRowsResponse } from '../../../common/lib/http.module';
 import { CrearModuloDto } from '../dto/crear-modulo.dto';
 @Injectable()
 export class ModuloService {
@@ -13,7 +12,7 @@ export class ModuloService {
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.moduloRepositorio.listar(paginacionQueryDto);
-    return totalRowsResponse(result);
+    return result;
   }
 
   async listarTodo() {

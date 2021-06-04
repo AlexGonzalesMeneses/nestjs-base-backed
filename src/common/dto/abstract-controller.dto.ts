@@ -27,6 +27,11 @@ export abstract class AbstractController {
     return this.makeResponse(data, message);
   }
 
+  successListRows(data, message = Messages.SUCCESS_LIST): SuccessResponseDto {
+    const [filas, total] = data;
+    return this.makeResponse({ total, filas }, message);
+  }
+
   getUser(req) {
     if (req?.user?.id) {
       return req.user.id;

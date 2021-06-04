@@ -27,7 +27,7 @@ export class ParametroController extends AbstractController {
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.parametroServicio.listar(paginacionQueryDto);
-    return this.successList(result);
+    return this.successListRows(result);
   }
 
   @UsePipes(ValidationPipe)

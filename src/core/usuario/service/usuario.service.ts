@@ -2,9 +2,6 @@ import { Injectable, PreconditionFailedException, Query } from '@nestjs/common';
 import { UsuarioRepository } from '../repository/usuario.repository';
 import { Usuario } from '../entity/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TotalRowsResponseDto } from '../../../common/dto/total-rows-response.dto';
-import { totalRowsResponse } from '../../../common/lib/http.module';
 import { Status } from '../../../common/constants';
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
 import { TextService } from '../../../common/lib/text.service';
@@ -38,11 +35,9 @@ export class UsuarioService {
   ) {}
 
   // GET USERS
-  async listar(
-    @Query() paginacionQueryDto: FiltrosUsuarioDto,
-  ): Promise<TotalRowsResponseDto> {
+  async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
     const resultado = await this.usuarioRepositorio.listar(paginacionQueryDto);
-    return totalRowsResponse(resultado);
+    return resultado;
   }
 
   async buscarUsuario(usuario: string): Promise<Usuario> {
@@ -159,6 +154,7 @@ export class UsuarioService {
       usuario,
       contrasena,
     );
+
     const result = await this.mensajeriaService.sendEmail(
       datosCorreo.correo,
       datosCorreo.asunto,
@@ -264,9 +260,8 @@ export class UsuarioService {
   }
 
   private async actualizarRoles(id, roles, usuarioAuditoria) {
-    const usuarioRoles = await this.usuarioRolRepositorio.obtenerRolesPorUsuario(
-      id,
-    );
+    const usuarioRoles =
+      await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id);
     const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
       usuarioRoles,
       roles,
@@ -323,9 +318,8 @@ export class UsuarioService {
         usuario.usuarioRol.map(async (usuarioRol) => {
           const { rol } = usuarioRol.rol;
           if (usuarioRol.estado === Status.ACTIVE) {
-            const modulos = await this.authorizationService.obtenerPermisosPorRol(
-              rol,
-            );
+            const modulos =
+              await this.authorizationService.obtenerPermisosPorRol(rol);
             return {
               rol,
               modulos,
