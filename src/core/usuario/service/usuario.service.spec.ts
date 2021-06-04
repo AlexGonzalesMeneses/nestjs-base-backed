@@ -134,7 +134,12 @@ describe('UsuarioService', () => {
           provide: UsuarioRepository,
           useValue: {
             listar: jest.fn(() => [[resUsuarioList], 1]),
-            buscarUsuarioRolPorId: jest.fn(() => resUsuarioPerfil),
+            buscarUsuarioRolPorId: jest
+              .fn()
+              .mockReturnValueOnce(resUsuarioPerfil)
+              .mockReturnValueOnce(null)
+              .mockReturnValueOnce(resUsuarioPerfil)
+            ,
             buscarUsuarioPorCI: jest
               .fn()
               .mockReturnValueOnce({ id: TextService.generateUuid() })
@@ -208,6 +213,15 @@ describe('UsuarioService', () => {
     expect(usuarios).toHaveProperty('id');
     expect(usuarios).toHaveProperty('persona');
     expect(usuarios).toHaveProperty('roles');
+  });
+
+  it('[buscarUsuarioId] Deberia lanzar una excepcion si el usuario no tiene asignados roles', async () => {
+    try {
+      const { id } = resUsuarioPerfil;
+      await service.buscarUsuarioId(id);
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
   });
 
   it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo nro de documento', async () => {

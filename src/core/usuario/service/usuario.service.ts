@@ -310,7 +310,7 @@ export class UsuarioService {
     };
   }
 
-  async buscarUsuarioId(id: string): Promise<any> {
+  async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id);
     let roles = [];
     if (usuario?.usuarioRol?.length) {
@@ -329,16 +329,16 @@ export class UsuarioService {
         }),
       );
       roles = roles.filter(Boolean);
+      return {
+        id: usuario.id,
+        usuario: usuario.usuario,
+        estado: usuario.estado,
+        roles,
+        persona: usuario.persona,
+      };
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
-    return {
-      id: usuario.id,
-      usuario: usuario.usuario,
-      estado: usuario.estado,
-      roles,
-      persona: usuario.persona,
-    };
   }
 
   async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario> {
