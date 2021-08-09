@@ -5,16 +5,40 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class modulo1611497480901 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const items = [
+      // MENU SESSION PRINCIPAL
       {
-        nombre: 'usuarios',
-        url: '/usuarios',
-        label: 'Usuarios',
-        icono: 'manage_accounts',
+        nombre: 'Principal',
+        url: '/principal',
+        label: 'Principal',
         propiedades: {
-          color_light: '#3F1929',
-          color_dark: '#AE6DAB',
+          icono: 'home',
+          color_light: '#6E7888',
+          color_dark: '#A2ACBD',
         },
       },
+      {
+        nombre: 'inicio',
+        url: '/home',
+        label: 'Inicio',
+        propiedades: {
+          icono: 'home',
+          color_light: '#6E7888',
+          color_dark: '#A2ACBD',
+        },
+        fidModulo: TextService.textToUuid('Principal'),
+      },
+      {
+        nombre: 'perfil',
+        url: '/perfil',
+        label: 'Perfil',
+        propiedades: {
+          icono: 'person',
+          color_light: '#6E7888',
+          color_dark: '#A2ACBD',
+        },
+        fidModulo: TextService.textToUuid('Principal'),
+      },
+      // MENU SECCION CONFIGURACIONES
       {
         nombre: 'configuraciones',
         url: '/configuraciones',
@@ -24,6 +48,17 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
+      },
+      {
+        nombre: 'usuarios',
+        url: '/usuarios',
+        label: 'Usuarios',
+        icono: 'manage_accounts',
+        propiedades: {
+          color_light: '#3F1929',
+          color_dark: '#AE6DAB',
+        },
+        fidModulo: TextService.textToUuid('configuraciones'),
       },
       {
         nombre: 'parametros',
