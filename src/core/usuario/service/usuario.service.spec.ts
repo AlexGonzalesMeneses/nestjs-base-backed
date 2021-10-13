@@ -15,6 +15,8 @@ import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol
 import { SegipService } from '../../external-services/iop/segip/segip.service';
 import { ConfigService } from '@nestjs/config';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
+import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto';
+import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -144,9 +146,13 @@ describe('UsuarioService', () => {
               .fn()
               .mockReturnValueOnce({ id: TextService.generateUuid() })
               .mockReturnValueOnce(undefined)
-              .mockReturnValueOnce(undefined),
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce({ id: TextService.generateUuid() }),
             buscarUsuarioPorCorreo: jest
               .fn()
+              .mockReturnValueOnce({ id: TextService.generateUuid() })
+              .mockReturnValueOnce(undefined)
               .mockReturnValueOnce({ id: TextService.generateUuid() })
               .mockReturnValueOnce(undefined),
             crear: jest.fn(() => resUsuarioCrear),
@@ -159,14 +165,22 @@ describe('UsuarioService', () => {
               .mockReturnValueOnce(resUsuarioActivar)
               .mockReturnValueOnce(undefined)
               .mockReturnValueOnce(resUsuarioRestaurar)
-              .mockReturnValueOnce(undefined),
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce({ ...resUsuarioActivar, correoElectronico: 'fake@mail.com' })
+              .mockReturnValueOnce({ ...resUsuarioActivar, correoElectronico: 'fake@mail.com' }),
             update: jest.fn(() => ({})),
             runTransaction: jest.fn(),
           },
         },
         {
           provide: UsuarioRolRepository,
-          useValue: {},
+          useValue: {
+            activar: jest.fn(() => ({})),
+            inactivar: jest.fn(() => ({})),
+            crear: jest.fn(() => ({})),
+            obtenerRolesPorUsuario: jest.fn(() => [{ rol: { id: TextService.generateUuid(), estado: 'ACTIVO' }}]),
+          },
         },
         {
           provide: MensajeriaService,
@@ -245,6 +259,7 @@ describe('UsuarioService', () => {
       expect(error.message).toEqual(Messages.EXISTING_USER);
     }
   });
+
   it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo correo electronico', async () => {
     const datosUsuario = {
       usuario: 'usuario122',
@@ -266,6 +281,7 @@ describe('UsuarioService', () => {
       expect(error.message).toEqual(Messages.EXISTING_EMAIL);
     }
   });
+
   it('[crear] Deberia crear un nuevo usuario', async () => {
     const datosUsuario = {
       usuario: 'usuario122',
@@ -285,6 +301,36 @@ describe('UsuarioService', () => {
     expect(usuario).toBeDefined();
     expect(usuario).toHaveProperty('id');
     expect(usuario).toHaveProperty('estado');
+  });
+
+  it('[crearConCiudadania] Deberia crear un nuevo usuario con bandera ciudadania', async () => {
+    const usuarioDto = new CrearUsuarioCiudadaniaDto();
+    usuarioDto.usuario = '7878787';
+    usuarioDto.roles = [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ];
+    usuarioDto.ciudadaniaDigital = true;
+
+    const usuarioAuditoria = TextService.generateUuid();
+    const usuario = await service.crearConCiudadania(usuarioDto, usuarioAuditoria);
+
+    expect(usuario).toBeDefined();
+    expect(usuario).toHaveProperty('id');
+    expect(usuario).toHaveProperty('estado');
+  });
+
+  it('[crearConCiudadania] Deberia retornar una excepcion al tratar de crear un usuario con ciudadania ya existente', async () => {
+    const usuarioDto = new CrearUsuarioCiudadaniaDto();
+    usuarioDto.usuario = '7878787';
+    usuarioDto.roles = [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ];
+    usuarioDto.ciudadaniaDigital = true;
+
+    const usuarioAuditoria = TextService.generateUuid();
+    
+    try {
+      await service.crearConCiudadania(usuarioDto, usuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
+      expect(error.message).toEqual(Messages.EXISTING_USER);
+    }
   });
 
   it('[activar] Deberia activar un usuario en estado CREADO', async () => {
@@ -401,5 +447,48 @@ describe('UsuarioService', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
+  });
+
+  it('[actualizarDatos] Deberia lanzar una excepcion si el usuario no existe', async () => {
+    const usuarioDto = new ActualizarUsuarioRolDto();
+    usuarioDto.correoElectronico = 'fake@gmail.com';
+    usuarioDto.roles = ['12323333'];
+    const idUsuario = TextService.generateUuid();
+    const idUsuarioAuditoria = TextService.generateUuid();
+    
+    try {
+      await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+      expect(error.message).toEqual(Messages.INVALID_USER);
+    }
+  });
+
+  it('[actualizarDatos] Deberia lanzar una excepcion si el usuario no existe', async () => {
+    const usuarioDto = new ActualizarUsuarioRolDto();
+    usuarioDto.correoElectronico = 'fake@gmail.com';
+    usuarioDto.roles = ['12323333'];
+    const idUsuario = TextService.generateUuid();
+    const idUsuarioAuditoria = TextService.generateUuid();
+    
+    try {
+      await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreconditionFailedException);
+      expect(error.message).toEqual(Messages.EXISTING_EMAIL);
+    }
+  });
+
+  it('[actualizarDatos] Deberia retornar el id si logra actualizar los registros', async () => {
+    const usuarioDto = new ActualizarUsuarioRolDto();
+    usuarioDto.correoElectronico = 'fake@gmail.com';
+    usuarioDto.roles = ['12323333'];
+    const idUsuario = TextService.generateUuid();
+    const idUsuarioAuditoria = TextService.generateUuid();
+    
+    const usuario = await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
+    
+    expect(usuario).toBeDefined();
+    expect(usuario).toHaveProperty('id')
   });
 });
