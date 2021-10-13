@@ -9,6 +9,10 @@
 ├─src
 |  ├── application              # directorio con logica de negocio de la aplicacion 
 |  |    ├── modulo1
+|  |    |   ├── controller      # directorio con controladores
+|  |    |   ├── entity          # directorio con entidades
+|  |    |   ├── repository      # directorio con repositorios
+|  |    |   └── service         # directorio con servicios
 |  |    ├── ...
 |  |    └── moduloN                       
 |  ├── common                   # directorio con modulos comunes (utilitarios, contantes, etc)
