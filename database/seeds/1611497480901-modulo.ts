@@ -2,6 +2,7 @@ import { TextService } from 'src/common/lib/text.service';
 import { PropiedadesDto } from 'src/core/authorization/dto/crear-modulo.dto';
 import { Modulo } from 'src/core/authorization/entity/modulo.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+
 export class modulo1611497480901 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const items = [
@@ -43,8 +44,8 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: 'configuraciones',
         url: '/configuraciones',
         label: 'Configuraciones Generales',
-        icono: 'settings',
         propiedades: {
+          icono: 'settings',
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
@@ -53,8 +54,8 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: 'usuarios',
         url: '/usuarios',
         label: 'Usuarios',
-        icono: 'manage_accounts',
         propiedades: {
+          icono: 'manage_accounts',
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
@@ -64,8 +65,8 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: 'parametros',
         url: '/parametros',
         label: 'Parámetros',
-        icono: 'tune',
         propiedades: {
+          icono: 'tune',
           color_light: '#312403',
           color_dark: '#B77346',
         },
@@ -75,8 +76,8 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: 'politicas',
         url: '/politicas',
         label: 'Politicas',
-        icono: 'verified_user',
         propiedades: {
+          icono: 'verified_user',
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
@@ -97,7 +98,7 @@ export class modulo1611497480901 implements MigrationInterface {
       const propiedades = new PropiedadesDto();
       propiedades.color_dark = item.propiedades.color_dark;
       propiedades.color_light = item.propiedades.color_light;
-      propiedades.icono = item.icono;
+      propiedades.icono = item.propiedades.icono;
 
       m.propiedades = propiedades;
       return m;
