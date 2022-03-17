@@ -316,12 +316,14 @@ export class UsuarioService {
     if (usuario?.usuarioRol?.length) {
       roles = await Promise.all(
         usuario.usuarioRol.map(async (usuarioRol) => {
-          const { rol } = usuarioRol.rol;
+          const { id, rol, nombre } = usuarioRol.rol;
           if (usuarioRol.estado === Status.ACTIVE) {
             const modulos =
               await this.authorizationService.obtenerPermisosPorRol(rol);
             return {
+              idRol: id,
               rol,
+              nombre,
               modulos,
             };
           }

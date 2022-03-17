@@ -12,6 +12,9 @@ export class Rol {
   @Column({ length: 50, unique: true })
   rol: string;
 
+  @Column({ length: 100 })
+  nombre: string;
+
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
 

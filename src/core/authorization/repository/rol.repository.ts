@@ -6,7 +6,7 @@ import { Status } from '../../../common/constants';
 export class RolRepository extends Repository<Rol> {
   async listar() {
     const queryBuilder = await this.createQueryBuilder('rol')
-      .select(['rol.id', 'rol.rol'])
+      .select(['rol.id', 'rol.rol', 'rol.nombre'])
       .where({ estado: Status.ACTIVE })
       .getMany();
     return queryBuilder;
