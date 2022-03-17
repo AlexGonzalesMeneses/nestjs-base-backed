@@ -39,7 +39,6 @@ export class ParametroRepository extends Repository<Parametro> {
     parametro.grupo = grupo;
     parametro.descripcion = descripcion;
 
-    await this.save(parametro);
-    return parametro;
+    return await this.save(parametro);
   }
 }
