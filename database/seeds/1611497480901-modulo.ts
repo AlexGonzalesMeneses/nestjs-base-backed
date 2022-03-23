@@ -23,6 +23,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Inicio',
         propiedades: {
           icono: 'home',
+          descripcion: 'Vista de bienvenida con características del sistema',
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
@@ -34,6 +35,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Perfil',
         propiedades: {
           icono: 'person',
+          descripcion: 'Información del perfil de usuario que inicio sesión',
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
@@ -43,7 +45,7 @@ export class modulo1611497480901 implements MigrationInterface {
       {
         nombre: 'configuraciones',
         url: '/configuraciones',
-        label: 'Configuraciones Generales',
+        label: 'Configuración',
         propiedades: {
           icono: 'settings',
           color_light: '#3F1929',
@@ -56,6 +58,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Usuarios',
         propiedades: {
           icono: 'manage_accounts',
+          descripcion: 'Control de usuarios del sistema',
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
@@ -67,6 +70,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Parámetros',
         propiedades: {
           icono: 'tune',
+          descripcion: 'Parametros generales del sistema',
           color_light: '#312403',
           color_dark: '#B77346',
         },
@@ -78,6 +82,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Politicas',
         propiedades: {
           icono: 'verified_user',
+          descripcion: 'Control de permisos para los usuarios',
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
@@ -99,6 +104,7 @@ export class modulo1611497480901 implements MigrationInterface {
       propiedades.color_dark = item.propiedades.color_dark;
       propiedades.color_light = item.propiedades.color_light;
       propiedades.icono = item.propiedades.icono;
+      propiedades.descripcion = item.propiedades.descripcion
 
       m.propiedades = propiedades;
       return m;
@@ -107,5 +113,6 @@ export class modulo1611497480901 implements MigrationInterface {
   }
 
   /* eslint-disable */
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+  }
 }

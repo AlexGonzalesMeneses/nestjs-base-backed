@@ -5,11 +5,15 @@ export class PropiedadesDto {
   icono: string;
 
   @IsString()
+  descripcion?: string;
+
+  @IsString()
   color_light?: string;
 
   @IsString()
   color_dark?: string;
 }
+
 export class CrearModuloDto {
   @IsNotEmpty()
   @IsString()
