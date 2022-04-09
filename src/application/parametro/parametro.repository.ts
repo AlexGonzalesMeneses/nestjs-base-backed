@@ -13,6 +13,7 @@ export class ParametroRepository extends Repository<Parametro> {
         'parametro.codigo',
         'parametro.nombre',
         'parametro.grupo',
+        'parametro.descripcion',
       ])
       .offset(saltar)
       .limit(limite)
