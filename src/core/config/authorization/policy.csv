@@ -1,5 +1,4 @@
-ADMINISTRADOR, /api/autorizacion/politicas, GET|POST|DELETE
-ADMINISTRADOR, /api/autorizacion/politicas/:id, PATCH
+ADMINISTRADOR, /api/autorizacion/politicas, GET|POST|DELETE|PATCH
 ADMINISTRADOR, /api/autorizacion/roles, GET
 ADMINISTRADOR, /api/autorizacion/modulos, GET
 ADMINISTRADOR, /api/usuarios, GET|POST
