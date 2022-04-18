@@ -19,7 +19,7 @@ export class modulo1611497480901 implements MigrationInterface {
       },
       {
         nombre: 'inicio',
-        url: '/home',
+        url: '/admin/home',
         label: 'Inicio',
         propiedades: {
           icono: 'home',
@@ -31,7 +31,7 @@ export class modulo1611497480901 implements MigrationInterface {
       },
       {
         nombre: 'perfil',
-        url: '/perfil',
+        url: '/admin/perfil',
         label: 'Perfil',
         propiedades: {
           icono: 'person',
@@ -54,7 +54,7 @@ export class modulo1611497480901 implements MigrationInterface {
       },
       {
         nombre: 'usuarios',
-        url: '/usuarios',
+        url: '/admin/usuarios',
         label: 'Usuarios',
         propiedades: {
           icono: 'manage_accounts',
@@ -66,7 +66,7 @@ export class modulo1611497480901 implements MigrationInterface {
       },
       {
         nombre: 'parametros',
-        url: '/parametros',
+        url: '/admin/parametros',
         label: 'Parámetros',
         propiedades: {
           icono: 'tune',
@@ -78,7 +78,7 @@ export class modulo1611497480901 implements MigrationInterface {
       },
       {
         nombre: 'politicas',
-        url: '/politicas',
+        url: '/admin/politicas',
         label: 'Politicas',
         propiedades: {
           icono: 'verified_user',
