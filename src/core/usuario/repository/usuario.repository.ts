@@ -39,7 +39,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       })
       .andWhere(
         filtro
-          ? 'persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro'
+          ? '(persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro)'
           : '1=1',
         {
           filtro: `%${filtro}%`,
