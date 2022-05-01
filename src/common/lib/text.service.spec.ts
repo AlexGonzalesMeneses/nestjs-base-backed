@@ -4,7 +4,8 @@ describe('TextService', () => {
   it('[textToUuid] deberia retornar un uuid dada una cadena', async () => {
     const texto = 'prueba';
     const uuid = TextService.textToUuid(texto);
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
     expect(uuid).toBeDefined();
     expect(uuid).toMatch(uuidRegex);
@@ -28,10 +29,10 @@ describe('TextService', () => {
   });
 
   it('[generateNanoId] deberia retornar un id corto', async () => {
-   const uuid = TextService.generateNanoId();
-   const uuidRegex = /[A-Za-z0-9_-]{21}$/i;
+    const uuid = TextService.generateNanoId();
+    const uuidRegex = /[A-Za-z0-9_-]{21}$/i;
 
-   expect(uuid).toBeDefined();
-   expect(uuid).toMatch(uuidRegex);
+    expect(uuid).toBeDefined();
+    expect(uuid).toMatch(uuidRegex);
   });
 });

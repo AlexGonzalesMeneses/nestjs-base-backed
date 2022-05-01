@@ -6,7 +6,7 @@ import { AuthenticationService } from './authentication.service';
 import { RefreshTokensService } from './refreshTokens.service';
 import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
 import { Configurations } from '../../../common/params';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { TextService } from '../../../common/lib/text.service';
 import { Persona } from '../../usuario/entity/persona.entity';
 import { plainToClass } from 'class-transformer';

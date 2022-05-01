@@ -3,7 +3,7 @@ import { hash, compare } from 'bcrypt';
 import { nanoid, customAlphabet } from 'nanoid';
 import { v5, v4 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
-import { Configurations } from '../../common/params';
+import { Configurations } from '../params';
 @Injectable()
 export class TextService {
   /**

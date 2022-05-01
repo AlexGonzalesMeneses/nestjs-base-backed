@@ -140,8 +140,7 @@ describe('UsuarioService', () => {
               .fn()
               .mockReturnValueOnce(resUsuarioPerfil)
               .mockReturnValueOnce(null)
-              .mockReturnValueOnce(resUsuarioPerfil)
-            ,
+              .mockReturnValueOnce(resUsuarioPerfil),
             buscarUsuarioPorCI: jest
               .fn()
               .mockReturnValueOnce({ id: TextService.generateUuid() })
@@ -167,8 +166,14 @@ describe('UsuarioService', () => {
               .mockReturnValueOnce(resUsuarioRestaurar)
               .mockReturnValueOnce(undefined)
               .mockReturnValueOnce(undefined)
-              .mockReturnValueOnce({ ...resUsuarioActivar, correoElectronico: 'fake@mail.com' })
-              .mockReturnValueOnce({ ...resUsuarioActivar, correoElectronico: 'fake@mail.com' }),
+              .mockReturnValueOnce({
+                ...resUsuarioActivar,
+                correoElectronico: 'fake@mail.com',
+              })
+              .mockReturnValueOnce({
+                ...resUsuarioActivar,
+                correoElectronico: 'fake@mail.com',
+              }),
             update: jest.fn(() => ({})),
             runTransaction: jest.fn(),
           },
@@ -179,7 +184,9 @@ describe('UsuarioService', () => {
             activar: jest.fn(() => ({})),
             inactivar: jest.fn(() => ({})),
             crear: jest.fn(() => ({})),
-            obtenerRolesPorUsuario: jest.fn(() => [{ rol: { id: TextService.generateUuid(), estado: 'ACTIVO' }}]),
+            obtenerRolesPorUsuario: jest.fn(() => [
+              { rol: { id: TextService.generateUuid(), estado: 'ACTIVO' } },
+            ]),
           },
         },
         {
@@ -306,11 +313,14 @@ describe('UsuarioService', () => {
   it('[crearConCiudadania] Deberia crear un nuevo usuario con bandera ciudadania', async () => {
     const usuarioDto = new CrearUsuarioCiudadaniaDto();
     usuarioDto.usuario = '7878787';
-    usuarioDto.roles = [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ];
+    usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8'];
     usuarioDto.ciudadaniaDigital = true;
 
     const usuarioAuditoria = TextService.generateUuid();
-    const usuario = await service.crearConCiudadania(usuarioDto, usuarioAuditoria);
+    const usuario = await service.crearConCiudadania(
+      usuarioDto,
+      usuarioAuditoria,
+    );
 
     expect(usuario).toBeDefined();
     expect(usuario).toHaveProperty('id');
@@ -320,11 +330,11 @@ describe('UsuarioService', () => {
   it('[crearConCiudadania] Deberia retornar una excepcion al tratar de crear un usuario con ciudadania ya existente', async () => {
     const usuarioDto = new CrearUsuarioCiudadaniaDto();
     usuarioDto.usuario = '7878787';
-    usuarioDto.roles = [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ];
+    usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8'];
     usuarioDto.ciudadaniaDigital = true;
 
     const usuarioAuditoria = TextService.generateUuid();
-    
+
     try {
       await service.crearConCiudadania(usuarioDto, usuarioAuditoria);
     } catch (error) {
@@ -455,7 +465,7 @@ describe('UsuarioService', () => {
     usuarioDto.roles = ['12323333'];
     const idUsuario = TextService.generateUuid();
     const idUsuarioAuditoria = TextService.generateUuid();
-    
+
     try {
       await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
     } catch (error) {
@@ -470,7 +480,7 @@ describe('UsuarioService', () => {
     usuarioDto.roles = ['12323333'];
     const idUsuario = TextService.generateUuid();
     const idUsuarioAuditoria = TextService.generateUuid();
-    
+
     try {
       await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
     } catch (error) {
@@ -485,10 +495,14 @@ describe('UsuarioService', () => {
     usuarioDto.roles = ['12323333'];
     const idUsuario = TextService.generateUuid();
     const idUsuarioAuditoria = TextService.generateUuid();
-    
-    const usuario = await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
-    
+
+    const usuario = await service.actualizarDatos(
+      idUsuario,
+      usuarioDto,
+      idUsuarioAuditoria,
+    );
+
     expect(usuario).toBeDefined();
-    expect(usuario).toHaveProperty('id')
+    expect(usuario).toHaveProperty('id');
   });
 });

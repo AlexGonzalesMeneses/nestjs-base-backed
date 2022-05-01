@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
 import { PersonaDto } from '../../usuario/dto/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
-import * as dayjs from 'dayjs';
-import * as customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 export const buildOpenIdClient = async () => {

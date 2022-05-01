@@ -1,7 +1,7 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { PersonaDto } from '../../../usuario/dto/persona.dto';
 import { UtilService } from '../../../../common/lib/util.service';
 
