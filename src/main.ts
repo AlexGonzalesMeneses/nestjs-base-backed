@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { TypeormStore } from 'typeorm-store';
@@ -42,7 +42,7 @@ async function bootstrap() {
         maxAge: 30 * 60 * 1000,
         httpOnly: true,
       },
-      store: new TypeormStore({ repository, expirationInterval: 3600000 }), //ms
+      store: new TypeormStore({ repository, expirationInterval: 3600 }), //segundos
     }),
   );
   app.use(passport.initialize());

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
 import * as fs from 'fs';
 import pino from 'pino';
+import { Options, ReqId } from 'pino-http';
 import { createWriteStream } from 'pino-http-send';
 import { multistream } from 'pino-multi-stream';
 
@@ -96,11 +97,11 @@ export class LogService {
     return 'info';
   }
 
-  static getPinoHttpConfig() {
+  static getPinoHttpConfig(): Options {
     return {
       name: this.sistemName,
       genReqId: (req) => {
-        return req.id || id();
+        return (req.id || id()) as ReqId;
       },
       serializers: {
         err: pino.stdSerializers.err,
@@ -125,10 +126,18 @@ export class LogService {
         err: `error`,
         responseTime: `Tiempo de la transaccion:ms`,
       },
-      prettyPrint:
+      /*prettyPrint:
         this.logsFilePath.length > 2 || this.logsLogstashUrl.length > 5
           ? false
-          : true, //false, //process.env.NODE_ENV !== 'production',
+          : true, //false, //process.env.NODE_ENV !== 'production',*/
+      /*transport: {
+        target: 'pino-pretty',
+        options: {
+          levelFirst: true,
+          translateTime: true,
+          colorize: true,
+        },
+      },*/
     };
   }
 }

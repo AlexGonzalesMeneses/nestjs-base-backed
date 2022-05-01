@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 
 import { RefreshTokensRepository } from '../repository/refreshTokens.repository';
