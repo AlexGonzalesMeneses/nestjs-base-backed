@@ -12,9 +12,10 @@ Para continuar con la instalación del proyecto se necesita contar con las sigui
 
 ## Instalación
 
-1. Instalación de paquetes.
+1. Instalación de paquetes. (mientras el módulo nest-authz no se actualice)
+
 ```bash
-$ npm install
+$ npm install  --legacy-peer-deps
 ```
 
 2. Copiar el archivo .env.sample y realizar las configuraciones necesarias.
