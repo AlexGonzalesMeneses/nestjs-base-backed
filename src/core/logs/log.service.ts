@@ -5,6 +5,7 @@ import pino from 'pino';
 import { Options, ReqId } from 'pino-http';
 import { createWriteStream } from 'pino-http-send';
 import { multistream } from 'pino-multi-stream';
+import { IncomingMessage, ServerResponse } from 'http';
 
 @Injectable()
 export class LogService {
@@ -63,7 +64,7 @@ export class LogService {
     };
   }
 
-  static customSuccessMessage(res) {
+  static customSuccessMessage(req: IncomingMessage, res: any) {
     if (res.statusCode <= 304) {
       return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
         res.req.headers,
@@ -76,7 +77,7 @@ export class LogService {
     )}, "body": ${JSON.stringify(res.req.body)} }`;
   }
 
-  static customErrorMessage(err, res) {
+  static customErrorMessage(req: IncomingMessage, res) {
     return `Peticion concluida - ${
       res.statusCode
     } Datos de la Peticion: { "headers":"${JSON.stringify(
@@ -84,7 +85,7 @@ export class LogService {
     )}, "body": ${JSON.stringify(res.req.body)} }`;
   }
 
-  static customLogLevel(res, err) {
+  static customLogLevel(req: IncomingMessage, res: ServerResponse, err) {
     if (err) {
       if (res.statusCode >= 500) {
         return 'error';
