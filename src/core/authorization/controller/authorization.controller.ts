@@ -23,13 +23,13 @@ export class AuthorizationController extends AbstractController {
 
   @Post('/politicas')
   async crearPolitica(@Body() politica) {
-    const result = this.authorizationService.crearPolitica(politica);
+    const result = await this.authorizationService.crearPolitica(politica);
     return this.successCreate(result);
   }
 
   @Patch('/politicas')
   async actualizarPolitica(@Body() politica, @Query() query) {
-    const result = this.authorizationService.actualizarPolitica(
+    const result = await this.authorizationService.actualizarPolitica(
       query,
       politica,
     );
@@ -45,7 +45,7 @@ export class AuthorizationController extends AbstractController {
   @Delete('/politicas')
   @HttpCode(204)
   async eliminarPolitica(@Query() query) {
-    const result = this.authorizationService.eliminarPolitica(query);
+    const result = await this.authorizationService.eliminarPolitica(query);
     return this.successDelete(result);
   }
 
