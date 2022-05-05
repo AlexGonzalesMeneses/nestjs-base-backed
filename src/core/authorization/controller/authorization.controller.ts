@@ -43,7 +43,6 @@ export class AuthorizationController extends AbstractController {
   }
 
   @Delete('/politicas')
-  @HttpCode(204)
   async eliminarPolitica(@Query() query) {
     const result = await this.authorizationService.eliminarPolitica(query);
     return this.successDelete(result);
