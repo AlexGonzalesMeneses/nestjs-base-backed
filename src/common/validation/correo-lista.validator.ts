@@ -1,6 +1,6 @@
 import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
 import { ValidationMessageEnum } from './i18n/es.enum';
-import { Configurations } from '../../common/params';
+import { Configurations } from '../params';
 
 export const IS_CORREO_LISTA = 'correoLista';
 
