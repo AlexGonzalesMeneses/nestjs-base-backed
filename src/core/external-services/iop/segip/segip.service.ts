@@ -1,9 +1,10 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception';
 import dayjs from 'dayjs';
 import { PersonaDto } from '../../../usuario/dto/persona.dto';
 import { UtilService } from '../../../../common/lib/util.service';
+import { HttpService } from '@nestjs/axios';
 
 // Respuestas codigos segip
 enum CodigoResSegipEnum {

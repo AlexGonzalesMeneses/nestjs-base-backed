@@ -1,6 +1,7 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { SinService } from './sin.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [

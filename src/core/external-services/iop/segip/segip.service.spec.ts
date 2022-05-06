@@ -1,10 +1,10 @@
-import { HttpModule, HttpService } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { PersonaDto } from '../../../../core/usuario/dto/persona.dto';
+import { PersonaDto } from '../../../usuario/dto/persona.dto';
 import { SegipService } from './segip.service';
 import { plainToClass } from 'class-transformer';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
 const dataDefaultAxios = {
   headers: {},

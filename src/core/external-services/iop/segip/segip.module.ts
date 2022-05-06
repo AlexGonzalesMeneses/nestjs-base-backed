@@ -1,6 +1,7 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { SegipService } from './segip.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
