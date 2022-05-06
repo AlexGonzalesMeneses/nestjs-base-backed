@@ -1,6 +1,7 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { SINCredencialesDTO } from './credenciales.dto';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class SinService {

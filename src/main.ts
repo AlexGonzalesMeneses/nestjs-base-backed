@@ -21,7 +21,10 @@ import {
 } from './common/constants';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule, {
+    // logger: ['error', 'warn'],
+    logger: false,
+  });
   app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
   // swagger
@@ -77,4 +80,5 @@ function createSwagger(app: INestApplication) {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup(SWAGGER_API_ROOT, app, document);
 }
+
 bootstrap();

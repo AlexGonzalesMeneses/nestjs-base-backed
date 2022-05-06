@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import * as htmlPdfMake from 'html-to-pdfmake';
-import * as jsdom from 'jsdom';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import htmlToPdfmake from 'html-to-pdfmake';
+import jsdom from 'jsdom';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { DynamicContent, Margins, PageSize } from 'pdfmake/interfaces';
 
 const pdf = pdfMake;
@@ -14,7 +14,7 @@ const { window } = new JSDOM('');
 @Injectable()
 export class PdfService {
   static generate(template) {
-    const html = htmlPdfMake(template, { window });
+    const html = htmlToPdfmake(template, { window });
     const docDefinition = {
       content: [html],
       ...this.pdfContent(),

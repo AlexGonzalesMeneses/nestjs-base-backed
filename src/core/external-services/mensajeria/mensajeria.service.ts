@@ -1,6 +1,7 @@
-import { HttpService, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../common/exceptions/external-service.exception';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class MensajeriaService {
