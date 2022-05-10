@@ -10,7 +10,7 @@ import { UsuarioService } from '../../usuario/service/usuario.service';
 
 import { Cron } from '@nestjs/schedule';
 
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../../common/constants/response-messages';
 import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
