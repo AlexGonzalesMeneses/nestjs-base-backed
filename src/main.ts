@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import session from 'express-session';
 import passport from 'passport';
 import helmet from 'helmet';
@@ -14,16 +14,16 @@ import { Logger } from 'nestjs-pino';
 import { expressMiddleware } from 'cls-rtracer';
 
 import {
+  SWAGGER_API_CURRENT_VERSION,
   SWAGGER_API_DESCRIPTION,
   SWAGGER_API_NAME,
-  SWAGGER_API_CURRENT_VERSION,
   SWAGGER_API_ROOT,
 } from './common/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    // logger: ['error', 'warn'],
-    logger: false,
+    logger: ['error', 'warn'],
+    // logger: false,
   });
   app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);

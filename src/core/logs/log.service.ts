@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
-import * as fs from 'fs';
+import fs from 'fs';
 import pino from 'pino';
 import { Options, ReqId } from 'pino-http';
 import { createWriteStream } from 'pino-http-send';
