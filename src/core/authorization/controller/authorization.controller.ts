@@ -1,12 +1,11 @@
 import {
   Body,
   Controller,
-  Post,
-  Patch,
-  Get,
   Delete,
+  Get,
+  Patch,
+  Post,
   Query,
-  HttpCode,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';

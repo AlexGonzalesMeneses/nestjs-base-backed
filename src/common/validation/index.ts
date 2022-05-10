@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import * as validator from 'class-validator';
 import { NroDocumento as _NroDocumento } from './nro-documento.validator';
 import { NombreApellido as _NombreApellido } from './nombre-apellido.validator';
