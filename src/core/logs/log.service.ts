@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
-import fs from 'fs';
 import pino from 'pino';
 import { Options, ReqId } from 'pino-http';
 import { createWriteStream } from 'pino-http-send';
 import { multistream } from 'pino-multi-stream';
 import { IncomingMessage, ServerResponse } from 'http';
+import fsr from 'file-stream-rotator';
 
 @Injectable()
 export class LogService {
@@ -34,21 +34,25 @@ export class LogService {
       this.logsFilePath.length > 2
         ? [
             {
-              stream: fs.createWriteStream(
-                `${this.logsFilePath}/${this.sistemName}-out.log`,
-              ),
+              stream: fsr.getStream({
+                filename: `${this.logsFilePath}/${this.sistemName}-out.log`,
+                frequency: '1H',
+              }),
             },
             {
               level: 'error',
-              stream: fs.createWriteStream(
-                `${this.logsFilePath}/${this.sistemName}-error.log`,
-              ),
+
+              stream: fsr.getStream({
+                filename: `${this.logsFilePath}/${this.sistemName}-error.log`,
+                frequency: '1H',
+              }),
             },
             {
               level: 'fatal',
-              stream: fs.createWriteStream(
-                `${this.logsFilePath}/${this.sistemName}-fatal.log`,
-              ),
+              stream: fsr.getStream({
+                filename: `${this.logsFilePath}/${this.sistemName}-fatal.log`,
+                frequency: '1H',
+              }),
             },
           ]
         : [];
@@ -58,6 +62,7 @@ export class LogService {
       : [];
     return multistream([...streamsEstandar, ...streamDisk, ...streamHttp]);
   }
+
   static getLoggerConfig() {
     return {
       pinoHttp: this.getPinoHttpConfig(),

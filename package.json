@@ -59,6 +59,7 @@
     "dotenv": "16.0.1",
     "ejs": "3.1.7",
     "express-session": "1.17.2",
+    "file-stream-rotator": "^0.6.1",
     "helmet": "5.0.2",
     "html-to-pdfmake": "2.3.11",
     "jsdom": "19.0.0",
