@@ -72,7 +72,8 @@ describe('SegipService', () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":1,"Complemento":2,"Nombres":1,"PrimerApellido":1,"SegundoApellido":1,"FechaNacimiento":1}';
     const response = makeSuccessResponse(resContrastacion);
-    jest.spyOn(httpService, 'get').mockImplementation(() => of(response));
+
+    jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
     const persona = plainToClass(PersonaDto, datosPersona);
     const respuesta = await service.contrastar(persona);
@@ -85,7 +86,7 @@ describe('SegipService', () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":1,"Complemento":1,"Nombres":1,"PrimerApellido":1,"SegundoApellido":1,"FechaNacimiento":1}';
     const response = makeSuccessResponse(resContrastacion);
-    jest.spyOn(httpService, 'get').mockImplementation(() => of(response));
+    jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
     datosPersona.nroDocumento = '123456-1A';
     const persona = plainToClass(PersonaDto, datosPersona);
@@ -99,7 +100,7 @@ describe('SegipService', () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":2,"Complemento":0,"Nombres":0,"PrimerApellido":0,"SegundoApellido":0,"FechaNacimiento":0}';
     const response = makeSuccessResponse(resContrastacion);
-    jest.spyOn(httpService, 'get').mockImplementation(() => of(response));
+    jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
     const persona = plainToClass(PersonaDto, datosPersona);
     const respuesta = await service.contrastar(persona);
@@ -110,8 +111,8 @@ describe('SegipService', () => {
   });
 
   it('[contrastar] deberia retornar finalizado = false, si segip retorna algun codigo distinto de 2 = ENCONTRADO ', async () => {
-    const response = makeFailedResponse();
-    jest.spyOn(httpService, 'get').mockImplementation(() => of(response));
+    const response: AxiosResponse<any> = makeFailedResponse();
+    jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
     const persona = plainToClass(PersonaDto, datosPersona);
     const respuesta = await service.contrastar(persona);
