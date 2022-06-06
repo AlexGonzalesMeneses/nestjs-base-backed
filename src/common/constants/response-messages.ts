@@ -25,6 +25,7 @@ export enum Messages {
   INVALID_USER = 'El usuario no existe o no contiene un estado valido.',
   INVALID_CREDENTIALS = 'Credenciales incorrectas!!!',
   INACTIVE_USER = 'El usuario se encuentra INACTIVO',
+  INACTIVE_PERSON = 'El registro de persona se encuentra INACTIVO',
   INVALID_PASSWORD_SCORE = 'La contraseña nueva no cumple el nivel de seguridad necesario.',
   USER_BLOCKED = 'Usuario bloqueado por muchos intentos de sesión fallidos, revise su correo electrónico.',
   SUBJECT_EMAIL_ACCOUNT_ACTIVE = 'Generación de credenciales.',

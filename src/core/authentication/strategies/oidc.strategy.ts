@@ -5,6 +5,7 @@ import { PersonaDto } from '../../usuario/dto/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 dayjs.extend(customParseFormat);
 
 export const buildOpenIdClient = async () => {
@@ -43,11 +44,13 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   async validate(tokenset: TokenSet): Promise<any> {
     try {
       const userinfo = await this.client.userinfo(tokenset);
+
       const ci = <documentoIdentidad>userinfo.documento_identidad;
-      if (/[a-z]/i.test(ci.numero_documento)) {
+
+      /*if (/[a-z]/i.test(ci.numero_documento)) {
         ci.complemento = ci.numero_documento.slice(-2);
         ci.numero_documento = ci.numero_documento.slice(0, -2);
-      }
+      }*/
 
       const fechaNacimiento = dayjs(
         userinfo.fecha_nacimiento.toString(),
@@ -64,8 +67,14 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.primerApellido = nombre.primer_apellido;
       persona.segundoApellido = nombre.segundo_apellido;
       // const correoElectronico = userinfo.email;
-      const usuario = await this.autenticacionService.validarUsuarioOidc(
+
+      const datosUsuario = {
+        correoElectronico: userinfo.email,
+      };
+
+      const usuario = await this.autenticacionService.validarOCrearUsuarioOidc(
         persona,
+        datosUsuario,
       );
 
       const data = {

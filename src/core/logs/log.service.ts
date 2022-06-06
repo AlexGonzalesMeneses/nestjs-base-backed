@@ -132,18 +132,17 @@ export class LogService {
         err: `error`,
         responseTime: `Tiempo de la transaccion:ms`,
       },
-      /*prettyPrint:
+      prettyPrint: !(
         this.logsFilePath.length > 2 || this.logsLogstashUrl.length > 5
-          ? false
-          : true, //false, //process.env.NODE_ENV !== 'production',*/
-      /*transport: {
+      ), //false, //process.env.NODE_ENV !== 'production',
+      transport: {
         target: 'pino-pretty',
         options: {
           levelFirst: true,
           translateTime: true,
           colorize: true,
         },
-      },*/
+      },
     };
   }
 }

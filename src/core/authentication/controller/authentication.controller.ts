@@ -72,7 +72,7 @@ export class AuthenticationController {
         )
         .status(200)
         .redirect(
-          `${this.configService.get('URL_FRONTEND')}/#/login?code=${
+          `${this.configService.get('URL_FRONTEND')}/login?code=${
             result.data.access_token
           }`,
         );
@@ -86,7 +86,7 @@ export class AuthenticationController {
   async logoutCiudadania(@Request() req, @Res() res: Response) {
     const jid = req.cookies.jid || '';
     if (jid != '') {
-      this.refreshTokensService.removeByid(jid);
+      await this.refreshTokensService.removeByid(jid);
     }
     const idToken = req.user ? req.user.idToken : null;
     // req.logout();

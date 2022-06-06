@@ -77,6 +77,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         'usuario.usuario',
         'usuario.contrasena',
         'usuario.estado',
+        'usuario.ciudadaniaDigital',
         'persona.nombres',
         'persona.primerApellido',
         'persona.segundoApellido',
@@ -99,11 +100,20 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
+  verificarExisteUsuarioPorCI(ci: string) {
+    return this.createQueryBuilder('usuario')
+      .leftJoin('usuario.persona', 'persona')
+      .select('usuario.id')
+      .where('persona.nroDocumento = :ci', { ci: ci })
+      .getOne();
+  }
+
   buscarUsuarioPorCorreo(correo: string) {
     return this.createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
       .getOne();
   }
+
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
       // Rol
@@ -131,6 +141,73 @@ export class UsuarioRepository extends Repository<Usuario> {
     const usuario = new Usuario();
     usuario.persona = persona;
     usuario.usuarioRol = usuarioRoles;
+
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
+    usuario.correoElectronico = usuarioDto?.correoElectronico;
+    usuario.contrasena =
+      usuarioDto?.contrasena ??
+      (await TextService.encrypt(TextService.generateUuid()));
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
+    usuario.usuarioCreacion = usuarioAuditoria;
+
+    return this.save(usuario);
+  }
+
+  async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
+    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
+      const usuarioRol = new UsuarioRol();
+      usuarioRol.rol = rol;
+      usuarioRol.usuarioCreacion = usuarioAuditoria;
+
+      return usuarioRol;
+    });
+
+    // Persona
+    const persona = new Persona();
+    persona.nombres = usuarioDto?.persona?.nombres ?? null;
+    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null;
+    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null;
+    persona.nroDocumento =
+      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
+    // persona.usuarioCreacion = usuarioAuditoria;
+    // TODO: agregar tabla de auditoría
+    persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null;
+    persona.telefono = usuarioDto?.persona?.telefono ?? null;
+
+    // Usuario
+    const usuario = new Usuario();
+    usuario.persona = persona;
+    usuario.usuarioRol = usuarioRoles;
+
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
+    usuario.correoElectronico = usuarioDto?.correoElectronico;
+    usuario.contrasena =
+      usuarioDto?.contrasena ??
+      (await TextService.encrypt(TextService.generateUuid()));
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
+    usuario.usuarioCreacion = usuarioAuditoria;
+
+    return this.save(usuario);
+  }
+
+  async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
+    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
+      const usuarioRol = new UsuarioRol();
+      usuarioRol.rol = rol;
+      usuarioRol.usuarioCreacion = usuarioAuditoria;
+
+      return usuarioRol;
+    });
+
+    // Usuario
+    const usuario = new Usuario();
+    usuario.usuarioRol = usuarioRoles;
+
+    // Persona
+    usuario.persona = usuarioDto.persona;
 
     usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
     usuario.estado = usuarioDto?.estado ?? Status.CREATE;
