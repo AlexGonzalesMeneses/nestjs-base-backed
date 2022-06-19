@@ -15,7 +15,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js',  'database/**/*.ts', '**/*.spec.ts'],
+  ignorePatterns: ['.eslintrc.js',  'database/**/*.ts', '**/*.spec.ts', 'libs'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
