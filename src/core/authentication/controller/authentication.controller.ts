@@ -83,12 +83,14 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
-  async logoutCiudadania(@Request() req, @Res() res: Response) {
+  async logoutCiudadania(@Request() req: Request | any, @Res() res: Response) {
     const jid = req.cookies.jid || '';
     if (jid != '') {
       await this.refreshTokensService.removeByid(jid);
     }
-    const idToken = req.user ? req.user.idToken : null;
+    const idToken =
+      req?.user?.idToken || req?.session?.passport?.user?.idToken || null;
+
     // req.logout();
     req.session = null;
     const issuer = await Issuer.discover(this.configService.get('OIDC_ISSUER'));
