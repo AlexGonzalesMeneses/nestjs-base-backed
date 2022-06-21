@@ -11,7 +11,7 @@ import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 import { ModuloService } from '../service/modulo.service';
 import { CrearModuloDto } from '../dto/crear-modulo.dto';
-import { JwtAuthGuard } from '../../../core/authentication/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { CasbinGuard } from '../guards/casbin.guard';
 
 @UseGuards(JwtAuthGuard, CasbinGuard)

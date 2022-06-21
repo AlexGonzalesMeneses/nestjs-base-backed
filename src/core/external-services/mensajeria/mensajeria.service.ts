@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { ExternalServiceException } from '../../../common/exceptions/external-service.exception';
 import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class MensajeriaService {
@@ -20,9 +21,9 @@ export class MensajeriaService {
       };
       const response = await this.httpService
         .post('/sms', smsBody)
-        .pipe(map((res) => res.data))
-        .toPromise();
-      return response;
+        .pipe(map((res) => res.data));
+
+      return firstValueFrom(response);
     } catch (error) {
       throw new ExternalServiceException('MENSAJERIA:SMS', error);
     }
@@ -43,9 +44,9 @@ export class MensajeriaService {
       };
       const response = await this.httpService
         .post('/correo', emailBody)
-        .pipe(map((res) => res.data))
-        .toPromise();
-      return response;
+        .pipe(map((res) => res.data));
+
+      return firstValueFrom(response);
     } catch (error) {
       throw new ExternalServiceException('MENSAJERIA:CORREO', error);
     }
@@ -59,9 +60,9 @@ export class MensajeriaService {
     try {
       const response = this.httpService
         .get(`/sms/reporte/${id}`)
-        .pipe(map((res) => res.data))
-        .toPromise();
-      return response;
+        .pipe(map((res) => res.data));
+
+      return firstValueFrom(response);
     } catch (error) {
       throw new ExternalServiceException('MENSAJERIA:SMS', error);
     }
@@ -75,9 +76,8 @@ export class MensajeriaService {
     try {
       const response = this.httpService
         .get(`/correo/reporte/${id}`)
-        .pipe(map((res) => res.data))
-        .toPromise();
-      return response;
+        .pipe(map((res) => res.data));
+      return firstValueFrom(response);
     } catch (error) {
       throw new ExternalServiceException('MENSAJERIA:CORREO', error);
     }

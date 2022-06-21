@@ -14,7 +14,7 @@ const dataDefaultAxios = {
 };
 
 const makeSuccessResponse = (datosRespuesta): AxiosResponse<any> => {
-  const response: AxiosResponse = {
+  return {
     data: {
       ConsultaDatoPersonaContrastacionResult: {
         EsValido: 'true',
@@ -28,7 +28,6 @@ const makeSuccessResponse = (datosRespuesta): AxiosResponse<any> => {
     },
     ...dataDefaultAxios,
   };
-  return response;
 };
 
 const makeFailedResponse = (): AxiosResponse<any> => {

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { hash, compare } from 'bcrypt';
-import { nanoid, customAlphabet } from 'nanoid';
-import { v5, v4 } from 'uuid';
+import { compare, hash } from 'bcrypt';
+import { customAlphabet, nanoid } from 'nanoid';
+import { v4, v5 } from 'uuid';
 import zxcvbn from 'zxcvbn-typescript';
 import { Configurations } from '../params';
+
 @Injectable()
 export class TextService {
   /**
@@ -11,16 +12,11 @@ export class TextService {
    * @param password contraeña
    */
   static async encrypt(password: string) {
-    const hashText = await hash(password, Configurations.SALT_ROUNDS);
-    return hashText;
+    return await hash(password, Configurations.SALT_ROUNDS);
   }
 
   static async compare(passwordInPlainText, hashedPassword) {
-    const isPasswordMatching = await compare(
-      passwordInPlainText,
-      hashedPassword,
-    );
-    return isPasswordMatching;
+    return await compare(passwordInPlainText, hashedPassword);
   }
 
   /**
@@ -61,10 +57,7 @@ export class TextService {
 
   static validateLevelPassword(password: string) {
     const result = zxcvbn(password);
-    if (result.score >= Configurations.SCORE_PASSWORD) {
-      return true;
-    }
-    return false;
+    return result.score >= Configurations.SCORE_PASSWORD;
   }
 
   static decodeBase64 = (base64) => {

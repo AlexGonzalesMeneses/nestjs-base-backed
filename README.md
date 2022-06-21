@@ -41,7 +41,7 @@ El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
     - Manejo de errores
 
 ## Documentación
-Documentación relacionada al proyecto:
+Documentación relacionada con el proyecto:
 1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
 3. [Documentacion de APIS](/docs/openapi.yaml)

@@ -5,13 +5,14 @@ import dayjs from 'dayjs';
 import { PersonaDto } from '../../../usuario/dto/persona.dto';
 import { UtilService } from '../../../../common/lib/util.service';
 import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 // Respuestas codigos segip
 enum CodigoResSegipEnum {
   NO_PROCESADO = '0', // No se realizo la búsqueda
   NO_ENCONTRADO = '1', // No se encontró el registro [persona ú documento]
   ENCONTRADO = '2', // Encontrado
-  MULTIPLICIDAD = '3', // Se encontró mas de un registro [persona ú documento]
+  MULTIPLICIDAD = '3', // Se encontró más de un registro [persona ú documento]
   OBSERVADO = '4', // Registro con observacion
 }
 
@@ -40,12 +41,13 @@ export class SegipService {
       const urlContrastacion = encodeURI(
         `/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`,
       );
-      const respuesta = await this.http
-        .get(urlContrastacion)
-        .pipe(map((response) => response.data))
-        .toPromise();
-
-      const resultado = respuesta?.ConsultaDatoPersonaContrastacionResult;
+      const respuesta = firstValueFrom(
+        await this.http
+          .get(urlContrastacion)
+          .pipe(map((response) => response.data)),
+      );
+      const resultado = (await respuesta)
+        ?.ConsultaDatoPersonaContrastacionResult;
       if (resultado) {
         if (resultado.CodigoRespuesta === CodigoResSegipEnum.ENCONTRADO) {
           const datosRespuesta = JSON.parse(

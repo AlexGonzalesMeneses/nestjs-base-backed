@@ -3,7 +3,7 @@ import { Messages } from '../constants/response-messages';
 import { SuccessResponseDto } from './success-response.dto';
 
 export abstract class AbstractController {
-  private makeResponse(data, message: string): SuccessResponseDto {
+  makeResponse(data, message: string): SuccessResponseDto {
     return {
       finalizado: true,
       mensaje: message,

@@ -13,17 +13,14 @@ export class ParametroService {
   ) {}
 
   async crear(parametroDto: CrearParametroDto): Promise<Parametro> {
-    const result = await this.parametroRepositorio.crear(parametroDto);
-    return result;
+    return await this.parametroRepositorio.crear(parametroDto);
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const result = await this.parametroRepositorio.listar(paginacionQueryDto);
-    return result;
+    return await this.parametroRepositorio.listar(paginacionQueryDto);
   }
 
   async listarPorGrupo(grupo: string) {
-    const result = await this.parametroRepositorio.listarPorGrupo(grupo);
-    return result;
+    return await this.parametroRepositorio.listarPorGrupo(grupo);
   }
 }

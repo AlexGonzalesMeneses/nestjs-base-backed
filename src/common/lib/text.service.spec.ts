@@ -14,7 +14,7 @@ describe('TextService', () => {
   it('[validateLevelPassword] Debería retornar true si la contrasena es segura', async () => {
     const longitudTexto = 12;
     const texto = TextService.generateShortRandomText(longitudTexto);
-    const uuid = await TextService.validateLevelPassword(texto);
+    const uuid =  TextService.validateLevelPassword(texto);
 
     expect(uuid).toBeDefined();
     expect(uuid).toBe(true);
@@ -22,7 +22,7 @@ describe('TextService', () => {
 
   it('[validateLevelPassword] Debería retornar false si la contrasena es insegura', async () => {
     const texto = 'password';
-    const uuid = await TextService.validateLevelPassword(texto);
+    const uuid =  TextService.validateLevelPassword(texto);
 
     expect(uuid).toBeDefined();
     expect(uuid).toBe(false);

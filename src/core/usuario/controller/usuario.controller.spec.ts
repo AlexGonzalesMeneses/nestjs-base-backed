@@ -9,7 +9,7 @@ import { UsuarioController } from './usuario.controller';
 import { UsuarioService } from '../service/usuario.service';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { CanActivate } from '@nestjs/common';
-import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard';
+import { CasbinGuard } from '../../authorization/guards/casbin.guard';
 
 const resUsuario = {
   id: TextService.generateUuid(),
