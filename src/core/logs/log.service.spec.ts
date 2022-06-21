@@ -11,7 +11,7 @@ describe('LogService', () => {
     service = module.get<LogService>(LogService);
   });
 
-  it('Deberia ser implementado como ', () => {
+  it('Debería ser implementado como ', () => {
     expect(service).toBeDefined();
   });
   it('streams', () => {

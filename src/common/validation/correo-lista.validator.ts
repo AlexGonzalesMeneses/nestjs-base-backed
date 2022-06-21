@@ -4,17 +4,12 @@ import { Configurations } from '../params';
 
 export const IS_CORREO_LISTA = 'correoLista';
 
-export function correoLista(value: string): boolean {
+export function correoLista(value?: string | null): boolean {
   const nameEmail = value?.substring(0, value?.lastIndexOf('@'));
   const domainEmail = value?.substring(value?.lastIndexOf('@') + 1);
-  const isValid =
-    domainEmail && nameEmail
-      ? !Configurations.BLACK_LIST_EMAILS.some(
-          (domain) => domainEmail === domain,
-        )
-      : false;
-
-  return isValid;
+  return domainEmail && nameEmail
+    ? !Configurations.BLACK_LIST_EMAILS.some((domain) => domainEmail === domain)
+    : false;
 }
 
 export function CorreoLista(

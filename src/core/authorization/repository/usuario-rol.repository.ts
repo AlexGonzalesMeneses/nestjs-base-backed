@@ -6,15 +6,15 @@ import { Status } from '../../../common/constants';
 
 @EntityRepository(UsuarioRol)
 export class UsuarioRolRepository extends Repository<UsuarioRol> {
-  obtenerRolesPorUsuario(idUsuario: string) {
-    return this.createQueryBuilder('usuarioRol')
+  async obtenerRolesPorUsuario(idUsuario: string) {
+    return await this.createQueryBuilder('usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('usuarioRol.id_usuario = :idUsuario', { idUsuario })
       .getMany();
   }
 
-  activar(idUsuario, roles, usuarioActualizacion) {
-    return this.createQueryBuilder()
+  async activar(idUsuario, roles, usuarioActualizacion) {
+    return await this.createQueryBuilder()
       .update(UsuarioRol)
       .set({ estado: Status.ACTIVE, usuarioActualizacion })
       .where('id_usuario = :idUsuario', { idUsuario })
@@ -22,8 +22,8 @@ export class UsuarioRolRepository extends Repository<UsuarioRol> {
       .execute();
   }
 
-  inactivar(idUsuario, roles, usuarioActualizacion) {
-    return this.createQueryBuilder()
+  async inactivar(idUsuario, roles, usuarioActualizacion) {
+    return await this.createQueryBuilder()
       .update(UsuarioRol)
       .set({ estado: Status.INACTIVE, usuarioActualizacion })
       .where('id_usuario = :idUsuario', { idUsuario })
@@ -31,7 +31,7 @@ export class UsuarioRolRepository extends Repository<UsuarioRol> {
       .execute();
   }
 
-  crear(idUsuario, roles, usuarioAuditoria) {
+  async crear(idUsuario, roles, usuarioAuditoria) {
     const usuarioRoles: UsuarioRol[] = roles.map((idRol) => {
       const usuario = new Usuario();
       usuario.id = idUsuario;
@@ -47,6 +47,6 @@ export class UsuarioRolRepository extends Repository<UsuarioRol> {
       return usuarioRol;
     });
 
-    return this.save(usuarioRoles);
+    return await this.save(usuarioRoles);
   }
 }

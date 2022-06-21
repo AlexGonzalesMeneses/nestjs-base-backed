@@ -21,9 +21,9 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    'max-lines-per-function': ["error", { 'max': 50, 'skipComments': true, 'skipBlankLines': true }],
-    'max-lines': ['error', {'max': 400, 'skipBlankLines': true, 'skipComments': true}],
-    'max-depth': ['error', 3],
-    'max-params': ['error', 3]
+    // 'max-lines-per-function': ["error", { 'max': 50, 'skipComments': true, 'skipBlankLines': true }],
+    // 'max-lines': ['error', {'max': 400, 'skipBlankLines': true, 'skipComments': true}],
+    // 'max-depth': ['error', 3],
+    // 'max-params': ['error', 3]
   },
 };

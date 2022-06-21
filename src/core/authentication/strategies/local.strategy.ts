@@ -20,7 +20,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!usuario) {
       throw new UnauthorizedException();
     }
-    const datos = { id: usuario.id, roles: usuario.roles };
-    return datos;
+    return { id: usuario.id, roles: usuario.roles };
   }
 }

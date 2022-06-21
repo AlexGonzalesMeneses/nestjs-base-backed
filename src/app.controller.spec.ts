@@ -16,7 +16,7 @@ describe('App controller', () => {
     controller = module.get<AppController>(AppController);
   });
 
-  it('[listar] Deberia devolver el status', async () => {
+  it('[listar] Debería devolver el status', async () => {
     const res = {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       status: function (_responseStatus) {

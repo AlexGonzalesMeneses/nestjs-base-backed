@@ -12,7 +12,7 @@ export class PersonaService {
     private personaRepositorio: PersonaRepository,
   ) {}
 
-  async buscarPersonaPorCI(persona: PersonaDto): Promise<Persona> {
+  async buscarPersonaPorCI(persona: PersonaDto): Promise<Persona | undefined> {
     return this.personaRepositorio.buscarPersonaPorCI(persona);
   }
 }

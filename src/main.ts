@@ -36,7 +36,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: configService.get('SESSION_SECRET'),
+      secret: configService.get('SESSION_SECRET') || '',
       resave: false,
       saveUninitialized: false,
       rolling: true,
@@ -59,7 +59,7 @@ async function bootstrap() {
   });
   app.use(helmet.hidePoweredBy());
   app.use(helmet());
-  app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN'));
+  app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN') || 'api');
   const port = configService.get('PORT');
   await app.listen(port);
   console.log(

@@ -13,7 +13,7 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 export class UsuarioRepository extends Repository<Usuario> {
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
     const { limite, saltar, filtro, rol } = paginacionQueryDto;
-    const queryBuilder = await this.createQueryBuilder('usuario')
+    return await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .leftJoinAndSelect('usuario.persona', 'persona')
@@ -48,27 +48,30 @@ export class UsuarioRepository extends Repository<Usuario> {
       .offset(saltar)
       .limit(limite)
       .getManyAndCount();
-    return queryBuilder;
   }
 
-  recuperar() {
-    return this.createQueryBuilder('usuario')
+  async recuperar() {
+    return await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .getMany();
   }
 
-  buscarUsuario(usuario: string) {
+  async buscarUsuario(usuario: string) {
     // return Usuario.findOne({ usuario });
-    return this.createQueryBuilder('usuario')
+    return await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where({ usuario: usuario })
       .getOne();
   }
 
-  buscarUsuarioRolPorId(id: string) {
-    return this.createQueryBuilder('usuario')
+  async buscarPorId(id: string) {
+    return await this.createQueryBuilder('usuario').where({ id: id }).getOne();
+  }
+
+  async buscarUsuarioRolPorId(id: string) {
+    return await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -91,8 +94,8 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  buscarUsuarioPorCI(persona: PersonaDto) {
-    return this.createQueryBuilder('usuario')
+  async buscarUsuarioPorCI(persona: PersonaDto) {
+    return await this.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -100,16 +103,16 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  verificarExisteUsuarioPorCI(ci: string) {
-    return this.createQueryBuilder('usuario')
+  async verificarExisteUsuarioPorCI(ci: string) {
+    return await this.createQueryBuilder('usuario')
       .leftJoin('usuario.persona', 'persona')
       .select('usuario.id')
       .where('persona.nroDocumento = :ci', { ci: ci })
       .getOne();
   }
 
-  buscarUsuarioPorCorreo(correo: string) {
-    return this.createQueryBuilder('usuario')
+  async buscarUsuarioPorCorreo(correo: string) {
+    return await this.createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
       .getOne();
   }
@@ -128,30 +131,26 @@ export class UsuarioRepository extends Repository<Usuario> {
       return usuarioRol;
     });
 
-    // Persona
-    const persona = new Persona();
-    persona.nombres = usuarioDto?.persona?.nombres ?? null;
-    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null;
-    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null;
-    persona.nroDocumento =
-      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
-    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
-
     // Usuario
-    const usuario = new Usuario();
-    usuario.persona = persona;
-    usuario.usuarioRol = usuarioRoles;
 
-    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
-    usuario.correoElectronico = usuarioDto?.correoElectronico;
-    usuario.contrasena =
-      usuarioDto?.contrasena ??
-      (await TextService.encrypt(TextService.generateUuid()));
-    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
-    usuario.usuarioCreacion = usuarioAuditoria;
-
-    return this.save(usuario);
+    return await this.save({
+      persona: {
+        nombres: usuarioDto?.persona?.nombres,
+        primerApellido: usuarioDto?.persona?.primerApellido,
+        segundoApellido: usuarioDto?.persona?.segundoApellido,
+        nroDocumento: usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario,
+        fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
+      },
+      usuarioRol: usuarioRoles,
+      usuario: usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario,
+      estado: usuarioDto?.estado ?? Status.CREATE,
+      correoElectronico: usuarioDto?.correoElectronico,
+      contrasena:
+        usuarioDto?.contrasena ??
+        (await TextService.encrypt(TextService.generateUuid())),
+      ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
+      usuarioCreacion: usuarioAuditoria,
+    });
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
@@ -172,7 +171,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
     persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
     // persona.usuarioCreacion = usuarioAuditoria;
-    // TODO: agregar tabla de auditoría
+
     persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null;
     persona.telefono = usuarioDto?.persona?.telefono ?? null;
 
@@ -190,7 +189,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
-    return this.save(usuario);
+    return await this.save(usuario);
   }
 
   async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
@@ -218,7 +217,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
-    return this.save(usuario);
+    return await this.save(usuario);
   }
 
   async actualizarContadorBloqueos(idUsuario, intento) {
@@ -226,7 +225,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.id = idUsuario;
     usuario.intentos = intento;
 
-    return this.save(usuario);
+    return await this.save(usuario);
   }
 
   async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
@@ -235,24 +234,31 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.codigoDesbloqueo = codigo;
     usuario.fechaBloqueo = fechaBloqueo;
 
-    return this.save(usuario);
+    return await this.save(usuario);
   }
 
-  buscarPorCodigoDesbloqueo(codigo: string) {
-    return this.createQueryBuilder('usuario')
+  async buscarPorCodigoDesbloqueo(codigo: string) {
+    return await this.createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
   }
 
-  actualizarDatosPersona(persona: PersonaDto) {
-    return this.createQueryBuilder()
+  async actualizarDatosPersona(persona: PersonaDto) {
+    return await this.createQueryBuilder()
       .update(Persona)
       .set(persona)
       .where('nroDocumento = :nroDocumento', {
         nroDocumento: persona.nroDocumento,
       })
       .execute();
+  }
+
+  async actualizarUsuario(id: string, usuario: any) {
+    return await this.save({
+      id: id,
+      ...usuario,
+    });
   }
 
   async runTransaction(op) {

@@ -43,7 +43,7 @@ export class AuthenticationController {
     const refreshToken = result.refresh_token.id;
     return res
       .cookie(
-        this.configService.get('REFRESH_TOKEN_NAME'),
+        this.configService.get('REFRESH_TOKEN_NAME') || '',
         refreshToken,
         CookieService.makeConfig(this.configService),
       )
@@ -66,7 +66,7 @@ export class AuthenticationController {
       const refreshToken = result.refresh_token.id;
       res
         .cookie(
-          this.configService.get('REFRESH_TOKEN_NAME'),
+          this.configService.get('REFRESH_TOKEN_NAME') || '',
           refreshToken,
           CookieService.makeConfig(this.configService),
         )
@@ -77,7 +77,7 @@ export class AuthenticationController {
           }`,
         );
     } else {
-      res.redirect(this.configService.get('URL_FRONTEND'));
+      res.redirect(this.configService.get('URL_FRONTEND') || '');
     }
   }
 
@@ -93,7 +93,9 @@ export class AuthenticationController {
 
     // req.logout();
     req.session = null;
-    const issuer = await Issuer.discover(this.configService.get('OIDC_ISSUER'));
+    const issuer = await Issuer.discover(
+      this.configService.get('OIDC_ISSUER') || '',
+    );
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
     res.clearCookie('jid', jid);

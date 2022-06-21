@@ -53,20 +53,14 @@ export class AuthenticationService {
         )}/desbloqueo?q=${codigo}`;
         const template =
           TemplateEmailService.armarPlantillaBloqueoCuenta(urlDesbloqueo);
-        this.mensajeriaService.sendEmail(
+        await this.mensajeriaService.sendEmail(
           usuario.correoElectronico,
           Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
           template,
         );
         return true;
-      } else if (
-        usuario.fechaBloqueo &&
-        dayjs().isAfter(usuario.fechaBloqueo)
-      ) {
-        return false;
-      } else {
-        return true;
-      }
+      } else
+        return !(usuario.fechaBloqueo && dayjs().isAfter(usuario.fechaBloqueo));
     }
     return false;
   }
@@ -85,7 +79,7 @@ export class AuthenticationService {
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuario(usuario);
     if (respuesta) {
-      // verificar si la cuenta contiene un estado valido
+      // verificar si la cuenta contiene un estado válido
       const statusValid = [Status.ACTIVE, Status.PENDING];
       if (!statusValid.includes(respuesta.estado as Status)) {
         throw new EntityUnauthorizedException(Messages.INVALID_USER);
@@ -105,15 +99,13 @@ export class AuthenticationService {
       }
       // si se logra autenticar con exito => reiniciar contador de intentos a 0
       if (respuesta.intentos > 0) {
-        this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0);
+        await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0);
       }
-      let roles = [];
+      let roles: Array<string | null> = [];
       if (respuesta.usuarioRol.length) {
         roles = respuesta.usuarioRol
-          .map((usuarioRol) =>
-            usuarioRol.estado === Status.ACTIVE ? usuarioRol.rol.rol : null,
-          )
-          .filter(Boolean);
+          .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
+          .map((usuarioRol) => usuarioRol.rol.rol);
       }
 
       return { id: respuesta.id, roles };
@@ -154,7 +146,7 @@ export class AuthenticationService {
       ) {
         await this.usuarioService.actualizarDatosPersona(persona);
       }
-      let roles = [];
+      let roles: Array<string | null> = [];
       if (respuesta.usuarioRol.length) {
         roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol);
       }
@@ -191,11 +183,14 @@ export class AuthenticationService {
         respuesta.correoElectronico = datosUsuario.correoElectronico;
         await this.usuarioService.actualizarDatos(
           String(respuesta.id),
-          respuesta,
+          {
+            correoElectronico: respuesta.correoElectronico,
+            roles: respuesta.usuarioRol.map((value) => value.id),
+          },
           '1',
         );
       }
-      let roles = [];
+      let roles: Array<string | null> = [];
 
       if (respuesta.usuarioRol.length) {
         roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol);
@@ -203,7 +198,8 @@ export class AuthenticationService {
       return { id: respuesta.id, roles };
     } else {
       // No existe persona, o no cuenta con un usuario - registrar
-      let nuevoUsuario = {
+      let nuevoUsuario: { estado: string | null; id: string | null };
+      nuevoUsuario = {
         id: null,
         estado: null,
       };

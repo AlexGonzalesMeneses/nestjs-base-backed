@@ -32,7 +32,7 @@ const makeSuccessResponse = (datosRespuesta): AxiosResponse<any> => {
 };
 
 const makeFailedResponse = (): AxiosResponse<any> => {
-  const response: AxiosResponse = {
+  return {
     data: {
       ConsultaDatoPersonaContrastacionResult: {
         EsValido: 'true',
@@ -45,7 +45,6 @@ const makeFailedResponse = (): AxiosResponse<any> => {
     },
     ...dataDefaultAxios,
   };
-  return response;
 };
 
 const datosPersona = {
@@ -68,7 +67,7 @@ describe('SegipService', () => {
     service = module.get<SegipService>(SegipService);
     httpService = module.get<HttpService>(HttpService);
   });
-  it('[contrastar] deberia retornar finalizado = true, si se logró contrastar todos los datos', async () => {
+  it('[contrastar] Debería retornar finalizado = true, si se logró contrastar todos los datos', async () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":1,"Complemento":2,"Nombres":1,"PrimerApellido":1,"SegundoApellido":1,"FechaNacimiento":1}';
     const response = makeSuccessResponse(resContrastacion);
@@ -79,10 +78,10 @@ describe('SegipService', () => {
     const respuesta = await service.contrastar(persona);
     expect(respuesta).toBeDefined();
     expect(respuesta).toHaveProperty('finalizado');
-    expect(respuesta.finalizado).toEqual(true);
+    expect(respuesta?.finalizado).toEqual(true);
   });
 
-  it('[contrastar] deberia retornar finalizado = true, si se logró contrastar todos los datos (caso persona con complemento)', async () => {
+  it('[contrastar] Debería retornar finalizado = true, si se logró contrastar todos los datos (caso persona con complemento)', async () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":1,"Complemento":1,"Nombres":1,"PrimerApellido":1,"SegundoApellido":1,"FechaNacimiento":1}';
     const response = makeSuccessResponse(resContrastacion);
@@ -93,10 +92,10 @@ describe('SegipService', () => {
     const respuesta = await service.contrastar(persona);
     expect(respuesta).toBeDefined();
     expect(respuesta).toHaveProperty('finalizado');
-    expect(respuesta.finalizado).toEqual(true);
+    expect(respuesta?.finalizado).toEqual(true);
   });
 
-  it('[contrastar] deberia retornar finalizado = false, si no algún dato no es correcto', async () => {
+  it('[contrastar] Debería retornar finalizado = false, si no algún dato no es correcto', async () => {
     const resContrastacion =
       '{"ComplementoVisible":1,"NumeroDocumento":2,"Complemento":0,"Nombres":0,"PrimerApellido":0,"SegundoApellido":0,"FechaNacimiento":0}';
     const response = makeSuccessResponse(resContrastacion);
@@ -107,10 +106,10 @@ describe('SegipService', () => {
 
     expect(respuesta).toBeDefined();
     expect(respuesta).toHaveProperty('finalizado');
-    expect(respuesta.finalizado).toEqual(false);
+    expect(respuesta?.finalizado).toEqual(false);
   });
 
-  it('[contrastar] deberia retornar finalizado = false, si segip retorna algun codigo distinto de 2 = ENCONTRADO ', async () => {
+  it('[contrastar] Debería retornar finalizado = false, si segip retorna algun codigo distinto de 2 = ENCONTRADO ', async () => {
     const response: AxiosResponse<any> = makeFailedResponse();
     jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
@@ -119,6 +118,6 @@ describe('SegipService', () => {
 
     expect(respuesta).toBeDefined();
     expect(respuesta).toHaveProperty('finalizado');
-    expect(respuesta.finalizado).toEqual(false);
+    expect(respuesta?.finalizado).toEqual(false);
   });
 });

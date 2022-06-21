@@ -31,7 +31,7 @@ export class PaginacionQueryDto {
     message: `El valor máximo para $property debe ser ${LIMITE_MAX}.`,
   })
   @IsOptional()
-  readonly limite?: number = LIMITE_MIN;
+  readonly limite: number = LIMITE_MIN;
 
   @ApiPropertyOptional({
     minimum: 1,
@@ -43,7 +43,7 @@ export class PaginacionQueryDto {
     message: `El valor mínimo para $property debe ser ${PAGINA_MIN}.`,
   })
   @IsOptional()
-  readonly pagina?: number = PAGINA_MIN;
+  readonly pagina: number = PAGINA_MIN;
 
   @ApiPropertyOptional()
   @IsNotEmpty()

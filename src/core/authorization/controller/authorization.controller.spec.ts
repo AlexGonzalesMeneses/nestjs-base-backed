@@ -47,7 +47,7 @@ describe('AuthorizationController', () => {
     controller = module.get<AuthorizationController>(AuthorizationController);
   });
 
-  it('[listar] Deberia listar politicas en formato filas y total', async () => {
+  it('[listar] Debería listar politicas en formato filas y total', async () => {
     const result = await controller.listarPoliticas('frontend');
     expect(result).toBeDefined();
     expect(result).toHaveProperty('finalizado');
@@ -56,7 +56,7 @@ describe('AuthorizationController', () => {
     expect(result.datos).toHaveProperty('total');
     expect(result.datos).toHaveProperty('filas');
   });
-  it('[obtenerRoles] Deberia listar politicas en formato casbin', async () => {
+  it('[obtenerRoles] Debería listar politicas en formato casbin', async () => {
     const result = await controller.obtenerRoles();
     expect(result).toBeDefined();
     expect(result).toHaveProperty('finalizado');
@@ -65,7 +65,7 @@ describe('AuthorizationController', () => {
     expect(result.datos).toBeInstanceOf(Array);
   });
 
-  it('[crearPolitica] Deberia crear una politica', async () => {
+  it('[crearPolitica] Debería crear una politica', async () => {
     const politica = { ...resPolitica };
     const result = await controller.crearPolitica(politica);
 
@@ -74,7 +74,7 @@ describe('AuthorizationController', () => {
     expect(result.finalizado).toEqual(true);
   });
 
-  it('[eliminarPolitica] Deberia eliminar una politica', async () => {
+  it('[eliminarPolitica] Debería eliminar una politica', async () => {
     const politica = { ...resPolitica };
     const result = await controller.eliminarPolitica(politica);
 

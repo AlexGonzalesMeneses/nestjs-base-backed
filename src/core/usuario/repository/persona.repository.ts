@@ -5,14 +5,17 @@ import { Status } from '../../../common/constants';
 
 @EntityRepository(Persona)
 export class PersonaRepository extends Repository<Persona> {
-  buscarPersonaPorCI(persona: PersonaDto) {
-    return this.createQueryBuilder('persona')
+  async buscarPersonaPorCI(persona: PersonaDto) {
+    return await this.createQueryBuilder('persona')
       .where('persona.nro_documento = :ci', { ci: persona.nroDocumento })
       .getOne();
   }
 
-  buscarPersonaPorDocumento(tipoDocumento: string, numeroDocumento: string) {
-    return this.createQueryBuilder('p')
+  async buscarPersonaPorDocumento(
+    tipoDocumento: string,
+    numeroDocumento: string,
+  ) {
+    return await this.createQueryBuilder('p')
       .where('p.nro_documento = :numeroDocumento', { numeroDocumento })
       .andWhere('p.tipo_documento = :tipoDocumento', { tipoDocumento })
       .andWhere('p.estado = :estado', { estado: Status.ACTIVE })

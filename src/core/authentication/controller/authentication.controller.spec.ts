@@ -56,7 +56,7 @@ describe('AuthenticationController', () => {
     controller = module.get<AuthenticationController>(AuthenticationController);
   });
 
-  it('[login] deberia realizar una autenticacion exitosa.', async () => {
+  it('[login] Debería realizar una autenticacion exitosa.', async () => {
     const req = mockRequest({}, { user: 'boss' });
     const res = mockResponse();
     await controller.login(req, res);

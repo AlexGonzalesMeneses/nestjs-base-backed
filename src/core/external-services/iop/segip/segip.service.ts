@@ -76,7 +76,7 @@ export class SegipService {
     }
   }
 
-  private armarDatosPersona(datosPersona) {
+  armarDatosPersona(datosPersona) {
     const datosCampos = {
       Complemento: '',
       NumeroDocumento: datosPersona.nroDocumento,
@@ -95,8 +95,8 @@ export class SegipService {
     return datosCampos;
   }
 
-  private procesarRespuesta(respuesta, retornarPrimerError) {
-    const datosIncorrectos = [];
+  procesarRespuesta(respuesta, retornarPrimerError) {
+    const datosIncorrectos: Array<string> = [];
     if (respuesta?.NumeroDocumento === EstadosDatosEnum.NO_CORRESPONDE) {
       datosIncorrectos.push('Número de documento');
     }
@@ -121,7 +121,7 @@ export class SegipService {
     return [];
   }
 
-  private armarRespuesta(exito, mensaje) {
+  armarRespuesta(exito, mensaje) {
     return {
       finalizado: exito,
       mensaje: `Servicio Segip: ${mensaje}`,

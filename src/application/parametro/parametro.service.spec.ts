@@ -31,7 +31,7 @@ describe('ParametroService', () => {
     service = module.get<ParametroService>(ParametroService);
   });
 
-  it('[listar] Deberia obtener la lista de parametros', async () => {
+  it('[listar] Debería obtener la lista de parametros', async () => {
     const paginacion = new PaginacionQueryDto();
     const parametros = await service.listar(paginacion);
 
@@ -39,13 +39,13 @@ describe('ParametroService', () => {
     expect(parametros.length).toEqual(2);
   });
 
-  it('[listarPorGrupo] Deberia obtener la lista de parametros por grupo', async () => {
+  it('[listarPorGrupo] Debería obtener la lista de parametros por grupo', async () => {
     const grupo = 'TD';
     const parametros = await service.listarPorGrupo(grupo);
     expect(parametros).toBeInstanceOf(Array);
   });
 
-  it('[crear] Deberia crear un nuevo parametro', async () => {
+  it('[crear] Debería crear un nuevo parametro', async () => {
     const parametro = new CrearParametroDto();
     parametro.codigo = resParametro.codigo;
     parametro.nombre = resParametro.nombre;

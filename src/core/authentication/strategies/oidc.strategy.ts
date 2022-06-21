@@ -1,6 +1,12 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Client, TokenSet, Issuer } from 'openid-client';
+import {
+  Client,
+  Issuer,
+  Strategy,
+  TokenSet,
+  UserinfoResponse,
+} from 'openid-client';
 import { PersonaDto } from '../../usuario/dto/persona.dto';
 import { AuthenticationService } from '../service/authentication.service';
 import dayjs from 'dayjs';
@@ -10,14 +16,13 @@ dayjs.extend(customParseFormat);
 
 export const buildOpenIdClient = async () => {
   try {
-    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
-    const client = new issuer.Client({
-      client_id: process.env.OIDC_CLIENT_ID,
+    const issuer = await Issuer.discover(process.env.OIDC_ISSUER || '');
+    return new issuer.Client({
+      client_id: process.env.OIDC_CLIENT_ID || '',
       client_secret: process.env.OIDC_CLIENT_SECRET,
     });
-    return client;
   } catch (error) {
-    console.error('Error al conectar a ciudadania:', error.message);
+    console.error('Error al conectar a ciudadanía:', error.message);
   }
 };
 
@@ -43,7 +48,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
 
   async validate(tokenset: TokenSet): Promise<any> {
     try {
-      const userinfo = await this.client.userinfo(tokenset);
+      const userinfo: UserinfoResponse = await this.client.userinfo(tokenset);
 
       const ci = <documentoIdentidad>userinfo.documento_identidad;
 
@@ -53,7 +58,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       }*/
 
       const fechaNacimiento = dayjs(
-        userinfo.fecha_nacimiento.toString(),
+        (<string>userinfo.fecha_nacimiento).toString(),
         'DD/MM/YYYY',
         true,
       ).format('YYYY-MM-DD');
@@ -77,7 +82,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         datosUsuario,
       );
 
-      const data = {
+      return {
         id: usuario.id,
         roles: usuario.roles || [],
         idToken: tokenset.id_token,
@@ -85,7 +90,6 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         refreshToken: tokenset.refresh_token,
         exp: tokenset.expires_at,
       };
-      return data;
     } catch (err) {
       throw new UnauthorizedException();
     }
