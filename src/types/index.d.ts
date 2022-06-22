@@ -9,6 +9,8 @@ declare global {
     idToken?: string;
     accessToken?: string;
     refreshToken?: string;
+    exp?: number;
+    iat?: number;
   };
 }
 

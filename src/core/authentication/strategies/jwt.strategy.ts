@@ -13,8 +13,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    const data = {
+  async validate(payload: any): Promise<PassportUser> {
+    const data: PassportUser = {
       id: payload.id,
       roles: payload.roles,
       exp: payload.exp,

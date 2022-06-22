@@ -40,7 +40,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     this.client = client;
   }
 
-  async validate(tokenset: TokenSet): Promise<any> {
+  async validate(tokenset: TokenSet): Promise<PassportUser> {
     try {
       const userinfo = await this.client.userinfo(tokenset);
       const ci = <documentoIdentidad>userinfo.documento_identidad;
@@ -68,7 +68,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         persona,
       );
 
-      const data = {
+      const data: PassportUser = {
         id: usuario.id,
         roles: usuario.roles || [],
         idToken: tokenset.id_token,
