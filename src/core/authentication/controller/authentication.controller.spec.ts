@@ -4,6 +4,7 @@ import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
+import { Request } from 'express';
 
 const resAutenticar = {
   refresh_token: '123',
@@ -21,10 +22,9 @@ const mockResponse = (): any => {
   return res;
 };
 
-const mockRequest = (sessionData, body) => ({
-  session: { data: sessionData },
-  body,
-});
+const mockRequest = (sessionData: any, body: any) => {
+  return { body, session: sessionData } as Request;
+};
 
 describe('AuthenticationController', () => {
   let controller: AuthenticationController;

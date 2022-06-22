@@ -3,11 +3,11 @@ import {
   Get,
   Inject,
   Post,
-  Request,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Issuer } from 'openid-client';
 import { CookieService } from '../../../common/lib/cookie.service';
 
@@ -36,7 +36,7 @@ export class AuthenticationController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
-  async login(@Request() req, @Res() res: Response) {
+  async login(@Req() req: Request, @Res() res: Response) {
     const result = await this.autenticacionService.autenticar(req.user);
     this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
     /* sendRefreshToken(res, result.refresh_token.id); */
@@ -59,7 +59,7 @@ export class AuthenticationController {
 
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-callback')
-  async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
+  async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
       // sendRefreshToken(res, result.refresh_token.id);
@@ -83,13 +83,13 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
-  async logoutCiudadania(@Request() req: Request | any, @Res() res: Response) {
+  async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
     const jid = req.cookies.jid || '';
     if (jid != '') {
       this.refreshTokensService.removeByid(jid);
     }
     const idToken =
-      req?.user?.idToken || req?.session?.passport?.user?.idToken || null;
+      req.user?.idToken || req.session?.passport?.user?.idToken || null;
 
     // req.logout();
     req.session = null;
