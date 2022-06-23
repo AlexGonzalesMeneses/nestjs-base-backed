@@ -1,13 +1,14 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   Inject,
   Post,
-  Request,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Issuer } from 'openid-client';
 import { CookieService } from '../../../common/lib/cookie.service';
 
@@ -36,8 +37,14 @@ export class AuthenticationController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
-  async login(@Request() req, @Res() res: Response) {
+  async login(@Req() req: Request, @Res() res: Response) {
+    if (req.user == undefined) {
+      throw new BadRequestException(
+        `Es necesario que este autenticado para consumir este recurso.`,
+      );
+    }
     const result = await this.autenticacionService.autenticar(req.user);
+
     this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
     /* sendRefreshToken(res, result.refresh_token.id); */
     const refreshToken = result.refresh_token.id;
@@ -59,7 +66,7 @@ export class AuthenticationController {
 
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-callback')
-  async loginCiudadaniaCallback(@Request() req, @Res() res: Response) {
+  async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
       // sendRefreshToken(res, result.refresh_token.id);
@@ -83,25 +90,34 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
-  async logoutCiudadania(@Request() req: Request | any, @Res() res: Response) {
+  async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
     const jid = req.cookies.jid || '';
     if (jid != '') {
       await this.refreshTokensService.removeByid(jid);
     }
+
     const idToken =
-      req?.user?.idToken || req?.session?.passport?.user?.idToken || null;
+      req.user?.idToken || req.session?.passport?.user?.idToken || null;
 
     // req.logout();
-    req.session = null;
+    req.session.destroy(() => {
+      this.logger.info('sesión finalizada');
+    });
     const issuer = await Issuer.discover(
       this.configService.get('OIDC_ISSUER') || '',
     );
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
     res.clearCookie('jid', jid);
-    const idUsuario = JSON.parse(
-      Buffer.from(req.headers.authorization.split('.')[1], 'base64').toString(),
-    ).id;
+    const idUsuario = req.headers.authorization
+      ? JSON.parse(
+          Buffer.from(
+            `${req.headers.authorization}`.split('.')[1],
+            'base64',
+          ).toString(),
+        ).id
+      : null;
+
     this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
 
     if (url && idToken) {

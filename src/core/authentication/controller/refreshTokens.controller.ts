@@ -4,12 +4,12 @@ import {
   Param,
   UseGuards,
   Post,
-  Request,
   Res,
   Inject,
+  Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Logger } from 'nestjs-pino';
 
 import { CookieService } from '../../../common/lib/cookie.service';
@@ -26,7 +26,7 @@ export class RefreshTokensController {
   ) {}
 
   @Post('token')
-  async getAccessToken(@Request() req, @Res() res: Response) {
+  async getAccessToken(@Req() req: Request, @Res() res: Response) {
     this.logger.log('[getAccessToken] init...');
     const jid = req.cookies['jid'];
     const result = await this.refreshTokensService.createAccessToken(jid);

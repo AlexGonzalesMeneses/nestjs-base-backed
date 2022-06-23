@@ -113,7 +113,7 @@ export class AuthenticationService {
     return null;
   }
 
-  async autenticar(user: any) {
+  async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id);
 
     const payload = { id: user.id, roles: user.roles };
