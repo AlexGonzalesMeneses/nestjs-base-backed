@@ -4,6 +4,10 @@ import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
+import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
+import { Messages } from 'src/common/constants/response-messages';
+import { ActualizarParametroDto } from './dto/actualizar-parametro.dto';
+import { Status } from 'src/common/constants';
 
 @Injectable()
 export class ParametroService {
@@ -22,5 +26,42 @@ export class ParametroService {
 
   async listarPorGrupo(grupo: string) {
     return await this.parametroRepositorio.listarPorGrupo(grupo);
+  }
+
+  async actualizarDatos(id: string, parametroDto: ActualizarParametroDto) {
+    const parametro = await this.parametroRepositorio.findOne(id);
+    if (parametro) {
+      await this.parametroRepositorio.update(id, parametroDto);
+      return { id };
+    }
+    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
+  }
+
+  async activar(idParametro) {
+    const parametro = await this.parametroRepositorio.findOne(idParametro);
+    if (parametro) {
+      const parametroDto = new ActualizarParametroDto();
+      parametroDto.estado = Status.ACTIVE;
+      await this.parametroRepositorio.update(idParametro, parametroDto);
+      return {
+        id: idParametro,
+        estado: parametroDto.estado,
+      };
+    }
+    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
+  }
+
+  async inactivar(idParametro) {
+    const parametro = await this.parametroRepositorio.findOne(idParametro);
+    if (parametro) {
+      const parametroDto = new ActualizarParametroDto();
+      parametroDto.estado = Status.INACTIVE;
+      await this.parametroRepositorio.update(idParametro, parametroDto);
+      return {
+        id: idParametro,
+        estado: parametroDto.estado,
+      };
+    }
+    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
   }
 }

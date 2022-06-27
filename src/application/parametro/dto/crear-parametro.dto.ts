@@ -15,4 +15,5 @@ export class CrearParametroDto {
   @ApiProperty()
   @IsNotEmpty()
   descripcion: string;
+  estado?: string;
 }

@@ -134,6 +134,24 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         v3: 'backend',
       },
       {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/parametros/:id',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/parametros/:id/activacion',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/parametros/:id/inactivacion',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
         v0: RolEnum.TECNICO,
         v1: '/api/autorizacion/roles',
         v2: 'GET',
