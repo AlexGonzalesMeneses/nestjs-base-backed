@@ -65,7 +65,7 @@ export class AuthenticationController {
   }
 
   @UseGuards(OidcAuthGuard)
-  @Get('ciudadania-callback')
+  @Get('ciudadania-autorizar')
   async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
@@ -78,13 +78,11 @@ export class AuthenticationController {
           CookieService.makeConfig(this.configService),
         )
         .status(200)
-        .redirect(
-          `${this.configService.get('URL_FRONTEND')}/login?code=${
-            result.data.access_token
-          }`,
-        );
+        .json({
+          access_token: result.data.access_token,
+        });
     } else {
-      res.redirect(this.configService.get('URL_FRONTEND') || '');
+      res.status(200).json({});
     }
   }
 
