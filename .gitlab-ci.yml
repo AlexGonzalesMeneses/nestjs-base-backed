@@ -1,9 +1,9 @@
-stages:
-   - building
-   - testing
-   - deployment
-   - delivery
-   - configurations
+stages: []
+#  - building
+#  - testing
+#  - deployment
+#  - delivery
+#  - configurations
 
 Instalando Dependencias:
   image: node:14-alpine

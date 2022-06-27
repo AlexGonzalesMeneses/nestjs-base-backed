@@ -1,21 +1,19 @@
 {
-  "name": "base-backend-nest",
+  "name": "agetic-nestjs-base-backend",
   "version": "1.0.2",
   "description": "",
   "author": "agetic@agetic.gob.bo",
   "private": true,
   "license": "LPG-Bolivia",
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "npm run check-node-version && nest build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "setup": "rimraf database/migrations/*; npm run schema:drop;npm run migrations:generate init;npm run migrations:run;npm run seeds:run",
     "start": "nest start",
-    "start:dev": "npm run check-node-version && NODE_ENV=development nest start --watch",
+    "start:dev": "NODE_ENV=development nest start --watch",
     "start:database": "./scripts/database.sh",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/src/main",
-    "check-node-version": "node ./node_modules/.bin/check-node-version",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --verbose --coverage=false",
@@ -35,6 +33,11 @@
     "compodoc": "compodoc -p tsconfig.json -o --language es-ES --disableCoverage --customLogo 'docs/imagenes/logoAgetic.png' --hideGenerator",
     "db:diagram": "ts-node ./node_modules/.bin/typeorm-uml ormconfig.ts -c connection -d docs/ERD.png",
     "prepare": "husky install",
+    "check-node-version": "node ./node_modules/.bin/check-node-version",
+    "prebuild": "npm run check-node-version && rimraf dist",
+    "presetup": "npm run check-node-version",
+    "prestart": "npm run check-node-version",
+    "prestart:dev": "npm run check-node-version",
     "pretest": "npm run check-node-version",
     "preinstall": "mkdir -p node_modules; touch ./node_modules/.metadata_never_index",
     "postinstall": "npm run check-node-version"
@@ -157,7 +160,8 @@
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "engines": {
-    "node": ">=16",
-    "npm": ">=8.0.0 <=8.5.5"
+    "node": "^16",
+    "npm": "^8 <=8.5.5",
+    "pm2": "^5.2"
   }
 }

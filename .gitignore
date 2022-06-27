@@ -34,10 +34,17 @@ test-report.xml
 !.vscode/launch.json
 !.vscode/extensions.json
 
-.env
 requests.http
 database/migrations/
 documentation
 src/common/params/index.ts
 sonar-project.properties
 sonar-project.properties.sample
+
+# config
+/ecosystem.config.js
+/.env
+
+# archivos temporales
+/tmp
+/temp

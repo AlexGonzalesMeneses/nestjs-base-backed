@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuarioRepository } from 'src/core/usuario/repository/usuario.repository';
+import { UsuarioRepository } from '../../core/usuario/repository/usuario.repository';
 import { AuthorizationController } from './controller/authorization.controller';
 import { AuthorizationService } from './controller/authorization.service';
 import { ModuloController } from './controller/modulo.controller';

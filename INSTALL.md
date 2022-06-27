@@ -1,37 +1,122 @@
-# Proyecto Base Backend - Manual de instalación
-
-## Requerimientos
-
-Para continuar con la instalación del proyecto se necesita contar con las siguientes instalaciones ya realizadas:
-
-1. [Postgres](https://www.postgresql.org/download/linux/debian/)
-2. [Node y Npm](https://github.com/nodesource/distributions/blob/master/README.md)
-3. [NVM](https://github.com/nvm-sh/nvm) Se recomienda NVM solo para ambientes de DESARROLLO.
-4. [Manejador de procesos PM2](https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/)
-
+# Proyecto Base Backend - Manual de instalación para entornos de desarrollo
 
 ## Instalación
 
 1. Instalación de paquetes. (mientras el módulo nest-authz no se actualice)
 
+## 1. Requerimientos
+
+| Nombre       | Versión     | Descripción                                            | Instalación                                      |
+| ------------ | ----------- | ------------------------------------------------------ | ------------------------------------------------ |
+| `PostgreSQL` | ^14         | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
+| `NodeJS`     | ^16         | Entorno de programación de JavaScript.                 | `nvm install 16` https://github.com/nvm-sh/nvm   |
+| `NPM`        | ^8 <= 8.5.5 | Gestor de paquetes de NodeJS.                          | `npm install -g npm@8.5.5`                       |
+| `PM2`        | ^5.2        | Gestor avanzado de procesos de producción para NodeJS. | `npm install -g pm2@5.2`                         |
+
+**Nota** Para crear una instancia de PostgreSQL con docker
+puede utilizar el siguiente comando.
+
 ```bash
-$ npm install  --legacy-peer-deps
+docker run --name pg14 -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres:14.2
 ```
 
-2. Copiar el archivo .env.sample y realizar las configuraciones necesarias.
-```
-$ cp .env.sample .env
+Para más detalles ver el archivo [backups/COPIAS_DE_SEGURIDAD_Y_RESTAURACION.md](./backups/COPIAS_DE_SEGURIDAD_Y_RESTAURACION.md)
+
+## 2. Instalación
+
+### Clonación del proyecto e instalación de dependencias
+
+```bash
+# Clonación del proyecto
+git clone git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
+
+# Nos ubicamos dentro del proyecto
+cd agetic-nestjs-base-backend
+
+# Nos cambiamos a la rama develop
+git checkout develop
+
+# Mientras el módulo nest-authz no se actualice utilizar el flag legacy
+npm install --legacy-peer-deps
 ```
 
-3. Revisar el archivo creado `.env` y configurar las variables necesarias. Los ejemplos se encuentran en el archivo `.env.sample` de configuración.
+### Archivos de configuración.
 
-**NOTA**: PARA MAYOR DETALLE REVISAR LA ÚLTIMA VERSIÓN DEL ARCHIVO .env.sample.
+Crear los archivos de configuración en base a los archivos `sample` y modificar los valores que sean necesarios.
+
+```bash
+# Variables de entorno globales
+cp .env.sample .env
+
+# Otros parámetros requeridos
+cp src/common/params/index.ts.sample src/common/params/index.ts
+
+# [OPCIONAL] Para el modo producción
+cp ecosystem.config.js.sample ecosystem.config.js
+```
+
+## Creación y configuración de la Base de Datos
+
+Antes de ejecutar el siguiente comando asegúrate de que la base de datos exista y se tenga acceso a esta.
+
+```bash
+# Configura la base de datos.
+npm run setup
+```
+
+## Despliegue de la aplicación
+
+```bash
+# Ejecución en modo desarrollo
+npm run start
+
+# Ejecución en modo desarrollo (live-reload)
+npm run start:dev
+
+# Ejecución en modo PRODUCCIÓN
+npm run build
+npm run start:prod
+
+# Ejecución en modo PRODUCCIÓN (con proceso activo en segundo plano)
+npm run build
+pm2 start ecosystem.config.js
+```
+
+## Ejecución de pruebas unitarias y de integración
+
+```bash
+# Todas las pruebas
+npm run test
+
+# Pruebas e2e
+npm run test:e2e
+
+# Pruebas de cobertura
+npm run test:cov
+```
+
+## Comandos útiles para el modo desarrollo
+
+```bash
+# Verifica la sintaxis
+npm run lint
+
+# Crea una nueva migración
+npm run seeds:create adicionarColumnaTipo
+
+# Ejecuta las migraciones
+npm run seeds:run
+```
+
+## Variables de entorno
 
 **Datos de despliegue**
+
 - NODE_ENV: ambiente de despliegue.
 - PORT: Puerto en el que se levantará la aplicación.
 
 **Configuración de la base de datos**
+
 - DB_HOST: Host de la base de datos.
 - DB_USERNAME: nombre de usuario de la base de datos.
 - DB_PASSWORD: contraseña de la base de datos.
@@ -40,6 +125,7 @@ $ cp .env.sample .env
 - PATH_SUBDOMAIN: `api` - mantener.
 
 **Configuración para módulo de autenticación**
+
 - JWT_SECRET: Llave para generar los tokens de autorización. Genera una llave fuerte para producción.
 - JWT_EXPIRES_IN: Tiempo de expiración del token de autorización en milisegundos.
 - REFRESH_TOKEN_NAME: `jid`
@@ -50,18 +136,22 @@ $ cp .env.sample .env
 - REFRESH_TOKEN_PATH: `/`
 
 **Configuración para el servicio de Mensajería Electrónica (Alertín), si se utiliza en el sistema**
+
 - MSJ_URL: URL de consumo al servicio de Mensajería Electrónico (Alertín).
 - MSJ_TOKEN: TOKEN de consumo al servicio de Mensajería Electrónico (Alertín).
 
 **Configuración para el servicio SEGIP de IOP, si corresponde**
+
 - IOP_SEGIP_URL: URL de consumo al servicio interoperabilidad de SEGIP.
 - IOP_SEGIP_TOKEN: Token de consumo al servicio interoperabilidad de SEGIP.
 
 **Configuración para el servicio SIN de IOP, si corresponde**
+
 - IOP_SIN_URL:
 - IOP_SIN_TOKEN:
 
 **Configuración para la integracion de autenticación con Ciudadanía Digital**
+
 - OIDC_ISSUER
 - OIDC_CLIENT_ID
 - OIDC_CLIENT_SECRET
@@ -71,76 +161,18 @@ $ cp .env.sample .env
 - SESSION_SECRET
 
 **Configurar la URL del frontend, según el ambiente de despliegue**
+
 - URL_FRONTEND: dominio en el que se encuentra levantado el frontend, si corresponde.
 
 **Configuración para almacenamiento de archivos**
+
 - PDF_PATH: ruta en el que se almacenarán los archivos, si corresponde.
 
 **Configuración de Logs, según el ambiente**
+
 - LOG_PATH:
 - LOG_HIDE:request.headers.host request.headers.authorization request.body.contrasena
 - LOG_URL:
 - LOG_URL_TOKEN:
-- LOG_PATH:
 - LOG_STD_OUT:
 - REFRESH_TOKEN_REVISIONS=`*/5 * * * *`
-
-4. Copiar el archivo src/common/params/index.ts.sample y realizar las configuraciones necesarias.
-```
-$ cp src/common/params/index.ts.sample src/common/params/index.ts
-```
-
-5. Revisar el archivo creado `index.ts` y configurar las variables necesarias. Los ejemplos se encuentran en el archivo `index.ts.sample` de parametros de configuración.
-
-## Preparación
-
-- Generación de migraciones
-```
-$ npm run migrations:generate <nombre-migracion>
-```
-- Ejecución de migraciones
-```
-$ npm run migrations:run
-```
-- Ejecucion de seeders
-```
-$ npm run seeds:run
-```
-
-## Ejecución manual
-
-- Ejecución en modo desarrollo
-```bash
-# development
-$ npm run start
-```
-- Ejecución en modo desarrollo (live-reload)
-```bash
-# watch mode
-$ npm run start:dev
-```
-- Ejecución en modo PRODUCCIÓN
-```bash
-# production mode
-$ npm run start:prod
-```
-
-## Ejecución con PM2
-
-Generar archivos para producción.
-
-```
-$ npm run build
-```
-
-Para ambientes de producción se recomienda levantar la aplicación con el manejador de procesos `pm2`. Ejemplo:
-
-```sh
-pm2 start dist/src/main.js --name backend-base
-```
-
-(Recomendado) Se puede levantar la aplicación con múltiples procesos. Ejemplo, para levantar 4 procesos del mismo:
-
-```sh
-pm2 start dist/src/main.js --name backend-base -i 4
-```
