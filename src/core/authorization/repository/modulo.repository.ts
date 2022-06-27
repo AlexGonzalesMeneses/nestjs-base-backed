@@ -8,8 +8,14 @@ export class ModuloRepository extends Repository<Modulo> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar } = paginacionQueryDto;
     return await this.createQueryBuilder('modulo')
+      .leftJoin('modulo.fidModulo', 'fidModulo')
       .offset(saltar)
       .limit(limite)
+
+      .select(
+        ['modulo.id', 'modulo.label', 'modulo.url', 'modulo.nombre', 'modulo.propiedades', 'modulo.estado', 'fidModulo.id']
+      )
+
       .getManyAndCount();
   }
 
@@ -29,13 +35,50 @@ export class ModuloRepository extends Repository<Modulo> {
     propiedades.icono = moduloDto.propiedades.icono;
     propiedades.color_dark = moduloDto.propiedades.color_dark;
     propiedades.color_light = moduloDto.propiedades.color_light;
+    propiedades.descripcion = moduloDto.propiedades.descripcion
 
+    //console.log('Datos........ para modulo......................', moduloDto)
     const modulo = new Modulo();
     modulo.label = moduloDto.label;
     modulo.url = moduloDto.url;
     modulo.nombre = moduloDto.nombre;
     modulo.propiedades = propiedades;
+    if (moduloDto.fidModulo != '') {
+      const em = new Modulo()
+      em.id = moduloDto.fidModulo
+      modulo.fidModulo = em
+    }
+
+    //console.log('Datos........ para guardar modulo......................', modulo)
 
     return await this.save(modulo);
+  }
+  async upModulo(moduloDto: CrearModuloDto) {
+    const propiedades = new PropiedadesDto();
+    propiedades.icono = moduloDto.propiedades.icono;
+    propiedades.color_dark = moduloDto.propiedades.color_dark;
+    propiedades.color_light = moduloDto.propiedades.color_light;
+    propiedades.descripcion = moduloDto.propiedades.descripcion
+
+    const modulo = new Modulo();
+    modulo.id = moduloDto.id
+    modulo.label = moduloDto.label;
+    modulo.url = moduloDto.url;
+    modulo.nombre = moduloDto.nombre;
+    modulo.propiedades = propiedades;
+    if (moduloDto.fidModulo != '') {
+      const em = new Modulo()
+      em.id = moduloDto.fidModulo
+      modulo.fidModulo = em
+    }
+
+
+    //console.log('Datos........ para guardar modulo......................', modulo)
+    return await this.save(modulo);
+  }
+  async deleteModulo(moduloDto: CrearModuloDto) {
+    const modulo = new Modulo();
+    modulo.id = moduloDto.id
+    return await this.delete(modulo);
   }
 }

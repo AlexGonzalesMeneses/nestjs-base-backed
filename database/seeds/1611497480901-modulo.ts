@@ -88,6 +88,18 @@ export class modulo1611497480901 implements MigrationInterface {
         },
         fidModulo: TextService.textToUuid('configuraciones'),
       },
+      {
+        nombre: 'modulos',
+        url: '/admin/modulos',
+        label: 'Módulos',
+        propiedades: {
+          icono: 'list',
+          descripcion: 'Gestión de módulos',
+          color_light: '#312403',
+          color_dark: '#B77346',
+        },
+        fidModulo: TextService.textToUuid('configuraciones'),
+      },
     ];
     const modulos = items.map((item) => {
       const m = new Modulo();
