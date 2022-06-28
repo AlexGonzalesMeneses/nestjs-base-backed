@@ -4,10 +4,10 @@ import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
-import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
-import { Messages } from 'src/common/constants/response-messages';
+import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
+import { Messages } from '../../common/constants/response-messages';
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto';
-import { Status } from 'src/common/constants';
+import { Status } from '../../common/constants';
 
 @Injectable()
 export class ParametroService {

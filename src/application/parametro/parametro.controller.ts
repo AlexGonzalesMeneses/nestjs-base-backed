@@ -17,7 +17,7 @@ import { CasbinGuard } from '../../core/authorization/guards/casbin.guard';
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../common/dto/abstract-controller.dto';
 import { ParamGrupoDto } from './dto/grupo.dto';
-import { ParamUuidDto } from 'src/common/dto/params-uuid.dto';
+import { ParamUuidDto } from '../../common/dto/params-uuid.dto';
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto';
 
 @Controller('parametros')
