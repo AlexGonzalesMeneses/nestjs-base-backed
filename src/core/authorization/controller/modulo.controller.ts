@@ -1,6 +1,5 @@
 import {
   Body,
-  ConsoleLogger,
   Delete,
   Patch,
   Post,
@@ -33,20 +32,19 @@ export class ModuloController extends AbstractController {
   @Post()
   @UsePipes(ValidationPipe)
   async crear(@Body() moduloDto: any) {
-    console.log(' post .............. body ', moduloDto)
     const result = await this.moduloService.crear(moduloDto);
     return this.successCreate(result);
   }
   @Patch()
   @UsePipes(ValidationPipe)
   async upModulo(@Body() moduloDto: CrearModuloDto) {
-    const result = await this.moduloService.upModulo(moduloDto);
-    return this.successCreate(result);
+    const result = await this.moduloService.actualizar(moduloDto);
+    return this.successUpdate(result);
   }
   @Delete()
   @UsePipes(ValidationPipe)
   async deleteModulo(@Body() moduloDto: CrearModuloDto) {
-    const result = await this.moduloService.deleteModulo(moduloDto);
-    return this.successCreate(result);
+    const result = await this.moduloService.eliminar(moduloDto);
+    return this.successDelete(result);
   }
 }

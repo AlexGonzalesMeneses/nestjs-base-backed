@@ -22,10 +22,10 @@ export class ModuloService {
   async crear(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.crear(moduloDto);
   }
-  async upModulo(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.upModulo(moduloDto);
+  async actualizar(moduloDto: CrearModuloDto) {
+    return await this.moduloRepositorio.actualizar(moduloDto);
   }
-  async deleteModulo(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.deleteModulo(moduloDto);
+  async eliminar(moduloDto: CrearModuloDto) {
+    return await this.moduloRepositorio.eliminar(moduloDto);
   }
 }

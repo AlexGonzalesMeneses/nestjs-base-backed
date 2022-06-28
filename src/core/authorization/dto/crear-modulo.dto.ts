@@ -15,8 +15,7 @@ export class PropiedadesDto {
 }
 
 export class CrearModuloDto {
-
-  id: string
+  id: string;
   @IsNotEmpty()
   @IsString()
   label: string;
@@ -32,5 +31,5 @@ export class CrearModuloDto {
   @IsObject()
   propiedades: PropiedadesDto;
 
-  fidModulo: string
+  fidModulo: string;
 }
