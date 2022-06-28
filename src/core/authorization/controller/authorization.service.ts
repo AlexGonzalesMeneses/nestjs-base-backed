@@ -10,24 +10,32 @@ export class AuthorizationService {
   ) {}
 
   async listarPoliticas(@Query() query) {
-    const { tipo, limite, pagina } = query;
-    let politicas;
-    if (tipo) {
-      politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
-    } else {
-      politicas = await this.rbacSrv.getPolicy();
-    }
-    const result = politicas.map((politica) => ({
+    const { limite, pagina, pol, app } = query;
+
+    const politicas = await this.rbacSrv.getPolicy();
+
+    let result = politicas.map((politica) => ({
       sujeto: politica[0],
       objeto: politica[1],
       accion: politica[2],
       app: politica[3],
     }));
+
+    if (pol != '') {
+      result = result.filter(
+        (r) => r.sujeto.search(pol) > 0 || r.objeto.search(pol) > 0,
+      );
+    }
+    if (app != '') {
+      result = result.filter((r) => r.app === app);
+    }
+
     if (!limite || !pagina) {
       return [result, result.length];
     }
     const i = limite * (pagina - 1);
     const f = limite * pagina;
+
     const subset = result.slice(i, f);
     return [subset, result.length];
   }

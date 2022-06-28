@@ -77,18 +77,6 @@ export class modulo1611497480901 implements MigrationInterface {
         fidModulo: TextService.textToUuid('configuraciones'),
       },
       {
-        nombre: 'politicas',
-        url: '/admin/politicas',
-        label: 'Politicas',
-        propiedades: {
-          icono: 'verified_user',
-          descripcion: 'Control de permisos para los usuarios',
-          color_light: '#B4AA99',
-          color_dark: '#B4AA99',
-        },
-        fidModulo: TextService.textToUuid('configuraciones'),
-      },
-      {
         nombre: 'modulos',
         url: '/admin/modulos',
         label: 'Módulos',
@@ -97,6 +85,18 @@ export class modulo1611497480901 implements MigrationInterface {
           descripcion: 'Gestión de módulos',
           color_light: '#312403',
           color_dark: '#B77346',
+        },
+        fidModulo: TextService.textToUuid('configuraciones'),
+      },
+      {
+        nombre: 'politicas',
+        url: '/admin/politicas',
+        label: 'Políticas',
+        propiedades: {
+          icono: 'verified_user',
+          descripcion: 'Control de permisos para los usuarios',
+          color_light: '#B4AA99',
+          color_dark: '#B4AA99',
         },
         fidModulo: TextService.textToUuid('configuraciones'),
       },
@@ -116,7 +116,7 @@ export class modulo1611497480901 implements MigrationInterface {
       propiedades.color_dark = item.propiedades.color_dark;
       propiedades.color_light = item.propiedades.color_light;
       propiedades.icono = item.propiedades.icono;
-      propiedades.descripcion = item.propiedades.descripcion
+      propiedades.descripcion = item.propiedades.descripcion;
 
       m.propiedades = propiedades;
       return m;
@@ -125,6 +125,5 @@ export class modulo1611497480901 implements MigrationInterface {
   }
 
   /* eslint-disable */
-  public async down(queryRunner: QueryRunner): Promise<void> {
-  }
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }
