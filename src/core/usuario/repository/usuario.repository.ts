@@ -66,7 +66,7 @@ export class UsuarioRepository extends Repository<Usuario> {
       .getOne();
   }
 
-  async buscarPorId(id: string) {
+  async buscarPorId(id: string): Promise<Usuario | undefined> {
     return await this.createQueryBuilder('usuario').where({ id: id }).getOne();
   }
 
@@ -254,7 +254,10 @@ export class UsuarioRepository extends Repository<Usuario> {
       .execute();
   }
 
-  async actualizarUsuario(id: string, usuario: any) {
+  async actualizarUsuario(
+    id: string,
+    usuario: Partial<Usuario>,
+  ): Promise<Usuario> {
     return await this.save({
       id: id,
       ...usuario,

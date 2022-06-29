@@ -16,13 +16,13 @@ export class Modulo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   label: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   url: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   nombre: string;
 
   @Column({

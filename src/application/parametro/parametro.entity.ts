@@ -9,16 +9,16 @@ export class Parametro {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 15, unique: true })
+  @Column({ length: 15, type: 'varchar', unique: true })
   codigo: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, type: 'varchar' })
   nombre: string;
 
-  @Column({ length: 15 })
+  @Column({ length: 15, type: 'varchar' })
   grupo: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, type: 'varchar' })
   descripcion: string;
 
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })

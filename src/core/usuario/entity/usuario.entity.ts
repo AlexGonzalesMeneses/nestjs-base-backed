@@ -23,17 +23,17 @@ export class Usuario extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   usuario: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, type: 'varchar' })
   contrasena: string;
 
-  @Column({ name: 'ciudadania_digital', default: false })
+  @Column({ name: 'ciudadania_digital', type: 'boolean', default: false })
   ciudadaniaDigital: boolean;
 
-  @Column({ name: 'correo_electronico', nullable: true })
-  correoElectronico: string;
+  @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
+  correoElectronico: string | null;
 
   @Column({
     type: 'enum',
@@ -52,15 +52,16 @@ export class Usuario extends AbstractEntity {
     name: 'codigo_desbloqueo',
     length: 100,
     nullable: true,
+    type: 'varchar',
   })
-  codigoDesbloqueo: string;
+  codigoDesbloqueo: string | null;
 
   @Column({
     name: 'fecha_bloqueo',
     type: 'timestamptz',
     nullable: true,
   })
-  fechaBloqueo: Date;
+  fechaBloqueo: Date | null;
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,

@@ -9,14 +9,24 @@ export class Persona {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100, nullable: true })
-  nombres: string;
+  @Column({ length: 100, type: 'varchar', nullable: true })
+  nombres: string | null;
 
-  @Column({ name: 'primer_apellido', length: 100, nullable: true })
-  primerApellido: string;
+  @Column({
+    name: 'primer_apellido',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  primerApellido: string | null;
 
-  @Column({ name: 'segundo_apellido', length: 100, nullable: true })
-  segundoApellido: string;
+  @Column({
+    name: 'segundo_apellido',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  segundoApellido: string | null;
 
   @Column({
     name: 'tipo_documento',
@@ -26,23 +36,32 @@ export class Persona {
   })
   tipoDocumento: string;
 
-  @Column({ name: 'tipo_documento_otro', length: 50, nullable: true })
-  tipoDocumentoOtro: string;
+  @Column({
+    name: 'tipo_documento_otro',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  tipoDocumentoOtro: string | null;
 
   @Column({ name: 'nro_documento', length: 50 })
   nroDocumento: string;
 
-  @Column({ name: 'fecha_nacimiento', type: 'date', nullable: true })
-  fechaNacimiento: string;
+  @Column({
+    name: 'fecha_nacimiento',
+    type: 'date',
+    nullable: true,
+  })
+  fechaNacimiento: string | null;
 
-  @Column({ length: 50, nullable: true })
-  telefono: string;
+  @Column({ length: 50, type: 'varchar', nullable: true })
+  telefono: string | null;
 
   @Column({ type: 'enum', enum: ['M', 'F', 'OTRO'], nullable: true })
-  genero: string;
+  genero: string | null;
 
-  @Column({ length: 255, nullable: true })
-  observacion: string;
+  @Column({ length: 255, type: 'varchar', nullable: true })
+  observacion: string | null;
 
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
   estado: string;
