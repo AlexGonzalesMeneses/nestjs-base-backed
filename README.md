@@ -1,10 +1,15 @@
-# Proyecto base backend
+<h1 align="center">Proyecto base backend</h1>
 
-[![pipeline status](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/badges/develop/pipeline.svg)](https://gitlab.agetic.gob.bo/agetic/backend-base-nestjs/-/commits/develop)
+<p align="center">
+  <a href="./">
+    <img src="https://img.shields.io/badge/version-v1.0.2-blue" alt="Versión">
+  </a>
+  <a href="./LICENSE">
+      <img src="https://img.shields.io/static/v1?label=Licencia&message=LPG%20-%20Bolivia&color=green" alt="Licencia: LPG - Bolivia" />
+  </a>
+</p>
 
-## Descripción
-
-Proyecto Base para el inicio de proyectos
+Proyecto Base para el inicio de proyectos basados en NestJS.
 
 ## Tabla de contenido
 
@@ -14,7 +19,7 @@ Proyecto Base para el inicio de proyectos
   - [Tecnologías](#tecnologías)
   - [Funcionalidades](#funcionalidades)
   - [Documentación](#documentación)
-    - [Comandos útiles](#comandos-útiles)
+  - [Comandos útiles](#comandos-útiles)
   - [Colaboradores](#colaboradores)
   - [Licencia](#licencia)
   - [Información de contacto](#información-de-contacto)
@@ -56,7 +61,7 @@ Documentación relacionada al proyecto:
 3. [Documentacion de APIS](/docs/openapi.yaml)
 4. [Documentacion de Permisos](/docs/permisos.md)
 
-### Comandos útiles
+## Comandos útiles
 
 1. Ejecución de contenedor con instancia postgres
    Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos de conexión a la base de datos de la cual se quiere generar el diagrama:
