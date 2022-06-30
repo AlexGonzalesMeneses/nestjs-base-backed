@@ -205,10 +205,15 @@ export class UsuarioService {
     this.verificarPermisos(idUsuario, usuarioAuditoria);
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario);
     if (usuario) {
-      return await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-        usuarioActualizacion: usuarioAuditoria,
-        estado: Status.INACTIVE,
-      });
+      const usuarioActualizado =
+        await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+          usuarioActualizacion: usuarioAuditoria,
+          estado: Status.INACTIVE,
+        });
+      return {
+        id: usuarioActualizado.id,
+        estado: usuarioActualizado.estado,
+      };
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
@@ -246,10 +251,15 @@ export class UsuarioService {
       const contrasena = TextService.decodeBase64(contrasenaNueva);
       if (TextService.validateLevelPassword(contrasena)) {
         // guardar en bd
-        return await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-          contrasena: await TextService.encrypt(contrasena),
-          estado: Status.ACTIVE,
-        });
+        const usuarioActualizado =
+          await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+            contrasena: await TextService.encrypt(contrasena),
+            estado: Status.ACTIVE,
+          });
+        return {
+          id: usuarioActualizado.id,
+          estado: usuarioActualizado.estado,
+        };
       } else {
         throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE);
       }
