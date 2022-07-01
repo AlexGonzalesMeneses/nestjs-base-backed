@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class AbstractEntity {
   // datos de auditoria
-  @CreateDateColumn({ name: 'fecha_creacion', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'fecha_creacion', type: 'timestamp' })
   fechaCreacion: Date;
 
   @Column({ name: 'usuario_creacion', type: 'varchar' })
@@ -11,7 +11,7 @@ export abstract class AbstractEntity {
   @UpdateDateColumn({
     name: 'fecha_actualizacion',
     nullable: true,
-    type: 'timestamptz',
+    type: 'timestamp',
   })
   fechaActualizacion: Date | null;
 

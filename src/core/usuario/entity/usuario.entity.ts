@@ -58,7 +58,7 @@ export class Usuario extends AbstractEntity {
 
   @Column({
     name: 'fecha_bloqueo',
-    type: 'timestamptz',
+    type: 'timestamp',
     nullable: true,
   })
   fechaBloqueo: Date | null;
