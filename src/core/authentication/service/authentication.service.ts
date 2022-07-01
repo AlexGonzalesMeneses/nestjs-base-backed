@@ -149,10 +149,13 @@ export class AuthenticationService {
       let roles: Array<string | null> = [];
       if (respuesta.usuarioRol.length) {
         roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol);
+        return { id: respuesta.id, roles };
+      } else {
+        return null;
       }
-      return { id: respuesta.id, roles };
+    } else {
+      return null;
     }
-    return null;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -242,10 +245,13 @@ export class AuthenticationService {
               ? respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
               : [],
           };
+        } else {
+          return null;
         }
+      } else {
+        return null;
       }
     }
-    return null;
   }
 
   async autenticarOidc(user: any) {
