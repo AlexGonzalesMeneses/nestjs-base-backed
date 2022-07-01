@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthorizationModule } from '../authorization/authorization.module';
 import { UsuarioRolRepository } from '../authorization/repository/usuario-rol.repository';
 import { IopModule } from '../external-services/iop/iop.module';
+import { RolRepository } from '../authorization/repository/rol.repository';
 
 @Module({
   providers: [UsuarioService],
@@ -18,6 +19,7 @@ import { IopModule } from '../external-services/iop/iop.module';
       UsuarioRepository,
       PersonaRepository,
       UsuarioRolRepository,
+      RolRepository,
     ]),
     MensajeriaModule,
     IopModule,

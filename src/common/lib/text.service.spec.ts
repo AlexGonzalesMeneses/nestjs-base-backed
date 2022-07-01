@@ -1,7 +1,7 @@
 import { TextService } from './text.service';
 
 describe('TextService', () => {
-  it('[textToUuid] deberia retornar un uuid dada una cadena', async () => {
+  it('[textToUuid] Debería retornar un uuid dada una cadena', async () => {
     const texto = 'prueba';
     const uuid = TextService.textToUuid(texto);
     const uuidRegex =
@@ -11,24 +11,24 @@ describe('TextService', () => {
     expect(uuid).toMatch(uuidRegex);
   });
 
-  it('[validateLevelPassword] deberia retornar true si la contrasena es segura', async () => {
+  it('[validateLevelPassword] Debería retornar true si la contrasena es segura', async () => {
     const longitudTexto = 12;
     const texto = TextService.generateShortRandomText(longitudTexto);
-    const uuid = await TextService.validateLevelPassword(texto);
+    const uuid =  TextService.validateLevelPassword(texto);
 
     expect(uuid).toBeDefined();
     expect(uuid).toBe(true);
   });
 
-  it('[validateLevelPassword] deberia retornar false si la contrasena es insegura', async () => {
+  it('[validateLevelPassword] Debería retornar false si la contrasena es insegura', async () => {
     const texto = 'password';
-    const uuid = await TextService.validateLevelPassword(texto);
+    const uuid =  TextService.validateLevelPassword(texto);
 
     expect(uuid).toBeDefined();
     expect(uuid).toBe(false);
   });
 
-  it('[generateNanoId] deberia retornar un id corto', async () => {
+  it('[generateNanoId] Debería retornar un id corto', async () => {
     const uuid = TextService.generateNanoId();
     const uuidRegex = /[A-Za-z0-9_-]{21}$/i;
 

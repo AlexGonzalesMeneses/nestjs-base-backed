@@ -1,7 +1,7 @@
 import { PdfService } from './pdf.service';
 
 describe('PdfService', () => {
-  it('[generateBase64] deberia generar un documento y retornar el resultado en base64', async () => {
+  it('[generateBase64] Debería generar un documento y retornar el resultado en base64', async () => {
     const template = '<h1>Test</h1>';
     const pdfBase64 = await PdfService.generateBase64(template);
     const base64regex =
@@ -11,7 +11,7 @@ describe('PdfService', () => {
     expect(pdfBase64).toMatch(base64regex);
   });
 
-  it('[generateBuffer] deberia generar un documento y retornar el resultado como buffer', async () => {
+  it('[generateBuffer] Debería generar un documento y retornar el resultado como buffer', async () => {
     const template = '<h1>Test</h1>';
     const pdfBuffer = await PdfService.generateBuffer(template);
 
@@ -19,7 +19,7 @@ describe('PdfService', () => {
     expect(pdfBuffer).toBeInstanceOf(Uint8Array);
   });
 
-  it('[generateBuffer] deberia generar un documento y retornar el resultado como stream', async () => {
+  it('[generateBuffer] Debería generar un documento y retornar el resultado como stream', async () => {
     const template = '<h1>Test</h1>';
     const pdfBuffer = PdfService.generateStream(template);
 

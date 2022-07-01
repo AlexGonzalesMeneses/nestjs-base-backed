@@ -5,6 +5,8 @@ import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { Request } from 'express';
+import { userInfo } from 'os';
+import any = jasmine.any;
 
 const resAutenticar = {
   refresh_token: '123',
@@ -22,8 +24,8 @@ const mockResponse = (): any => {
   return res;
 };
 
-const mockRequest = (sessionData: any, body: any) => {
-  return { body, session: sessionData } as Request;
+const mockRequest = (sessionData: any, body: any, user?: any) => {
+  return { body, session: sessionData, user } as Request;
 };
 
 describe('AuthenticationController', () => {
@@ -56,8 +58,8 @@ describe('AuthenticationController', () => {
     controller = module.get<AuthenticationController>(AuthenticationController);
   });
 
-  it('[login] deberia realizar una autenticacion exitosa.', async () => {
-    const req = mockRequest({}, { user: 'boss' });
+  it('[login] Debería realizar una autenticacion exitosa.', async () => {
+    const req = mockRequest({}, { user: 'boss' }, {id: 5});
     const res = mockResponse();
     await controller.login(req, res);
     expect(res.status).toHaveBeenCalledWith(200);

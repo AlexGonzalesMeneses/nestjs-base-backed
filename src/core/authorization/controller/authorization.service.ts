@@ -1,6 +1,7 @@
 import { Injectable, Query } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
 import { ModuloService } from '../service/modulo.service';
+
 @Injectable()
 export class AuthorizationService {
   constructor(
@@ -9,24 +10,32 @@ export class AuthorizationService {
   ) {}
 
   async listarPoliticas(@Query() query) {
-    const { tipo, limite, pagina } = query;
-    let politicas;
-    if (tipo) {
-      politicas = await this.rbacSrv.getFilteredPolicy(3, tipo);
-    } else {
-      politicas = await this.rbacSrv.getPolicy();
-    }
-    const result = politicas.map((politica) => ({
+    const { limite, pagina, pol, app } = query;
+
+    const politicas = await this.rbacSrv.getPolicy();
+
+    let result = politicas.map((politica) => ({
       sujeto: politica[0],
       objeto: politica[1],
       accion: politica[2],
       app: politica[3],
     }));
+
+    if (pol != '') {
+      result = result.filter(
+        (r) => r.sujeto.search(pol) > 0 || r.objeto.search(pol) > 0,
+      );
+    }
+    if (app != '') {
+      result = result.filter((r) => r.app === app);
+    }
+
     if (!limite || !pagina) {
       return [result, result.length];
     }
     const i = limite * (pagina - 1);
     const f = limite * pagina;
+
     const subset = result.slice(i, f);
     return [subset, result.length];
   }
@@ -50,15 +59,14 @@ export class AuthorizationService {
   }
 
   async obtenerRoles() {
-    const result = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
-    return result;
+    return await this.rbacSrv.getFilteredPolicy(3, 'frontend');
   }
 
   async obtenerPermisosPorRol(rol: string) {
     const politicas = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
     const modulos = await this.moduloService.listarTodo();
     const politicasRol = politicas.filter((politica) => politica[0] === rol);
-    const politicasModulo = modulos.filter((modulo) => {
+    return modulos.filter((modulo) => {
       if (modulo?.subModulo?.length > 0) {
         const subModulos = modulo.subModulo.filter((subModulo) =>
           politicasRol.some((politica) => politica[1] === subModulo.url),
@@ -70,6 +78,5 @@ export class AuthorizationService {
       }
       return politicasRol.some((politica) => politica[1] === modulo.url);
     });
-    return politicasModulo;
   }
 }

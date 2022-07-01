@@ -50,13 +50,13 @@ describe('MensajeriaService', () => {
     service = module.get<MensajeriaService>(MensajeriaService);
   });
 
-  it('[sendSms] deberia enviar un sms.', async () => {
+  it('[sendSms] Debería enviar un sms.', async () => {
     const response = await service.sendSms('77777777', 'sms fake');
     expect(response).toHaveProperty('finalizado');
     expect(response.finalizado).toBe(true);
   });
 
-  it('[sendEmail] deberia enviar un correo.', async () => {
+  it('[sendEmail] Debería enviar un correo.', async () => {
     const response = await service.sendEmail(
       'fake@fake.bo',
       'asunto',
@@ -66,13 +66,13 @@ describe('MensajeriaService', () => {
     expect(response.finalizado).toBe(true);
   });
 
-  it('[getReportSms] deberia obtener el reporte de un sms.', async () => {
+  it('[getReportSms] Debería obtener el reporte de un sms.', async () => {
     const response = await service.getReportSms('111111111111');
     expect(response).toHaveProperty('finalizado');
     expect(response.finalizado).toBe(true);
   });
 
-  it('[getReportEmail] deberia obtener el reporte de un correo.', async () => {
+  it('[getReportEmail] Debería obtener el reporte de un correo.', async () => {
     const response = await service.getReportEmail('22222222222');
     expect(response).toHaveProperty('finalizado');
     expect(response.finalizado).toBe(true);

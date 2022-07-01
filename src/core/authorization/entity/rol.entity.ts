@@ -9,10 +9,10 @@ export class Rol {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   rol: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, type: 'varchar' })
   nombre: string;
 
   @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })

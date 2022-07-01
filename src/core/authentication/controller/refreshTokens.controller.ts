@@ -36,7 +36,7 @@ export class RefreshTokensController {
       // sendRefreshToken(res, result.refresh_token.id);
       const refreshToken = result.refresh_token.id;
       res.cookie(
-        this.configService.get('REFRESH_TOKEN_NAME'),
+        this.configService.get('REFRESH_TOKEN_NAME') || '',
         refreshToken,
         CookieService.makeConfig(this.configService),
       );

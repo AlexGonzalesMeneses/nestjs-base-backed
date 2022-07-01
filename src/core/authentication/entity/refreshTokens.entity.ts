@@ -7,13 +7,13 @@ export class RefreshTokens {
   @Column({ name: 'grant_id' })
   grantId: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   iat: Date;
 
-  @Column({ name: 'expires_at' })
+  @Column({ name: 'expires_at', type: 'timestamptz' })
   expiresAt: Date;
 
-  @Column({ name: 'is_revoked' })
+  @Column({ name: 'is_revoked', type: 'boolean' })
   isRevoked: boolean;
 
   @Column({ type: 'jsonb' })

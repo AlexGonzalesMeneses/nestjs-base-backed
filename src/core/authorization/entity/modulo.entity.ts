@@ -1,10 +1,10 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Status } from '../../../common/constants';
 import { PropiedadesDto } from '../dto/crear-modulo.dto';
@@ -16,13 +16,13 @@ export class Modulo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   label: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   url: string;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: 50, type: 'varchar', unique: true })
   nombre: string;
 
   @Column({

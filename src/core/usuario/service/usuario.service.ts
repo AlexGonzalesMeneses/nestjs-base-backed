@@ -19,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
 import { TemplateEmailService } from '../../../common/templates/templates-email.service';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception';
+import { RolRepository } from '../../authorization/repository/rol.repository';
+import { Modulo } from '../../authorization/entity/modulo.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -28,20 +30,20 @@ export class UsuarioService {
     private usuarioRepositorio: UsuarioRepository,
     @InjectRepository(UsuarioRolRepository)
     private usuarioRolRepositorio: UsuarioRolRepository,
+    @InjectRepository(RolRepository)
+    private rolRepositorio: RolRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
     private configService: ConfigService,
   ) {}
 
-  // GET USERS
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
-    const resultado = await this.usuarioRepositorio.listar(paginacionQueryDto);
-    return resultado;
+    return await this.usuarioRepositorio.listar(paginacionQueryDto);
   }
 
-  async buscarUsuario(usuario: string): Promise<Usuario> {
-    return this.usuarioRepositorio.buscarUsuario(usuario);
+  async buscarUsuario(usuario: string): Promise<Usuario | undefined> {
+    return await this.usuarioRepositorio.buscarUsuario(usuario);
   }
 
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
@@ -78,7 +80,7 @@ export class UsuarioService {
           const { id, estado } = result;
           return { id, estado };
         }
-        throw new PreconditionFailedException(contrastaSegip.mensaje);
+        throw new PreconditionFailedException(contrastaSegip?.mensaje);
       }
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
     }
@@ -104,19 +106,86 @@ export class UsuarioService {
     throw new PreconditionFailedException(Messages.EXISTING_USER);
   }
 
+  async crearConPersonaExistente(
+    persona,
+    otrosDatos,
+    usuarioAuditoria: string,
+  ) {
+    const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
+      persona.nroDocumento,
+    );
+    if (!usuario) {
+      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO');
+
+      const nuevoUsuario = {
+        estado: Status.ACTIVE,
+        correoElectronico: otrosDatos?.correoElectronico,
+        persona,
+        ciudadaniaDigital: true,
+        roles: [rol],
+      };
+      const result = await this.usuarioRepositorio.crearConPersonaExistente(
+        nuevoUsuario,
+        usuarioAuditoria,
+      );
+      const { id, estado } = result;
+      return { id, estado };
+    }
+    throw new PreconditionFailedException(Messages.EXISTING_USER);
+  }
+
+  async crearConCiudadaniaV2(
+    personaCiudadania,
+    otrosDatos,
+    usuarioAuditoria: string,
+  ) {
+    const persona = new PersonaDto();
+    // completar campos de Ciudadanía
+    persona.tipoDocumento = personaCiudadania.tipoDocumento;
+    persona.nroDocumento = personaCiudadania.nroDocumento;
+    persona.fechaNacimiento = personaCiudadania.fechaNacimiento;
+    persona.nombres = personaCiudadania.nombres;
+    persona.primerApellido = personaCiudadania.primerApellido;
+    persona.segundoApellido = personaCiudadania.segundoApellido;
+
+    const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
+      persona.nroDocumento,
+    );
+    if (usuario) throw new PreconditionFailedException(Messages.EXISTING_USER);
+
+    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO');
+
+    const nuevoUsuario = {
+      usuario: personaCiudadania.nroDocumento,
+      estado: Status.ACTIVE,
+      correoElectronico: otrosDatos?.correoElectronico,
+      persona,
+      ciudadaniaDigital: true,
+      roles: [rol],
+    };
+    const result = await this.usuarioRepositorio.crearConCiudadania(
+      nuevoUsuario,
+      usuarioAuditoria,
+    );
+    const { id, estado } = result;
+    return { id, estado };
+  }
+
   async activar(idUsuario, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria);
-    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
+    const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario);
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText();
-      const usuarioDto = new ActualizarUsuarioDto();
-      usuarioDto.contrasena = await TextService.encrypt(contrasena);
-      usuarioDto.estado = Status.PENDING;
-      usuarioDto.usuarioActualizacion = usuarioAuditoria;
-      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
-      // si todo bien => enviar el mail con la contraseña generada
+
+      const usuarioActualizado =
+        await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+          contrasena: await TextService.encrypt(contrasena),
+          estado: Status.PENDING,
+          usuarioActualizacion: usuarioAuditoria,
+        });
+      // si está bien => enviar el mail con la contraseña generada
       const datosCorreo = {
         correo: usuario.correoElectronico,
         asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
@@ -126,25 +195,28 @@ export class UsuarioService {
         usuario.usuario,
         contrasena,
       );
-      return { id: idUsuario, estado: usuarioDto.estado };
+      return { id: usuarioActualizado.id, estado: usuarioActualizado.estado };
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
-    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   async inactivar(idUsuario: string, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria);
-    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
+    const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario);
     if (usuario) {
-      const usuarioDto = new ActualizarUsuarioDto();
-      usuarioDto.usuarioActualizacion = usuarioAuditoria;
-      usuarioDto.estado = Status.INACTIVE;
-      await this.usuarioRepositorio.update(idUsuario, usuarioDto);
+      const usuarioActualizado =
+        await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+          usuarioActualizacion: usuarioAuditoria,
+          estado: Status.INACTIVE,
+        });
       return {
-        id: idUsuario,
-        estado: usuarioDto.estado,
+        id: usuarioActualizado.id,
+        estado: usuarioActualizado.estado,
       };
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
-    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   private async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
@@ -163,7 +235,7 @@ export class UsuarioService {
     return result.finalizado;
   }
 
-  private verificarPermisos(usuarioAuditoria, id) {
+  verificarPermisos(usuarioAuditoria, id) {
     if (usuarioAuditoria === id) {
       throw new EntityForbiddenException();
     }
@@ -179,23 +251,26 @@ export class UsuarioService {
       const contrasena = TextService.decodeBase64(contrasenaNueva);
       if (TextService.validateLevelPassword(contrasena)) {
         // guardar en bd
-        const usuarioDto = new ActualizarUsuarioDto();
-        usuarioDto.contrasena = await TextService.encrypt(contrasena);
-        usuarioDto.estado = Status.ACTIVE;
-        await this.usuarioRepositorio.update(idUsuario, usuarioDto);
+        const usuarioActualizado =
+          await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+            contrasena: await TextService.encrypt(contrasena),
+            estado: Status.ACTIVE,
+          });
         return {
-          id: idUsuario,
-          estado: usuarioDto.estado,
+          id: usuarioActualizado.id,
+          estado: usuarioActualizado.estado,
         };
+      } else {
+        throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE);
       }
-      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE);
+    } else {
+      throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS);
     }
-    throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS);
   }
 
   async restaurarContrasena(idUsuario: string, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria);
-    const usuario = await this.usuarioRepositorio.findOne(idUsuario);
+    const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario);
     const statusValid = [Status.ACTIVE, Status.PENDING];
     if (usuario && statusValid.includes(usuario.estado as Status)) {
       const contrasena = TextService.generateShortRandomText();
@@ -207,7 +282,7 @@ export class UsuarioService {
       const op = async (transaction) => {
         const repositorio = transaction.getRepository(Usuario);
         await repositorio.update(idUsuario, usuarioDto);
-        // si todo bien => enviar el mail con la contraseña generada
+        // si está bien => enviar el mail con la contraseña generada
         const datosCorreo = {
           correo: usuario.correoElectronico,
           asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
@@ -220,8 +295,9 @@ export class UsuarioService {
       };
       await this.usuarioRepositorio.runTransaction(op);
       return { id: idUsuario, estado: usuarioDto.estado };
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
-    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   async actualizarDatos(
@@ -231,7 +307,8 @@ export class UsuarioService {
   ) {
     this.verificarPermisos(id, usuarioAuditoria);
     // 1. verificar que exista el usuario
-    const usuario = await this.usuarioRepositorio.findOne(id);
+    const usuario = await this.usuarioRepositorio.buscarPorId(id);
+
     if (usuario) {
       const { correoElectronico, roles } = usuarioDto;
       // 2. verificar que el email no este registrado
@@ -245,18 +322,20 @@ export class UsuarioService {
         if (existe) {
           throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
         }
-        const actualizarUsuarioDto = new ActualizarUsuarioDto();
-        actualizarUsuarioDto.correoElectronico = correoElectronico;
-        actualizarUsuarioDto.usuarioActualizacion = usuarioAuditoria;
-        await this.usuarioRepositorio.update(id, actualizarUsuarioDto);
+        await this.usuarioRepositorio.actualizarUsuario(id, {
+          correoElectronico: correoElectronico,
+          usuarioActualizacion: usuarioAuditoria,
+        });
       }
-      if (roles.length > 0) {
-        // realizar reglas de roles
-        await this.actualizarRoles(id, roles, usuarioAuditoria);
-      }
-      return { id };
+      if (roles)
+        if (roles.length > 0) {
+          // realizar reglas de roles
+          await this.actualizarRoles(id, roles, usuarioAuditoria);
+        }
+      return { id: usuario.id };
+    } else {
+      throw new EntityNotFoundException(Messages.INVALID_USER);
     }
-    throw new EntityNotFoundException(Messages.INVALID_USER);
   }
 
   private async actualizarRoles(id, roles, usuarioAuditoria) {
@@ -312,12 +391,18 @@ export class UsuarioService {
 
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id);
-    let roles = [];
+    let roles: Array<{
+      idRol: string;
+      rol: string;
+      nombre: string;
+      modulos: Modulo[];
+    }> = [];
     if (usuario?.usuarioRol?.length) {
       roles = await Promise.all(
-        usuario.usuarioRol.map(async (usuarioRol) => {
-          const { id, rol, nombre } = usuarioRol.rol;
-          if (usuarioRol.estado === Status.ACTIVE) {
+        usuario.usuarioRol
+          .filter((value) => value.estado === Status.ACTIVE)
+          .map(async (usuarioRol) => {
+            const { id, rol, nombre } = usuarioRol.rol;
             const modulos =
               await this.authorizationService.obtenerPermisosPorRol(rol);
             return {
@@ -326,14 +411,12 @@ export class UsuarioService {
               nombre,
               modulos,
             };
-          }
-          return false;
-        }),
+          }),
       );
-      roles = roles.filter(Boolean);
       return {
         id: usuario.id,
         usuario: usuario.usuario,
+        ciudadania_digital: usuario.ciudadaniaDigital,
         estado: usuario.estado,
         roles,
         persona: usuario.persona,
@@ -343,25 +426,23 @@ export class UsuarioService {
     }
   }
 
-  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario> {
-    return this.usuarioRepositorio.buscarUsuarioPorCI(persona);
+  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario | undefined> {
+    return await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
   }
 
   async actualizarContadorBloqueos(idUsuario: string, intento: number) {
-    const usuario = await this.usuarioRepositorio.actualizarContadorBloqueos(
+    return await this.usuarioRepositorio.actualizarContadorBloqueos(
       idUsuario,
       intento,
     );
-    return usuario;
   }
 
   async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
-    const usuario = await this.usuarioRepositorio.actualizarDatosBloqueo(
+    return await this.usuarioRepositorio.actualizarDatosBloqueo(
       idUsuario,
       codigo,
       fechaBloqueo,
     );
-    return usuario;
   }
 
   async desbloquearCuenta(codigo: string) {
@@ -369,19 +450,17 @@ export class UsuarioService {
       codigo,
     );
     if (usuario?.fechaBloqueo) {
-      const usuarioDto = new ActualizarUsuarioDto();
-      usuarioDto.fechaBloqueo = null;
-      usuarioDto.intentos = 0;
-      usuarioDto.codigoDesbloqueo = null;
-      await this.usuarioRepositorio.update(usuario.id, usuarioDto);
+      await this.usuarioRepositorio.actualizarUsuario(usuario.id, {
+        fechaBloqueo: null,
+        intentos: 0,
+        codigoDesbloqueo: null,
+      });
     }
     return { codigo };
   }
 
   async actualizarDatosPersona(datosPersona: PersonaDto) {
-    const usuario = await this.usuarioRepositorio.actualizarDatosPersona(
-      datosPersona,
-    );
-    return usuario;
+    return await this.usuarioRepositorio.actualizarDatosPersona(datosPersona);
+    // eslint-disable-next-line max-lines
   }
 }

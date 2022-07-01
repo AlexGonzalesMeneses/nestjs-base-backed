@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="./">
-    <img src="https://img.shields.io/badge/version-v1.0.2-blue" alt="Versión">
+    <img src="https://img.shields.io/badge/version-v1.1.0-blue" alt="Versión">
   </a>
   <a href="./LICENSE">
       <img src="https://img.shields.io/static/v1?label=Licencia&message=LPG%20-%20Bolivia&color=green" alt="Licencia: LPG - Bolivia" />
@@ -53,9 +53,7 @@ El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
   - Manejo de errores
 
 ## Documentación
-
-Documentación relacionada al proyecto:
-
+Documentación relacionada con el proyecto:
 1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
 3. [Documentacion de APIS](/docs/openapi.yaml)
@@ -90,6 +88,8 @@ $ npm run compodoc
 - almamani@agetic.gob.bo
 - jpoma@agetic.gob.bo
 - rquispe@agetic.gob.bo
+- wilmer.quispe@agetic.gob.bo
+- ivillarreal@agetic.gob.bo
 
 ## Licencia
 

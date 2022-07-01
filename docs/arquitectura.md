@@ -67,7 +67,7 @@
 ![Diagrama ERD](ERD.png "Diagrama")
 
 ## Estructura Modular
-El proyecto base contiene una estructura modular, a continuación se puede ver la composición de los mas importantes:
+El proyecto base contiene una estructura modular, a continuación se puede ver la composición de los más importantes:
 
 ### Módulo Nucleo
 ![Modulo Nucleo](imagenes/modulo-nucleo.png "Diagrama")

@@ -8,7 +8,7 @@ const doc = /[0-9]{4,10}/;
 export const NRO_DOC = 'nroDocumento';
 
 /**
- * Verifica si una cadena es un numero de documento valido
+ * Verifica si una cadena es un número de documento válido
  * @param value cadena a validar
  * @param param1 Objeto con propiedades de validacion
  *  - complemento (true defecto)
@@ -16,7 +16,7 @@ export const NRO_DOC = 'nroDocumento';
  * @returns Si el valor dado no es una cadena, devuelve falso.
  */
 export function nroDocumento(
-  value: string,
+  value?: string | null,
   {
     complemento = true,
     extranjero = true,
@@ -29,7 +29,7 @@ export function nroDocumento(
       (complemento ? comp.source : '') +
       '$',
   );
-  return regex.test(value);
+  return value ? regex.test(value) : false;
 }
 
 export function NroDocumento(

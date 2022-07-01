@@ -16,13 +16,18 @@ import { UsuarioRepository } from '../usuario/repository/usuario.repository';
 import { RefreshTokensRepository } from './repository/refreshTokens.repository';
 import { RefreshTokensService } from './service/refreshTokens.service';
 import { MensajeriaModule } from '../external-services/mensajeria/mensajeria.module';
+import { PersonaService } from '../usuario/service/persona.service';
+import { UsuarioRolRepository } from '../authorization/repository/usuario-rol.repository';
+import { PersonaRepository } from '../usuario/repository/persona.repository';
+import { RolRepository } from '../authorization/repository/rol.repository';
+import { BaseClient } from 'openid-client';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
   useFactory: async (autenticacionService: AuthenticationService) => {
-    const client = await buildOpenIdClient();
-    const strategy = new OidcStrategy(autenticacionService, client);
-    return strategy;
+    const client: BaseClient | undefined = await buildOpenIdClient();
+    if (client) return new OidcStrategy(autenticacionService, client);
+    else return undefined;
   },
   inject: [AuthenticationService],
 };
@@ -40,12 +45,19 @@ const OidcStrategyFactory = {
     }),
     UsuarioModule,
     ConfigModule,
-    TypeOrmModule.forFeature([UsuarioRepository, RefreshTokensRepository]),
+    TypeOrmModule.forFeature([
+      PersonaRepository,
+      UsuarioRepository,
+      RefreshTokensRepository,
+      UsuarioRolRepository,
+      RolRepository,
+    ]),
     MensajeriaModule,
   ],
   controllers: [AuthenticationController, RefreshTokensController],
   providers: [
     AuthenticationService,
+    PersonaService,
     RefreshTokensService,
     LocalStrategy,
     JwtStrategy,

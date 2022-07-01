@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   Inject,
@@ -37,13 +38,19 @@ export class AuthenticationController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Req() req: Request, @Res() res: Response) {
+    if (req.user == undefined) {
+      throw new BadRequestException(
+        `Es necesario que este autenticado para consumir este recurso.`,
+      );
+    }
     const result = await this.autenticacionService.autenticar(req.user);
+
     this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
     /* sendRefreshToken(res, result.refresh_token.id); */
     const refreshToken = result.refresh_token.id;
     return res
       .cookie(
-        this.configService.get('REFRESH_TOKEN_NAME'),
+        this.configService.get('REFRESH_TOKEN_NAME') || '',
         refreshToken,
         CookieService.makeConfig(this.configService),
       )
@@ -58,7 +65,7 @@ export class AuthenticationController {
   }
 
   @UseGuards(OidcAuthGuard)
-  @Get('ciudadania-callback')
+  @Get('ciudadania-autorizar')
   async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       const result = await this.autenticacionService.autenticarOidc(req.user);
@@ -66,18 +73,16 @@ export class AuthenticationController {
       const refreshToken = result.refresh_token.id;
       res
         .cookie(
-          this.configService.get('REFRESH_TOKEN_NAME'),
+          this.configService.get('REFRESH_TOKEN_NAME') || '',
           refreshToken,
           CookieService.makeConfig(this.configService),
         )
         .status(200)
-        .redirect(
-          `${this.configService.get('URL_FRONTEND')}/#/login?code=${
-            result.data.access_token
-          }`,
-        );
+        .json({
+          access_token: result.data.access_token,
+        });
     } else {
-      res.redirect(this.configService.get('URL_FRONTEND'));
+      res.status(200).json({});
     }
   }
 
@@ -86,20 +91,31 @@ export class AuthenticationController {
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
     const jid = req.cookies.jid || '';
     if (jid != '') {
-      this.refreshTokensService.removeByid(jid);
+      await this.refreshTokensService.removeByid(jid);
     }
+
     const idToken =
       req.user?.idToken || req.session?.passport?.user?.idToken || null;
 
     // req.logout();
-    req.session = null;
-    const issuer = await Issuer.discover(this.configService.get('OIDC_ISSUER'));
+    req.session.destroy(() => {
+      this.logger.info('sesión finalizada');
+    });
+    const issuer = await Issuer.discover(
+      this.configService.get('OIDC_ISSUER') || '',
+    );
     const url = issuer.metadata.end_session_endpoint;
     res.clearCookie('connect.sid');
     res.clearCookie('jid', jid);
-    const idUsuario = JSON.parse(
-      Buffer.from(req.headers.authorization.split('.')[1], 'base64').toString(),
-    ).id;
+    const idUsuario = req.headers.authorization
+      ? JSON.parse(
+          Buffer.from(
+            `${req.headers.authorization}`.split('.')[1],
+            'base64',
+          ).toString(),
+        ).id
+      : null;
+
     this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
 
     if (url && idToken) {

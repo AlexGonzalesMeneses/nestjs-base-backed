@@ -25,7 +25,7 @@ describe('RolService', () => {
     service = module.get<RolService>(RolService);
   });
 
-  it('[listar] Deberia obtener la lista de roles', async () => {
+  it('[listar] Debería obtener la lista de roles', async () => {
     const usuarios = await service.listar();
 
     expect(usuarios).toBeDefined();

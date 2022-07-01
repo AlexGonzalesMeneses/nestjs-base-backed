@@ -17,6 +17,7 @@ import { ConfigService } from '@nestjs/config';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto';
 import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto';
+import { RolRepository } from '../../authorization/repository/rol.repository';
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -136,6 +137,8 @@ describe('UsuarioService', () => {
           provide: UsuarioRepository,
           useValue: {
             listar: jest.fn(() => [[resUsuarioList], 1]),
+            buscarPorId: jest.fn().mockReturnValueOnce(resUsuarioPerfil),
+            actualizarUsuario: jest.fn().mockReturnValueOnce(resUsuarioPerfil),
             buscarUsuarioRolPorId: jest
               .fn()
               .mockReturnValueOnce(resUsuarioPerfil)
@@ -211,6 +214,10 @@ describe('UsuarioService', () => {
             obtenerPermisosPorRol: jest.fn(() => [resModulo]),
           },
         },
+        {
+          provide: RolRepository,
+          useValue: {},
+        },
       ],
       imports: [MensajeriaModule],
     }).compile();
@@ -218,7 +225,7 @@ describe('UsuarioService', () => {
     service = module.get<UsuarioService>(UsuarioService);
   });
 
-  it('[listar] Deberia obtener la lista de usuarios', async () => {
+  it('[listar] Debería obtener la lista de usuarios', async () => {
     const paginacion = new FiltrosUsuarioDto();
     const usuarios = await service.listar(paginacion);
 
@@ -226,7 +233,7 @@ describe('UsuarioService', () => {
     expect(usuarios.length).toEqual(2);
   });
 
-  it('[buscarUsuarioId] Deberia obtener la informacion relacionada al usuario', async () => {
+  it('[buscarUsuarioId] Debería obtener la informacion relacionada al usuario', async () => {
     const { id } = resUsuarioPerfil;
     const usuarios = await service.buscarUsuarioId(id);
 
@@ -236,7 +243,7 @@ describe('UsuarioService', () => {
     expect(usuarios).toHaveProperty('roles');
   });
 
-  it('[buscarUsuarioId] Deberia lanzar una excepcion si el usuario no tiene asignados roles', async () => {
+  it('[buscarUsuarioId] Debería lanzar una excepcion si el usuario no tiene asignados roles', async () => {
     try {
       const { id } = resUsuarioPerfil;
       await service.buscarUsuarioId(id);
@@ -245,7 +252,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo nro de documento', async () => {
+  it('[crear] Debería lanzar una excepcion si ya existe un usuario con el mismo nro de documento', async () => {
     const datosUsuario = {
       usuario: 'usuario122',
       contrasena: '123',
@@ -267,7 +274,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[crear] Deberia lanzar una excepcion si ya existe un usuario con el mismo correo electronico', async () => {
+  it('[crear] Debería lanzar una excepcion si ya existe un usuario con el mismo correo electronico', async () => {
     const datosUsuario = {
       usuario: 'usuario122',
       contrasena: '123',
@@ -289,7 +296,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[crear] Deberia crear un nuevo usuario', async () => {
+  it('[crear] Debería crear un nuevo usuario', async () => {
     const datosUsuario = {
       usuario: 'usuario122',
       contrasena: '123',
@@ -310,7 +317,7 @@ describe('UsuarioService', () => {
     expect(usuario).toHaveProperty('estado');
   });
 
-  it('[crearConCiudadania] Deberia crear un nuevo usuario con bandera ciudadania', async () => {
+  it('[crearConCiudadania] Debería crear un nuevo usuario con bandera ciudadania', async () => {
     const usuarioDto = new CrearUsuarioCiudadaniaDto();
     usuarioDto.usuario = '7878787';
     usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8'];
@@ -327,7 +334,7 @@ describe('UsuarioService', () => {
     expect(usuario).toHaveProperty('estado');
   });
 
-  it('[crearConCiudadania] Deberia retornar una excepcion al tratar de crear un usuario con ciudadania ya existente', async () => {
+  it('[crearConCiudadania] Debería retornar una excepcion al tratar de crear un usuario con ciudadania ya existente', async () => {
     const usuarioDto = new CrearUsuarioCiudadaniaDto();
     usuarioDto.usuario = '7878787';
     usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8'];
@@ -343,18 +350,23 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[activar] Deberia activar un usuario en estado CREADO', async () => {
-    const idUsuario = TextService.generateUuid();
-    const usuarioAuditoria = TextService.generateUuid();
-    const usuario = await service.activar(idUsuario, usuarioAuditoria);
+  it('[activar] Debería activar un usuario en estado CREADO', async () => {
+    try {
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      const usuario = await service.activar(idUsuario, usuarioAuditoria);
 
-    expect(usuario).toBeDefined();
-    expect(usuario).toHaveProperty('id');
-    expect(usuario).toHaveProperty('estado');
-    expect(usuario.estado).toEqual('PENDIENTE');
+      expect(usuario).toBeDefined();
+      expect(usuario).toHaveProperty('id');
+      expect(usuario).toHaveProperty('estado');
+      expect(usuario.estado).toEqual('PENDIENTE');
+    }
+    catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
   });
 
-  it('[activar] Deberia lanzar una excepcion si el usuario no existe', async () => {
+  it('[activar] Debería lanzar una excepcion si el usuario no existe', async () => {
     try {
       const idUsuario = TextService.generateUuid();
       const usuarioAuditoria = TextService.generateUuid();
@@ -364,7 +376,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[activar] Deberia lanzar una excepcion si el usuario no tiene un estado valido para activacion', async () => {
+  it('[activar] Debería lanzar una excepcion si el usuario no tiene un estado valido para activacion', async () => {
     try {
       const idUsuario = TextService.generateUuid();
       const usuarioAuditoria = TextService.generateUuid();
@@ -374,17 +386,23 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[inactivar] Deberia inactivar un usuario en cualquier estado', async () => {
-    const idUsuario = TextService.generateUuid();
-    const usuarioAuditoria = TextService.generateUuid();
-    const usuario = await service.inactivar(idUsuario, usuarioAuditoria);
+  it('[inactivar] Debería inactivar un usuario en cualquier estado', async () => {
+    try {
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      const usuario = await service.inactivar(idUsuario, usuarioAuditoria);
 
-    expect(usuario).toBeDefined();
-    expect(usuario).toHaveProperty('id');
-    expect(usuario).toHaveProperty('estado');
+      expect(usuario).toBeDefined();
+      expect(usuario).toHaveProperty('id');
+      expect(usuario).toHaveProperty('estado');
+    }
+    catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
+
   });
 
-  it('[inactivar] Deberia lanzar una excepcion si el usuario no existe', async () => {
+  it('[inactivar] Debería lanzar una excepcion si el usuario no existe', async () => {
     try {
       const idUsuario = TextService.generateUuid();
       const usuarioAuditoria = TextService.generateUuid();
@@ -394,7 +412,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[actualizarContrasena] Deberia actualizar la contraseña de un usuario autenticado', async () => {
+  it('[actualizarContrasena] Debería actualizar la contraseña de un usuario autenticado', async () => {
     const idUsuario = TextService.generateUuid();
     const contrasenaActual = TextService.btoa(encodeURI('123'));
     const contrasenaNueva = TextService.btoa(encodeURI('Contr4seN1AS3gur4'));
@@ -407,7 +425,7 @@ describe('UsuarioService', () => {
     expect(result).toHaveProperty('id');
   });
 
-  it('[actualizarContrasena] Deberia lanzar una excepcion si la contraseña actual es incorrecta', async () => {
+  it('[actualizarContrasena] Debería lanzar una excepcion si la contraseña actual es incorrecta', async () => {
     const idUsuario = TextService.generateUuid();
     const contrasenaActual = TextService.btoa(encodeURI('1234'));
     const contrasenaNueva = TextService.btoa(encodeURI('Contr4seN1AS3gur4'));
@@ -422,7 +440,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[actualizarContrasena] Deberia lanzar una excepcion si la contraseña nueva no es segura', async () => {
+  it('[actualizarContrasena] Debería lanzar una excepcion si la contraseña nueva no es segura', async () => {
     const idUsuario = TextService.generateUuid();
     const contrasenaActual = '1234';
     const contrasenaNueva = 'password';
@@ -437,19 +455,24 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[restaurarContrasena] Deberia restaurar la contraseña de un usuario', async () => {
-    const idUsuario = TextService.generateUuid();
-    const usuarioAuditoria = TextService.generateUuid();
-    const result = await service.restaurarContrasena(
-      idUsuario,
-      usuarioAuditoria,
-    );
+  it('[restaurarContrasena] Debería restaurar la contraseña de un usuario', async () => {
+    try {
+      const idUsuario = TextService.generateUuid();
+      const usuarioAuditoria = TextService.generateUuid();
+      const result = await service.restaurarContrasena(
+        idUsuario,
+        usuarioAuditoria,
+      );
 
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('id');
+      expect(result).toBeDefined();
+      expect(result).toHaveProperty('id');
+    }
+    catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
   });
 
-  it('[restaurarContrasena] Deberia lanzar una excepcion si el usuario no existe', async () => {
+  it('[restaurarContrasena] Debería lanzar una excepcion si el usuario no existe', async () => {
     try {
       const idUsuario = TextService.generateUuid();
       const usuarioAuditoria = TextService.generateUuid();
@@ -459,7 +482,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[actualizarDatos] Deberia lanzar una excepcion si el usuario no existe', async () => {
+  it('[actualizarDatos] Debería lanzar una excepcion si el usuario no existe 1', async () => {
     const usuarioDto = new ActualizarUsuarioRolDto();
     usuarioDto.correoElectronico = 'fake@gmail.com';
     usuarioDto.roles = ['12323333'];
@@ -474,7 +497,7 @@ describe('UsuarioService', () => {
     }
   });
 
-  it('[actualizarDatos] Deberia lanzar una excepcion si el usuario no existe', async () => {
+  it('[actualizarDatos] Debería lanzar una excepcion si el usuario no existe 2', async () => {
     const usuarioDto = new ActualizarUsuarioRolDto();
     usuarioDto.correoElectronico = 'fake@gmail.com';
     usuarioDto.roles = ['12323333'];
@@ -484,25 +507,30 @@ describe('UsuarioService', () => {
     try {
       await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria);
     } catch (error) {
-      expect(error).toBeInstanceOf(PreconditionFailedException);
-      expect(error.message).toEqual(Messages.EXISTING_EMAIL);
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+      expect(error.message).toEqual(Messages.INVALID_USER);
     }
   });
 
-  it('[actualizarDatos] Deberia retornar el id si logra actualizar los registros', async () => {
+  it('[actualizarDatos] Debería retornar el id si logra actualizar los registros', async () => {
     const usuarioDto = new ActualizarUsuarioRolDto();
     usuarioDto.correoElectronico = 'fake@gmail.com';
     usuarioDto.roles = ['12323333'];
     const idUsuario = TextService.generateUuid();
     const idUsuarioAuditoria = TextService.generateUuid();
 
-    const usuario = await service.actualizarDatos(
-      idUsuario,
-      usuarioDto,
-      idUsuarioAuditoria,
-    );
+    try {
+      const usuario = await service.actualizarDatos(
+        idUsuario,
+        usuarioDto,
+        idUsuarioAuditoria,
+      );
 
-    expect(usuario).toBeDefined();
-    expect(usuario).toHaveProperty('id');
+      expect(usuario).toBeDefined();
+      expect(usuario).toHaveProperty('id');
+    } catch (error) {
+      expect(error).toBeInstanceOf(EntityNotFoundException);
+    }
+
   });
 });

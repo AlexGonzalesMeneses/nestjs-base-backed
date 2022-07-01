@@ -49,7 +49,7 @@ describe('ParametroController', () => {
     controller = module.get<ParametroController>(ParametroController);
   });
 
-  it('[listar] Deberia listar parametros', async () => {
+  it('[listar] Debería listar parametros', async () => {
     const pagination = new PaginacionQueryDto();
     const result = await controller.listar(pagination);
     expect(result).toBeDefined();
@@ -60,7 +60,7 @@ describe('ParametroController', () => {
     expect(result.datos).toHaveProperty('filas');
   });
 
-  it('[listarPorGrupo] Deberia listar parametros por grupo', async () => {
+  it('[listarPorGrupo] Debería listar parametros por grupo', async () => {
     const mockRequest = {
       grupo: 'TD',
     };
@@ -72,7 +72,7 @@ describe('ParametroController', () => {
     expect(result.datos).toBeInstanceOf(Array);
   });
 
-  it('[crear] Deberia crear un nuevo parametro', async () => {
+  it('[crear] Debería crear un nuevo parametro', async () => {
     const parametro = {
       codigo: 'TD-2',
       nombre: 'Pasaporte',

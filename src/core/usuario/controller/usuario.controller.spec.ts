@@ -9,7 +9,7 @@ import { UsuarioController } from './usuario.controller';
 import { UsuarioService } from '../service/usuario.service';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { CanActivate } from '@nestjs/common';
-import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard';
+import { CasbinGuard } from '../../authorization/guards/casbin.guard';
 
 const resUsuario = {
   id: TextService.generateUuid(),
@@ -68,7 +68,7 @@ describe('UsuarioController', () => {
     service = module.get<UsuarioService>(UsuarioService);
   });
 
-  it('[listar] Deberia listar usuarios', async () => {
+  it('[listar] Debería listar usuarios', async () => {
     const pagination = new FiltrosUsuarioDto();
     const result = await controller.listar(pagination);
 
@@ -81,7 +81,7 @@ describe('UsuarioController', () => {
     expect(result.datos).toHaveProperty('filas');
   });
 
-  it('[obtenerPerfil] Deberia obtener el perfil de un usuario', async () => {
+  it('[obtenerPerfil] Debería obtener el perfil de un usuario', async () => {
     const perfil = await controller.obtenerPerfil(mockRequest);
 
     expect(perfil).toBeDefined();
@@ -89,7 +89,7 @@ describe('UsuarioController', () => {
     expect(perfil.finalizado).toEqual(true);
   });
 
-  it('[crear] Deberia crear un usuario', async () => {
+  it('[crear] Debería crear un usuario', async () => {
     const datosUsuario = {
       correoElectronico: 'fake@yopmail.com',
       persona: {
@@ -109,7 +109,7 @@ describe('UsuarioController', () => {
     expect(usuario.finalizado).toEqual(true);
   });
 
-  it('[activar] Deberia activar un usuario', async () => {
+  it('[activar] Debería activar un usuario', async () => {
     const param = {
       id: TextService.generateUuid(),
     };
@@ -120,7 +120,7 @@ describe('UsuarioController', () => {
     expect(usuario.finalizado).toEqual(true);
   });
 
-  it('[inactivar] Deberia inactivar un usuario', async () => {
+  it('[inactivar] Debería inactivar un usuario', async () => {
     const param = {
       id: TextService.generateUuid(),
     };
@@ -131,7 +131,7 @@ describe('UsuarioController', () => {
     expect(usuario.finalizado).toEqual(true);
   });
 
-  it('[acualizarContrasena] Deberia actualizar la contrasena de un usuario', async () => {
+  it('[acualizarContrasena] Debería actualizar la contrasena de un usuario', async () => {
     const datosBody = {
       constrasenaActual: TextService.generateShortRandomText(),
       contrasenaNueva: TextService.generateShortRandomText(),
@@ -144,7 +144,7 @@ describe('UsuarioController', () => {
     expect(usuario.finalizado).toEqual(true);
   });
 
-  it('[restaurarContrasena] Deberia restaurar la contrasena de un usuario', async () => {
+  it('[restaurarContrasena] Debería restaurar la contrasena de un usuario', async () => {
     const param = {
       id: TextService.generateUuid(),
     };

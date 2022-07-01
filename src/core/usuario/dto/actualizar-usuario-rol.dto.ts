@@ -11,7 +11,7 @@ export class ActualizarUsuarioRolDto {
   @IsEmail()
   @CorreoLista()
   @ValidateIf((o) => !o.roles)
-  correoElectronico?: string;
+  correoElectronico?: string | null;
 
   @IsNotEmpty()
   @IsArray()

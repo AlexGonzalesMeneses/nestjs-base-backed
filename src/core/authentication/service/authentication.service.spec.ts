@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MensajeriaService } from '../../../core/external-services/mensajeria/mensajeria.service';
+import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service';
 import { UsuarioService } from '../../usuario/service/usuario.service';
 import { AuthenticationService } from './authentication.service';
 import { RefreshTokensService } from './refreshTokens.service';
@@ -11,6 +11,11 @@ import { TextService } from '../../../common/lib/text.service';
 import { Persona } from '../../usuario/entity/persona.entity';
 import { plainToClass } from 'class-transformer';
 import { ConfigService } from '@nestjs/config';
+import { PersonaService } from '../../usuario/service/persona.service';
+import { PersonaRepository } from '../../usuario/repository/persona.repository';
+import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
+import { RolRepository } from '../../authorization/repository/rol.repository';
+import { PersonaDto } from '../../usuario/dto/persona.dto';
 
 const resSign = 'aaa.bbb.ccc';
 const resBuscarUsuario = {
@@ -45,6 +50,7 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        PersonaService,
         ConfigService,
         AuthenticationService,
         {
@@ -104,6 +110,18 @@ describe('AuthenticationService', () => {
             sendEmail: jest.fn(() => ({ finalizado: true })),
           },
         },
+        {
+          provide: PersonaRepository,
+          useValue: {},
+        },
+        {
+          provide: UsuarioRolRepository,
+          useValue: {},
+        },
+        {
+          provide: RolRepository,
+          useValue: {},
+        }
       ],
     }).compile();
 
@@ -111,7 +129,7 @@ describe('AuthenticationService', () => {
     usuarioService = module.get<UsuarioService>(UsuarioService);
   });
 
-  it('[autenticar] deberia generar un token de acceso.', async () => {
+  it('[autenticar] debería generar un token de acceso.', async () => {
     const user = {
       usuario: 'user',
       id: '11111',
@@ -121,7 +139,7 @@ describe('AuthenticationService', () => {
     expect(credenciales?.data?.access_token).toEqual(resSign);
   });
 
-  it('[validarUsuario] deberia validar un usuario exitosamente.', async () => {
+  it('[validarUsuario] Debería validar un usuario exitosamente.', async () => {
     const usuario = await service.validarUsuario(
       'user',
       TextService.btoa(encodeURI('123')),
@@ -130,7 +148,7 @@ describe('AuthenticationService', () => {
     expect(usuario).toHaveProperty('id');
   });
 
-  it('[validarUsuario] deberia lanzar una excepcion para un usuario con contrasena erronea.', async () => {
+  it('[validarUsuario] Debería lanzar una excepcion para un usuario con contrasena erronea.', async () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
     } catch (error) {
@@ -139,7 +157,7 @@ describe('AuthenticationService', () => {
     }
   });
 
-  it('[validarUsuario] deberia lanzar una excepcion para un usuario INACTIVO.', async () => {
+  it('[validarUsuario] Debería lanzar una excepcion para un usuario INACTIVO.', async () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
     } catch (error) {
@@ -148,7 +166,7 @@ describe('AuthenticationService', () => {
     }
   });
 
-  it('[validarUsuario] deberia lanzar una excepcion si excedio el limite de intentos erroneos de inicio de sesion.', async () => {
+  it('[validarUsuario] Debería lanzar una excepcion si excedio el limite de intentos erroneos de inicio de sesion.', async () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
     } catch (error) {
@@ -157,13 +175,13 @@ describe('AuthenticationService', () => {
     }
   });
 
-  it('[validarUsuario] deberia restablecer el limite de intentos si inicio sesion correctamente.', async () => {
+  it('[validarUsuario] Debería restablecer el limite de intentos si inicio sesion correctamente.', async () => {
     await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
 
     expect(usuarioService.actualizarContadorBloqueos).toBeCalled();
   });
 
-  it('[validarUsuario] deberia permitir iniciar sesion si la fecha limite bloqueo ya expiro.', async () => {
+  it('[validarUsuario] Debería permitir iniciar sesion si la fecha limite bloqueo ya expiro.', async () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
     } catch (error) {
@@ -173,24 +191,24 @@ describe('AuthenticationService', () => {
     }
   });
 
-  it('[validarUsuarioOidc] Deberia retornar null cuando no existe el usuario.', async () => {
-    const persona = plainToClass(Persona, resPersona);
+  it('[validarUsuarioOidc] Debería retornar null cuando no existe el usuario.', async () => {
+    const persona = plainToClass(Persona, resPersona) as PersonaDto;
 
     const result = await service.validarUsuarioOidc(persona);
     expect(result).toBeFalsy();
   });
 
-  it('[validarUsuarioOidc] Deberia retornar excepcion si el usuario esta INACTIVO.', async () => {
+  it('[validarUsuarioOidc] Debería retornar excepcion si el usuario esta INACTIVO.', async () => {
     try {
-      const persona = plainToClass(Persona, resPersona);
+      const persona = plainToClass(Persona, resPersona) as PersonaDto;
       await service.validarUsuarioOidc(persona);
     } catch (error) {
       expect(error).toBeInstanceOf(EntityUnauthorizedException);
     }
   });
 
-  it('[validarUsuarioOidc] Deberia retornar el id si el usuario esta ACTIVO.', async () => {
-    const persona = plainToClass(Persona, resPersona);
+  it('[validarUsuarioOidc] Debería retornar el id si el usuario esta ACTIVO.', async () => {
+    const persona = plainToClass(Persona, resPersona) as PersonaDto;
     const result = await service.validarUsuarioOidc(persona);
     expect(result).toBeDefined();
     expect(result).toHaveProperty('id');

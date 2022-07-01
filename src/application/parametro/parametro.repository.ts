@@ -6,29 +6,36 @@ import { Parametro } from './parametro.entity';
 @EntityRepository(Parametro)
 export class ParametroRepository extends Repository<Parametro> {
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar } = paginacionQueryDto;
-    const queryBuilder = await this.createQueryBuilder('parametro')
+    const { limite, saltar, filtro } = paginacionQueryDto;
+    return await this.createQueryBuilder('parametro')
       .select([
         'parametro.id',
         'parametro.codigo',
         'parametro.nombre',
         'parametro.grupo',
         'parametro.descripcion',
+        'parametro.estado',
       ])
+      .where(
+        filtro
+          ? '(parametro.codigo like :filtro or parametro.nombre ilike :filtro or parametro.descripcion ilike :filtro or parametro.grupo ilike :filtro)'
+          : '1=1',
+        {
+          filtro: `%${filtro}%`,
+        },
+      )
       .offset(saltar)
       .limit(limite)
       .getManyAndCount();
-    return queryBuilder;
   }
 
   async listarPorGrupo(grupo: string) {
-    const queryBuilder = await this.createQueryBuilder('parametro')
+    return await this.createQueryBuilder('parametro')
       .select(['parametro.id', 'parametro.codigo', 'parametro.nombre'])
       .where('parametro.grupo = :grupo', {
         grupo,
       })
       .getMany();
-    return queryBuilder;
   }
 
   async crear(parametroDto: CrearParametroDto) {

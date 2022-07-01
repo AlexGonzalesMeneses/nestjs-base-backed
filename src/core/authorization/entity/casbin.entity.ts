@@ -7,41 +7,49 @@ export class CasbinRule extends BaseEntity {
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public ptype: string;
+  public ptype: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v0: string;
+  public v0: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v1: string;
+  public v1: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v2: string;
+  public v2: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v3: string;
+  public v3: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v4: string;
+  public v4: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v5: string;
+  public v5: string | null;
 
   @Column({
     nullable: true,
+    type: 'varchar',
   })
-  public v6: string;
+  public v6: string | null;
 }

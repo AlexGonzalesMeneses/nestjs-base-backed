@@ -29,13 +29,13 @@ export class RefreshTokensService {
     private readonly configService: ConfigService,
   ) {}
 
-  async findById(id: string): Promise<RefreshTokens> {
+  async findById(id: string): Promise<RefreshTokens | undefined> {
     return this.refreshTokensRepository.findById(id);
   }
 
   async create(grantId: string): Promise<RefreshTokens> {
     const ttl = parseInt(
-      this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      this.configService.get('REFRESH_TOKEN_EXPIRES_IN') || '3600000',
       10,
     );
     const currentDate = new Date();
@@ -72,15 +72,18 @@ export class RefreshTokensService {
       refreshToken.grantId,
     );
 
-    const roles = [];
+    const roles: Array<string | null> = [];
     if (usuario.roles.length) {
       usuario.roles.map((usuarioRol) => {
         roles.push(usuarioRol.rol);
       });
     }
 
-    let newRefreshToken = null;
-    const rft = parseInt(this.configService.get('REFRESH_TOKEN_ROTATE_IN'), 10);
+    let newRefreshToken: RefreshTokens | undefined | null = null;
+    const rft = parseInt(
+      this.configService.get('REFRESH_TOKEN_ROTATE_IN') || '0',
+      10,
+    );
 
     // crear rotacion de refresh token
     if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
@@ -99,14 +102,14 @@ export class RefreshTokensService {
   }
 
   async removeByid(id: string) {
-    const refreshToken = await this.refreshTokensRepository.findOne(id);
+    const refreshToken = await this.refreshTokensRepository.findById(id);
     if (!refreshToken) {
       return {};
     }
     return this.refreshTokensRepository.remove(refreshToken);
   }
 
-  @Cron(process.env.REFRESH_TOKEN_REVISIONS)
+  @Cron(process.env.REFRESH_TOKEN_REVISIONS || '0')
   async eliminarCaducos() {
     return this.refreshTokensRepository.eliminarTokensCaducos();
   }

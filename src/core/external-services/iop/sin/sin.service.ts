@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { SINCredencialesDTO } from './credenciales.dto';
 import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class SinService {
@@ -20,10 +21,11 @@ export class SinService {
         clave: datosSIN.Contrasena,
       };
 
-      const respuesta = await this.http
-        .post('/login', datosCampos)
-        .pipe(map((response) => response.data))
-        .toPromise();
+      const respuesta = await firstValueFrom(
+        await this.http
+          .post('/login', datosCampos)
+          .pipe(map((response) => response.data)),
+      );
 
       if (
         !respuesta.estado &&
