@@ -185,7 +185,7 @@ export class UsuarioService {
           estado: Status.PENDING,
           usuarioActualizacion: usuarioAuditoria,
         });
-      // si está bien => enviar el mail con la contraseña generada
+      // si está bien ≥ enviar el mail con la contraseña generada
       const datosCorreo = {
         correo: usuario.correoElectronico,
         asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
@@ -282,7 +282,7 @@ export class UsuarioService {
       const op = async (transaction) => {
         const repositorio = transaction.getRepository(Usuario);
         await repositorio.update(idUsuario, usuarioDto);
-        // si está bien => enviar el mail con la contraseña generada
+        // si está bien ≥ enviar el mail con la contraseña generada
         const datosCorreo = {
           correo: usuario.correoElectronico,
           asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,

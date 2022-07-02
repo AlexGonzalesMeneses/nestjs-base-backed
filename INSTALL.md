@@ -7,7 +7,7 @@
 ## 1. Requerimientos
 
 | Nombre       | Versión     | Descripción                                            | Instalación                                      |
-| ------------ | ----------- | ------------------------------------------------------ | ------------------------------------------------ |
+|--------------|-------------|--------------------------------------------------------|--------------------------------------------------|
 | `PostgreSQL` | ^14         | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
 | `NodeJS`     | ^16         | Entorno de programación de JavaScript.                 | `nvm install 16` https://github.com/nvm-sh/nvm   |
 | `NPM`        | ^8 <= 8.5.5 | Gestor de paquetes de NodeJS.                          | `npm install -g npm@8.5.5`                       |
@@ -42,7 +42,7 @@ npm install --legacy-peer-deps
 
 ### Archivos de configuración.
 
-Crear los archivos de configuración en base a los archivos `sample` y modificar los valores que sean necesarios.
+Crear los archivos de configuración con base en los archivos `sample` y modificar los valores que sean necesarios.
 
 ```bash
 # Variables de entorno globales

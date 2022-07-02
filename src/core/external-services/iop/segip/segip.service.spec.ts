@@ -13,7 +13,7 @@ const dataDefaultAxios = {
   config: {},
 };
 
-const makeSuccessResponse = (datosRespuesta): AxiosResponse<any> => {
+const makeSuccessResponse = (datosRespuesta: string): AxiosResponse => {
   return {
     data: {
       ConsultaDatoPersonaContrastacionResult: {
@@ -30,7 +30,7 @@ const makeSuccessResponse = (datosRespuesta): AxiosResponse<any> => {
   };
 };
 
-const makeFailedResponse = (): AxiosResponse<any> => {
+const makeFailedResponse = (): AxiosResponse => {
   return {
     data: {
       ConsultaDatoPersonaContrastacionResult: {
@@ -109,7 +109,7 @@ describe('SegipService', () => {
   });
 
   it('[contrastar] Debería retornar finalizado = false, si segip retorna algun codigo distinto de 2 = ENCONTRADO ', async () => {
-    const response: AxiosResponse<any> = makeFailedResponse();
+    const response: AxiosResponse = makeFailedResponse();
     jest.spyOn(httpService, 'get').mockImplementation(() => of<any>(response));
 
     const persona = plainToClass(PersonaDto, datosPersona);

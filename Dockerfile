@@ -9,7 +9,7 @@ ARG CI_COMMIT_REF_NAME
 ENV CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA} \
     CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE} \
     CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
-RUN npm set registry http://repositorio.agetic.gob.bo/nexus/repository/npmjs
+RUN npm config set registry=https://registry.npmjs.com/
 RUN npm set strict-ssl false
 RUN npm ci
 RUN npm run build

@@ -5,8 +5,6 @@ import { AuthenticationService } from '../service/authentication.service';
 import { RefreshTokensService } from '../service/refreshTokens.service';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { Request } from 'express';
-import { userInfo } from 'os';
-import any = jasmine.any;
 
 const resAutenticar = {
   refresh_token: '123',

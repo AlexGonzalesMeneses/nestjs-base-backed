@@ -16,7 +16,6 @@ import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol
 import { InjectRepository } from '@nestjs/typeorm';
 import { PersonaService } from '../../usuario/service/persona.service';
 import { RolRepository } from '../../authorization/repository/rol.repository';
-import { Persona } from '../../usuario/entity/persona.entity';
 
 @Injectable()
 export class AuthenticationService {
