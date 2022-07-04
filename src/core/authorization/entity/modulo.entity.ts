@@ -8,10 +8,12 @@ import {
 } from 'typeorm';
 import { Status } from '../../../common/constants';
 import { PropiedadesDto } from '../dto/crear-modulo.dto';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
-@Entity()
+@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -9,10 +9,12 @@ import {
 import { Rol } from './rol.entity';
 import { Status } from '../../../common/constants';
 import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
-@Entity()
+@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class UsuarioRol extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

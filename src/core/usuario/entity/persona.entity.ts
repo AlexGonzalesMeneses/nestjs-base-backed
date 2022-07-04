@@ -1,10 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Usuario } from './usuario.entity';
 import { Status } from '../../../common/constants';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
-@Entity()
+@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona {
   @PrimaryGeneratedColumn('uuid')
   id: string;

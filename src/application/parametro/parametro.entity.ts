@@ -1,10 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 import { Status } from '../../common/constants';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
-@Entity()
+@Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro {
   @PrimaryGeneratedColumn('uuid')
   id: string;

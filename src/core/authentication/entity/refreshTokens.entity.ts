@@ -1,5 +1,8 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-@Entity()
+import dotenv from 'dotenv';
+dotenv.config();
+
+@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class RefreshTokens {
   @PrimaryColumn()
   id: string;
@@ -7,10 +10,10 @@ export class RefreshTokens {
   @Column({ name: 'grant_id' })
   grantId: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamp' })
   iat: Date;
 
-  @Column({ name: 'expires_at', type: 'timestamptz' })
+  @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
   @Column({ name: 'is_revoked', type: 'boolean' })

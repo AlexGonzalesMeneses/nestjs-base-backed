@@ -10,6 +10,8 @@ import {
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
 import { Persona } from './persona.entity';
 import { Status } from '../../../common/constants';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const enumStatus = [
   Status.CREATE,
@@ -18,7 +20,7 @@ const enumStatus = [
   Status.INACTIVE,
 ];
 
-@Entity()
+@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -58,7 +60,7 @@ export class Usuario extends AbstractEntity {
 
   @Column({
     name: 'fecha_bloqueo',
-    type: 'timestamptz',
+    type: 'timestamp',
     nullable: true,
   })
   fechaBloqueo: Date | null;
