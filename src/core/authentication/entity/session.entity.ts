@@ -3,8 +3,7 @@ import { SessionEntity } from 'typeorm-store';
 import dotenv from 'dotenv';
 dotenv.config();
 
-
-@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
+@Entity()
 export class Session extends BaseEntity implements SessionEntity {
   @PrimaryColumn()
   id: string;

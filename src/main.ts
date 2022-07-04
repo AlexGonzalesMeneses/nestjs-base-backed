@@ -46,7 +46,10 @@ async function bootstrap() {
         maxAge: 30 * 60 * 1000,
         httpOnly: true,
       },
-      store: new TypeormStore({ repository, expirationInterval: 3600 }), //segundos
+      store: new TypeormStore({
+        repository: repository,
+        expirationInterval: 3600,
+      }), //segundos
     }),
   );
   app.use(passport.initialize());
