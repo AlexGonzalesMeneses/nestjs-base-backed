@@ -1,19 +1,34 @@
-import { EntityRepository, getRepository, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { RefreshTokens } from '../entity/refreshTokens.entity';
+import { Injectable } from '@nestjs/common';
 
-@EntityRepository(RefreshTokens)
-export class RefreshTokensRepository extends Repository<RefreshTokens> {
-  findById(id: string) {
-    return getRepository(RefreshTokens)
+@Injectable()
+export class RefreshTokensRepository {
+  constructor(private dataSource: DataSource) {}
+
+  async findById(id: string) {
+    return await this.dataSource
+      .getRepository(RefreshTokens)
       .createQueryBuilder('refreshTokens')
       .where('refreshTokens.id = :id', { id })
       .getOne();
   }
 
-  eliminarTokensCaducos() {
+  async crear(refreshToken: Partial<RefreshTokens>) {
+    return await this.dataSource
+      .getRepository(RefreshTokens)
+      .save(refreshToken);
+  }
+
+  async eliminar(id: string) {
+    return await this.dataSource.getRepository(RefreshTokens).delete(id);
+  }
+
+  async eliminarTokensCaducos() {
     const now: Date = new Date();
-    return getRepository(RefreshTokens)
+    return await this.dataSource
+      .getRepository(RefreshTokens)
       .createQueryBuilder('RefreshTokens')
       .delete()
       .from(RefreshTokens)

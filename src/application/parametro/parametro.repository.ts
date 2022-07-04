@@ -1,13 +1,36 @@
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { EntityRepository, Repository } from 'typeorm';
+import { DataSource, Repository, UpdateResult } from 'typeorm';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { Parametro } from './parametro.entity';
+import { Injectable } from '@nestjs/common';
+import { ActualizarParametroDto } from './dto/actualizar-parametro.dto';
 
-@EntityRepository(Parametro)
-export class ParametroRepository extends Repository<Parametro> {
+@Injectable()
+export class ParametroRepository {
+  constructor(private dataSource: DataSource) {}
+
+  async buscarPorId(id: string): Promise<Parametro | null> {
+    return await this.dataSource
+      .getRepository(Parametro)
+      .createQueryBuilder('parametro')
+      .where({ id: id })
+      .getOne();
+  }
+
+  async actualizar(
+    id: string,
+    parametroDto: ActualizarParametroDto,
+  ): Promise<UpdateResult> {
+    return await this.dataSource
+      .getRepository(Parametro)
+      .update(id, parametroDto);
+  }
+
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, filtro } = paginacionQueryDto;
-    return await this.createQueryBuilder('parametro')
+    return await this.dataSource
+      .getRepository(Parametro)
+      .createQueryBuilder('parametro')
       .select([
         'parametro.id',
         'parametro.codigo',
@@ -30,7 +53,9 @@ export class ParametroRepository extends Repository<Parametro> {
   }
 
   async listarPorGrupo(grupo: string) {
-    return await this.createQueryBuilder('parametro')
+    return await this.dataSource
+      .getRepository(Parametro)
+      .createQueryBuilder('parametro')
       .select(['parametro.id', 'parametro.codigo', 'parametro.nombre'])
       .where('parametro.grupo = :grupo', {
         grupo,
@@ -47,6 +72,6 @@ export class ParametroRepository extends Repository<Parametro> {
     parametro.grupo = grupo;
     parametro.descripcion = descripcion;
 
-    return await this.save(parametro);
+    return await this.dataSource.getRepository(Parametro).save(parametro);
   }
 }

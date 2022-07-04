@@ -7,7 +7,7 @@ import passport from 'passport';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
-import { getConnection } from 'typeorm';
+
 import { TypeormStore } from 'typeorm-store';
 import { Session } from './core/authentication/entity/session.entity';
 import { Logger } from 'nestjs-pino';
@@ -19,6 +19,7 @@ import {
   SWAGGER_API_NAME,
   SWAGGER_API_ROOT,
 } from './common/constants';
+import AppDataSource from '../ormconfig-default';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -31,7 +32,7 @@ async function bootstrap() {
   createSwagger(app);
 
   // configuration app
-  const repository = getConnection().getRepository(Session);
+  const repository = AppDataSource.getRepository(Session);
   app.use(expressMiddleware());
 
   app.use(

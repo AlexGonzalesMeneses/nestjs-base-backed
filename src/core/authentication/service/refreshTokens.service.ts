@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
@@ -22,15 +21,15 @@ dotenv.config();
 export class RefreshTokensService {
   // eslint-disable-next-line max-params
   constructor(
-    @InjectRepository(RefreshTokensRepository)
+    @Inject(RefreshTokensRepository)
     private refreshTokensRepository: RefreshTokensRepository,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
-  async findById(id: string): Promise<RefreshTokens | undefined> {
-    return this.refreshTokensRepository.findById(id);
+  async findById(id: string): Promise<RefreshTokens | null> {
+    return await this.refreshTokensRepository.findById(id);
   }
 
   async create(grantId: string): Promise<RefreshTokens> {
@@ -39,7 +38,7 @@ export class RefreshTokensService {
       10,
     );
     const currentDate = new Date();
-    const refreshToken = this.refreshTokensRepository.create({
+    return this.refreshTokensRepository.crear({
       id: TextService.generateNanoId(),
       grantId,
       iat: currentDate,
@@ -47,7 +46,6 @@ export class RefreshTokensService {
       isRevoked: false,
       data: {},
     });
-    return this.refreshTokensRepository.save(refreshToken);
   }
 
   async createAccessToken(refreshTokenId: string) {
@@ -106,7 +104,7 @@ export class RefreshTokensService {
     if (!refreshToken) {
       return {};
     }
-    return this.refreshTokensRepository.remove(refreshToken);
+    return this.refreshTokensRepository.eliminar(refreshToken.id);
   }
 
   @Cron(process.env.REFRESH_TOKEN_REVISIONS || '0')

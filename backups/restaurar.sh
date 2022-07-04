@@ -26,23 +26,23 @@ docker exec $dockerContainer psql -h $dbhost -U postgres -c "SELECT 1 FROM pg_us
 docker exec $dockerContainer psql -h $dbhost -U postgres -c "ALTER DATABASE $dbname OWNER TO $dbuser"
 
 echo " - Copiando..."
-docker cp $dbfile $dockerContainer:/
+docker cp "$dbfile" $dockerContainer:/
 sleep 2;
 
 echo " - Descomprimiendo..."
-docker exec $dockerContainer gunzip -kf $filename.gz
+docker exec $dockerContainer gunzip -kf "$filename".gz
 sleep 2;
 
 echo " - Removiendo $filename.gz..."
-docker exec $dockerContainer rm -rf $filename.gz
+docker exec $dockerContainer rm -rf "$filename".gz
 sleep 2;
 
 echo " - Restaurando..."
-docker exec $dockerContainer psql -h $dbhost -U postgres -d $dbname -f $filename
+docker exec $dockerContainer psql -h $dbhost -U postgres -d "$dbname" -f "$filename"
 sleep 2;
 
 echo " - Removiendo $filename..."
-docker exec $dockerContainer rm -rf $filename
+docker exec $dockerContainer rm -rf "$filename"
 sleep 2;
 
 echo -e "\n - [success] $dbname ($dbhost)"

@@ -21,6 +21,11 @@ import { UsuarioRolRepository } from '../authorization/repository/usuario-rol.re
 import { PersonaRepository } from '../usuario/repository/persona.repository';
 import { RolRepository } from '../authorization/repository/rol.repository';
 import { BaseClient } from 'openid-client';
+import { Persona } from '../usuario/entity/persona.entity';
+import { Usuario } from '../usuario/entity/usuario.entity';
+import { RefreshTokens } from './entity/refreshTokens.entity';
+import { UsuarioRol } from '../authorization/entity/usuario-rol.entity';
+import { Rol } from '../authorization/entity/rol.entity';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
@@ -46,11 +51,11 @@ const OidcStrategyFactory = {
     UsuarioModule,
     ConfigModule,
     TypeOrmModule.forFeature([
-      PersonaRepository,
-      UsuarioRepository,
-      RefreshTokensRepository,
-      UsuarioRolRepository,
-      RolRepository,
+      Persona,
+      Usuario,
+      RefreshTokens,
+      UsuarioRol,
+      Rol,
     ]),
     MensajeriaModule,
   ],
@@ -63,6 +68,11 @@ const OidcStrategyFactory = {
     JwtStrategy,
     OidcStrategyFactory,
     SessionSerializer,
+    RolRepository,
+    PersonaRepository,
+    UsuarioRepository,
+    RefreshTokensRepository,
+    UsuarioRolRepository,
   ],
   exports: [AuthenticationService],
 })

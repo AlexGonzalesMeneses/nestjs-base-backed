@@ -1,20 +1,27 @@
 import { UsuarioRol } from '../entity/usuario-rol.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Usuario } from '../../usuario/entity/usuario.entity';
 import { Rol } from '../entity/rol.entity';
 import { Status } from '../../../common/constants';
+import { Injectable } from '@nestjs/common';
 
-@EntityRepository(UsuarioRol)
-export class UsuarioRolRepository extends Repository<UsuarioRol> {
+@Injectable()
+export class UsuarioRolRepository {
+  constructor(private dataSource: DataSource) {}
+
   async obtenerRolesPorUsuario(idUsuario: string) {
-    return await this.createQueryBuilder('usuarioRol')
+    return await this.dataSource
+      .getRepository(UsuarioRol)
+      .createQueryBuilder('usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('usuarioRol.id_usuario = :idUsuario', { idUsuario })
       .getMany();
   }
 
   async activar(idUsuario, roles, usuarioActualizacion) {
-    return await this.createQueryBuilder()
+    return await this.dataSource
+      .getRepository(UsuarioRol)
+      .createQueryBuilder()
       .update(UsuarioRol)
       .set({ estado: Status.ACTIVE, usuarioActualizacion })
       .where('id_usuario = :idUsuario', { idUsuario })
@@ -23,7 +30,9 @@ export class UsuarioRolRepository extends Repository<UsuarioRol> {
   }
 
   async inactivar(idUsuario, roles, usuarioActualizacion) {
-    return await this.createQueryBuilder()
+    return await this.dataSource
+      .getRepository(UsuarioRol)
+      .createQueryBuilder()
       .update(UsuarioRol)
       .set({ estado: Status.INACTIVE, usuarioActualizacion })
       .where('id_usuario = :idUsuario', { idUsuario })
@@ -47,6 +56,6 @@ export class UsuarioRolRepository extends Repository<UsuarioRol> {
       return usuarioRol;
     });
 
-    return await this.save(usuarioRoles);
+    return await this.dataSource.getRepository(UsuarioRol).save(usuarioRoles);
   }
 }

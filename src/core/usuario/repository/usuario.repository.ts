@@ -1,19 +1,24 @@
 import { TextService } from '../../../common/lib/text.service';
 import { Rol } from '../../authorization/entity/rol.entity';
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
-import { EntityRepository, Repository } from 'typeorm';
 import { Persona } from '../entity/persona.entity';
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
 import { Usuario } from '../entity/usuario.entity';
 import { PersonaDto } from '../dto/persona.dto';
 import { Status } from '../../../common/constants';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
-@EntityRepository(Usuario)
-export class UsuarioRepository extends Repository<Usuario> {
+@Injectable()
+export class UsuarioRepository {
+  constructor(private dataSource: DataSource) {}
+
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
     const { limite, saltar, filtro, rol } = paginacionQueryDto;
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .leftJoinAndSelect('usuario.persona', 'persona')
@@ -51,7 +56,9 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   async recuperar() {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .getMany();
@@ -59,19 +66,27 @@ export class UsuarioRepository extends Repository<Usuario> {
 
   async buscarUsuario(usuario: string) {
     // return Usuario.findOne({ usuario });
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where({ usuario: usuario })
       .getOne();
   }
 
-  async buscarPorId(id: string): Promise<Usuario | undefined> {
-    return await this.createQueryBuilder('usuario').where({ id: id }).getOne();
+  async buscarPorId(id: string): Promise<Usuario | null> {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .where({ id: id })
+      .getOne();
   }
 
   async buscarUsuarioRolPorId(id: string) {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -95,7 +110,9 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   async buscarUsuarioPorCI(persona: PersonaDto) {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.persona', 'persona')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
@@ -104,7 +121,9 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   async verificarExisteUsuarioPorCI(ci: string) {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .leftJoin('usuario.persona', 'persona')
       .select('usuario.id')
       .where('persona.nroDocumento = :ci', { ci: ci })
@@ -112,7 +131,9 @@ export class UsuarioRepository extends Repository<Usuario> {
   }
 
   async buscarUsuarioPorCorreo(correo: string) {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
       .getOne();
   }
@@ -133,7 +154,7 @@ export class UsuarioRepository extends Repository<Usuario> {
 
     // Usuario
 
-    return await this.save({
+    return await this.dataSource.getRepository(Usuario).save({
       persona: {
         nombres: usuarioDto?.persona?.nombres,
         primerApellido: usuarioDto?.persona?.primerApellido,
@@ -189,7 +210,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
-    return await this.save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario);
   }
 
   async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
@@ -217,7 +238,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
     usuario.usuarioCreacion = usuarioAuditoria;
 
-    return await this.save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario);
   }
 
   async actualizarContadorBloqueos(idUsuario, intento) {
@@ -225,7 +246,7 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.id = idUsuario;
     usuario.intentos = intento;
 
-    return await this.save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario);
   }
 
   async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
@@ -234,18 +255,21 @@ export class UsuarioRepository extends Repository<Usuario> {
     usuario.codigoDesbloqueo = codigo;
     usuario.fechaBloqueo = fechaBloqueo;
 
-    return await this.save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario);
   }
 
   async buscarPorCodigoDesbloqueo(codigo: string) {
-    return await this.createQueryBuilder('usuario')
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne();
   }
 
   async actualizarDatosPersona(persona: PersonaDto) {
-    return await this.createQueryBuilder()
+    return await this.dataSource
+      .createQueryBuilder()
       .update(Persona)
       .set(persona)
       .where('nroDocumento = :nroDocumento', {
@@ -258,13 +282,13 @@ export class UsuarioRepository extends Repository<Usuario> {
     id: string,
     usuario: Partial<Usuario>,
   ): Promise<Usuario> {
-    return await this.save({
+    return await this.dataSource.getRepository(Usuario).save({
       id: id,
       ...usuario,
     });
   }
 
   async runTransaction(op) {
-    return this.manager.transaction(op);
+    return this.dataSource.getRepository(Usuario).manager.transaction(op);
   }
 }

@@ -1,7 +1,11 @@
-import { Injectable, PreconditionFailedException, Query } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  PreconditionFailedException,
+  Query,
+} from '@nestjs/common';
 import { UsuarioRepository } from '../repository/usuario.repository';
 import { Usuario } from '../entity/usuario.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Status } from '../../../common/constants';
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
 import { TextService } from '../../../common/lib/text.service';
@@ -26,11 +30,11 @@ import { Modulo } from '../../authorization/entity/modulo.entity';
 export class UsuarioService {
   // eslint-disable-next-line max-params
   constructor(
-    @InjectRepository(UsuarioRepository)
+    @Inject(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
-    @InjectRepository(UsuarioRolRepository)
+    @Inject(UsuarioRolRepository)
     private usuarioRolRepositorio: UsuarioRolRepository,
-    @InjectRepository(RolRepository)
+    @Inject(RolRepository)
     private rolRepositorio: RolRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
@@ -42,7 +46,7 @@ export class UsuarioService {
     return await this.usuarioRepositorio.listar(paginacionQueryDto);
   }
 
-  async buscarUsuario(usuario: string): Promise<Usuario | undefined> {
+  async buscarUsuario(usuario: string): Promise<Usuario | null> {
     return await this.usuarioRepositorio.buscarUsuario(usuario);
   }
 
@@ -426,7 +430,7 @@ export class UsuarioService {
     }
   }
 
-  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario | undefined> {
+  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario | null> {
     return await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
   }
 

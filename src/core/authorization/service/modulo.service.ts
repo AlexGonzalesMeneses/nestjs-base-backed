@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { ModuloRepository } from '../repository/modulo.repository';
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 import { CrearModuloDto } from '../dto/crear-modulo.dto';
@@ -7,7 +6,7 @@ import { CrearModuloDto } from '../dto/crear-modulo.dto';
 @Injectable()
 export class ModuloService {
   constructor(
-    @InjectRepository(ModuloRepository)
+    @Inject(ModuloRepository)
     private moduloRepositorio: ModuloRepository,
   ) {}
 

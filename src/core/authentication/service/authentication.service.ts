@@ -13,7 +13,6 @@ import { PersonaDto } from '../../usuario/dto/persona.dto';
 import { ConfigService } from '@nestjs/config';
 import { TemplateEmailService } from '../../../common/templates/templates-email.service';
 import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PersonaService } from '../../usuario/service/persona.service';
 import { RolRepository } from '../../authorization/repository/rol.repository';
 
@@ -26,9 +25,9 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly mensajeriaService: MensajeriaService,
-    @InjectRepository(UsuarioRolRepository)
+    @Inject(UsuarioRolRepository)
     private usuarioRolRepositorio: UsuarioRolRepository,
-    @InjectRepository(RolRepository)
+    @Inject(RolRepository)
     private rolRepositorio: RolRepository,
     @Inject(ConfigService) private readonly configService: ConfigService,
   ) {}

@@ -1,18 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PersonaRepository } from '../repository/persona.repository';
 import { Persona } from '../entity/persona.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PersonaDto } from '../dto/persona.dto';
 
 @Injectable()
 export class PersonaService {
   // eslint-disable-next-line max-params
   constructor(
-    @InjectRepository(PersonaRepository)
+    @Inject(PersonaRepository)
     private personaRepositorio: PersonaRepository,
   ) {}
 
-  async buscarPersonaPorCI(persona: PersonaDto): Promise<Persona | undefined> {
-    return this.personaRepositorio.buscarPersonaPorCI(persona);
+  async buscarPersonaPorCI(persona: PersonaDto): Promise<Persona | null> {
+    return await this.personaRepositorio.buscarPersonaPorCI(persona);
   }
 }

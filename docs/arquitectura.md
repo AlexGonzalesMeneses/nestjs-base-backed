@@ -53,7 +53,7 @@
 ├──Dockerfile
 ├──LICENSE
 ├──nest-cli.json
-├──ormconfig.ts
+├──ormconfig-default.ts
 ├──package-lock.json
 ├──package.json
 ├──INSTALL.md               # Archivo con instrucciones de instalación

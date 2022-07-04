@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { ParametroRepository } from './parametro.repository';
 import { Parametro } from './parametro.entity';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
@@ -12,7 +11,7 @@ import { Status } from '../../common/constants';
 @Injectable()
 export class ParametroService {
   constructor(
-    @InjectRepository(ParametroRepository)
+    @Inject(ParametroRepository)
     private parametroRepositorio: ParametroRepository,
   ) {}
 
@@ -29,20 +28,20 @@ export class ParametroService {
   }
 
   async actualizarDatos(id: string, parametroDto: ActualizarParametroDto) {
-    const parametro = await this.parametroRepositorio.findOne(id);
+    const parametro = await this.parametroRepositorio.buscarPorId(id);
     if (parametro) {
-      await this.parametroRepositorio.update(id, parametroDto);
+      await this.parametroRepositorio.actualizar(id, parametroDto);
       return { id };
     }
     throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
   }
 
   async activar(idParametro) {
-    const parametro = await this.parametroRepositorio.findOne(idParametro);
+    const parametro = await this.parametroRepositorio.buscarPorId(idParametro);
     if (parametro) {
       const parametroDto = new ActualizarParametroDto();
       parametroDto.estado = Status.ACTIVE;
-      await this.parametroRepositorio.update(idParametro, parametroDto);
+      await this.parametroRepositorio.actualizar(idParametro, parametroDto);
       return {
         id: idParametro,
         estado: parametroDto.estado,
@@ -52,11 +51,11 @@ export class ParametroService {
   }
 
   async inactivar(idParametro) {
-    const parametro = await this.parametroRepositorio.findOne(idParametro);
+    const parametro = await this.parametroRepositorio.buscarPorId(idParametro);
     if (parametro) {
       const parametroDto = new ActualizarParametroDto();
       parametroDto.estado = Status.INACTIVE;
-      await this.parametroRepositorio.update(idParametro, parametroDto);
+      await this.parametroRepositorio.actualizar(idParametro, parametroDto);
       return {
         id: idParametro,
         estado: parametroDto.estado,
