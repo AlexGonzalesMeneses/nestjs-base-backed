@@ -11,6 +11,9 @@
 
 Proyecto Base para el inicio de proyectos basados en NestJS.
 
+🚨 Advertencia, este proyecto en rama `Develop` usa TypeOrm `v0.3.7` para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
+
+
 ## Tabla de contenido
 
 - [Proyecto base backend](#proyecto-base-backend)
