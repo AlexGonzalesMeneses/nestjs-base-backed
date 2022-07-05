@@ -6,7 +6,7 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import dotenv from 'dotenv';
-import { ISession } from '@freshgiammi/connect-typeorm';
+import { ISession } from 'connect-typeorm';
 
 dotenv.config();
 

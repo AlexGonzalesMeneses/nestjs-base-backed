@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 
-import { TypeormStore } from '@freshgiammi/connect-typeorm';
+import { TypeormStore } from 'connect-typeorm';
 import { Session } from './core/authentication/entity/session.entity';
 import { Logger } from 'nestjs-pino';
 import { expressMiddleware } from 'cls-rtracer';

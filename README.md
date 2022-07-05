@@ -9,9 +9,21 @@
   </a>
 </p>
 
-Proyecto Base para el inicio de proyectos basados en NestJS.
+> Para proyectos desarrollados por AGETIC
 
 🚨 Advertencia, este proyecto en rama `Develop` usa TypeOrm `v0.3.7` para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
+
+💡 Antes de reutilizar el proyecto 
+
+- Se sugiere crear un Fork, dado que se harán mejoras continuas
+- Para añadir este proyecto como otro origen, ejecutar dentro el proyecto Fork:
+```
+git remote add origin2 git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
+```
+- Para descargar los commits desde el 2do origen, ejecutar
+```
+git pull origin2 master
+```
 
 
 ## Tabla de contenido
