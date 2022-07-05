@@ -8,10 +8,11 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { INestApplication } from '@nestjs/common';
 
-import { TypeormStore } from 'typeorm-store';
+import { TypeormStore } from '@freshgiammi/connect-typeorm';
 import { Session } from './core/authentication/entity/session.entity';
 import { Logger } from 'nestjs-pino';
 import { expressMiddleware } from 'cls-rtracer';
+import dotenv from 'dotenv';
 
 import {
   SWAGGER_API_CURRENT_VERSION,
@@ -19,7 +20,21 @@ import {
   SWAGGER_API_NAME,
   SWAGGER_API_ROOT,
 } from './common/constants';
-import AppDataSource from '../ormconfig-default';
+import { DataSource } from 'typeorm';
+
+dotenv.config();
+
+export const SessionAppDataSource = new DataSource({
+  type: 'postgres',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  synchronize: false,
+  logging: true,
+  entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -31,8 +46,11 @@ async function bootstrap() {
   // swagger
   createSwagger(app);
 
+  await SessionAppDataSource.initialize();
+
   // configuration app
-  const repository = AppDataSource.getRepository(Session);
+  const repositorySession = SessionAppDataSource.getRepository(Session);
+
   app.use(expressMiddleware());
 
   app.use(
@@ -46,10 +64,9 @@ async function bootstrap() {
         maxAge: 30 * 60 * 1000,
         httpOnly: true,
       },
-      store: new TypeormStore({
-        repository: repository,
-        expirationInterval: 3600,
-      }), //segundos
+      store: new TypeormStore({ ttl: 3600, cleanupLimit: 2 }).connect(
+        repositorySession,
+      ),
     }),
   );
   app.use(passport.initialize());

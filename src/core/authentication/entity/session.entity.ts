@@ -1,16 +1,27 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
-import { SessionEntity } from 'typeorm-store';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  PrimaryColumn,
+} from 'typeorm';
 import dotenv from 'dotenv';
+import { ISession } from '@freshgiammi/connect-typeorm';
+
 dotenv.config();
 
 @Entity()
-export class Session extends BaseEntity implements SessionEntity {
-  @PrimaryColumn()
-  id: string;
+export class Session implements ISession {
+  @Index()
+  @Column('bigint')
+  public expiredAt = Date.now();
 
-  @Column({ type: 'integer' })
-  expiresAt: number;
+  @PrimaryColumn('varchar', { length: 255 })
+  public id = '';
 
-  @Column({ type: 'varchar' })
-  data: string;
+  @Column('text')
+  public json = '';
+
+  @DeleteDateColumn()
+  public destroyedAt?: Date;
 }
