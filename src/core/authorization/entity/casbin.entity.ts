@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class CasbinRule extends BaseEntity {
   @PrimaryGeneratedColumn()

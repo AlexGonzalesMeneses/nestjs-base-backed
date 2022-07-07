@@ -1,5 +1,5 @@
 import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { DataSource, Repository, UpdateResult } from 'typeorm';
+import { DataSource, UpdateResult } from 'typeorm';
 import { CrearParametroDto } from './dto/crear-parametro.dto';
 import { Parametro } from './parametro.entity';
 import { Injectable } from '@nestjs/common';
