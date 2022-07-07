@@ -6,12 +6,12 @@
 
 ## 1. Requerimientos
 
-| Nombre       | Versión     | Descripción                                            | Instalación                                      |
-|--------------|-------------|--------------------------------------------------------|--------------------------------------------------|
-| `PostgreSQL` | ^14         | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
-| `NodeJS`     | ^16         | Entorno de programación de JavaScript.                 | `nvm install 16` https://github.com/nvm-sh/nvm   |
-| `NPM`        | ^8 <= 8.5.5 | Gestor de paquetes de NodeJS.                          | `npm install -g npm@8.5.5`                       |
-| `PM2`        | ^5.2        | Gestor avanzado de procesos de producción para NodeJS. | `npm install -g pm2@5.2`                         |
+| Nombre       | Versión | Descripción                                            | Instalación                                      |
+| ------------ | ------- | ------------------------------------------------------ | ------------------------------------------------ |
+| `PostgreSQL` | ^14     | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
+| `NodeJS`     | ^16     | Entorno de programación de JavaScript.                 | `nvm install 16` https://github.com/nvm-sh/nvm   |
+| `NPM`        | ^8      | Gestor de paquetes de NodeJS.                          | `npm install -g npm@8.5.5`                       |
+| `PM2`        | ^5.2    | Gestor avanzado de procesos de producción para NodeJS. | `npm install -g pm2@5.2`                         |
 
 **Nota** Para crear una instancia de PostgreSQL con docker
 puede utilizar el siguiente comando.
@@ -102,7 +102,7 @@ npm run test:cov
 npm run lint
 
 # Crea una nueva migración
-npm run seeds:create adicionarColumnaTipo
+npm run seeds:create adicionarColumnaEstado
 
 # Ejecuta las migraciones
 npm run seeds:run

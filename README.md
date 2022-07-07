@@ -2,10 +2,10 @@
 
 <p align="center">
   <a href="./">
-    <img src="https://img.shields.io/badge/version-v1.1.0-blue" alt="Versión">
+    <img src="https://img.shields.io/badge/version-v1.1.5-blue" alt="Versión">
   </a>
   <a href="./LICENSE">
-      <img src="https://img.shields.io/static/v1?label=Licencia&message=LPG%20-%20Bolivia&color=green" alt="Licencia: LPG - Bolivia" />
+      <img src="https://img.shields.io/static/v1?label=license&message=LPG%20-%20Bolivia&color=green" alt="Licencia: LPG - Bolivia" />
   </a>
 </p>
 
@@ -13,31 +13,31 @@
 
 🚨 Advertencia, este proyecto en rama `Develop` usa TypeOrm `v0.3.7` para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
 
-💡 Antes de reutilizar el proyecto 
+💡 Antes de reutilizar el proyecto
 
 - Se sugiere crear un Fork, dado que se harán mejoras continuas
 - Para añadir este proyecto como otro origen, ejecutar dentro el proyecto Fork:
+
 ```
 git remote add origin2 git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
 ```
+
 - Para descargar los commits desde el 2do origen, ejecutar
+
 ```
 git pull origin2 master
 ```
 
-
 ## Tabla de contenido
 
-- [Proyecto base backend](#proyecto-base-backend)
-  - [Descripción](#descripción)
-  - [Tabla de contenido](#tabla-de-contenido)
-  - [Tecnologías](#tecnologías)
-  - [Funcionalidades](#funcionalidades)
-  - [Documentación](#documentación)
-  - [Comandos útiles](#comandos-útiles)
-  - [Colaboradores](#colaboradores)
-  - [Licencia](#licencia)
-  - [Información de contacto](#información-de-contacto)
+- [Tabla de contenido](#tabla-de-contenido)
+- [Tecnologías](#tecnologías)
+- [Funcionalidades](#funcionalidades)
+- [Documentación](#documentación)
+- [Comandos útiles](#comandos-útiles)
+- [Colaboradores](#colaboradores)
+- [Licencia](#licencia)
+- [Información de contacto](#información-de-contacto)
 
 ## Tecnologías
 
@@ -68,7 +68,9 @@ El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
   - Manejo de errores
 
 ## Documentación
+
 Documentación relacionada con el proyecto:
+
 1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
 3. [Documentacion de APIS](/docs/openapi.yaml)
