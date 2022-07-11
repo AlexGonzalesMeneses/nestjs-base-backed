@@ -121,7 +121,7 @@ describe('AuthenticationService', () => {
         {
           provide: RolRepository,
           useValue: {},
-        }
+        },
       ],
     }).compile();
 

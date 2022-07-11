@@ -360,8 +360,7 @@ describe('UsuarioService', () => {
       expect(usuario).toHaveProperty('id');
       expect(usuario).toHaveProperty('estado');
       expect(usuario.estado).toEqual('PENDIENTE');
-    }
-    catch (error) {
+    } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
   });
@@ -395,11 +394,9 @@ describe('UsuarioService', () => {
       expect(usuario).toBeDefined();
       expect(usuario).toHaveProperty('id');
       expect(usuario).toHaveProperty('estado');
-    }
-    catch (error) {
+    } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
-
   });
 
   it('[inactivar] Debería lanzar una excepcion si el usuario no existe', async () => {
@@ -466,8 +463,7 @@ describe('UsuarioService', () => {
 
       expect(result).toBeDefined();
       expect(result).toHaveProperty('id');
-    }
-    catch (error) {
+    } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
   });
@@ -531,6 +527,5 @@ describe('UsuarioService', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(EntityNotFoundException);
     }
-
   });
 });

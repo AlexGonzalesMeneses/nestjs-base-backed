@@ -57,7 +57,7 @@ describe('AuthenticationController', () => {
   });
 
   it('[login] Debería realizar una autenticacion exitosa.', async () => {
-    const req = mockRequest({}, { user: 'boss' }, {id: 5});
+    const req = mockRequest({}, { user: 'boss' }, { id: 5 });
     const res = mockResponse();
     await controller.login(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
