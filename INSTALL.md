@@ -13,15 +13,6 @@
 | `NPM`        | ^8      | Gestor de paquetes de NodeJS.                          | `npm install -g npm@8.5.5`                       |
 | `PM2`        | ^5.2    | Gestor avanzado de procesos de producción para NodeJS. | `npm install -g pm2@5.2`                         |
 
-**Nota** Para crear una instancia de PostgreSQL con docker
-puede utilizar el siguiente comando.
-
-```bash
-docker run --name pg14 -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres:14.2
-```
-
-Para más detalles ver el archivo [backups/COPIAS_DE_SEGURIDAD_Y_RESTAURACION.md](./backups/COPIAS_DE_SEGURIDAD_Y_RESTAURACION.md)
-
 ## 2. Instalación
 
 ### Clonación del proyecto e instalación de dependencias
@@ -57,7 +48,9 @@ cp ecosystem.config.js.sample ecosystem.config.js
 
 ## Creación y configuración de la Base de Datos
 
-Antes de ejecutar el siguiente comando asegúrate de que la base de datos exista y se tenga acceso a esta.
+Antes de ejecutar el siguiente comando asegúrate de que la base de datos exista (con sus correspondientes esquemas) y se tenga acceso a esta.
+
+Para más detalles ver el archivo [backups/CREAR_BASE_DE_DATOS.md](./backups/CREAR_BASE_DE_DATOS.md)
 
 ```bash
 # Configura la base de datos.

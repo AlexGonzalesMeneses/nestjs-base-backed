@@ -1,22 +1,27 @@
 #!/usr/bin/bash
 
-arg1=${1:-database_db.gz}
+arg1=${1:-pg14}
 arg2=${2:-database_db}
-filename="${arg1/.gz/''}"
-database="${arg2}"
+arg3=${3:-database_db.gz}
 
+arg4=${4:-localhost}
+arg5=${5:-5432}
+arg6=${6:-postgres}
+arg7=${7:-postgres}
+
+dockerContainer="${arg1}"
+
+dbname="${arg2}"
+dbhost="${arg4}"
+dbport="${arg5}"
+dbuser="${arg6}"
+dbpass="${arg7}"
+
+filename="${arg3/.gz/''}"
 dbfile="$filename.gz"
-dbname="$database"
-
-dbschema="public"
-dbhost="localhost"
-dbuser="postgres"
-dbpass="postgres"
-
-dockerContainer="pg14"
 
 # [INI] SQL
-echo -e "\n\n >>> Restaurando SQL backup desde $dbfile a $dbname ($dbhost)...\n"
+echo -e "\n\n >>> Restaurando SQL backup desde $dbfile a $dbname ($dbhost:$dbport)...\n"
 
 docker restart $dockerContainer
 docker exec $dockerContainer psql -h $dbhost -U postgres -c "DROP DATABASE IF EXISTS $dbname"
@@ -45,7 +50,7 @@ echo " - Removiendo $filename..."
 docker exec $dockerContainer rm -rf "$filename"
 sleep 2;
 
-echo -e "\n - [success] $dbname ($dbhost)"
+echo -e "\n - [éxito] $dbname ($dbhost)"
 # [END] SQL
 
-echo -e "\n\n >>> ¡SQL backup restaurado con éxito! :)\n"
+echo -e "\n\n >>> ¡Base de datos restaurada con éxito! :)\n"
