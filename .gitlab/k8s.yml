@@ -29,6 +29,7 @@ Build:
     - npm set registry https://registry.agcs.agetic.gob.bo
     - npm set strict-ssl false
     - npm ci --legacy-peer-deps
+    - cp src/common/params/index.ts.sample src/common/params/index.ts
     # - npm run generate
     - npm run build
     - npm ci --only=production --no-optional --legacy-peer-deps

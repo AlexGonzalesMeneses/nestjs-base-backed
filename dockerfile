@@ -8,7 +8,8 @@ USER node
 RUN npm set registry https://registry.agcs.agetic.gob.bo/
 RUN npm set strict-ssl false
 
-RUN npm ci --legacy-peer-deps     
+RUN npm ci --legacy-peer-deps    
+RUN cp ./src/common/params/index.ts.sample ./src/common/params/index.ts 
 RUN npm run build 
 RUN npm ci --production --no-optional --legacy-peer-deps
 
