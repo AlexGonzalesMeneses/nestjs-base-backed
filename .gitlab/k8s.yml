@@ -234,7 +234,7 @@ Generar imagen de la aplicación:
     - kubernetes-runner
   script:
     - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$INGRESS_PATH/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
-    - export IR_CHART_NAME=$IR_CHART_NAME
+    - export IR_CHART_NAME=$(grep -o '"IR_CHART_NAME":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_DOMAIN=$(grep -o '"IR_DOMAIN":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_IOP_REPO=$(grep -o '"IR_IOP_REPO":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_PASS=$(grep -o '"IR_PASS":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
@@ -262,7 +262,7 @@ Desplegar la aplicación:
     - kubernetes-runner
   script:
     - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$INGRESS_PATH/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
-    - export IR_CHART_NAME=$IR_CHART_NAME
+    - export IR_CHART_NAME=$(grep -o '"IR_CHART_NAME":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_DOMAIN=$(grep -o '"IR_DOMAIN":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_IOP_REPO=$(grep -o '"IR_IOP_REPO":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_PASS=$(grep -o '"IR_PASS":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
