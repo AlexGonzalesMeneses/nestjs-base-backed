@@ -1,6 +1,7 @@
-<h1 align="center">Proyecto base backend</h1>
 
-<p align="center">
+# Backend Base - NestJS
+
+<p>
   <a href="./">
     <img src="https://img.shields.io/badge/version-v1.1.6-blue" alt="Versión">
   </a>
@@ -9,12 +10,12 @@
   </a>
 </p>
 
+
 > Para proyectos desarrollados por AGETIC
 
-🚨 Advertencia, este proyecto en rama `Develop` usa TypeOrm `v0.3.7` para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
+## Recomendaciones
 
-💡 Antes de reutilizar el proyecto
-
+- Este proyecto en rama `Develop` usa TypeOrm `v0.3.7`, para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0` 
 - Se sugiere crear un Fork, dado que se harán mejoras continuas
 - Para añadir este proyecto como otro origen, ejecutar dentro el proyecto Fork:
 
@@ -22,7 +23,7 @@
 git remote add origin2 git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
 ```
 
-- Para descargar los commits desde el 2do origen, ejecutar
+- Para descargar los commits desde el 2.º origen, ejecutar
 
 ```
 git pull origin2 master
@@ -90,7 +91,6 @@ $ npm run start:database
 2. Generación del diagrama ERD
 
 ```bash
-
 $ npm run db:diagram
 ```
 
