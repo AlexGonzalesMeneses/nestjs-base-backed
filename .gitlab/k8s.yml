@@ -28,10 +28,10 @@ Build:
     # - cp .env.k8s_ENV .env
     - npm set registry https://registry.agcs.agetic.gob.bo
     - npm set strict-ssl false
-    - npm ci
+    - npm ci --legacy-peer-deps
     # - npm run generate
     - npm run build
-    - npm ci --only=production --no-optional
+    - npm ci --only=production --no-optional --legacy-peer-deps
   artifacts:
     paths:
       # - .nuxt/dist/

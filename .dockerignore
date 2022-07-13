@@ -11,3 +11,6 @@
 
 #ignoring markdown files
 README.md
+
+*Dockerfile*
+*docker-compose*
