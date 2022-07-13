@@ -233,7 +233,7 @@ Generar imagen de la aplicación:
   tags:
     - kubernetes-runner
   script:
-    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$INGRESS_PATH/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
+    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$PATH_FOLDER/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
     - export IR_CHART_NAME=$(grep -o '"IR_CHART_NAME":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_DOMAIN=$(grep -o '"IR_DOMAIN":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_IOP_REPO=$(grep -o '"IR_IOP_REPO":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
@@ -261,13 +261,13 @@ Desplegar la aplicación:
   tags:
     - kubernetes-runner
   script:
-    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$INGRESS_PATH/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
+    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$PATH_FOLDER/infrastructure/harbor --header "X-Vault-Token:$VAULT_TOKEN" -O harbor.json
     - export IR_CHART_NAME=$(grep -o '"IR_CHART_NAME":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_DOMAIN=$(grep -o '"IR_DOMAIN":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_IOP_REPO=$(grep -o '"IR_IOP_REPO":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_PASS=$(grep -o '"IR_PASS":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export IR_USER=$(grep -o '"IR_USER":*"[^"]*"' harbor.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
-    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$INGRESS_PATH/infrastructure/kubernetes --header "X-Vault-Token:$VAULT_TOKEN" -O kubernetes.json
+    - wget $VAULT_DOMAIN/v1/$VAULT_ROOT_PATH/$PATH_FOLDER/infrastructure/kubernetes --header "X-Vault-Token:$VAULT_TOKEN" -O kubernetes.json
     - export K8S_CA_DATA=$(grep -o '"K8S_CA_DATA":*"[^"]*"' kubernetes.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export K8S_SERVER_URL=$(grep -o '"K8S_SERVER_URL":*"[^"]*"' kubernetes.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')
     - export K8S_USER_TOKEN=$(grep -o '"K8S_USER_TOKEN":*"[^"]*"' kubernetes.json | grep -o '"[^"]*"$' | sed -e 's/^"//' | sed -e 's/"$//')

@@ -28,5 +28,5 @@ ENV CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA} \
     CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE} \
     CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
 
-CMD  ["sh", "-c",  "node dist/main"]
+CMD  ["sh", "-c",  "node dist/src/main"]
 EXPOSE 3000
