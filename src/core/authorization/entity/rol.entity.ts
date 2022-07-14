@@ -1,10 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Check,
+} from 'typeorm';
 import { UsuarioRol } from './usuario-rol.entity';
 import { Status } from '../../../common/constants';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Rol {
@@ -17,7 +21,8 @@ export class Rol {
   @Column({ length: 100, type: 'varchar' })
   nombre: string;
 
-  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
+  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
   estado: string;
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)

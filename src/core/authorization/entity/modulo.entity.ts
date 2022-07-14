@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   JoinColumn,
@@ -10,8 +11,6 @@ import { Status } from '../../../common/constants';
 import { PropiedadesDto } from '../dto/crear-modulo.dto';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo {
@@ -32,7 +31,8 @@ export class Modulo {
   })
   propiedades: PropiedadesDto;
 
-  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
+  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
   estado: string;
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)

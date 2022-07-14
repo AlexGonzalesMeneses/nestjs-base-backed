@@ -1,10 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Check } from 'typeorm';
 
 import { Status } from '../../common/constants';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro {
@@ -23,6 +21,7 @@ export class Parametro {
   @Column({ length: 255, type: 'varchar' })
   descripcion: string;
 
-  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
+  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
   estado: string;
 }

@@ -15,3 +15,15 @@ export enum Order {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export enum TipoDocumento {
+  CI = 'CI',
+  PASAPORTE = 'PASAPORTE',
+  OTRO = 'OTRO',
+}
+
+export enum Genero {
+  MASCULINO = 'M',
+  FEMENINO = 'F',
+  OTRO = 'OTRO',
+}

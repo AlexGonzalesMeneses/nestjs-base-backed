@@ -5,6 +5,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 import { Rol } from './rol.entity';
 import { Status } from '../../../common/constants';
@@ -12,14 +13,13 @@ import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const enumStatus = [Status.ACTIVE, Status.INACTIVE];
-
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class UsuarioRol extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
+  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
   estado: string;
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)

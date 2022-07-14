@@ -6,19 +6,13 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
 import { Persona } from './persona.entity';
 import { Status } from '../../../common/constants';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const enumStatus = [
-  Status.CREATE,
-  Status.PENDING,
-  Status.ACTIVE,
-  Status.INACTIVE,
-];
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AbstractEntity {
@@ -37,11 +31,15 @@ export class Usuario extends AbstractEntity {
   @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
   correoElectronico: string | null;
 
-  @Column({
-    type: 'enum',
-    enum: enumStatus,
-    default: Status.CREATE,
-  })
+  @Check(
+    `estado in (
+      '${Status.CREATE}',
+      '${Status.PENDING}',
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`,
+  )
+  @Column({ length: 15, type: 'varchar', default: Status.CREATE })
   estado: string;
 
   @Column({

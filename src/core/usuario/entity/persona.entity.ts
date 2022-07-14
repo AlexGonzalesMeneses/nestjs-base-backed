@@ -1,10 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Check,
+} from 'typeorm';
 import { Usuario } from './usuario.entity';
-import { Status } from '../../../common/constants';
+import { Genero, Status, TipoDocumento } from '../../../common/constants';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const enumStatus = [Status.ACTIVE, Status.INACTIVE];
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona {
@@ -30,11 +34,14 @@ export class Persona {
   })
   segundoApellido: string | null;
 
+  @Check(
+    `tipo_documento in ('${TipoDocumento.CI}', '${TipoDocumento.PASAPORTE}', '${TipoDocumento.OTRO}')`,
+  )
   @Column({
     name: 'tipo_documento',
-    type: 'enum',
-    enum: ['CI', 'PASAPORTE', 'OTRO'],
-    default: 'CI',
+    length: 15,
+    type: 'varchar',
+    default: TipoDocumento.CI,
   })
   tipoDocumento: string;
 
@@ -59,13 +66,17 @@ export class Persona {
   @Column({ length: 50, type: 'varchar', nullable: true })
   telefono: string | null;
 
-  @Column({ type: 'enum', enum: ['M', 'F', 'OTRO'], nullable: true })
+  @Check(
+    `genero in ('${Genero.MASCULINO}', '${Genero.FEMENINO}', '${Genero.OTRO}')`,
+  )
+  @Column({ length: 15, type: 'varchar', nullable: true })
   genero: string | null;
 
   @Column({ length: 255, type: 'varchar', nullable: true })
   observacion: string | null;
 
-  @Column({ type: 'enum', enum: enumStatus, default: Status.ACTIVE })
+  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
   estado: string;
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)
