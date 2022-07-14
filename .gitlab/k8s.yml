@@ -226,6 +226,9 @@ Trivy:
 Generar imagen de la aplicación:
   image: hub.agcs.agetic.gob.bo/googlehub-proxy/kaniko-project/executor:v1.3.0-debug
   stage: release
+  needs:
+    - job: Build
+      artifacts: true
   only:
     - /test.*/
     - /develop.*/
@@ -244,6 +247,7 @@ Generar imagen de la aplicación:
     - . ./configure-image-generation.sh
     - env
     - rm harbor.json
+    - rm .dockerignore
     - /kaniko/executor --context . --target=$NAMESPACE --dockerfile ./dockerfile.k8s --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME --build-arg CI_COMMIT_MESSAGE="$CI_COMMIT_MESSAGE" --destination $IR_REPO_URL:$NAMESPACE
 
 Desplegar la aplicación:
