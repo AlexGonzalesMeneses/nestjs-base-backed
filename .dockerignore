@@ -1,7 +1,11 @@
 #ignoring dirs
 ./node_modules
+./dist
+./.next
+./.nuxt
 
 #ignoring dotfiles
+.dockerignore
 .eslintrc.js
 .env.sample
 .env
@@ -10,7 +14,10 @@
 .git
 
 #ignoring markdown files
-README.md
+*.md
 
-*Dockerfile*
+*ockerfile*
 *docker-compose*
+
+./.gitlab-ci.yml
+./.gitlab

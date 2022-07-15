@@ -14,25 +14,21 @@ ENV CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA} \
     CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
 
 FROM build AS production
-WORKDIR /home/node/app
 USER node
 CMD  ["sh", "-c",  "node dist/src/main"]
 EXPOSE 3000
 
 FROM build AS sandbox
-WORKDIR /home/node/app
 USER node
 CMD  ["sh", "-c",  "node dist/src/main"]
 EXPOSE 3000
 
 FROM build AS testing
-WORKDIR /home/node/app
 USER node
 CMD  ["sh", "-c",  "node dist/src/main"]
 EXPOSE 3000
 
 FROM build AS development
-WORKDIR /home/node/app
 USER node
 CMD  ["sh", "-c",  "node dist/src/main"]
 EXPOSE 3000
