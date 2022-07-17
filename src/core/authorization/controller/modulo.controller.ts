@@ -1,6 +1,8 @@
 import {
   Body,
+  Controller,
   Delete,
+  Get,
   Patch,
   Post,
   Query,
@@ -8,7 +10,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Controller, Get } from '@nestjs/common';
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 import { ModuloService } from '../service/modulo.service';
@@ -24,6 +25,7 @@ export class ModuloController extends AbstractController {
   }
 
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true }))
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.moduloService.listar(paginacionQueryDto);
     return this.successListRows(result);
@@ -35,12 +37,14 @@ export class ModuloController extends AbstractController {
     const result = await this.moduloService.crear(moduloDto);
     return this.successCreate(result);
   }
+
   @Patch()
   @UsePipes(ValidationPipe)
   async upModulo(@Body() moduloDto: CrearModuloDto) {
     const result = await this.moduloService.actualizar(moduloDto);
     return this.successUpdate(result);
   }
+
   @Delete()
   @UsePipes(ValidationPipe)
   async deleteModulo(@Body() moduloDto: CrearModuloDto) {

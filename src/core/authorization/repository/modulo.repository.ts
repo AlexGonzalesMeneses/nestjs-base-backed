@@ -14,9 +14,6 @@ export class ModuloRepository {
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
       .leftJoin('modulo.fidModulo', 'fidModulo')
-      .offset(saltar)
-      .limit(limite)
-
       .select([
         'modulo.id',
         'modulo.label',
@@ -34,6 +31,8 @@ export class ModuloRepository {
           filtro: `%${filtro?.toLowerCase()}%`,
         },
       )
+      .offset(saltar)
+      .limit(limite)
       .getManyAndCount();
   }
 

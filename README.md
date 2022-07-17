@@ -3,7 +3,7 @@
 
 <p>
   <a href="./">
-    <img src="https://img.shields.io/badge/version-v1.1.6-blue" alt="Versión">
+    <img src="https://img.shields.io/badge/version-v1.1.7-blue" alt="Versión">
   </a>
   <a href="./LICENSE">
       <img src="https://img.shields.io/static/v1?label=license&message=LPG%20-%20Bolivia&color=green" alt="Licencia: LPG - Bolivia" />

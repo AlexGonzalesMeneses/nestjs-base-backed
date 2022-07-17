@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { id } from 'cls-rtracer';
-import pino from 'pino';
 import { Options, ReqId } from 'pino-http';
 import { createWriteStream } from 'pino-http-send';
-import { multistream } from 'pino-multi-stream';
+import pino, { multistream } from 'pino';
 import { IncomingMessage, ServerResponse } from 'http';
 import fsr from 'file-stream-rotator';
 
