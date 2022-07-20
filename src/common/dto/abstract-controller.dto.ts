@@ -11,6 +11,10 @@ export abstract class AbstractController {
     };
   }
 
+  success(data, message = Messages.SUCCESS_DEFAULT): SuccessResponseDto {
+    return this.makeResponse(data, message);
+  }
+
   successList(data, message = Messages.SUCCESS_LIST): SuccessResponseDto {
     return this.makeResponse(data, message);
   }

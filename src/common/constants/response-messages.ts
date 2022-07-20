@@ -12,7 +12,7 @@ export enum Messages {
   EXCEPTION_REFRESH_TOKEN_EXPIRED = 'Sesión expirada por inactividad.',
 
   // generic messages success
-  SUCCESS_DEFAULT = 'ok',
+  SUCCESS_DEFAULT = '¡Tarea completada con éxito!',
   SUCCESS_LIST = 'Registro(s) obtenido(s) con exito!',
   SUCCESS_CREATE = 'Registro creado con exito!',
   SUCCESS_UPDATE = 'Registro actualizado con exito!',
