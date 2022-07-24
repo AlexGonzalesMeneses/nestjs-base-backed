@@ -1,8 +1,5 @@
 # Proyecto Base Backend - Manual de instalación para entornos de desarrollo
 
-## Instalación
-
-1. Instalación de paquetes. (mientras el módulo nest-authz no se actualice)
 
 ## 1. Requerimientos
 
@@ -21,14 +18,14 @@
 # Clonación del proyecto
 git clone git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
 
-# Nos ubicamos dentro del proyecto
+# Ingresamos dentro de la carpeta del proyecto
 cd agetic-nestjs-base-backend
 
-# Nos cambiamos a la rama develop
+# Cambiamos a la rama develop
 git checkout develop
 
-# Mientras el módulo nest-authz no se actualice utilizar el flag legacy
-npm install --legacy-peer-deps
+# Instalamos dependencias 
+npm install
 ```
 
 ### Archivos de configuración.

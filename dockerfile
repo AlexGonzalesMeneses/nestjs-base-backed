@@ -8,10 +8,10 @@ USER node
 RUN npm set registry https://registry.agcs.agetic.gob.bo/
 RUN npm set strict-ssl false
 
-RUN npm ci --legacy-peer-deps    
-RUN cp ./src/common/params/index.ts.sample ./src/common/params/index.ts 
-RUN npm run build 
-RUN npm ci --production --no-optional --legacy-peer-deps
+RUN npm ci
+RUN cp ./src/common/params/index.ts.sample ./src/common/params/index.ts
+RUN npm run build
+RUN npm ci --production --no-optional
 
 FROM hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine AS release
 RUN mkdir -p /home/node/app/node_modules && mkdir -p /home/node/app/dist  && chown -R node:node /home/node/app

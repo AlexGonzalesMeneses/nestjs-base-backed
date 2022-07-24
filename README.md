@@ -88,7 +88,9 @@ Documentación relacionada con el proyecto:
 $ npm run start:database
 ```
 
-2. Generación del diagrama ERD
+2. Generación del diagrama ERD (deshabilitado hasta tener soporte para TypeOrm 0.3)
+
+[//]: # (TODO: Actualizar soporte TypeOrm 0.3 para generar diagramas)
 
 ```bash
 $ npm run db:diagram
