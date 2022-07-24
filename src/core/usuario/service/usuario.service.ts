@@ -24,7 +24,6 @@ import { TemplateEmailService } from '../../../common/templates/templates-email.
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception';
 import { RolRepository } from '../../authorization/repository/rol.repository';
-import { Modulo } from '../../authorization/entity/modulo.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -395,34 +394,28 @@ export class UsuarioService {
 
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id);
-    let roles: Array<{
-      idRol: string;
-      rol: string;
-      nombre: string;
-      modulos: Modulo[];
-    }> = [];
+
     if (usuario?.usuarioRol?.length) {
-      roles = await Promise.all(
-        usuario.usuarioRol
-          .filter((value) => value.estado === Status.ACTIVE)
-          .map(async (usuarioRol) => {
-            const { id, rol, nombre } = usuarioRol.rol;
-            const modulos =
-              await this.authorizationService.obtenerPermisosPorRol(rol);
-            return {
-              idRol: id,
-              rol,
-              nombre,
-              modulos,
-            };
-          }),
-      );
       return {
         id: usuario.id,
         usuario: usuario.usuario,
         ciudadania_digital: usuario.ciudadaniaDigital,
         estado: usuario.estado,
-        roles,
+        roles: await Promise.all(
+          usuario.usuarioRol
+            .filter((value) => value.estado === Status.ACTIVE)
+            .map(async (usuarioRol) => {
+              const { id, rol, nombre } = usuarioRol.rol;
+              const modulos =
+                await this.authorizationService.obtenerPermisosPorRol(rol);
+              return {
+                idRol: id,
+                rol,
+                nombre,
+                modulos,
+              };
+            }),
+        ),
         persona: usuario.persona,
       };
     } else {

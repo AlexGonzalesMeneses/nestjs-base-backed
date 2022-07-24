@@ -1,6 +1,7 @@
 import { Injectable, Query } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
 import { ModuloService } from '../service/modulo.service';
+import { Modulo } from '../entity/modulo.entity';
 
 @Injectable()
 export class AuthorizationService {
@@ -66,17 +67,11 @@ export class AuthorizationService {
     const politicas = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
     const modulos = await this.moduloService.listarTodo();
     const politicasRol = politicas.filter((politica) => politica[0] === rol);
-    return modulos.filter((modulo) => {
-      if (modulo?.subModulo?.length > 0) {
-        const subModulos = modulo.subModulo.filter((subModulo) =>
-          politicasRol.some((politica) => politica[1] === subModulo.url),
-        );
-        if (subModulos.length > 0) {
-          modulo.subModulo = subModulos;
-          return modulo;
-        }
-      }
-      return politicasRol.some((politica) => politica[1] === modulo.url);
-    });
+    return modulos.map((modulo) => ({
+      ...modulo,
+      subModulo: modulo.subModulo.filter((subModulo) =>
+        politicasRol.some((politica) => politica[1] === subModulo.url),
+      ),
+    }));
   }
 }

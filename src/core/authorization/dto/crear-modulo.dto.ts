@@ -2,7 +2,7 @@ import { IsString, IsNotEmpty, IsObject } from 'class-validator';
 
 export class PropiedadesDto {
   @IsString()
-  icono: string;
+  icono?: string;
 
   @IsString()
   descripcion?: string;
@@ -32,4 +32,5 @@ export class CrearModuloDto {
   propiedades: PropiedadesDto;
 
   fidModulo: string;
+  estado?: string;
 }

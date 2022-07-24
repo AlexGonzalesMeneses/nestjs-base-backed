@@ -3,10 +3,19 @@ import { DataSource } from 'typeorm';
 import { Modulo } from '../entity/modulo.entity';
 import { CrearModuloDto, PropiedadesDto } from '../dto/crear-modulo.dto';
 import { Injectable } from '@nestjs/common';
+import { Status } from '../../../common/constants';
 
 @Injectable()
 export class ModuloRepository {
   constructor(private dataSource: DataSource) {}
+
+  async buscarPorId(id: string): Promise<Modulo | null> {
+    return await this.dataSource
+      .getRepository(Modulo)
+      .createQueryBuilder('modulo')
+      .where({ id: id })
+      .getOne();
+  }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, filtro } = paginacionQueryDto;
@@ -33,6 +42,7 @@ export class ModuloRepository {
       )
       .offset(saltar)
       .limit(limite)
+      .orderBy('modulo.id', 'ASC')
       .getManyAndCount();
   }
 
@@ -47,8 +57,34 @@ export class ModuloRepository {
     return await this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
-      .leftJoinAndSelect('modulo.subModulo', 'subModulo')
+      .leftJoinAndSelect(
+        'modulo.subModulo',
+        'subModulo',
+        'subModulo.estado = :estado',
+        {
+          estado: Status.ACTIVE,
+        },
+      )
+      .orderBy('subModulo.id', 'ASC')
+      .select([
+        'modulo.id',
+        'modulo.label',
+        'modulo.url',
+        'modulo.nombre',
+        'modulo.propiedades',
+        'modulo.estado',
+        'subModulo.id',
+        'subModulo.label',
+        'subModulo.url',
+        'subModulo.nombre',
+        'subModulo.propiedades',
+        'subModulo.estado',
+      ])
       .where('modulo.fid_modulo is NULL')
+      .andWhere('modulo.estado = :estado', {
+        estado: Status.ACTIVE,
+      })
+      .orderBy('modulo.id', 'ASC')
       .getMany();
   }
 
@@ -76,31 +112,11 @@ export class ModuloRepository {
     return await this.dataSource.getRepository(Modulo).save(modulo);
   }
 
-  async actualizar(moduloDto: CrearModuloDto) {
-    const propiedades = new PropiedadesDto();
-    propiedades.icono = moduloDto.propiedades.icono;
-    propiedades.color_dark = moduloDto.propiedades.color_dark;
-    propiedades.color_light = moduloDto.propiedades.color_light;
-    propiedades.descripcion = moduloDto.propiedades.descripcion;
-
-    const modulo = new Modulo();
-    modulo.id = moduloDto.id;
-    modulo.label = moduloDto.label;
-    modulo.url = moduloDto.url;
-    modulo.nombre = moduloDto.nombre;
-    modulo.propiedades = propiedades;
-    if (moduloDto.fidModulo != '') {
-      const em = new Modulo();
-      em.id = moduloDto.fidModulo;
-      modulo.fidModulo = em;
-    }
-
-    //console.log('Datos........ para guardar modulo......................', modulo)
-    return await this.dataSource.getRepository(Modulo).save(modulo);
+  async actualizar(moduloDto: Partial<Modulo>) {
+    return await this.dataSource.getRepository(Modulo).save(moduloDto);
   }
+
   async eliminar(moduloDto: CrearModuloDto) {
-    const modulo = new Modulo();
-    modulo.id = moduloDto.id;
-    return await this.dataSource.getRepository(Modulo).delete(modulo);
+    return await this.dataSource.getRepository(Modulo).delete(moduloDto.id);
   }
 }

@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -16,6 +18,7 @@ import { ModuloService } from '../service/modulo.service';
 import { CrearModuloDto } from '../dto/crear-modulo.dto';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { CasbinGuard } from '../guards/casbin.guard';
+import { ParamUuidDto } from '../../../common/dto/params-uuid.dto';
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
@@ -50,5 +53,32 @@ export class ModuloController extends AbstractController {
   async deleteModulo(@Body() moduloDto: CrearModuloDto) {
     const result = await this.moduloService.eliminar(moduloDto);
     return this.successDelete(result);
+  }
+
+  // activar modulo
+  @UseGuards(JwtAuthGuard, CasbinGuard)
+  @Patch('/:id/activacion')
+  @UsePipes(ValidationPipe)
+  async activar(@Req() req, @Param() params: ParamUuidDto) {
+    const { id: idUsuario } = params;
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.moduloService.activar(
+      idUsuario,
+      usuarioAuditoria,
+    );
+    return this.successUpdate(result);
+  }
+
+  // inactivar modulo
+  @UseGuards(JwtAuthGuard, CasbinGuard)
+  @Patch('/:id/inactivacion')
+  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
+    const { id: idUsuario } = param;
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.moduloService.inactivar(
+      idUsuario,
+      usuarioAuditoria,
+    );
+    return this.successUpdate(result);
   }
 }

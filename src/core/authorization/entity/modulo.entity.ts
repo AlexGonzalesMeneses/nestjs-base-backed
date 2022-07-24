@@ -10,10 +10,11 @@ import {
 import { Status } from '../../../common/constants';
 import { PropiedadesDto } from '../dto/crear-modulo.dto';
 import dotenv from 'dotenv';
+import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
 dotenv.config();
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class Modulo {
+export class Modulo extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

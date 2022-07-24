@@ -70,7 +70,7 @@ export class modulo1611497480901 implements MigrationInterface {
         label: 'Parámetros',
         propiedades: {
           icono: 'tune',
-          descripcion: 'Parametros generales del sistema',
+          descripcion: 'Parámetros generales del sistema',
           color_light: '#312403',
           color_dark: '#B77346',
         },
@@ -107,6 +107,8 @@ export class modulo1611497480901 implements MigrationInterface {
       m.nombre = item.nombre;
       m.url = item.url;
       m.label = item.label;
+      m.usuarioCreacion = '1';
+      m.fechaCreacion = new Date();
       if (item.fidModulo) {
         const submodulo = new Modulo();
         submodulo.id = item.fidModulo;

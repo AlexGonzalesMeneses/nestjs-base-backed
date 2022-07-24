@@ -52,6 +52,7 @@ export class UsuarioRepository {
       )
       .offset(saltar)
       .limit(limite)
+      .orderBy('usuario.id', 'ASC')
       .getManyAndCount();
   }
 
