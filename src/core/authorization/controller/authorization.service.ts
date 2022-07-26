@@ -1,7 +1,6 @@
 import { Injectable, Query } from '@nestjs/common';
 import { AuthZManagementService } from 'nest-authz';
 import { ModuloService } from '../service/modulo.service';
-import { Modulo } from '../entity/modulo.entity';
 
 @Injectable()
 export class AuthorizationService {
