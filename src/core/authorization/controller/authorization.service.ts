@@ -67,11 +67,13 @@ export class AuthorizationService {
     const politicas = await this.rbacSrv.getFilteredPolicy(3, 'frontend');
     const modulos = await this.moduloService.listarTodo();
     const politicasRol = politicas.filter((politica) => politica[0] === rol);
-    return modulos.map((modulo) => ({
-      ...modulo,
-      subModulo: modulo.subModulo.filter((subModulo) =>
-        politicasRol.some((politica) => politica[1] === subModulo.url),
-      ),
-    }));
+    return modulos
+      .map((modulo) => ({
+        ...modulo,
+        subModulo: modulo.subModulo.filter((subModulo) =>
+          politicasRol.some((politica) => politica[1] === subModulo.url),
+        ),
+      }))
+      .filter((modulo) => modulo.subModulo.length > 0);
   }
 }
