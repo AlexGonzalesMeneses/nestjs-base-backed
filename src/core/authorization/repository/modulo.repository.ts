@@ -88,7 +88,7 @@ export class ModuloRepository {
       .getMany();
   }
 
-  async crear(moduloDto: CrearModuloDto) {
+  async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
     const propiedades = new PropiedadesDto();
     propiedades.icono = moduloDto.propiedades.icono;
     propiedades.color_dark = moduloDto.propiedades.color_dark;
@@ -101,6 +101,8 @@ export class ModuloRepository {
     modulo.url = moduloDto.url;
     modulo.nombre = moduloDto.nombre;
     modulo.propiedades = propiedades;
+    modulo.usuarioCreacion = usuarioAuditoria;
+    modulo.fechaCreacion = new Date();
     if (moduloDto.fidModulo != '') {
       const em = new Modulo();
       em.id = moduloDto.fidModulo;

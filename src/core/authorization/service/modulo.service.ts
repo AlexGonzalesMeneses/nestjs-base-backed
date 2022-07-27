@@ -22,13 +22,13 @@ export class ModuloService {
     return await this.moduloRepositorio.obtenerModulosSubmodulos();
   }
 
-  async crear(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.crear(moduloDto);
+  async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
+    return await this.moduloRepositorio.crear(moduloDto, usuarioAuditoria);
   }
   async actualizar(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.actualizar({
       ...moduloDto,
-      ...{ fidModulo: { id: moduloDto.id } as Modulo },
+      ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
     });
   }
   async eliminar(moduloDto: CrearModuloDto) {

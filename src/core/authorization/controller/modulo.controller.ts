@@ -36,8 +36,9 @@ export class ModuloController extends AbstractController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async crear(@Body() moduloDto: any) {
-    const result = await this.moduloService.crear(moduloDto);
+  async crear(@Body() moduloDto: any, @Req() req) {
+    const usuarioAuditoria = this.getUser(req);
+    const result = await this.moduloService.crear(moduloDto, usuarioAuditoria);
     return this.successCreate(result);
   }
 
