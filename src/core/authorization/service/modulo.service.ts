@@ -28,7 +28,7 @@ export class ModuloService {
   async actualizar(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.actualizar({
       ...moduloDto,
-      ...{ fidModulo: { id: moduloDto.id } as Modulo },
+      ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
     });
   }
   async eliminar(moduloDto: CrearModuloDto) {
