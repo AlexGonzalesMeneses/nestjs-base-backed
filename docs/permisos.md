@@ -29,7 +29,7 @@ El proyecto base actualmente cuenta con roles y permisos de ejemplo
 |GET|/autenticacion/logout*|Cierre de sesión|
 |DELETE|/autenticacion/:id/refresh-token*|Eliminar un refresh token|
 
-#### Rutas con autenticación (especificas por rol)
+#### Rutas con autenticación (específicas por rol)
 |ruta/roles|ADMINISTRADOR|TECNICO|USUARIO
 |-|-|-|-|
 |GET /autorizacion/politicas|x|||

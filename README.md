@@ -10,9 +10,6 @@
   </a>
 </p>
 
-
-> Para proyectos desarrollados por AGETIC
-
 ## Recomendaciones
 
 - Este proyecto en rama `Develop` usa TypeOrm `v0.3.7`, para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0` 
@@ -28,17 +25,6 @@ git remote add origin2 git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/age
 ```
 git pull origin2 master
 ```
-
-## Tabla de contenido
-
-- [Tabla de contenido](#tabla-de-contenido)
-- [Tecnologías](#tecnologías)
-- [Funcionalidades](#funcionalidades)
-- [Documentación](#documentación)
-- [Comandos útiles](#comandos-útiles)
-- [Colaboradores](#colaboradores)
-- [Licencia](#licencia)
-- [Información de contacto](#información-de-contacto)
 
 ## Tecnologías
 
@@ -57,7 +43,7 @@ git pull origin2 master
 El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
 
 - Autenticación JWT
-- Autenticación con Ciudadania Digital
+- Autenticación con Ciudadanía Digital
 - Refresh Token
 - Autorización (Roles, Módulos, Usuarios, Permisos)
 - Paramétricas
@@ -82,25 +68,25 @@ Documentación relacionada con el proyecto:
 1. Ejecución de contenedor con instancia postgres
    Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos de conexión a la base de datos de la cual se quiere generar el diagrama:
 
-> Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+    > Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
 
-```bash
-$ npm run start:database
-```
+    ```bash
+    $ npm run start:database
+    ```
 
 2. Generación del diagrama ERD (deshabilitado hasta tener soporte para TypeOrm 0.3)
 
-[//]: # (TODO: Actualizar soporte TypeOrm 0.3 para generar diagramas)
+    [//]: # (TODO: Actualizar soporte TypeOrm 0.3 para generar diagramas)
 
-```bash
-$ npm run db:diagram
-```
+    ```bash
+    $ npm run db:diagram
+    ```
 
 3. Generación de documentación
 
-```bash
-$ npm run compodoc
-```
+    ```bash
+    $ npm run compodoc
+    ```
 
 ## Changelog
 
