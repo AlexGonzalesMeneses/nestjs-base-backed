@@ -1,4 +1,5 @@
 import { IsString, IsNotEmpty, IsObject } from 'class-validator';
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 
 export class PropiedadesDto {
   @IsString()
@@ -33,4 +34,8 @@ export class CrearModuloDto {
 
   fidModulo: string;
   estado?: string;
+}
+
+export class FiltroModuloDto extends PaginacionQueryDto {
+  readonly seccion?: boolean;
 }

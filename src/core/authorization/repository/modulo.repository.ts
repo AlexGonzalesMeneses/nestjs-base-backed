@@ -1,7 +1,10 @@
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
 import { DataSource } from 'typeorm';
 import { Modulo } from '../entity/modulo.entity';
-import { CrearModuloDto, PropiedadesDto } from '../dto/crear-modulo.dto';
+import {
+  CrearModuloDto,
+  FiltroModuloDto,
+  PropiedadesDto,
+} from '../dto/crear-modulo.dto';
 import { Injectable } from '@nestjs/common';
 import { Status } from '../../../common/constants';
 
@@ -17,8 +20,8 @@ export class ModuloRepository {
       .getOne();
   }
 
-  async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, filtro } = paginacionQueryDto;
+  async listar(paginacionQueryDto: FiltroModuloDto) {
+    const { limite, saltar, filtro, seccion } = paginacionQueryDto;
     return await this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
@@ -40,6 +43,7 @@ export class ModuloRepository {
           filtro: `%${filtro?.toLowerCase()}%`,
         },
       )
+      .andWhere(seccion ? '(modulo.fidModulo is null)' : '1=1')
       .offset(saltar)
       .limit(limite)
       .orderBy('modulo.id', 'ASC')

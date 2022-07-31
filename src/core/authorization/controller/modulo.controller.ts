@@ -12,10 +12,9 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
 import { AbstractController } from '../../../common/dto/abstract-controller.dto';
 import { ModuloService } from '../service/modulo.service';
-import { CrearModuloDto } from '../dto/crear-modulo.dto';
+import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto';
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard';
 import { CasbinGuard } from '../guards/casbin.guard';
 import { ParamUuidDto } from '../../../common/dto/params-uuid.dto';
@@ -29,7 +28,7 @@ export class ModuloController extends AbstractController {
 
   @Get()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
+  async listar(@Query() paginacionQueryDto: FiltroModuloDto) {
     const result = await this.moduloService.listar(paginacionQueryDto);
     return this.successListRows(result);
   }

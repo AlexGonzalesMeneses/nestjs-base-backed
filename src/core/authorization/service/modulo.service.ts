@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuloRepository } from '../repository/modulo.repository';
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
-import { CrearModuloDto } from '../dto/crear-modulo.dto';
+import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto';
 import { Status } from '../../../common/constants';
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../../common/constants/response-messages';
@@ -14,7 +13,7 @@ export class ModuloService {
     private moduloRepositorio: ModuloRepository,
   ) {}
 
-  async listar(paginacionQueryDto: PaginacionQueryDto) {
+  async listar(paginacionQueryDto: FiltroModuloDto) {
     return await this.moduloRepositorio.listar(paginacionQueryDto);
   }
 
