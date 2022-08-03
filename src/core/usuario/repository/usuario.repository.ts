@@ -8,7 +8,7 @@ import { PersonaDto } from '../dto/persona.dto';
 import { Status } from '../../../common/constants';
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 @Injectable()
 export class UsuarioRepository {
@@ -289,7 +289,7 @@ export class UsuarioRepository {
     });
   }
 
-  async runTransaction(op) {
+  async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.getRepository(Usuario).manager.transaction(op);
   }
 }

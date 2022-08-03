@@ -13,7 +13,6 @@ import { MensajeriaService } from '../../external-services/mensajeria/mensajeria
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
 import { Messages } from '../../../common/constants/response-messages';
 import { AuthorizationService } from '../../authorization/controller/authorization.service';
-import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto';
 import { PersonaDto } from '../dto/persona.dto';
 import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
 import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto';
@@ -24,6 +23,7 @@ import { TemplateEmailService } from '../../../common/templates/templates-email.
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception';
 import { RolRepository } from '../../authorization/repository/rol.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -275,32 +275,44 @@ export class UsuarioService {
     this.verificarPermisos(idUsuario, usuarioAuditoria);
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario);
     const statusValid = [Status.ACTIVE, Status.PENDING];
-    if (usuario && statusValid.includes(usuario.estado as Status)) {
-      const contrasena = TextService.generateShortRandomText();
-      const usuarioDto = new ActualizarUsuarioDto();
-      usuarioDto.contrasena = await TextService.encrypt(contrasena);
-      usuarioDto.estado = Status.PENDING;
-      usuarioDto.usuarioActualizacion = usuarioAuditoria;
-
-      const op = async (transaction) => {
-        const repositorio = transaction.getRepository(Usuario);
-        await repositorio.update(idUsuario, usuarioDto);
-        // si está bien ≥ enviar el mail con la contraseña generada
-        const datosCorreo = {
-          correo: usuario.correoElectronico,
-          asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
-        };
-        await this.enviarCorreoContrasenia(
-          datosCorreo,
-          usuario.usuario,
-          contrasena,
-        );
-      };
-      await this.usuarioRepositorio.runTransaction(op);
-      return { id: idUsuario, estado: usuarioDto.estado };
-    } else {
+    if (!(usuario && statusValid.includes(usuario.estado as Status))) {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
+
+    const op = async (transaction) => {
+      const contrasena = TextService.generateShortRandomText();
+      const usuarioRepository: Repository<Usuario> =
+        transaction.getRepository(Usuario);
+      await usuarioRepository.update(idUsuario, {
+        contrasena: await TextService.encrypt(contrasena),
+        estado: Status.PENDING,
+        usuarioActualizacion: usuarioAuditoria,
+      });
+
+      const usuarioActualizado = await usuarioRepository.findOne({
+        where: { id: idUsuario },
+      });
+
+      if (!usuarioActualizado) {
+        throw new EntityNotFoundException(Messages.INVALID_USER);
+      }
+
+      // si está bien ≥ enviar el mail con la contraseña generada
+      const datosCorreo = {
+        correo: usuario.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
+      };
+      await this.enviarCorreoContrasenia(
+        datosCorreo,
+        usuarioActualizado.usuario,
+        usuarioActualizado.contrasena,
+      );
+
+      return usuarioActualizado;
+    };
+    const usuario1 = await this.usuarioRepositorio.runTransaction<Usuario>(op);
+
+    return { id: idUsuario, estado: usuario1.estado };
   }
 
   async actualizarDatos(
