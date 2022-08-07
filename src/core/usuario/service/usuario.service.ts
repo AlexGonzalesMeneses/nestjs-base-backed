@@ -23,7 +23,7 @@ import { TemplateEmailService } from '../../../common/templates/templates-email.
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception';
 import { RolRepository } from '../../authorization/repository/rol.repository';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -279,7 +279,7 @@ export class UsuarioService {
       throw new EntityNotFoundException(Messages.INVALID_USER);
     }
 
-    const op = async (transaction) => {
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
       const contrasena = TextService.generateShortRandomText();
       const usuarioRepository: Repository<Usuario> =
         transaction.getRepository(Usuario);
