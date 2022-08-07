@@ -50,63 +50,69 @@ export class UsuarioService {
   }
 
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
+    // verificar si el usuario ya fue registrado
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
       usuarioDto.persona,
     );
-    if (!usuario) {
-      // verificar si el correo no esta registrado
-      const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        usuarioDto.correoElectronico,
-      );
-      if (!correo) {
-        // contrastacion segip
-        const { persona } = usuarioDto;
-        const contrastaSegip = await this.segipServices.contrastar(persona);
-        if (contrastaSegip?.finalizado) {
-          const contrasena = TextService.generateShortRandomText();
-          usuarioDto.contrasena = await TextService.encrypt(contrasena);
-          usuarioDto.estado = Status.PENDING;
-          const result = await this.usuarioRepositorio.crear(
-            usuarioDto,
-            usuarioAuditoria,
-          );
-          // enviar correo con credenciales
-          const datosCorreo = {
-            correo: usuarioDto.correoElectronico,
-            asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-          };
-          await this.enviarCorreoContrasenia(
-            datosCorreo,
-            usuarioDto.persona.nroDocumento,
-            contrasena,
-          );
-          const { id, estado } = result;
-          return { id, estado };
-        }
-        throw new PreconditionFailedException(contrastaSegip?.mensaje);
-      }
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER);
+    }
+
+    // verificar si el correo no esta registrado
+    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      usuarioDto.correoElectronico,
+    );
+
+    if (correo) {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL);
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER);
+
+    // contrastacion segip
+    const { persona } = usuarioDto;
+    const contrastaSegip = await this.segipServices.contrastar(persona);
+    if (contrastaSegip?.finalizado) {
+      const contrasena = TextService.generateShortRandomText();
+      usuarioDto.contrasena = await TextService.encrypt(contrasena);
+      usuarioDto.estado = Status.PENDING;
+      const result = await this.usuarioRepositorio.crear(
+        usuarioDto,
+        usuarioAuditoria,
+      );
+      // enviar correo con credenciales
+      const datosCorreo = {
+        correo: usuarioDto.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+      };
+      await this.enviarCorreoContrasenia(
+        datosCorreo,
+        usuarioDto.persona.nroDocumento,
+        contrasena,
+      );
+      return { id: result.id, estado: result.estado };
+    } else {
+      throw new PreconditionFailedException(contrastaSegip?.mensaje);
+    }
   }
 
   async crearConCiudadania(
     usuarioDto: CrearUsuarioCiudadaniaDto,
     usuarioAuditoria: string,
   ) {
-    const persona = new PersonaDto();
-    persona.nroDocumento = usuarioDto.usuario;
-    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona);
-    if (!usuario) {
-      usuarioDto.estado = Status.ACTIVE;
-      const result = await this.usuarioRepositorio.crear(
-        usuarioDto as CrearUsuarioDto,
-        usuarioAuditoria,
-      );
-      const { id, estado } = result;
-      return { id, estado };
+    // verificar si el usuario ya fue registrado
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI({
+      nroDocumento: usuarioDto.usuario,
+    } as PersonaDto);
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER);
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER);
+
+    const result = await this.usuarioRepositorio.crear(
+      { ...usuarioDto, ...{ estado: Status.ACTIVE } } as CrearUsuarioDto,
+      usuarioAuditoria,
+    );
+    return { id: result.id, estado: result.estado };
   }
 
   async crearConPersonaExistente(
@@ -114,27 +120,31 @@ export class UsuarioService {
     otrosDatos,
     usuarioAuditoria: string,
   ) {
+    // verificar si el usuario ya fue registrado
     const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
       persona.nroDocumento,
     );
-    if (!usuario) {
-      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO');
 
-      const nuevoUsuario = {
-        estado: Status.ACTIVE,
-        correoElectronico: otrosDatos?.correoElectronico,
-        persona,
-        ciudadaniaDigital: true,
-        roles: [rol],
-      };
-      const result = await this.usuarioRepositorio.crearConPersonaExistente(
-        nuevoUsuario,
-        usuarioAuditoria,
-      );
-      const { id, estado } = result;
-      return { id, estado };
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER);
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER);
+
+    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO');
+
+    const nuevoUsuario = {
+      estado: Status.ACTIVE,
+      correoElectronico: otrosDatos?.correoElectronico,
+      persona,
+      ciudadaniaDigital: true,
+      roles: [rol],
+    };
+
+    const result = await this.usuarioRepositorio.crearConPersonaExistente(
+      nuevoUsuario,
+      usuarioAuditoria,
+    );
+
+    return { id: result.id, estado: result.estado };
   }
 
   async crearConCiudadaniaV2(
@@ -170,8 +180,7 @@ export class UsuarioService {
       nuevoUsuario,
       usuarioAuditoria,
     );
-    const { id, estado } = result;
-    return { id, estado };
+    return { id: result.id, estado: result.estado };
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
