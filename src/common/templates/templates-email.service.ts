@@ -24,7 +24,7 @@ export class TemplateEmailService {
           </div>
         </body>
       </html>
-    `;
+    `
   }
 
   static armarPlantillaBloqueoCuenta(url) {
@@ -48,6 +48,6 @@ export class TemplateEmailService {
           </div>
         </body>
       </html>
-    `;
+    `
   }
 }

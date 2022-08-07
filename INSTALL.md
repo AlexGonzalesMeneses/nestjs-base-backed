@@ -1,6 +1,5 @@
 # Proyecto Base Backend - Manual de instalación para entornos de desarrollo
 
-
 ## 1. Requerimientos
 
 | Nombre       | Versión | Descripción                                            | Instalación                                      |
@@ -24,7 +23,7 @@ cd agetic-nestjs-base-backend
 # Cambiamos a la rama develop
 git checkout develop
 
-# Instalamos dependencias 
+# Instalamos dependencias
 npm install
 ```
 
@@ -44,7 +43,6 @@ cp ecosystem.config.js.sample ecosystem.config.js
 ```
 
 ## Creación y configuración de la Base de Datos
-
 
 ```bash
 # Crear los siguientes esquemas de base de datos:

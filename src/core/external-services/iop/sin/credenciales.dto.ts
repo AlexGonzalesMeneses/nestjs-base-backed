@@ -1,13 +1,13 @@
-import { IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class SINCredencialesDTO {
   @ApiProperty()
-  Nit: string;
+  Nit: string
   @ApiProperty()
   @IsNotEmpty()
-  Usuario: string;
+  Usuario: string
   @ApiProperty()
   @IsNotEmpty()
-  Contrasena: string;
+  Contrasena: string
 }

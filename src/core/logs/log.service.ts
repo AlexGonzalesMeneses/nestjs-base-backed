@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { id } from 'cls-rtracer';
-import { Options, ReqId } from 'pino-http';
-import { createWriteStream } from 'pino-http-send';
-import pino, { multistream } from 'pino';
-import { IncomingMessage, ServerResponse } from 'http';
-import fsr from 'file-stream-rotator';
+import { Injectable } from '@nestjs/common'
+import { id } from 'cls-rtracer'
+import { Options, ReqId } from 'pino-http'
+import { createWriteStream } from 'pino-http-send'
+import pino, { multistream } from 'pino'
+import { IncomingMessage, ServerResponse } from 'http'
+import fsr from 'file-stream-rotator'
 
 @Injectable()
 export class LogService {
-  static logsLogstashUrl: string = process.env.LOG_URL || '';
-  static logsLogstashToken: string = process.env.LOG_URL_TOKEN || '';
-  static logsFilePath: string = process.env.LOG_PATH || '';
-  static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true';
+  static logsLogstashUrl: string = process.env.LOG_URL || ''
+  static logsLogstashToken: string = process.env.LOG_URL_TOKEN || ''
+  static logsFilePath: string = process.env.LOG_PATH || ''
+  static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true'
 
-  static sistemName = process.env.npm_package_name || 'APP';
+  static sistemName = process.env.npm_package_name || 'APP'
 
   static getStream() {
     const streamHttp =
@@ -27,7 +27,7 @@ export class LogService {
               batchSize: 1,
             }),
           ]
-        : [];
+        : []
 
     const streamDisk =
       this.logsFilePath.length > 2
@@ -54,65 +54,65 @@ export class LogService {
               }),
             },
           ]
-        : [];
+        : []
 
     const streamsEstandar = this.logsEstandarOut
       ? [{ stream: process.stdout }]
-      : [];
-    return multistream([...streamsEstandar, ...streamDisk, ...streamHttp]);
+      : []
+    return multistream([...streamsEstandar, ...streamDisk, ...streamHttp])
   }
 
   static getLoggerConfig() {
     return {
       pinoHttp: this.getPinoHttpConfig(),
-    };
+    }
   }
 
   static customSuccessMessage(req: IncomingMessage, res: any) {
     if (res.statusCode <= 304) {
       return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
-        res.req.headers,
-      )}`;
+        res.req.headers
+      )}`
     }
     return `Peticion concluida - : ${
       res.statusCode
     } Datos de la Peticion: { "headers":"${JSON.stringify(
-      res.req.headers,
-    )}, "body": ${JSON.stringify(res.req.body)} }`;
+      res.req.headers
+    )}, "body": ${JSON.stringify(res.req.body)} }`
   }
 
   static customErrorMessage(req: IncomingMessage, res) {
     return `Peticion concluida - ${
       res.statusCode
     } Datos de la Peticion: { "headers":"${JSON.stringify(
-      res.req.headers,
-    )}, "body": ${JSON.stringify(res.req.body)} }`;
+      res.req.headers
+    )}, "body": ${JSON.stringify(res.req.body)} }`
   }
 
   static customLogLevel(req: IncomingMessage, res: ServerResponse, err) {
     if (err) {
       if (res.statusCode >= 500) {
-        return 'error';
+        return 'error'
       } else if (res.statusCode > 304 && res.statusCode < 500) {
-        return 'warn';
+        return 'warn'
       } else {
-        return 'error';
+        return 'error'
       }
     }
-    return 'info';
+    return 'info'
   }
 
   static getPinoHttpConfig(): Options {
     return {
       name: this.sistemName,
       genReqId: (req) => {
-        return (req.id || id()) as ReqId;
+        return (req.id || id()) as ReqId
       },
       serializers: {
         err: pino.stdSerializers.err,
         req: (req) => {
-          req.body = req.raw.body;
-          return { id: req.id, method: req.method, url: req.url };
+          req.body = req.raw.body
+          return { id: req.id, method: req.method, url: req.url }
         },
         res: pino.stdSerializers.res,
       },
@@ -142,6 +142,6 @@ export class LogService {
           colorize: true,
         },
       },
-    };
+    }
   }
 }

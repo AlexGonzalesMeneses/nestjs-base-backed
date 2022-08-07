@@ -1,20 +1,20 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 export abstract class AbstractEntity {
   // datos de auditoria
   @CreateDateColumn({ name: 'fecha_creacion', type: 'timestamp' })
-  fechaCreacion: Date;
+  fechaCreacion: Date
 
   @Column({ name: 'usuario_creacion', type: 'varchar' })
-  usuarioCreacion: string;
+  usuarioCreacion: string
 
   @UpdateDateColumn({
     name: 'fecha_actualizacion',
     nullable: true,
     type: 'timestamp',
   })
-  fechaActualizacion: Date | null;
+  fechaActualizacion: Date | null
 
   @Column({ name: 'usuario_actualizacion', type: 'varchar', nullable: true })
-  usuarioActualizacion: string | null;
+  usuarioActualizacion: string | null
 }

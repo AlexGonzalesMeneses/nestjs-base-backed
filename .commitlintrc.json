@@ -4,19 +4,23 @@
     "header-max-length": [1, "always", 80],
     "body-max-line-length": [2, "always", 80],
     "subject-min-length": [2, "always", 5],
-    "type-enum": [2, "always", [
-      "build",
-      "ci",
-      "chore",
-      "docs",
-      "feat",
-      "fix",
-      "perf",
-      "refactor",
-      "revert",
-      "style",
-      "test",
-      "merge"
-    ]]
+    "type-enum": [
+      2,
+      "always",
+      [
+        "build",
+        "ci",
+        "chore",
+        "docs",
+        "feat",
+        "fix",
+        "perf",
+        "refactor",
+        "revert",
+        "style",
+        "test",
+        "merge"
+      ]
+    ]
   }
 }

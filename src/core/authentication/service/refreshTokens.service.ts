@@ -1,21 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import dayjs from 'dayjs';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import dayjs from 'dayjs'
+import { ConfigService } from '@nestjs/config'
 
-import { RefreshTokensRepository } from '../repository/refreshTokens.repository';
-import { RefreshTokens } from '../entity/refreshTokens.entity';
-import { UsuarioService } from '../../usuario/service/usuario.service';
+import { RefreshTokensRepository } from '../repository/refreshTokens.repository'
+import { RefreshTokens } from '../entity/refreshTokens.entity'
+import { UsuarioService } from '../../usuario/service/usuario.service'
 
-import { Cron } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule'
 
-import dotenv from 'dotenv';
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
-import { Messages } from '../../../common/constants/response-messages';
-import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
-import { TextService } from '../../../common/lib/text.service';
+import dotenv from 'dotenv'
+import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
+import { Messages } from '../../../common/constants/response-messages'
+import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception'
+import { TextService } from '../../../common/lib/text.service'
 
-dotenv.config();
+dotenv.config()
 
 @Injectable()
 export class RefreshTokensService {
@@ -25,19 +25,19 @@ export class RefreshTokensService {
     private refreshTokensRepository: RefreshTokensRepository,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async findById(id: string): Promise<RefreshTokens | null> {
-    return await this.refreshTokensRepository.findById(id);
+    return await this.refreshTokensRepository.findById(id)
   }
 
   async create(grantId: string): Promise<RefreshTokens> {
     const ttl = parseInt(
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN') || '3600000',
-      10,
-    );
-    const currentDate = new Date();
+      10
+    )
+    const currentDate = new Date()
     return this.refreshTokensRepository.crear({
       id: TextService.generateNanoId(),
       grantId,
@@ -45,70 +45,70 @@ export class RefreshTokensService {
       expiresAt: new Date(currentDate.getTime() + ttl),
       isRevoked: false,
       data: {},
-    });
+    })
   }
 
   async createAccessToken(refreshTokenId: string) {
     const refreshToken = await this.refreshTokensRepository.findById(
-      refreshTokenId,
-    );
+      refreshTokenId
+    )
 
     if (!refreshToken) {
       throw new EntityNotFoundException(
-        Messages.EXCEPTION_REFRESH_TOKEN_NOT_FOUND,
-      );
+        Messages.EXCEPTION_REFRESH_TOKEN_NOT_FOUND
+      )
     }
 
     if (!dayjs().isBefore(dayjs(refreshToken.expiresAt))) {
       throw new EntityUnauthorizedException(
-        Messages.EXCEPTION_REFRESH_TOKEN_EXPIRED,
-      );
+        Messages.EXCEPTION_REFRESH_TOKEN_EXPIRED
+      )
     }
 
     // usuario
     const usuario = await this.usuarioService.buscarUsuarioId(
-      refreshToken.grantId,
-    );
+      refreshToken.grantId
+    )
 
-    const roles: Array<string | null> = [];
+    const roles: Array<string | null> = []
     if (usuario.roles.length) {
       usuario.roles.map((usuarioRol) => {
-        roles.push(usuarioRol.rol);
-      });
+        roles.push(usuarioRol.rol)
+      })
     }
 
-    let newRefreshToken: RefreshTokens | undefined | null = null;
+    let newRefreshToken: RefreshTokens | undefined | null = null
     const rft = parseInt(
       this.configService.get('REFRESH_TOKEN_ROTATE_IN') || '0',
-      10,
-    );
+      10
+    )
 
     // crear rotacion de refresh token
     if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
-      newRefreshToken = await this.create(refreshToken.grantId);
+      newRefreshToken = await this.create(refreshToken.grantId)
     }
-    const payload = { id: usuario.id, roles };
+    const payload = { id: usuario.id, roles }
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
-    };
+    }
 
     return {
       data,
       refresh_token: newRefreshToken ? { id: newRefreshToken.id } : null,
-    };
+    }
   }
 
   async removeByid(id: string) {
-    const refreshToken = await this.refreshTokensRepository.findById(id);
+    const refreshToken = await this.refreshTokensRepository.findById(id)
     if (!refreshToken) {
-      return {};
+      return {}
     }
-    return this.refreshTokensRepository.eliminar(refreshToken.id);
+    return this.refreshTokensRepository.eliminar(refreshToken.id)
   }
 
   @Cron(process.env.REFRESH_TOKEN_REVISIONS || '0')
   async eliminarCaducos() {
-    return this.refreshTokensRepository.eliminarTokensCaducos();
+    return this.refreshTokensRepository.eliminarTokensCaducos()
   }
 }

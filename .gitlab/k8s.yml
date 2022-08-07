@@ -40,7 +40,6 @@ Build:
       - node_modules/
     expire_in: 20 mins
 
-
 Verificar paquetes:
   image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/opensecurity/nodejsscan:latest
   stage: test
@@ -195,8 +194,8 @@ Trivy:
       - master
   variables:
     DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    IMAGE_NAME: "$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    DOCKER_TLS_CERTDIR: ''
+    IMAGE_NAME: '$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     TRIVY_URL_VERSION: https://api.github.com/repos/aquasecurity/trivy/releases/latest
     SCAN_TRIVY: trivy-report_$CI_COMMIT_SHORT_SHA.json
     URL_ELK: http://192.168.21.70:5000 # TODO: Obtener desde vault

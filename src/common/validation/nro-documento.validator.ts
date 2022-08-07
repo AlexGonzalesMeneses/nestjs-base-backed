@@ -1,11 +1,11 @@
-import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
-import { ValidationMessageEnum } from './i18n/es.enum';
+import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator'
+import { ValidationMessageEnum } from './i18n/es.enum'
 
-const comp = /(-[A-Za-z0-9]{2}){0,1}/;
-const ext = /([eE][-]{1}){0,1}/;
-const doc = /[0-9]{4,10}/;
+const comp = /(-[A-Za-z0-9]{2}){0,1}/
+const ext = /([eE][-]{1}){0,1}/
+const doc = /[0-9]{4,10}/
 
-export const NRO_DOC = 'nroDocumento';
+export const NRO_DOC = 'nroDocumento'
 
 /**
  * Verifica si una cadena es un número de documento válido
@@ -20,21 +20,21 @@ export function nroDocumento(
   {
     complemento = true,
     extranjero = true,
-  }: { complemento?: boolean; extranjero?: boolean } = {},
+  }: { complemento?: boolean; extranjero?: boolean } = {}
 ): boolean {
   const regex = new RegExp(
     '^' +
       (extranjero ? ext.source : '') +
       doc.source +
       (complemento ? comp.source : '') +
-      '$',
-  );
-  return value ? regex.test(value) : false;
+      '$'
+  )
+  return value ? regex.test(value) : false
 }
 
 export function NroDocumento(
   options?: any,
-  validationsOptions?: ValidationOptions,
+  validationsOptions?: ValidationOptions
 ): PropertyDecorator {
   return ValidateBy(
     {
@@ -44,10 +44,10 @@ export function NroDocumento(
         validate: (value): boolean => nroDocumento(value, options),
         defaultMessage: buildMessage(
           () => ValidationMessageEnum.NRO_DOC,
-          validationsOptions,
+          validationsOptions
         ),
       },
     },
-    validationsOptions,
-  );
+    validationsOptions
+  )
 }

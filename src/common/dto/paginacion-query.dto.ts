@@ -1,5 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
   IsEnum,
   IsInt,
@@ -8,13 +8,13 @@ import {
   IsString,
   Max,
   Min,
-} from '../validation';
+} from '../validation'
 
-import { Order } from '../constants';
+import { Order } from '../constants'
 
-const LIMITE_MIN = 10;
-const LIMITE_MAX = 50;
-const PAGINA_MIN = 1;
+const LIMITE_MIN = 10
+const LIMITE_MAX = 50
+const PAGINA_MIN = 1
 
 export class PaginacionQueryDto {
   @ApiPropertyOptional({
@@ -31,7 +31,7 @@ export class PaginacionQueryDto {
     message: `El valor máximo para $property debe ser ${LIMITE_MAX}.`,
   })
   @IsOptional()
-  readonly limite: number = LIMITE_MIN;
+  readonly limite: number = LIMITE_MIN
 
   @ApiPropertyOptional({
     minimum: 1,
@@ -43,13 +43,13 @@ export class PaginacionQueryDto {
     message: `El valor mínimo para $property debe ser ${PAGINA_MIN}.`,
   })
   @IsOptional()
-  readonly pagina: number = PAGINA_MIN;
+  readonly pagina: number = PAGINA_MIN
 
   @ApiPropertyOptional()
   @IsNotEmpty()
   @IsOptional()
   @IsString()
-  readonly filtro?: string;
+  readonly filtro?: string
 
   @ApiPropertyOptional({
     enum: Order,
@@ -57,9 +57,9 @@ export class PaginacionQueryDto {
   })
   @IsEnum(Order)
   @IsOptional()
-  readonly orden?: Order = Order.ASC;
+  readonly orden?: Order = Order.ASC
 
   get saltar(): number {
-    return (this.pagina - 1) * this.limite;
+    return (this.pagina - 1) * this.limite
   }
 }

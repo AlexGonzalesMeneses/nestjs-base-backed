@@ -1,4 +1,4 @@
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
+import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,29 +7,29 @@ import {
   ManyToOne,
   JoinColumn,
   Check,
-} from 'typeorm';
-import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
-import { Persona } from './persona.entity';
-import { Status } from '../../../common/constants';
-import dotenv from 'dotenv';
-dotenv.config();
+} from 'typeorm'
+import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
+import { Persona } from './persona.entity'
+import { Status } from '../../../common/constants'
+import dotenv from 'dotenv'
+dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
-  usuario: string;
+  usuario: string
 
   @Column({ length: 255, type: 'varchar' })
-  contrasena: string;
+  contrasena: string
 
   @Column({ name: 'ciudadania_digital', type: 'boolean', default: false })
-  ciudadaniaDigital: boolean;
+  ciudadaniaDigital: boolean
 
   @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
-  correoElectronico: string | null;
+  correoElectronico: string | null
 
   @Check(
     `estado in (
@@ -37,16 +37,16 @@ export class Usuario extends AbstractEntity {
       '${Status.PENDING}',
       '${Status.ACTIVE}',
       '${Status.INACTIVE}'
-    )`,
+    )`
   )
   @Column({ length: 15, type: 'varchar', default: Status.CREATE })
-  estado: string;
+  estado: string
 
   @Column({
     type: 'integer',
     default: 0,
   })
-  intentos: number;
+  intentos: number
 
   @Column({
     name: 'codigo_desbloqueo',
@@ -54,19 +54,19 @@ export class Usuario extends AbstractEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoDesbloqueo: string | null;
+  codigoDesbloqueo: string | null
 
   @Column({
     name: 'fecha_bloqueo',
     type: 'timestamp',
     nullable: true,
   })
-  fechaBloqueo: Date | null;
+  fechaBloqueo: Date | null
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,
   })
-  public usuarioRol!: UsuarioRol[];
+  public usuarioRol!: UsuarioRol[]
 
   @ManyToOne(() => Persona, (persona) => persona.usuarios, {
     nullable: false,
@@ -76,5 +76,5 @@ export class Usuario extends AbstractEntity {
     name: 'id_persona',
     referencedColumnName: 'id',
   })
-  persona: Persona;
+  persona: Persona
 }

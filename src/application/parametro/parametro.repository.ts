@@ -1,9 +1,9 @@
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto';
-import { DataSource, UpdateResult } from 'typeorm';
-import { CrearParametroDto } from './dto/crear-parametro.dto';
-import { Parametro } from './parametro.entity';
-import { Injectable } from '@nestjs/common';
-import { ActualizarParametroDto } from './dto/actualizar-parametro.dto';
+import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto'
+import { DataSource, UpdateResult } from 'typeorm'
+import { CrearParametroDto } from './dto/crear-parametro.dto'
+import { Parametro } from './parametro.entity'
+import { Injectable } from '@nestjs/common'
+import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 
 @Injectable()
 export class ParametroRepository {
@@ -14,20 +14,20 @@ export class ParametroRepository {
       .getRepository(Parametro)
       .createQueryBuilder('parametro')
       .where({ id: id })
-      .getOne();
+      .getOne()
   }
 
   async actualizar(
     id: string,
-    parametroDto: ActualizarParametroDto,
+    parametroDto: ActualizarParametroDto
   ): Promise<UpdateResult> {
     return await this.dataSource
       .getRepository(Parametro)
-      .update(id, parametroDto);
+      .update(id, parametroDto)
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, filtro } = paginacionQueryDto;
+    const { limite, saltar, filtro } = paginacionQueryDto
     return await this.dataSource
       .getRepository(Parametro)
       .createQueryBuilder('parametro')
@@ -45,11 +45,11 @@ export class ParametroRepository {
           : '1=1',
         {
           filtro: `%${filtro}%`,
-        },
+        }
       )
       .offset(saltar)
       .limit(limite)
-      .getManyAndCount();
+      .getManyAndCount()
   }
 
   async listarPorGrupo(grupo: string) {
@@ -60,18 +60,18 @@ export class ParametroRepository {
       .where('parametro.grupo = :grupo', {
         grupo,
       })
-      .getMany();
+      .getMany()
   }
 
   async crear(parametroDto: CrearParametroDto) {
-    const { codigo, nombre, grupo, descripcion } = parametroDto;
+    const { codigo, nombre, grupo, descripcion } = parametroDto
 
-    const parametro = new Parametro();
-    parametro.codigo = codigo;
-    parametro.nombre = nombre;
-    parametro.grupo = grupo;
-    parametro.descripcion = descripcion;
+    const parametro = new Parametro()
+    parametro.codigo = codigo
+    parametro.nombre = nombre
+    parametro.grupo = grupo
+    parametro.descripcion = descripcion
 
-    return await this.dataSource.getRepository(Parametro).save(parametro);
+    return await this.dataSource.getRepository(Parametro).save(parametro)
   }
 }

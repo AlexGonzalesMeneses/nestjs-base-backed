@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { map } from 'rxjs/operators';
-import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception';
-import dayjs from 'dayjs';
-import { PersonaDto } from '../../../usuario/dto/persona.dto';
-import { UtilService } from '../../../../common/lib/util.service';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { Injectable } from '@nestjs/common'
+import { map } from 'rxjs/operators'
+import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception'
+import dayjs from 'dayjs'
+import { PersonaDto } from '../../../usuario/dto/persona.dto'
+import { UtilService } from '../../../../common/lib/util.service'
+import { HttpService } from '@nestjs/axios'
+import { firstValueFrom } from 'rxjs'
 
 // Respuestas codigos segip
 enum CodigoResSegipEnum {
@@ -35,33 +35,33 @@ export class SegipService {
    */
   async contrastar(datosPersona: PersonaDto, retornarPrimerError = true) {
     try {
-      const datosCampos = this.armarDatosPersona(datosPersona);
-      const campos = UtilService.armarQueryParams(datosCampos);
+      const datosCampos = this.armarDatosPersona(datosPersona)
+      const campos = UtilService.armarQueryParams(datosCampos)
 
       const urlContrastacion = encodeURI(
-        `/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`,
-      );
+        `/v2/personas/contrastacion?tipo_persona=1&lista_campo={ ${campos} }`
+      )
       const respuesta = firstValueFrom(
         await this.http
           .get(urlContrastacion)
-          .pipe(map((response) => response.data)),
-      );
+          .pipe(map((response) => response.data))
+      )
       const resultado = (await respuesta)
-        ?.ConsultaDatoPersonaContrastacionResult;
+        ?.ConsultaDatoPersonaContrastacionResult
       if (resultado) {
         if (resultado.CodigoRespuesta === CodigoResSegipEnum.ENCONTRADO) {
           const datosRespuesta = JSON.parse(
-            resultado.ContrastacionEnFormatoJson,
-          );
+            resultado.ContrastacionEnFormatoJson
+          )
           const observaciones = this.procesarRespuesta(
             datosRespuesta,
-            retornarPrimerError,
-          );
-          const exito = observaciones.length === 0;
+            retornarPrimerError
+          )
+          const exito = observaciones.length === 0
           const mensaje = exito
             ? resultado.DescripcionRespuesta
-            : `No coincide ${observaciones.join(', ')}`;
-          return this.armarRespuesta(exito, mensaje);
+            : `No coincide ${observaciones.join(', ')}`
+          return this.armarRespuesta(exito, mensaje)
         } else if (
           [
             CodigoResSegipEnum.NO_PROCESADO,
@@ -70,11 +70,11 @@ export class SegipService {
             CodigoResSegipEnum.OBSERVADO,
           ].includes(resultado.CodigoRespuesta)
         ) {
-          return this.armarRespuesta(false, resultado.DescripcionRespuesta);
+          return this.armarRespuesta(false, resultado.DescripcionRespuesta)
         }
       }
     } catch (error) {
-      throw new ExternalServiceException('SEGIP:CONTRASTACION', error);
+      throw new ExternalServiceException('SEGIP:CONTRASTACION', error)
     }
   }
 
@@ -86,47 +86,44 @@ export class SegipService {
       PrimerApellido: datosPersona.primerApellido || '--',
       SegundoApellido: datosPersona.segundoApellido || '--',
       FechaNacimiento: dayjs(datosPersona.fechaNacimiento).format('DD/MM/YYYY'),
-    };
-    if (datosPersona.nroDocumento.includes('-')) {
-      datosCampos.NumeroDocumento = datosPersona.nroDocumento
-        .split('-')
-        .shift();
-      datosCampos.Complemento =
-        datosPersona.nroDocumento.split('-').pop() || '';
     }
-    return datosCampos;
+    if (datosPersona.nroDocumento.includes('-')) {
+      datosCampos.NumeroDocumento = datosPersona.nroDocumento.split('-').shift()
+      datosCampos.Complemento = datosPersona.nroDocumento.split('-').pop() || ''
+    }
+    return datosCampos
   }
 
   procesarRespuesta(respuesta, retornarPrimerError) {
-    const datosIncorrectos: Array<string> = [];
+    const datosIncorrectos: Array<string> = []
     if (respuesta?.NumeroDocumento === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Número de documento');
+      datosIncorrectos.push('Número de documento')
     }
     if (respuesta?.Complemento === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Complemento');
+      datosIncorrectos.push('Complemento')
     }
     if (respuesta?.Nombres === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Nombre(s)');
+      datosIncorrectos.push('Nombre(s)')
     }
     if (respuesta?.PrimerApellido === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Primer Apellido');
+      datosIncorrectos.push('Primer Apellido')
     }
     if (respuesta?.SegundoApellido === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Segundo Apellido');
+      datosIncorrectos.push('Segundo Apellido')
     }
     if (respuesta?.FechaNacimiento === EstadosDatosEnum.NO_CORRESPONDE) {
-      datosIncorrectos.push('Fecha de Nacimiento');
+      datosIncorrectos.push('Fecha de Nacimiento')
     }
     if (datosIncorrectos.length > 0) {
-      return retornarPrimerError ? [datosIncorrectos[0]] : datosIncorrectos;
+      return retornarPrimerError ? [datosIncorrectos[0]] : datosIncorrectos
     }
-    return [];
+    return []
   }
 
   armarRespuesta(exito, mensaje) {
     return {
       finalizado: exito,
       mensaje: `Servicio Segip: ${mensaje}`,
-    };
+    }
   }
 }

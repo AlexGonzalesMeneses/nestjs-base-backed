@@ -1,23 +1,23 @@
-import { JwtService } from '@nestjs/jwt';
-import { Test, TestingModule } from '@nestjs/testing';
-import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service';
-import { UsuarioService } from '../../usuario/service/usuario.service';
-import { AuthenticationService } from './authentication.service';
-import { RefreshTokensService } from './refreshTokens.service';
-import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception';
-import { Configurations } from '../../../common/params';
-import dayjs from 'dayjs';
-import { TextService } from '../../../common/lib/text.service';
-import { Persona } from '../../usuario/entity/persona.entity';
-import { plainToClass } from 'class-transformer';
-import { ConfigService } from '@nestjs/config';
-import { PersonaService } from '../../usuario/service/persona.service';
-import { PersonaRepository } from '../../usuario/repository/persona.repository';
-import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository';
-import { RolRepository } from '../../authorization/repository/rol.repository';
-import { PersonaDto } from '../../usuario/dto/persona.dto';
+import { JwtService } from '@nestjs/jwt'
+import { Test, TestingModule } from '@nestjs/testing'
+import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
+import { UsuarioService } from '../../usuario/service/usuario.service'
+import { AuthenticationService } from './authentication.service'
+import { RefreshTokensService } from './refreshTokens.service'
+import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception'
+import { Configurations } from '../../../common/params'
+import dayjs from 'dayjs'
+import { TextService } from '../../../common/lib/text.service'
+import { Persona } from '../../usuario/entity/persona.entity'
+import { plainToClass } from 'class-transformer'
+import { ConfigService } from '@nestjs/config'
+import { PersonaService } from '../../usuario/service/persona.service'
+import { PersonaRepository } from '../../usuario/repository/persona.repository'
+import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository'
+import { RolRepository } from '../../authorization/repository/rol.repository'
+import { PersonaDto } from '../../usuario/dto/persona.dto'
 
-const resSign = 'aaa.bbb.ccc';
+const resSign = 'aaa.bbb.ccc'
 const resBuscarUsuario = {
   id: 11111,
   usuario: 'user',
@@ -32,20 +32,20 @@ const resBuscarUsuario = {
     },
   ],
   intentos: 0,
-};
+}
 
 const resPersona = {
   nombres: 'JUAN',
   primerApellido: 'PEREZ',
   segundoApellido: 'PEREZ',
   fechaNacimiento: '1999-11-11',
-};
+}
 
-const refreshToken = { resfresh_token: '1' };
+const refreshToken = { resfresh_token: '1' }
 
 describe('AuthenticationService', () => {
-  let service: AuthenticationService;
-  let usuarioService: UsuarioService;
+  let service: AuthenticationService
+  let usuarioService: UsuarioService
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -123,94 +123,94 @@ describe('AuthenticationService', () => {
           useValue: {},
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<AuthenticationService>(AuthenticationService);
-    usuarioService = module.get<UsuarioService>(UsuarioService);
-  });
+    service = module.get<AuthenticationService>(AuthenticationService)
+    usuarioService = module.get<UsuarioService>(UsuarioService)
+  })
 
   it('[autenticar] debería generar un token de acceso.', async () => {
     const user = {
       usuario: 'user',
       id: '11111',
-    };
-    const credenciales = await service.autenticarOidc(user);
+    }
+    const credenciales = await service.autenticarOidc(user)
     // expect(credenciales).toHaveProperty('access_token');
-    expect(credenciales?.data?.access_token).toEqual(resSign);
-  });
+    expect(credenciales?.data?.access_token).toEqual(resSign)
+  })
 
   it('[validarUsuario] Debería validar un usuario exitosamente.', async () => {
     const usuario = await service.validarUsuario(
       'user',
-      TextService.btoa(encodeURI('123')),
-    );
+      TextService.btoa(encodeURI('123'))
+    )
 
-    expect(usuario).toHaveProperty('id');
-  });
+    expect(usuario).toHaveProperty('id')
+  })
 
   it('[validarUsuario] Debería lanzar una excepcion para un usuario con contrasena erronea.', async () => {
     try {
-      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
+      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException);
-      expect(error.status).toEqual(401);
+      expect(error instanceof EntityUnauthorizedException)
+      expect(error.status).toEqual(401)
     }
-  });
+  })
 
   it('[validarUsuario] Debería lanzar una excepcion para un usuario INACTIVO.', async () => {
     try {
-      await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
+      await service.validarUsuario('user', TextService.btoa(encodeURI('123')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException);
-      expect(error.status).toEqual(401);
+      expect(error instanceof EntityUnauthorizedException)
+      expect(error.status).toEqual(401)
     }
-  });
+  })
 
   it('[validarUsuario] Debería lanzar una excepcion si excedio el limite de intentos erroneos de inicio de sesion.', async () => {
     try {
-      await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
+      await service.validarUsuario('user', TextService.btoa(encodeURI('123')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException);
-      expect(error.status).toEqual(401);
+      expect(error instanceof EntityUnauthorizedException)
+      expect(error.status).toEqual(401)
     }
-  });
+  })
 
   it('[validarUsuario] Debería restablecer el limite de intentos si inicio sesion correctamente.', async () => {
-    await service.validarUsuario('user', TextService.btoa(encodeURI('123')));
+    await service.validarUsuario('user', TextService.btoa(encodeURI('123')))
 
-    expect(usuarioService.actualizarContadorBloqueos).toBeCalled();
-  });
+    expect(usuarioService.actualizarContadorBloqueos).toBeCalled()
+  })
 
   it('[validarUsuario] Debería permitir iniciar sesion si la fecha limite bloqueo ya expiro.', async () => {
     try {
-      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')));
+      await service.validarUsuario('user', TextService.btoa(encodeURI('1234')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException);
-      expect(usuarioService.actualizarDatosBloqueo).toBeCalled();
-      expect(usuarioService.actualizarContadorBloqueos).toBeCalled();
+      expect(error instanceof EntityUnauthorizedException)
+      expect(usuarioService.actualizarDatosBloqueo).toBeCalled()
+      expect(usuarioService.actualizarContadorBloqueos).toBeCalled()
     }
-  });
+  })
 
   it('[validarUsuarioOidc] Debería retornar null cuando no existe el usuario.', async () => {
-    const persona = plainToClass(Persona, resPersona) as PersonaDto;
+    const persona = plainToClass(Persona, resPersona) as PersonaDto
 
-    const result = await service.validarUsuarioOidc(persona);
-    expect(result).toBeFalsy();
-  });
+    const result = await service.validarUsuarioOidc(persona)
+    expect(result).toBeFalsy()
+  })
 
   it('[validarUsuarioOidc] Debería retornar excepcion si el usuario esta INACTIVO.', async () => {
     try {
-      const persona = plainToClass(Persona, resPersona) as PersonaDto;
-      await service.validarUsuarioOidc(persona);
+      const persona = plainToClass(Persona, resPersona) as PersonaDto
+      await service.validarUsuarioOidc(persona)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityUnauthorizedException);
+      expect(error).toBeInstanceOf(EntityUnauthorizedException)
     }
-  });
+  })
 
   it('[validarUsuarioOidc] Debería retornar el id si el usuario esta ACTIVO.', async () => {
-    const persona = plainToClass(Persona, resPersona) as PersonaDto;
-    const result = await service.validarUsuarioOidc(persona);
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('id');
-  });
-});
+    const persona = plainToClass(Persona, resPersona) as PersonaDto
+    const result = await service.validarUsuarioOidc(persona)
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('id')
+  })
+})

@@ -1,21 +1,21 @@
-import { TextService } from '../../../common/lib/text.service';
-import { Rol } from '../../authorization/entity/rol.entity';
-import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity';
-import { Persona } from '../entity/persona.entity';
-import { CrearUsuarioDto } from '../dto/crear-usuario.dto';
-import { Usuario } from '../entity/usuario.entity';
-import { PersonaDto } from '../dto/persona.dto';
-import { Status } from '../../../common/constants';
-import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto';
-import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { TextService } from '../../../common/lib/text.service'
+import { Rol } from '../../authorization/entity/rol.entity'
+import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
+import { Persona } from '../entity/persona.entity'
+import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
+import { Usuario } from '../entity/usuario.entity'
+import { PersonaDto } from '../dto/persona.dto'
+import { Status } from '../../../common/constants'
+import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
+import { Injectable } from '@nestjs/common'
+import { DataSource, EntityManager } from 'typeorm'
 
 @Injectable()
 export class UsuarioRepository {
   constructor(private dataSource: DataSource) {}
 
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
-    const { limite, saltar, filtro, rol } = paginacionQueryDto;
+    const { limite, saltar, filtro, rol } = paginacionQueryDto
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
@@ -48,12 +48,12 @@ export class UsuarioRepository {
           : '1=1',
         {
           filtro: `%${filtro}%`,
-        },
+        }
       )
       .offset(saltar)
       .limit(limite)
       .orderBy('usuario.id', 'ASC')
-      .getManyAndCount();
+      .getManyAndCount()
   }
 
   async recuperar() {
@@ -62,7 +62,7 @@ export class UsuarioRepository {
       .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
-      .getMany();
+      .getMany()
   }
 
   async buscarUsuario(usuario: string) {
@@ -73,7 +73,7 @@ export class UsuarioRepository {
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where({ usuario: usuario })
-      .getOne();
+      .getOne()
   }
 
   async buscarPorId(id: string): Promise<Usuario | null> {
@@ -81,7 +81,7 @@ export class UsuarioRepository {
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .where({ id: id })
-      .getOne();
+      .getOne()
   }
 
   async buscarUsuarioRolPorId(id: string) {
@@ -107,7 +107,7 @@ export class UsuarioRepository {
         'rol',
       ])
       .where({ id })
-      .getOne();
+      .getOne()
   }
 
   async buscarUsuarioPorCI(persona: PersonaDto) {
@@ -118,7 +118,7 @@ export class UsuarioRepository {
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('persona.nroDocumento = :ci', { ci: persona.nroDocumento })
-      .getOne();
+      .getOne()
   }
 
   async verificarExisteUsuarioPorCI(ci: string) {
@@ -128,7 +128,7 @@ export class UsuarioRepository {
       .leftJoin('usuario.persona', 'persona')
       .select('usuario.id')
       .where('persona.nroDocumento = :ci', { ci: ci })
-      .getOne();
+      .getOne()
   }
 
   async buscarUsuarioPorCorreo(correo: string) {
@@ -136,22 +136,22 @@ export class UsuarioRepository {
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
-      .getOne();
+      .getOne()
   }
 
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
       // Rol
-      const rol = new Rol();
-      rol.id = idRol;
+      const rol = new Rol()
+      rol.id = idRol
 
       // UsuarioRol
-      const usuarioRol = new UsuarioRol();
-      usuarioRol.rol = rol;
-      usuarioRol.usuarioCreacion = usuarioAuditoria;
+      const usuarioRol = new UsuarioRol()
+      usuarioRol.rol = rol
+      usuarioRol.usuarioCreacion = usuarioAuditoria
 
-      return usuarioRol;
-    });
+      return usuarioRol
+    })
 
     // Usuario
 
@@ -172,91 +172,91 @@ export class UsuarioRepository {
         (await TextService.encrypt(TextService.generateUuid())),
       ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
       usuarioCreacion: usuarioAuditoria,
-    });
+    })
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
-      const usuarioRol = new UsuarioRol();
-      usuarioRol.rol = rol;
-      usuarioRol.usuarioCreacion = usuarioAuditoria;
+      const usuarioRol = new UsuarioRol()
+      usuarioRol.rol = rol
+      usuarioRol.usuarioCreacion = usuarioAuditoria
 
-      return usuarioRol;
-    });
+      return usuarioRol
+    })
 
     // Persona
-    const persona = new Persona();
-    persona.nombres = usuarioDto?.persona?.nombres ?? null;
-    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null;
-    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null;
+    const persona = new Persona()
+    persona.nombres = usuarioDto?.persona?.nombres ?? null
+    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null
+    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null
     persona.nroDocumento =
-      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
-    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null;
+      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
+    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null
     // persona.usuarioCreacion = usuarioAuditoria;
 
-    persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null;
-    persona.telefono = usuarioDto?.persona?.telefono ?? null;
+    persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null
+    persona.telefono = usuarioDto?.persona?.telefono ?? null
 
     // Usuario
-    const usuario = new Usuario();
-    usuario.persona = persona;
-    usuario.usuarioRol = usuarioRoles;
+    const usuario = new Usuario()
+    usuario.persona = persona
+    usuario.usuarioRol = usuarioRoles
 
-    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
-    usuario.correoElectronico = usuarioDto?.correoElectronico;
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE
+    usuario.correoElectronico = usuarioDto?.correoElectronico
     usuario.contrasena =
       usuarioDto?.contrasena ??
-      (await TextService.encrypt(TextService.generateUuid()));
-    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
-    usuario.usuarioCreacion = usuarioAuditoria;
+      (await TextService.encrypt(TextService.generateUuid()))
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false
+    usuario.usuarioCreacion = usuarioAuditoria
 
-    return await this.dataSource.getRepository(Usuario).save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
   async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
-      const usuarioRol = new UsuarioRol();
-      usuarioRol.rol = rol;
-      usuarioRol.usuarioCreacion = usuarioAuditoria;
+      const usuarioRol = new UsuarioRol()
+      usuarioRol.rol = rol
+      usuarioRol.usuarioCreacion = usuarioAuditoria
 
-      return usuarioRol;
-    });
+      return usuarioRol
+    })
 
     // Usuario
-    const usuario = new Usuario();
-    usuario.usuarioRol = usuarioRoles;
+    const usuario = new Usuario()
+    usuario.usuarioRol = usuarioRoles
 
     // Persona
-    usuario.persona = usuarioDto.persona;
+    usuario.persona = usuarioDto.persona
 
-    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario;
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE;
-    usuario.correoElectronico = usuarioDto?.correoElectronico;
+    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
+    usuario.estado = usuarioDto?.estado ?? Status.CREATE
+    usuario.correoElectronico = usuarioDto?.correoElectronico
     usuario.contrasena =
       usuarioDto?.contrasena ??
-      (await TextService.encrypt(TextService.generateUuid()));
-    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false;
-    usuario.usuarioCreacion = usuarioAuditoria;
+      (await TextService.encrypt(TextService.generateUuid()))
+    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false
+    usuario.usuarioCreacion = usuarioAuditoria
 
-    return await this.dataSource.getRepository(Usuario).save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
   async actualizarContadorBloqueos(idUsuario, intento) {
-    const usuario = new Usuario();
-    usuario.id = idUsuario;
-    usuario.intentos = intento;
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.intentos = intento
 
-    return await this.dataSource.getRepository(Usuario).save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
   async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
-    const usuario = new Usuario();
-    usuario.id = idUsuario;
-    usuario.codigoDesbloqueo = codigo;
-    usuario.fechaBloqueo = fechaBloqueo;
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.codigoDesbloqueo = codigo
+    usuario.fechaBloqueo = fechaBloqueo
 
-    return await this.dataSource.getRepository(Usuario).save(usuario);
+    return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
   async buscarPorCodigoDesbloqueo(codigo: string) {
@@ -265,7 +265,7 @@ export class UsuarioRepository {
       .createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
-      .getOne();
+      .getOne()
   }
 
   async actualizarDatosPersona(persona: PersonaDto) {
@@ -276,20 +276,20 @@ export class UsuarioRepository {
       .where('nroDocumento = :nroDocumento', {
         nroDocumento: persona.nroDocumento,
       })
-      .execute();
+      .execute()
   }
 
   async actualizarUsuario(
     id: string,
-    usuario: Partial<Usuario>,
+    usuario: Partial<Usuario>
   ): Promise<Usuario> {
     return await this.dataSource.getRepository(Usuario).save({
       id: id,
       ...usuario,
-    });
+    })
   }
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.getRepository(Usuario).manager.transaction(op);
+    return this.dataSource.getRepository(Usuario).manager.transaction(op)
   }
 }

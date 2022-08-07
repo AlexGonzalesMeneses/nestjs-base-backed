@@ -15,7 +15,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js',  'database/**/*.ts', '**/*.spec.ts', 'libs'],
+  ignorePatterns: ['.eslintrc.js', 'database/**/*.ts', '**/*.spec.ts', 'libs'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -26,4 +26,4 @@ module.exports = {
     // 'max-depth': ['error', 3],
     // 'max-params': ['error', 3]
   },
-};
+}

@@ -1,9 +1,9 @@
-import TypeORMAdapter from 'typeorm-adapter';
-import { Module } from '@nestjs/common';
-import { AuthZModule, AUTHZ_ENFORCER } from 'nest-authz';
-import { join } from 'path';
-import { newEnforcer } from 'casbin';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import TypeORMAdapter from 'typeorm-adapter'
+import { Module } from '@nestjs/common'
+import { AuthZModule, AUTHZ_ENFORCER } from 'nest-authz'
+import { join } from 'path'
+import { newEnforcer } from 'casbin'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 
 @Module({
   imports: [
@@ -23,20 +23,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             schema: configService.get('DB_SCHEMA_USUARIOS'),
             logging: configService.get('NODE_ENV') === 'development',
             synchronize: false,
-          });
+          })
           const enforcer = await newEnforcer(
             join(__dirname, 'model.conf'),
-            adapter,
-          );
-          enforcer.enableLog(true);
-          await enforcer.loadPolicy();
-          return enforcer;
+            adapter
+          )
+          enforcer.enableLog(true)
+          await enforcer.loadPolicy()
+          return enforcer
         },
         inject: [ConfigService],
       },
       usernameFromContext: (ctx) => {
-        const request = ctx.switchToHttp().getRequest();
-        return request.user && request.user.username;
+        const request = ctx.switchToHttp().getRequest()
+        return request.user && request.user.username
       },
     }),
   ],

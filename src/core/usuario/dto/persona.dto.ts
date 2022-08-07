@@ -1,33 +1,33 @@
-import { ValidateIf } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { ValidateIf } from 'class-validator'
+import { Transform } from 'class-transformer'
 import {
   IsNotEmpty,
   IsString,
   NombreApellido,
   NroDocumento,
-} from '../../../common/validation';
+} from '../../../common/validation'
 
 export class PersonaDto {
   @IsNotEmpty()
   @NroDocumento()
   @Transform(({ value }) => value?.trim())
-  nroDocumento: string;
+  nroDocumento: string
 
-  tipoDocumento?: string;
+  tipoDocumento?: string
 
   @IsNotEmpty()
   @NombreApellido()
-  nombres: string;
+  nombres: string
 
   @IsString()
   @ValidateIf((o) => !o.segundoApellido)
   @NombreApellido()
-  primerApellido?: string;
+  primerApellido?: string
 
   @ValidateIf((o) => !o.primerApellido)
   @NombreApellido()
-  segundoApellido?: string;
+  segundoApellido?: string
 
   @IsString()
-  fechaNacimiento: string;
+  fechaNacimiento: string
 }

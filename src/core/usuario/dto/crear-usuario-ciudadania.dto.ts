@@ -1,19 +1,19 @@
-import { Transform } from 'class-transformer';
-import { IsNotEmpty, NroDocumento } from '../../../common/validation';
+import { Transform } from 'class-transformer'
+import { IsNotEmpty, NroDocumento } from '../../../common/validation'
 
 export class CrearUsuarioCiudadaniaDto {
   @IsNotEmpty()
   @NroDocumento()
   @Transform(({ value }) => value?.trim())
-  usuario: string;
+  usuario: string
 
-  estado?: string;
+  estado?: string
 
   @IsNotEmpty()
-  roles: Array<string>;
+  roles: Array<string>
 
   @Transform(() => true)
-  ciudadaniaDigital?: boolean = true;
+  ciudadaniaDigital?: boolean = true
 
-  usuarioCreacion?: string;
+  usuarioCreacion?: string
 }

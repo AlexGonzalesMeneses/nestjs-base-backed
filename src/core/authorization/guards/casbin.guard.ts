@@ -4,8 +4,8 @@ import {
   ExecutionContext,
   ForbiddenException,
   Inject,
-} from '@nestjs/common';
-import { AUTHZ_ENFORCER } from 'nest-authz';
+} from '@nestjs/common'
+import { AUTHZ_ENFORCER } from 'nest-authz'
 @Injectable()
 export class CasbinGuard implements CanActivate {
   constructor(@Inject(AUTHZ_ENFORCER) private enforcer) {}
@@ -17,14 +17,14 @@ export class CasbinGuard implements CanActivate {
       query,
       route,
       method: action,
-    } = context.switchToHttp().getRequest();
+    } = context.switchToHttp().getRequest()
     if (!user) {
-      throw new ForbiddenException();
+      throw new ForbiddenException()
     }
-    const resource = Object.keys(query).length ? route.path : originalUrl;
+    const resource = Object.keys(query).length ? route.path : originalUrl
     for (const rol of user.roles) {
-      if (await this.enforcer.enforce(rol, resource, action)) return true;
+      if (await this.enforcer.enforce(rol, resource, action)) return true
     }
-    return false;
+    return false
   }
 }
