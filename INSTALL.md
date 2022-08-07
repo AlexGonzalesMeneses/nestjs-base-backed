@@ -45,7 +45,12 @@ cp ecosystem.config.js.sample ecosystem.config.js
 
 ## Creación y configuración de la Base de Datos
 
-Antes de ejecutar el siguiente comando asegúrate de que la base de datos exista (con sus correspondientes esquemas) y se tenga acceso a esta.
+
+```bash
+# Crear los siguientes esquemas de base de datos:
+create schema usuarios;
+create schema parametricas;
+```
 
 Para más detalles ver el archivo [backups/CREAR_BASE_DE_DATOS.md](./backups/CREAR_BASE_DE_DATOS.md)
 
