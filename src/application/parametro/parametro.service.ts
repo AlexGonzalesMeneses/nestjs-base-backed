@@ -32,8 +32,9 @@ export class ParametroService {
     if (parametro) {
       await this.parametroRepositorio.actualizar(id, parametroDto);
       return { id };
+    } else {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
     }
-    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
   }
 
   async activar(idParametro) {
@@ -46,8 +47,9 @@ export class ParametroService {
         id: idParametro,
         estado: parametroDto.estado,
       };
+    } else {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
     }
-    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
   }
 
   async inactivar(idParametro) {
@@ -60,7 +62,8 @@ export class ParametroService {
         id: idParametro,
         estado: parametroDto.estado,
       };
+    } else {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
     }
-    throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT);
   }
 }
