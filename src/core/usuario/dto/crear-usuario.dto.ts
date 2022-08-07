@@ -1,28 +1,28 @@
-import { IsEmail, IsNotEmpty, CorreoLista } from '../../../common/validation';
-import { PersonaDto } from './persona.dto';
-import { ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsEmail, IsNotEmpty, CorreoLista } from '../../../common/validation'
+import { PersonaDto } from './persona.dto'
+import { ValidateNested } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class CrearUsuarioDto {
-  usuario?: string;
+  usuario?: string
 
-  estado?: string;
+  estado?: string
 
-  contrasena?: string;
+  contrasena?: string
 
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()
-  correoElectronico: string;
+  correoElectronico: string
 
   @ValidateNested()
   @Type(() => PersonaDto)
-  persona: PersonaDto;
+  persona: PersonaDto
 
-  ciudadaniaDigital?: boolean = false;
+  ciudadaniaDigital?: boolean = false
 
   @IsNotEmpty()
-  roles: Array<string>;
+  roles: Array<string>
 
-  usuarioCreacion?: string;
+  usuarioCreacion?: string
 }

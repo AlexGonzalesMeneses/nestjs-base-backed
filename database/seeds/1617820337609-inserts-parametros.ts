@@ -1,5 +1,5 @@
-import { TextService } from 'src/common/lib/text.service';
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { TextService } from 'src/common/lib/text.service'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class insertsParametros1617820337609 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -100,13 +100,13 @@ export class insertsParametros1617820337609 implements MigrationInterface {
         grupo: 'TACCB',
         descripcion: 'DELETE',
       },
-    ];
+    ]
     await queryRunner.manager
       .createQueryBuilder()
       .insert()
       .into('parametro')
       .values(parametros)
-      .execute();
+      .execute()
   }
 
   /* eslint-disable */

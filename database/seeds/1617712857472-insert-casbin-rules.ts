@@ -1,6 +1,6 @@
-import { CasbinRule } from 'src/core/authorization/entity/casbin.entity';
-import { RolEnum } from 'src/core/authorization/rol.enum';
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { CasbinRule } from 'src/core/authorization/entity/casbin.entity'
+import { RolEnum } from 'src/core/authorization/rol.enum'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class insertCasbinRules1617712857472 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -218,17 +218,17 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         v2: 'PATCH',
         v3: 'backend',
       },
-    ];
+    ]
     const casbin = items.map((item) => {
-      const c = new CasbinRule();
-      c.ptype = 'p';
-      c.v0 = item.v0;
-      c.v1 = item.v1;
-      c.v2 = item.v2;
-      c.v3 = item.v3;
-      return c;
-    });
-    await queryRunner.manager.save(casbin);
+      const c = new CasbinRule()
+      c.ptype = 'p'
+      c.v0 = item.v0
+      c.v1 = item.v1
+      c.v2 = item.v2
+      c.v3 = item.v3
+      return c
+    })
+    await queryRunner.manager.save(casbin)
   }
   /* eslint-disable */
   public async down(queryRunner: QueryRunner): Promise<void> {}

@@ -1,12 +1,12 @@
-import { IsNotEmpty } from '../../../common/validation';
+import { IsNotEmpty } from '../../../common/validation'
 
 export class ActualizarParametroDto {
   @IsNotEmpty()
-  codigo: string;
+  codigo: string
   @IsNotEmpty()
-  nombre: string;
+  nombre: string
   @IsNotEmpty()
-  grupo: string;
-  descripcion: string;
-  estado?: string;
+  grupo: string
+  descripcion: string
+  estado?: string
 }

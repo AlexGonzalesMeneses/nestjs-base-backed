@@ -1,15 +1,15 @@
-import { PassportSerializer } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { PassportSerializer } from '@nestjs/passport'
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
   serializeUser(user: any, done: (err: Error | null, user: any) => void): any {
-    done(null, user);
+    done(null, user)
   }
   deserializeUser(
     payload: any,
-    done: (err: Error | null, payload: string) => void,
+    done: (err: Error | null, payload: string) => void
   ): any {
-    done(null, payload);
+    done(null, payload)
   }
 }

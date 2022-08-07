@@ -1,33 +1,33 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
-import { AuthenticationController } from './authentication.controller';
-import { AuthenticationService } from '../service/authentication.service';
-import { RefreshTokensService } from '../service/refreshTokens.service';
-import { LoggerModule, PinoLogger } from 'nestjs-pino';
-import { Request } from 'express';
+import { Test, TestingModule } from '@nestjs/testing'
+import { ConfigService } from '@nestjs/config'
+import { AuthenticationController } from './authentication.controller'
+import { AuthenticationService } from '../service/authentication.service'
+import { RefreshTokensService } from '../service/refreshTokens.service'
+import { LoggerModule, PinoLogger } from 'nestjs-pino'
+import { Request } from 'express'
 
 const resAutenticar = {
   refresh_token: '123',
   data: { access_token: 'aaa.bbb.ccc', id: '12132' },
-};
-const resValidarUsuario = { id: '111111', usuario: 'usuario' };
-const refreshToken = { resfresh_token: '1' };
+}
+const resValidarUsuario = { id: '111111', usuario: 'usuario' }
+const refreshToken = { resfresh_token: '1' }
 
 const mockResponse = (): any => {
-  const res: any = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  res.cookie = jest.fn().mockReturnValue(res);
-  res.send = jest.fn().mockReturnValue(res);
-  return res;
-};
+  const res: any = {}
+  res.status = jest.fn().mockReturnValue(res)
+  res.json = jest.fn().mockReturnValue(res)
+  res.cookie = jest.fn().mockReturnValue(res)
+  res.send = jest.fn().mockReturnValue(res)
+  return res
+}
 
 const mockRequest = (sessionData: any, body: any, user?: any) => {
-  return { body, session: sessionData, user } as Request;
-};
+  return { body, session: sessionData, user } as Request
+}
 
 describe('AuthenticationController', () => {
-  let controller: AuthenticationController;
+  let controller: AuthenticationController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,21 +51,21 @@ describe('AuthenticationController', () => {
         ConfigService,
         PinoLogger,
       ],
-    }).compile();
+    }).compile()
 
-    controller = module.get<AuthenticationController>(AuthenticationController);
-  });
+    controller = module.get<AuthenticationController>(AuthenticationController)
+  })
 
   it('[login] Debería realizar una autenticacion exitosa.', async () => {
-    const req = mockRequest({}, { user: 'boss' }, { id: 5 });
-    const res = mockResponse();
-    await controller.login(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
+    const req = mockRequest({}, { user: 'boss' }, { id: 5 })
+    const res = mockResponse()
+    await controller.login(req, res)
+    expect(res.status).toHaveBeenCalledWith(200)
     expect(res.send).toHaveBeenCalledWith({
       datos: resAutenticar?.data,
       finalizado: true,
       mensaje: 'ok',
-    });
+    })
     // expect(res.cookie).toHaveBeenCalledWith({ username: 'boss' });
-  });
-});
+  })
+})

@@ -7,32 +7,32 @@ import {
   Req,
   Res,
   UseGuards,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { Issuer } from 'openid-client';
-import { CookieService } from '../../../common/lib/cookie.service';
+} from '@nestjs/common'
+import { Request, Response } from 'express'
+import { Issuer } from 'openid-client'
+import { CookieService } from '../../../common/lib/cookie.service'
 
-import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { OidcAuthGuard } from '../guards/oidc-auth.guard';
-import { AuthenticationService } from '../service/authentication.service';
-import { RefreshTokensService } from '../service/refreshTokens.service';
-import { PinoLogger } from 'nestjs-pino';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { ConfigService } from '@nestjs/config';
+import { LocalAuthGuard } from '../guards/local-auth.guard'
+import { OidcAuthGuard } from '../guards/oidc-auth.guard'
+import { AuthenticationService } from '../service/authentication.service'
+import { RefreshTokensService } from '../service/refreshTokens.service'
+import { PinoLogger } from 'nestjs-pino'
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'
+import { ConfigService } from '@nestjs/config'
 
 @Controller()
 export class AuthenticationController {
-  static staticLogger: PinoLogger;
+  static staticLogger: PinoLogger
 
   // eslint-disable-next-line max-params
   constructor(
     private readonly autenticacionService: AuthenticationService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly logger: PinoLogger,
-    @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(ConfigService) private readonly configService: ConfigService
   ) {
-    this.logger.setContext(AuthenticationController.name);
-    AuthenticationController.staticLogger = this.logger;
+    this.logger.setContext(AuthenticationController.name)
+    AuthenticationController.staticLogger = this.logger
   }
 
   @UseGuards(LocalAuthGuard)
@@ -40,22 +40,22 @@ export class AuthenticationController {
   async login(@Req() req: Request, @Res() res: Response) {
     if (req.user == undefined) {
       throw new BadRequestException(
-        `Es necesario que este autenticado para consumir este recurso.`,
-      );
+        `Es necesario que este autenticado para consumir este recurso.`
+      )
     }
-    const result = await this.autenticacionService.autenticar(req.user);
+    const result = await this.autenticacionService.autenticar(req.user)
 
-    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`);
+    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`)
     /* sendRefreshToken(res, result.refresh_token.id); */
-    const refreshToken = result.refresh_token.id;
+    const refreshToken = result.refresh_token.id
     return res
       .cookie(
         this.configService.get('REFRESH_TOKEN_NAME') || '',
         refreshToken,
-        CookieService.makeConfig(this.configService),
+        CookieService.makeConfig(this.configService)
       )
       .status(200)
-      .send({ finalizado: true, mensaje: 'ok', datos: result.data });
+      .send({ finalizado: true, mensaje: 'ok', datos: result.data })
   }
 
   @UseGuards(OidcAuthGuard)
@@ -68,64 +68,64 @@ export class AuthenticationController {
   @Get('ciudadania-autorizar')
   async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
-      const result = await this.autenticacionService.autenticarOidc(req.user);
+      const result = await this.autenticacionService.autenticarOidc(req.user)
       // sendRefreshToken(res, result.refresh_token.id);
-      const refreshToken = result.refresh_token.id;
+      const refreshToken = result.refresh_token.id
       res
         .cookie(
           this.configService.get('REFRESH_TOKEN_NAME') || '',
           refreshToken,
-          CookieService.makeConfig(this.configService),
+          CookieService.makeConfig(this.configService)
         )
         .status(200)
         .json({
           access_token: result.data.access_token,
-        });
+        })
     } else {
-      res.status(200).json({});
+      res.status(200).json({})
     }
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
-    const jid = req.cookies.jid || '';
+    const jid = req.cookies.jid || ''
     if (jid != '') {
-      await this.refreshTokensService.removeByid(jid);
+      await this.refreshTokensService.removeByid(jid)
     }
 
     const idToken =
-      req.user?.idToken || req.session?.passport?.user?.idToken || null;
+      req.user?.idToken || req.session?.passport?.user?.idToken || null
 
     // req.logout();
     req.session.destroy(() => {
-      this.logger.info('sesión finalizada');
-    });
+      this.logger.info('sesión finalizada')
+    })
     const issuer = await Issuer.discover(
-      this.configService.get('OIDC_ISSUER') || '',
-    );
-    const url = issuer.metadata.end_session_endpoint;
-    res.clearCookie('connect.sid');
-    res.clearCookie('jid', jid);
+      this.configService.get('OIDC_ISSUER') || ''
+    )
+    const url = issuer.metadata.end_session_endpoint
+    res.clearCookie('connect.sid')
+    res.clearCookie('jid', jid)
     const idUsuario = req.headers.authorization
       ? JSON.parse(
           Buffer.from(
             `${req.headers.authorization}`.split('.')[1],
-            'base64',
-          ).toString(),
+            'base64'
+          ).toString()
         ).id
-      : null;
+      : null
 
-    this.logger.info(`Usuario: ${idUsuario} salio del sistema`);
+    this.logger.info(`Usuario: ${idUsuario} salio del sistema`)
 
     if (url && idToken) {
       return res.status(200).json({
         url: `${url}?post_logout_redirect_uri=${this.configService.get(
-          'OIDC_POST_LOGOUT_REDIRECT_URI',
+          'OIDC_POST_LOGOUT_REDIRECT_URI'
         )}&id_token_hint=${idToken}`,
-      });
+      })
     } else {
-      return res.status(200).json();
+      return res.status(200).json()
     }
   }
 }

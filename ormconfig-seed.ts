@@ -1,7 +1,7 @@
-import { DataSource } from 'typeorm';
-import dotenv from 'dotenv';
+import { DataSource } from 'typeorm'
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 const SeedDataSource = new DataSource({
   type: 'postgres',
@@ -14,6 +14,6 @@ const SeedDataSource = new DataSource({
   logging: true,
   migrations: ['database/seeds/*.ts'],
   entities: ['src/**/*.entity.ts'],
-});
+})
 
-export default SeedDataSource;
+export default SeedDataSource

@@ -1,28 +1,28 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { LogService } from './log.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { LogService } from './log.service'
 
 describe('LogService', () => {
-  let service: LogService;
+  let service: LogService
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [LogService],
-    }).compile();
+    }).compile()
 
-    service = module.get<LogService>(LogService);
-  });
+    service = module.get<LogService>(LogService)
+  })
 
   it('Debería ser implementado como ', () => {
-    expect(service).toBeDefined();
-  });
+    expect(service).toBeDefined()
+  })
   it('streams', () => {
-    expect(LogService.getStream().streams).toEqual([]);
-  });
+    expect(LogService.getStream().streams).toEqual([])
+  })
   it('Configuracion', () => {
-    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('name');
-    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('genReqId');
-    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('serializers');
-    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('level');
-    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('timestamp');
+    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('name')
+    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('genReqId')
+    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('serializers')
+    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('level')
+    expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('timestamp')
     // expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('prettyPrint');
-  });
-});
+  })
+})

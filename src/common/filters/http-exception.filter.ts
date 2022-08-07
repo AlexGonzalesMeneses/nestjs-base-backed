@@ -9,37 +9,37 @@ import {
   NotFoundException,
   PreconditionFailedException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception';
-import { Messages } from '../constants/response-messages';
-import { ExternalServiceException } from '../exceptions/external-service.exception';
-import { PinoLogger } from 'nestjs-pino';
-import { EntityForbiddenException } from '../exceptions/entity-forbidden.exception';
+} from '@nestjs/common'
+import { Response } from 'express'
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception'
+import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception'
+import { Messages } from '../constants/response-messages'
+import { ExternalServiceException } from '../exceptions/external-service.exception'
+import { PinoLogger } from 'nestjs-pino'
+import { EntityForbiddenException } from '../exceptions/entity-forbidden.exception'
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  static staticLogger: PinoLogger;
+  static staticLogger: PinoLogger
 
   constructor(private readonly logger: PinoLogger) {
-    this.logger.setContext(HttpExceptionFilter.name);
-    HttpExceptionFilter.staticLogger = this.logger;
+    this.logger.setContext(HttpExceptionFilter.name)
+    HttpExceptionFilter.staticLogger = this.logger
   }
   catch(exception: HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse<Response>()
     let status = exception.getStatus()
       ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
-    const r = <any>exception.getResponse();
-    let errores = [];
-    this.logger.error('[error] %o', r);
+      : HttpStatus.INTERNAL_SERVER_ERROR
+    const r = <any>exception.getResponse()
+    let errores = []
+    this.logger.error('[error] %o', r)
     if (Array.isArray(r.message)) {
-      status = HttpStatus.BAD_REQUEST;
-      errores = r.message;
+      status = HttpStatus.BAD_REQUEST
+      errores = r.message
     }
-    const mensaje = this.isBusinessException(exception);
+    const mensaje = this.isBusinessException(exception)
     const errorResponse = {
       finalizado: false,
       codigo: status,
@@ -48,8 +48,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       datos: {
         errores,
       },
-    };
-    response.status(status).json(errorResponse);
+    }
+    response.status(status).json(errorResponse)
   }
   public isBusinessException(exception: Error): any {
     if (
@@ -58,33 +58,33 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof EntityForbiddenException ||
       exception instanceof ExternalServiceException
     ) {
-      return exception.message;
+      return exception.message
     } else {
-      return this.filterMessage(exception);
+      return this.filterMessage(exception)
     }
   }
 
   filterMessage(exception) {
-    let message;
+    let message
     switch (exception.constructor) {
       case BadRequestException:
-        message = Messages.EXCEPTION_BAD_REQUEST;
-        break;
+        message = Messages.EXCEPTION_BAD_REQUEST
+        break
       case UnauthorizedException:
-        message = Messages.EXCEPTION_UNAUTHORIZED;
-        break;
+        message = Messages.EXCEPTION_UNAUTHORIZED
+        break
       case NotFoundException:
-        message = Messages.EXCEPTION_NOT_FOUND;
-        break;
+        message = Messages.EXCEPTION_NOT_FOUND
+        break
       case PreconditionFailedException:
-        message = exception.message || Messages.EXCEPTION_PRECONDITION_FAILED;
-        break;
+        message = exception.message || Messages.EXCEPTION_PRECONDITION_FAILED
+        break
       case ForbiddenException:
-        message = Messages.EXCEPTION_FORBIDDEN;
-        break;
+        message = Messages.EXCEPTION_FORBIDDEN
+        break
       default:
-        message = Messages.EXCEPTION_DEFAULT;
+        message = Messages.EXCEPTION_DEFAULT
     }
-    return message;
+    return message
   }
 }

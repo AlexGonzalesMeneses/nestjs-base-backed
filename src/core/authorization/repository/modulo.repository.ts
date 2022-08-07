@@ -1,12 +1,12 @@
-import { DataSource } from 'typeorm';
-import { Modulo } from '../entity/modulo.entity';
+import { DataSource } from 'typeorm'
+import { Modulo } from '../entity/modulo.entity'
 import {
   CrearModuloDto,
   FiltroModuloDto,
   PropiedadesDto,
-} from '../dto/crear-modulo.dto';
-import { Injectable } from '@nestjs/common';
-import { Status } from '../../../common/constants';
+} from '../dto/crear-modulo.dto'
+import { Injectable } from '@nestjs/common'
+import { Status } from '../../../common/constants'
 
 @Injectable()
 export class ModuloRepository {
@@ -17,11 +17,11 @@ export class ModuloRepository {
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
       .where({ id: id })
-      .getOne();
+      .getOne()
   }
 
   async listar(paginacionQueryDto: FiltroModuloDto) {
-    const { limite, saltar, filtro, seccion } = paginacionQueryDto;
+    const { limite, saltar, filtro, seccion } = paginacionQueryDto
     return await this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
@@ -41,20 +41,20 @@ export class ModuloRepository {
           : '1=1',
         {
           filtro: `%${filtro?.toLowerCase()}%`,
-        },
+        }
       )
       .andWhere(seccion ? '(modulo.fidModulo is null)' : '1=1')
       .offset(saltar)
       .limit(limite)
       .orderBy('modulo.id', 'ASC')
-      .getManyAndCount();
+      .getManyAndCount()
   }
 
   async listarTodo() {
     return await this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
-      .getMany();
+      .getMany()
   }
 
   async obtenerModulosSubmodulos() {
@@ -67,7 +67,7 @@ export class ModuloRepository {
         'subModulo.estado = :estado',
         {
           estado: Status.ACTIVE,
-        },
+        }
       )
       .orderBy('subModulo.id', 'ASC')
       .select([
@@ -89,40 +89,40 @@ export class ModuloRepository {
         estado: Status.ACTIVE,
       })
       .orderBy('modulo.id', 'ASC')
-      .getMany();
+      .getMany()
   }
 
   async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
-    const propiedades = new PropiedadesDto();
-    propiedades.icono = moduloDto.propiedades.icono;
-    propiedades.color_dark = moduloDto.propiedades.color_dark;
-    propiedades.color_light = moduloDto.propiedades.color_light;
-    propiedades.descripcion = moduloDto.propiedades.descripcion;
+    const propiedades = new PropiedadesDto()
+    propiedades.icono = moduloDto.propiedades.icono
+    propiedades.color_dark = moduloDto.propiedades.color_dark
+    propiedades.color_light = moduloDto.propiedades.color_light
+    propiedades.descripcion = moduloDto.propiedades.descripcion
 
     //console.log('Datos........ para modulo......................', moduloDto)
-    const modulo = new Modulo();
-    modulo.label = moduloDto.label;
-    modulo.url = moduloDto.url;
-    modulo.nombre = moduloDto.nombre;
-    modulo.propiedades = propiedades;
-    modulo.usuarioCreacion = usuarioAuditoria;
-    modulo.fechaCreacion = new Date();
+    const modulo = new Modulo()
+    modulo.label = moduloDto.label
+    modulo.url = moduloDto.url
+    modulo.nombre = moduloDto.nombre
+    modulo.propiedades = propiedades
+    modulo.usuarioCreacion = usuarioAuditoria
+    modulo.fechaCreacion = new Date()
     if (moduloDto.fidModulo != '') {
-      const em = new Modulo();
-      em.id = moduloDto.fidModulo;
-      modulo.fidModulo = em;
+      const em = new Modulo()
+      em.id = moduloDto.fidModulo
+      modulo.fidModulo = em
     }
 
     //console.log('Datos........ para guardar modulo......................', modulo)
 
-    return await this.dataSource.getRepository(Modulo).save(modulo);
+    return await this.dataSource.getRepository(Modulo).save(modulo)
   }
 
   async actualizar(moduloDto: Partial<Modulo>) {
-    return await this.dataSource.getRepository(Modulo).save(moduloDto);
+    return await this.dataSource.getRepository(Modulo).save(moduloDto)
   }
 
   async eliminar(moduloDto: CrearModuloDto) {
-    return await this.dataSource.getRepository(Modulo).delete(moduloDto.id);
+    return await this.dataSource.getRepository(Modulo).delete(moduloDto.id)
   }
 }

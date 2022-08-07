@@ -16,7 +16,7 @@ paths:
       operationId: get-api-v1-status
       description: Api de estado del sistema
       responses:
-       '200':
+        '200':
           description: OK
           content:
             application/json:
@@ -55,7 +55,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'ok'
                   finalizado:
@@ -84,7 +84,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -104,7 +104,7 @@ paths:
                         items:
                           type: object
                           properties:
-                            rol: 
+                            rol:
                               type: string
                               example: 'ADMINISTRADOR'
                             modulos:
@@ -112,7 +112,7 @@ paths:
                               items:
                                 type: object
                                 properties:
-                                  id: 
+                                  id:
                                     type: string
                                     example: 'b320fe27-5644-5712-8423-198302b01e25'
                                   label:
@@ -120,7 +120,7 @@ paths:
                                     example: 'Usuarios'
                                   url:
                                     type: string
-                                    example: '/usuarios'                                  
+                                    example: '/usuarios'
                                   nombre:
                                     type: string
                                     example: 'usuarios'
@@ -130,7 +130,7 @@ paths:
                                   propiedades:
                                     type: object
                                     properties:
-                                      icono: 
+                                      icono:
                                         type: string
                                         example: 'mdiAccountCog'
                                       color_light:
@@ -184,7 +184,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro actualizado con exito!'
                   finalizado:
@@ -221,7 +221,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro actualizado con exito!'
                   finalizado:
@@ -262,7 +262,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro actualizado con exito!'
                   finalizado:
@@ -299,7 +299,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Cuenta desbloqueada exitosamente.'
                   finalizado:
@@ -329,7 +329,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Restauración de contraseña exitosa!!!'
                   finalizado:
@@ -359,7 +359,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -371,7 +371,13 @@ paths:
                       type: array
                       items:
                         type: string
-                      example: ['ADMINISTRADOR', '/usuarios', 'create|read|update', 'frontend']
+                      example:
+                        [
+                          'ADMINISTRADOR',
+                          '/usuarios',
+                          'create|read|update',
+                          'frontend',
+                        ]
   /api/usuarios:
     get:
       summary: Api para obtener el listado de usuarios
@@ -405,7 +411,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -425,10 +431,10 @@ paths:
                             usuario:
                               type: string
                               example: 'ADMINISTRADOR'
-                            estado:  
+                            estado:
                               type: string
                               example: 'ACTIVO'
-                            ciudadaniaDigital:  
+                            ciudadaniaDigital:
                               type: boolean
                               example: false
                             persona:
@@ -460,7 +466,7 @@ paths:
                                   rol:
                                     type: object
                                     properties:
-                                      rol: 
+                                      rol:
                                         type: string
                                         example: 'ADMINISTRADOR'
                       total:
@@ -605,7 +611,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro actualizado con exito!'
                   finalizado:
@@ -638,7 +644,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -658,7 +664,7 @@ paths:
                             objeto:
                               type: string
                               example: '/usuarios'
-                            accion:  
+                            accion:
                               type: string
                               example: 'read'
                             app:
@@ -766,7 +772,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -784,9 +790,9 @@ paths:
                               type: string
                               example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
                             codigo:
-                              type: string 
+                              type: string
                               example: 'TD-1'
-                            nombre:  
+                            nombre:
                               type: string
                               example: 'Tipo de documento CI'
                             grupo:
@@ -875,7 +881,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -909,7 +915,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  mensaje: 
+                  mensaje:
                     type: string
                     example: 'Registro(s) obtenido(s) con exito!'
                   finalizado:
@@ -924,5 +930,5 @@ paths:
                           type: string
                           example: 'd5de12df-3cc3-5a58-a742-be24030482d8'
                         rol:
-                          type: string 
+                          type: string
                           example: 'ADMINISTRADOR'

@@ -6,40 +6,40 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Status } from '../../../common/constants';
-import { PropiedadesDto } from '../dto/crear-modulo.dto';
-import dotenv from 'dotenv';
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto';
-dotenv.config();
+} from 'typeorm'
+import { Status } from '../../../common/constants'
+import { PropiedadesDto } from '../dto/crear-modulo.dto'
+import dotenv from 'dotenv'
+import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
+dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AbstractEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
-  label: string;
+  label: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
-  url: string;
+  url: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
-  nombre: string;
+  nombre: string
 
   @Column({
     type: 'jsonb',
   })
-  propiedades: PropiedadesDto;
+  propiedades: PropiedadesDto
 
   @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
   @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
-  estado: string;
+  estado: string
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
-  subModulo: Modulo[];
+  subModulo: Modulo[]
 
   @ManyToOne(() => Modulo, (modulo) => modulo.subModulo)
   @JoinColumn({ name: 'fid_modulo', referencedColumnName: 'id' })
-  fidModulo: Modulo;
+  fidModulo: Modulo
 }

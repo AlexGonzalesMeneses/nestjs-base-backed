@@ -1,6 +1,6 @@
-import { IsUUID } from '../validation';
+import { IsUUID } from '../validation'
 
 export class ParamUuidDto {
   @IsUUID()
-  id: string;
+  id: string
 }

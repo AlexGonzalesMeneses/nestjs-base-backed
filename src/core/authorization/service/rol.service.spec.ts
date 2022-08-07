@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { RolService } from './rol.service';
-import { RolRepository } from '../repository/rol.repository';
+import { Test, TestingModule } from '@nestjs/testing'
+import { RolService } from './rol.service'
+import { RolRepository } from '../repository/rol.repository'
 
 const resRolesList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
   rol: 'ADMINISTRADOR',
-};
+}
 
 describe('RolService', () => {
-  let service: RolService;
+  let service: RolService
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -20,15 +20,15 @@ describe('RolService', () => {
           },
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<RolService>(RolService);
-  });
+    service = module.get<RolService>(RolService)
+  })
 
   it('[listar] Debería obtener la lista de roles', async () => {
-    const usuarios = await service.listar();
+    const usuarios = await service.listar()
 
-    expect(usuarios).toBeDefined();
-    expect(usuarios).toBeInstanceOf(Array);
-  });
-});
+    expect(usuarios).toBeDefined()
+    expect(usuarios).toBeInstanceOf(Array)
+  })
+})

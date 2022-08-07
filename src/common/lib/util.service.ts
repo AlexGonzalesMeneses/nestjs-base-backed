@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class UtilService {
@@ -9,6 +9,6 @@ export class UtilService {
   static armarQueryParams(datos) {
     return Object.keys(datos)
       .map((dato) => `"${dato}":"${datos[dato]}"`)
-      .join(', ');
+      .join(', ')
   }
 }

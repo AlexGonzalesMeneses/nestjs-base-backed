@@ -1,4 +1,3 @@
-
 # Backend Base - NestJS
 
 <p>
@@ -12,7 +11,7 @@
 
 ## Recomendaciones
 
-- Este proyecto en rama `Develop` usa TypeOrm `v0.3.7`, para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0` 
+- Este proyecto en rama `Develop` usa TypeOrm `v0.3.7`, para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
 - Se sugiere crear un Fork, dado que se harán mejoras continuas
 - Para añadir este proyecto como otro origen, ejecutar dentro el proyecto Fork:
 
@@ -68,41 +67,43 @@ Documentación relacionada con el proyecto:
 1. Ejecución de contenedor con instancia postgres
    Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos de conexión a la base de datos de la cual se quiere generar el diagrama:
 
-    > Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+   > Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
 
-    ```bash
-    $ npm run start:database
-    ```
+   ```bash
+   $ npm run start:database
+   ```
 
 2. Generación del diagrama ERD (deshabilitado hasta tener soporte para TypeOrm 0.3)
 
-    [//]: # (TODO: Actualizar soporte TypeOrm 0.3 para generar diagramas)
+   [//]: # 'TODO: Actualizar soporte TypeOrm 0.3 para generar diagramas'
 
-    ```bash
-    $ npm run db:diagram
-    ```
+   ```bash
+   $ npm run db:diagram
+   ```
 
 3. Generación de documentación
 
-    ```bash
-    $ npm run compodoc
-    ```
+   ```bash
+   $ npm run compodoc
+   ```
 
 ## Changelog
 
 1. Generar tag de la versión
-> Cambiar el número de versión en archivo `package.json`
+
+   > Cambiar el número de versión en archivo `package.json`
 
 2. Generar tag y archivo CHANGELOG
-```bash
-npm run release
-```
+    
+    ```bash
+    npm run release
+    ```
 
 3. Guardar los tags generados
 
-```bash
-git push --follow-tags origin master
-```
+    ```bash
+    git push --follow-tags origin master
+    ```
 
 ## Colaboradores
 

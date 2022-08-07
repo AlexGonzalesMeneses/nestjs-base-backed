@@ -7,14 +7,14 @@
 ├─docs                          # directorio con la documentacion del proyecto
 ├─scripts                       # directorio con scripts
 ├─src
-|  ├── application              # directorio con logica de negocio de la aplicacion 
+|  ├── application              # directorio con logica de negocio de la aplicacion
 |  |    ├── modulo1
 |  |    |   ├── controller      # directorio con controladores
 |  |    |   ├── entity          # directorio con entidades
 |  |    |   ├── repository      # directorio con repositorios
 |  |    |   └── service         # directorio con servicios
 |  |    ├── ...
-|  |    └── moduloN                       
+|  |    └── moduloN
 |  ├── common                   # directorio con modulos comunes (utilitarios, contantes, etc)
 |  |    ├── constants
 |  |    ├── dto
@@ -63,23 +63,31 @@
 └──tsconfig.json
 
 ```
+
 ## Diagrama ERD
-![Diagrama ERD](ERD.png "Diagrama")
+
+![Diagrama ERD](ERD.png 'Diagrama')
 
 ## Estructura Modular
+
 El proyecto base contiene una estructura modular, a continuación se puede ver la composición de los más importantes:
 
 ### Módulo Nucleo
-![Modulo Nucleo](imagenes/modulo-nucleo.png "Diagrama")
+
+![Modulo Nucleo](imagenes/modulo-nucleo.png 'Diagrama')
 
 ### Módulo Autenticación
-![Modulo Autenticacion](imagenes/modulo-autenticacion.png "Diagrama")
+
+![Modulo Autenticacion](imagenes/modulo-autenticacion.png 'Diagrama')
 
 ### Módulo Autorización
-![Modulo Autorizacion](imagenes/modulo-autorizacion.png "Diagrama")
+
+![Modulo Autorizacion](imagenes/modulo-autorizacion.png 'Diagrama')
 
 ### Módulo Usuario
-![Modulo Usuario](imagenes/modulo-usuario.png "Diagrama")
+
+![Modulo Usuario](imagenes/modulo-usuario.png 'Diagrama')
 
 ### Módulo Servicios Externos
-![Modulo Servicios Externos](imagenes/modulo-external.png "Diagrama")
+
+![Modulo Servicios Externos](imagenes/modulo-external.png 'Diagrama')

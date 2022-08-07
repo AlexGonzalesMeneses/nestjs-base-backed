@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { MensajeriaModule } from './mensajeria/mensajeria.module';
-import { IopModule } from './iop/iop.module';
+import { Module } from '@nestjs/common'
+import { MensajeriaModule } from './mensajeria/mensajeria.module'
+import { IopModule } from './iop/iop.module'
 
 @Module({
   imports: [MensajeriaModule, IopModule],

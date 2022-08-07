@@ -1,17 +1,17 @@
-import { IsNotEmpty } from '../../../common/validation';
-import { PersonaDto } from './persona.dto';
+import { IsNotEmpty } from '../../../common/validation'
+import { PersonaDto } from './persona.dto'
 export class UsuarioDto {
   @IsNotEmpty()
-  usuario: string;
+  usuario: string
 
   @IsNotEmpty()
-  contrasena: string;
+  contrasena: string
 
-  estado?: string;
+  estado?: string
 
-  persona: PersonaDto;
+  persona: PersonaDto
 
-  usuarioCreacion?: string;
+  usuarioCreacion?: string
   /*   @ApiProperty()
   email: string;
 

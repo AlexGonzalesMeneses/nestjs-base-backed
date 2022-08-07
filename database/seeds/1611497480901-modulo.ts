@@ -1,7 +1,7 @@
-import { TextService } from 'src/common/lib/text.service';
-import { PropiedadesDto } from 'src/core/authorization/dto/crear-modulo.dto';
-import { Modulo } from 'src/core/authorization/entity/modulo.entity';
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { TextService } from 'src/common/lib/text.service'
+import { PropiedadesDto } from 'src/core/authorization/dto/crear-modulo.dto'
+import { Modulo } from 'src/core/authorization/entity/modulo.entity'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class modulo1611497480901 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -100,30 +100,30 @@ export class modulo1611497480901 implements MigrationInterface {
         },
         fidModulo: TextService.textToUuid('configuraciones'),
       },
-    ];
+    ]
     const modulos = items.map((item) => {
-      const m = new Modulo();
-      m.id = TextService.textToUuid(item.nombre);
-      m.nombre = item.nombre;
-      m.url = item.url;
-      m.label = item.label;
-      m.usuarioCreacion = '1';
-      m.fechaCreacion = new Date();
+      const m = new Modulo()
+      m.id = TextService.textToUuid(item.nombre)
+      m.nombre = item.nombre
+      m.url = item.url
+      m.label = item.label
+      m.usuarioCreacion = '1'
+      m.fechaCreacion = new Date()
       if (item.fidModulo) {
-        const submodulo = new Modulo();
-        submodulo.id = item.fidModulo;
-        m.fidModulo = submodulo;
+        const submodulo = new Modulo()
+        submodulo.id = item.fidModulo
+        m.fidModulo = submodulo
       }
-      const propiedades = new PropiedadesDto();
-      propiedades.color_dark = item.propiedades.color_dark;
-      propiedades.color_light = item.propiedades.color_light;
-      propiedades.icono = item.propiedades.icono;
-      propiedades.descripcion = item.propiedades.descripcion;
+      const propiedades = new PropiedadesDto()
+      propiedades.color_dark = item.propiedades.color_dark
+      propiedades.color_light = item.propiedades.color_light
+      propiedades.icono = item.propiedades.icono
+      propiedades.descripcion = item.propiedades.descripcion
 
-      m.propiedades = propiedades;
-      return m;
-    });
-    await queryRunner.manager.save(modulos);
+      m.propiedades = propiedades
+      return m
+    })
+    await queryRunner.manager.save(modulos)
   }
 
   /* eslint-disable */

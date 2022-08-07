@@ -1,26 +1,26 @@
-import { CanActivate } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthZManagementService } from 'nest-authz';
-import { CasbinGuard } from '../guards/casbin.guard';
-import { AuthorizationController } from './authorization.controller';
-import { AuthorizationService } from './authorization.service';
+import { CanActivate } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { AuthZManagementService } from 'nest-authz'
+import { CasbinGuard } from '../guards/casbin.guard'
+import { AuthorizationController } from './authorization.controller'
+import { AuthorizationService } from './authorization.service'
 
 const resPolitica = {
   sujeto: 'ADMINISTRADOR',
   objeto: '/usuarios',
   accion: 'GET',
   app: 'backend',
-};
+}
 
-const resListar = [1, resPolitica];
+const resListar = [1, resPolitica]
 
-const resListarCasbin = ['ADMINISTRADOR', '/usuarios', 'GET', 'backend'];
+const resListarCasbin = ['ADMINISTRADOR', '/usuarios', 'GET', 'backend']
 describe('AuthorizationController', () => {
-  let controller: AuthorizationController;
+  let controller: AuthorizationController
   beforeEach(async () => {
     const mock_ForceFailGuard: CanActivate = {
       canActivate: jest.fn(() => true),
-    };
+    }
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [AuthorizationController],
@@ -42,44 +42,44 @@ describe('AuthorizationController', () => {
     })
       .overrideGuard(CasbinGuard)
       .useValue(mock_ForceFailGuard)
-      .compile();
+      .compile()
 
-    controller = module.get<AuthorizationController>(AuthorizationController);
-  });
+    controller = module.get<AuthorizationController>(AuthorizationController)
+  })
 
   it('[listar] Debería listar politicas en formato filas y total', async () => {
-    const result = await controller.listarPoliticas('frontend');
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('finalizado');
-    expect(result).toHaveProperty('mensaje');
-    expect(result).toHaveProperty('datos');
-    expect(result.datos).toHaveProperty('total');
-    expect(result.datos).toHaveProperty('filas');
-  });
+    const result = await controller.listarPoliticas('frontend')
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('finalizado')
+    expect(result).toHaveProperty('mensaje')
+    expect(result).toHaveProperty('datos')
+    expect(result.datos).toHaveProperty('total')
+    expect(result.datos).toHaveProperty('filas')
+  })
   it('[obtenerRoles] Debería listar politicas en formato casbin', async () => {
-    const result = await controller.obtenerRoles();
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('finalizado');
-    expect(result).toHaveProperty('mensaje');
-    expect(result).toHaveProperty('datos');
-    expect(result.datos).toBeInstanceOf(Array);
-  });
+    const result = await controller.obtenerRoles()
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('finalizado')
+    expect(result).toHaveProperty('mensaje')
+    expect(result).toHaveProperty('datos')
+    expect(result.datos).toBeInstanceOf(Array)
+  })
 
   it('[crearPolitica] Debería crear una politica', async () => {
-    const politica = { ...resPolitica };
-    const result = await controller.crearPolitica(politica);
+    const politica = { ...resPolitica }
+    const result = await controller.crearPolitica(politica)
 
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('finalizado');
-    expect(result.finalizado).toEqual(true);
-  });
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('finalizado')
+    expect(result.finalizado).toEqual(true)
+  })
 
   it('[eliminarPolitica] Debería eliminar una politica', async () => {
-    const politica = { ...resPolitica };
-    const result = await controller.eliminarPolitica(politica);
+    const politica = { ...resPolitica }
+    const result = await controller.eliminarPolitica(politica)
 
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty('finalizado');
-    expect(result.finalizado).toEqual(true);
-  });
-});
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('finalizado')
+    expect(result.finalizado).toEqual(true)
+  })
+})

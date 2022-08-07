@@ -1,7 +1,7 @@
-import { DataSource } from 'typeorm';
-import { Status } from '../../../common/constants';
-import { Injectable } from '@nestjs/common';
-import { Rol } from '../entity/rol.entity';
+import { DataSource } from 'typeorm'
+import { Status } from '../../../common/constants'
+import { Injectable } from '@nestjs/common'
+import { Rol } from '../entity/rol.entity'
 
 @Injectable()
 export class RolRepository {
@@ -12,7 +12,7 @@ export class RolRepository {
       .createQueryBuilder('rol')
       .select(['rol.id', 'rol.rol', 'rol.nombre'])
       .where({ estado: Status.ACTIVE })
-      .getMany();
+      .getMany()
   }
 
   async buscarPorNombreRol(rol: string) {
@@ -20,7 +20,7 @@ export class RolRepository {
       .getRepository(Rol)
       .createQueryBuilder('rol')
       .where({ rol: rol })
-      .getOne();
+      .getOne()
   }
 
   async listarRolesPorUsuario(idUsuario: number) {
@@ -29,6 +29,6 @@ export class RolRepository {
       .createQueryBuilder('rol')
       .select(['rol.id', 'rol.rol'])
       .where({ estado: Status.ACTIVE, usuarioRol: idUsuario })
-      .getMany();
+      .getMany()
   }
 }

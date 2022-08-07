@@ -1,24 +1,24 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import dotenv from 'dotenv';
-dotenv.config();
+import { Column, Entity, PrimaryColumn } from 'typeorm'
+import dotenv from 'dotenv'
+dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class RefreshTokens {
   @PrimaryColumn()
-  id: string;
+  id: string
 
   @Column({ name: 'grant_id' })
-  grantId: string;
+  grantId: string
 
   @Column({ type: 'timestamp' })
-  iat: Date;
+  iat: Date
 
   @Column({ name: 'expires_at', type: 'timestamp' })
-  expiresAt: Date;
+  expiresAt: Date
 
   @Column({ name: 'is_revoked', type: 'boolean' })
-  isRevoked: boolean;
+  isRevoked: boolean
 
   @Column({ type: 'jsonb' })
-  data: Record<string, never>;
+  data: Record<string, never>
 }

@@ -1,19 +1,19 @@
-import { IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CrearParametroDto {
-  id: number;
+  id: number
   @ApiProperty()
   @IsNotEmpty()
-  codigo: string;
+  codigo: string
   @ApiProperty()
   @IsNotEmpty()
-  nombre: string;
+  nombre: string
   @ApiProperty()
   @IsNotEmpty()
-  grupo: string;
+  grupo: string
   @ApiProperty()
   @IsNotEmpty()
-  descripcion: string;
-  estado?: string;
+  descripcion: string
+  estado?: string
 }

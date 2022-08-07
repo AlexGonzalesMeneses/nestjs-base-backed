@@ -1,9 +1,9 @@
-import { HttpService } from '@nestjs/axios';
-import { Test, TestingModule } from '@nestjs/testing';
-import { SinService } from './sin.service';
+import { HttpService } from '@nestjs/axios'
+import { Test, TestingModule } from '@nestjs/testing'
+import { SinService } from './sin.service'
 
 describe('SinService', () => {
-  let service: SinService;
+  let service: SinService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,12 +14,12 @@ describe('SinService', () => {
           useValue: {},
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<SinService>(SinService);
-  });
+    service = module.get<SinService>(SinService)
+  })
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+    expect(service).toBeDefined()
+  })
+})

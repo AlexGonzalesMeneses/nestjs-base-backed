@@ -1,41 +1,41 @@
-import { IsString, IsNotEmpty, IsObject } from 'class-validator';
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto';
+import { IsString, IsNotEmpty, IsObject } from 'class-validator'
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 
 export class PropiedadesDto {
   @IsString()
-  icono?: string;
+  icono?: string
 
   @IsString()
-  descripcion?: string;
+  descripcion?: string
 
   @IsString()
-  color_light?: string;
+  color_light?: string
 
   @IsString()
-  color_dark?: string;
+  color_dark?: string
 }
 
 export class CrearModuloDto {
-  id: string;
+  id: string
   @IsNotEmpty()
   @IsString()
-  label: string;
+  label: string
 
   @IsNotEmpty()
   @IsString()
-  url: string;
+  url: string
 
   @IsNotEmpty()
   @IsString()
-  nombre: string;
+  nombre: string
 
   @IsObject()
-  propiedades: PropiedadesDto;
+  propiedades: PropiedadesDto
 
-  fidModulo: string;
-  estado?: string;
+  fidModulo: string
+  estado?: string
 }
 
 export class FiltroModuloDto extends PaginacionQueryDto {
-  readonly seccion?: boolean;
+  readonly seccion?: boolean
 }
