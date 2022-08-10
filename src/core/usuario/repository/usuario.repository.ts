@@ -50,8 +50,8 @@ export class UsuarioRepository {
           filtro: `%${filtro}%`,
         }
       )
-      .offset(saltar)
-      .limit(limite)
+      .take(limite)
+      .skip(saltar)
       .orderBy('usuario.id', 'ASC')
       .getManyAndCount()
   }

@@ -47,8 +47,8 @@ export class ParametroRepository {
           filtro: `%${filtro}%`,
         }
       )
-      .offset(saltar)
-      .limit(limite)
+      .take(limite)
+      .skip(saltar)
       .getManyAndCount()
   }
 
