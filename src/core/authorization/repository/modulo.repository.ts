@@ -44,8 +44,8 @@ export class ModuloRepository {
         }
       )
       .andWhere(seccion ? '(modulo.fidModulo is null)' : '1=1')
-      .offset(saltar)
-      .limit(limite)
+      .take(limite)
+      .skip(saltar)
       .orderBy('modulo.id', 'ASC')
       .getManyAndCount()
   }
