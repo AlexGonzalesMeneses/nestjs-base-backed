@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { AbstractController } from '../../../common/dto/abstract-controller.dto'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
+import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
@@ -36,9 +37,10 @@ export class AuthorizationController extends AbstractController {
   }
 
   @Get('/politicas')
-  async listarPoliticas(@Query() query) {
-    const result = await this.authorizationService.listarPoliticas(query)
-    console.log('result controler', result)
+  async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
+    const result = await this.authorizationService.listarPoliticas(
+      paginacionQueryDto
+    )
     return this.successListRows(result)
   }
 

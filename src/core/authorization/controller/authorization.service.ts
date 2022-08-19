@@ -1,18 +1,19 @@
 import { Injectable, Query } from '@nestjs/common'
 import { AuthZManagementService } from 'nest-authz'
+import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
 import { ModuloService } from '../service/modulo.service'
 
 @Injectable()
 export class AuthorizationService {
   constructor(
-    private readonly rbacSrv: AuthZManagementService,
+    private readonly authZManagerService: AuthZManagementService,
     private readonly moduloService: ModuloService
   ) {}
 
-  async listarPoliticas(@Query() query) {
-    const { limite, pagina, pol, app } = query
+  async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
+    const { limite, pagina, filtro, aplicacion } = paginacionQueryDto
 
-    const politicas = await this.rbacSrv.getPolicy()
+    const politicas = await this.authZManagerService.getPolicy()
 
     let result = politicas.map((politica) => ({
       sujeto: politica[0],
@@ -21,13 +22,13 @@ export class AuthorizationService {
       app: politica[3],
     }))
 
-    if (pol != '') {
+    if (filtro) {
       result = result.filter(
-        (r) => r.sujeto.search(pol) > 0 || r.objeto.search(pol) > 0
+        (r) => r.sujeto.search(filtro) > 0 || r.objeto.search(filtro) > 0
       )
     }
-    if (app != '') {
-      result = result.filter((r) => r.app === app)
+    if (aplicacion) {
+      result = result.filter((r) => r.app === aplicacion)
     }
 
     if (!limite || !pagina) {
@@ -42,28 +43,31 @@ export class AuthorizationService {
 
   async crearPolitica(politica) {
     const { sujeto, objeto, accion, app } = politica
-    await this.rbacSrv.addPolicy(sujeto, objeto, accion, app)
+    await this.authZManagerService.addPolicy(sujeto, objeto, accion, app)
     return politica
   }
 
   async actualizarPolitica(politica, politicaNueva) {
     const { sujeto, objeto, accion, app } = politicaNueva
     await this.eliminarPolitica(politica)
-    await this.rbacSrv.addPolicy(sujeto, objeto, accion, app)
+    await this.authZManagerService.addPolicy(sujeto, objeto, accion, app)
   }
 
   async eliminarPolitica(politica) {
     const { sujeto, objeto, accion, app } = politica
-    await this.rbacSrv.removePolicy(sujeto, objeto, accion, app)
+    await this.authZManagerService.removePolicy(sujeto, objeto, accion, app)
     return politica
   }
 
   async obtenerRoles() {
-    return await this.rbacSrv.getFilteredPolicy(3, 'frontend')
+    return await this.authZManagerService.getFilteredPolicy(3, 'frontend')
   }
 
   async obtenerPermisosPorRol(rol: string) {
-    const politicas = await this.rbacSrv.getFilteredPolicy(3, 'frontend')
+    const politicas = await this.authZManagerService.getFilteredPolicy(
+      3,
+      'frontend'
+    )
     const modulos = await this.moduloService.listarTodo()
     const politicasRol = politicas.filter((politica) => politica[0] === rol)
     return modulos
