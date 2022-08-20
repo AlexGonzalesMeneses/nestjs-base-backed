@@ -222,7 +222,7 @@ export class AuthenticationService {
         nuevoUsuario = await this.usuarioService.crearConPersonaExistente(
           respPersona,
           datosUsuario,
-          '1'
+          '1' // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
         )
       } else {
         // No existe la persona en base de datos, crear registro completo de persona

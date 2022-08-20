@@ -24,6 +24,12 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { EntityManager, Repository } from 'typeorm'
+import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
+import {
+  NuevaContrasenaDto,
+  RecuperarCuentaDto,
+  ValidarRecuperarCuentaDto,
+} from '../dto/recuperar-cuenta.dto'
 
 @Injectable()
 export class UsuarioService {
@@ -93,6 +99,144 @@ export class UsuarioService {
     } else {
       throw new PreconditionFailedException(contrastaSegip?.mensaje)
     }
+  }
+
+  async crearUsuario(usuarioDto: CrearUsuarioCuentaDto) {
+    // verificar si el usuario ya fue registrado
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
+      usuarioDto.persona
+    )
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
+    }
+
+    // verificar si el correo no esta registrado
+    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      usuarioDto.correoElectronico
+    )
+
+    if (correo) {
+      throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+    }
+
+    // contrastacion segip
+    const { persona } = usuarioDto
+    const contrastaSegip = await this.segipServices.contrastar(persona)
+    if (contrastaSegip?.finalizado) {
+      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
+
+      const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
+        'ADMINISTRADOR'
+      ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+
+      const contrasena = TextService.generateShortRandomText()
+
+      const result = await this.usuarioRepositorio.crear(
+        {
+          ...{ ...usuarioDto },
+          roles: rol?.id ? [rol?.id] : [],
+          estado: Status.PENDING,
+          contrasena: await TextService.encrypt(contrasena),
+        },
+        usuarioAuditoria?.id ?? ''
+      )
+      // enviar correo con credenciales
+      const datosCorreo = {
+        correo: usuarioDto.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+      }
+      await this.enviarCorreoContrasenia(
+        datosCorreo,
+        usuarioDto.persona.nroDocumento,
+        contrasena
+      )
+      return { id: result.id, estado: result.estado }
+    } else {
+      throw new PreconditionFailedException(contrastaSegip?.mensaje)
+    }
+  }
+
+  async recuperarCuenta(recuperarCuentaDto: RecuperarCuentaDto) {
+    try {
+      const usuario = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+        recuperarCuentaDto.correoElectronico
+      )
+      if (usuario?.id) {
+        const codigo = TextService.generateUuid()
+        const urlRecuperacion = `${this.configService.get(
+          'URL_FRONTEND'
+        )}/recuperacion?q=${codigo}`
+
+        await this.actualizarDatosRecuperacion(usuario.id, codigo)
+
+        const template =
+          TemplateEmailService.armarPlantillaRecuperacionCuenta(urlRecuperacion)
+
+        if (usuario.correoElectronico) {
+          await this.mensajeriaService.sendEmail(
+            usuario.correoElectronico,
+            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+            template
+          )
+        }
+      } else {
+        console.log(`Usuario no encontrado`)
+      }
+    } catch (e) {
+      console.log(`Error al buscar usuario: ${e}`)
+    }
+    return 'Busqueda terminada'
+  }
+
+  async validarRecuperar(validarRecuperarCuentaDto: ValidarRecuperarCuentaDto) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoRecuperacion(
+      validarRecuperarCuentaDto.codigo
+    )
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    const codigo = TextService.generateUuid()
+
+    const usuarioActualizado =
+      await this.actualizarDatosTransaccionRecuperacion(usuario.id, codigo)
+
+    return { code: usuarioActualizado.codigoTransaccion }
+  }
+
+  async nuevaContrasenaTransaccion(nuevaContrasenaDto: NuevaContrasenaDto) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoTransaccion(
+      nuevaContrasenaDto.codigo
+    )
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    if (
+      !TextService.validateLevelPassword(nuevaContrasenaDto.contrasenaNueva)
+    ) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+    }
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      usuario.id,
+      {
+        fechaBloqueo: null,
+        intentos: 0,
+        codigoDesbloqueo: null,
+        codigoTransaccion: null,
+        codigoRecuperacion: null,
+        contrasena: await TextService.encrypt(
+          TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
+        ),
+        estado: Status.ACTIVE,
+      }
+    )
+
+    return { id: usuarioActualizado.id }
   }
 
   async crearConCiudadania(
@@ -460,6 +604,20 @@ export class UsuarioService {
       idUsuario,
       codigo,
       fechaBloqueo
+    )
+  }
+
+  async actualizarDatosRecuperacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosRecuperacion(
+      idUsuario,
+      codigo
+    )
+  }
+
+  async actualizarDatosTransaccionRecuperacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosTransaccion(
+      idUsuario,
+      codigo
     )
   }
 

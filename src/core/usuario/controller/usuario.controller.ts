@@ -24,12 +24,19 @@ import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto'
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CasbinGuard } from '../../authorization/guards/casbin.guard'
+import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
+import {
+  NuevaContrasenaDto,
+  RecuperarCuentaDto,
+  ValidarRecuperarCuentaDto,
+} from '../dto/recuperar-cuenta.dto'
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
   constructor(private usuarioService: UsuarioService) {
     super()
   }
+
   // GET users
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(
@@ -59,6 +66,55 @@ export class UsuarioController extends AbstractController {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.crear(usuarioDto, usuarioAuditoria)
     return this.successCreate(result)
+  }
+
+  //create user account
+  @Post('crear-cuenta')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async crearUsuario(@Req() req, @Body() usuarioDto: CrearUsuarioCuentaDto) {
+    const result = await this.usuarioService.crearUsuario(usuarioDto)
+    return this.successCreate(result, Messages.NEW_USER_ACCOUNT)
+  }
+
+  //restore user account
+  @Post('recuperar')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async recuperarCuenta(
+    @Req() req,
+    @Body() recuperarCuentaDto: RecuperarCuentaDto
+  ) {
+    const result = await this.usuarioService.recuperarCuenta(recuperarCuentaDto)
+    return this.successList(result, Messages.SUCCESS_DEFAULT)
+  }
+
+  // validate restore user account
+  @Post('validar-recuperar')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async validarRecuperarCuenta(
+    @Req() req,
+    @Body() validarRecuperarCuentaDto: ValidarRecuperarCuentaDto
+  ) {
+    const result = await this.usuarioService.validarRecuperar(
+      validarRecuperarCuentaDto
+    )
+    return this.success(result, Messages.SUCCESS_DEFAULT)
+  }
+
+  // validate restore user account
+  @Patch('/cuenta/nueva-contrasena')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async nuevaContrasena(
+    @Req() req,
+    @Body() nuevaContrasenaDto: NuevaContrasenaDto
+  ) {
+    const result = await this.usuarioService.nuevaContrasenaTransaccion(
+      nuevaContrasenaDto
+    )
+    return this.success(result, Messages.SUCCESS_DEFAULT)
   }
 
   @UseGuards(JwtAuthGuard, CasbinGuard)
