@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
 import { Usuario } from '../entity/usuario.entity'
-import { Status } from '../../../common/constants'
+import { Status, TipoDocumento } from '../../../common/constants'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { TextService } from '../../../common/lib/text.service'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
@@ -101,10 +101,10 @@ export class UsuarioService {
     }
   }
 
-  async crearUsuario(usuarioDto: CrearUsuarioCuentaDto) {
-    // verificar si el usuario ya fue registrado
-    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
-      usuarioDto.persona
+  async crearCuenta(usuarioDto: CrearUsuarioCuentaDto) {
+    // verificar si el usuario ya fue registrado con su correo
+    const usuario = await this.usuarioRepositorio.buscarUsuario(
+      usuarioDto.correoElectronico
     )
 
     if (usuario) {
@@ -120,41 +120,45 @@ export class UsuarioService {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
     }
 
-    // contrastacion segip
-    const { persona } = usuarioDto
-    const contrastaSegip = await this.segipServices.contrastar(persona)
-    if (contrastaSegip?.finalizado) {
-      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
+    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
+      'ADMINISTRADOR'
+    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
 
-      const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
-        'ADMINISTRADOR'
-      ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
-      const contrasena = TextService.generateShortRandomText()
-
-      const result = await this.usuarioRepositorio.crear(
-        {
-          ...{ ...usuarioDto },
-          roles: rol?.id ? [rol?.id] : [],
-          estado: Status.PENDING,
-          contrasena: await TextService.encrypt(contrasena),
-        },
-        usuarioAuditoria?.id ?? ''
-      )
-      // enviar correo con credenciales
-      const datosCorreo = {
-        correo: usuarioDto.correoElectronico,
-        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-      }
-      await this.enviarCorreoContrasenia(
-        datosCorreo,
-        usuarioDto.persona.nroDocumento,
-        contrasena
-      )
-      return { id: result.id, estado: result.estado }
-    } else {
-      throw new PreconditionFailedException(contrastaSegip?.mensaje)
+    if (!TextService.validateLevelPassword(usuarioDto.contrasenaNueva)) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
+
+    const result = await this.usuarioRepositorio.crear(
+      {
+        usuario: usuarioDto.correoElectronico,
+        persona: {
+          nombres: usuarioDto.nombres,
+          primerApellido: '',
+          segundoApellido: '',
+          nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
+          fechaNacimiento: new Date(),
+          tipoDocumento: TipoDocumento.OTRO,
+        },
+        correoElectronico: usuarioDto.correoElectronico,
+        roles: rol?.id ? [rol?.id] : [],
+        estado: Status.PENDING,
+        contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
+      },
+      usuarioAuditoria?.id ?? ''
+    )
+    // enviar correo con credenciales
+    const datosCorreo = {
+      correo: usuarioDto.correoElectronico,
+      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+    }
+    await this.enviarCorreoContrasenia(
+      datosCorreo,
+      usuarioDto.correoElectronico,
+      usuarioDto.contrasenaNueva
+    )
+    return { id: result.id, estado: result.estado }
   }
 
   async recuperarCuenta(recuperarCuentaDto: RecuperarCuentaDto) {

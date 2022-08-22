@@ -73,7 +73,7 @@ export class UsuarioController extends AbstractController {
   @UsePipes(ValidationPipe)
   @UsePipes(new ValidationPipe({ transform: true }))
   async crearUsuario(@Req() req, @Body() usuarioDto: CrearUsuarioCuentaDto) {
-    const result = await this.usuarioService.crearUsuario(usuarioDto)
+    const result = await this.usuarioService.crearCuenta(usuarioDto)
     return this.successCreate(result, Messages.NEW_USER_ACCOUNT)
   }
 

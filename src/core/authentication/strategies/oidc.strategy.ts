@@ -61,7 +61,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         (<string>userinfo.fecha_nacimiento).toString(),
         'DD/MM/YYYY',
         true
-      ).format('YYYY-MM-DD')
+      ).toDate()
 
       const persona = new PersonaDto()
       persona.tipoDocumento = ci.tipo_documento

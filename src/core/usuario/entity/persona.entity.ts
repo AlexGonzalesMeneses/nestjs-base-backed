@@ -1,13 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
   Check,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Usuario } from './usuario.entity'
 import { Genero, Status, TipoDocumento } from '../../../common/constants'
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
@@ -61,7 +62,7 @@ export class Persona {
     type: 'date',
     nullable: true,
   })
-  fechaNacimiento: string | null
+  fechaNacimiento: Date | null
 
   @Column({ length: 50, type: 'varchar', nullable: true })
   telefono: string | null
