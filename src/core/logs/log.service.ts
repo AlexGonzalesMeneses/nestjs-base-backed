@@ -12,7 +12,7 @@ import { Request, Response } from 'express'
 export class LogService {
   static getStream(): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
-    if (process.env.LOG_PATH) {
+    if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
       const options: RotateOptions = {
         size: process.env.LOG_SIZE || '5M',
         path: process.env.LOG_PATH || './logs',
@@ -38,7 +38,7 @@ export class LogService {
     }
 
     const streamStandar: pretty.PrettyStream[] = []
-    if (process.env.LOG_STD_OUT) {
+    if (process.env.LOG_STD_OUT && process.env.LOG_STD_OUT === 'true') {
       streamStandar.push(
         pretty({
           colorize: true,
@@ -48,7 +48,11 @@ export class LogService {
     }
 
     const streamHttp: any[] = []
-    if (process.env.LOG_URL && process.env.LOG_URL_TOKEN) {
+    if (
+      process.env.LOG_URL &&
+      process.env.LOG_URL.length > 0 &&
+      process.env.LOG_URL_TOKEN
+    ) {
       streamHttp.push(
         createWriteStream({
           url: process.env.LOG_URL,
@@ -70,39 +74,11 @@ export class LogService {
   }
 
   static customSuccessMessage(req: Request, res: Response) {
-    if (res.statusCode >= 200 && res.statusCode < 400) {
-      return `Petición concluida - ${res.statusCode}`
-    }
-
-    const codeText = `${res.statusCode}`
-    const urlText = `\n${req.method} ${req.originalUrl}`
-
-    const headersText =
-      req.headers && Object.keys(req.headers).length > 0
-        ? `\nheaders =\n${JSON.stringify(req.headers, null, 2)}`
-        : ''
-
-    const bodyText =
-      req.body && Object.keys(req.body).length > 0
-        ? `\nbody =\n${JSON.stringify(req.body, null, 2)}`
-        : ''
-    return `Petición concluida - ${codeText}${urlText}${headersText}${bodyText}`
+    return `Petición concluida - ${res.statusCode}`
   }
 
   static customErrorMessage(req: Request, res: Response) {
-    const codeText = `${res.statusCode}`
-    const urlText = `\n${req.method} ${req.originalUrl}`
-
-    const headersText =
-      req.headers && Object.keys(req.headers).length > 0
-        ? `\nheaders =\n${JSON.stringify(req.headers, null, 2)}`
-        : ''
-
-    const bodyText =
-      req.body && Object.keys(req.body).length > 0
-        ? `\nbody =\n${JSON.stringify(req.body, null, 2)}`
-        : ''
-    return `Peticion concluida - ${codeText}${urlText}${headersText}${bodyText}`
+    return `Petición concluida - ${res.statusCode}`
   }
 
   static customLogLevel(req: IncomingMessage, res: ServerResponse, err: Error) {
@@ -128,7 +104,6 @@ export class LogService {
             id: req.id,
             method: req.method,
             url: req.url,
-            body: req.raw.body,
           }
         },
         res: (res) => {
@@ -147,8 +122,10 @@ export class LogService {
         err: `error`,
         responseTime: `response time [ms]`,
       },
-      // level: 'info',
-      // timestamp: pino.stdTimeFunctions.isoTime,
+      redact: {
+        paths: (process.env.LOG_HIDE || '').split(' '),
+        censor: '*****',
+      },
     }
   }
 }
