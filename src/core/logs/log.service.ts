@@ -5,67 +5,60 @@ import { createWriteStream } from 'pino-http-send'
 import pino, { multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
 import pretty from 'pino-pretty'
-import { createStream } from 'rotating-file-stream'
+import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
 
 @Injectable()
 export class LogService {
-  static logsLogstashUrl: string = process.env.LOG_URL || ''
-  static logsLogstashToken: string = process.env.LOG_URL_TOKEN || ''
-  static logsFilePath: string = process.env.LOG_PATH || ''
-  static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true'
-  static sistemName = process.env.npm_package_name || 'APP'
-
   static getStream(): pino.MultiStreamRes {
-    // size     = rota por tamaño                G:GigaBytes | M:MegaBytes | K:KiloBytes | B:Bytes
-    // interval = rota por intérvalo de tiempo   M:mes | s:semana | d:día | h:hora | m:minuto | s:segundo
-    const streamDisk: pino.StreamEntry[] = [
-      {
-        stream: createStream('info.log', {
-          size: '5M',
-          path: LogService.logsFilePath,
-          interval: '1d',
-        }),
+    const streamDisk: pino.StreamEntry[] = []
+    if (process.env.LOG_PATH) {
+      const options: RotateOptions = {
+        size: process.env.LOG_SIZE || '5M',
+        path: process.env.LOG_PATH || './logs',
+        interval: process.env.LOG_INTERVAL || '1d',
+      }
+
+      if (process.env.LOG_COMPRESS && process.env.LOG_COMPRESS === 'true') {
+        options.compress = true
+      }
+
+      streamDisk.push({
+        stream: createStream('info.log', options),
         level: 'info',
-      },
-      {
-        stream: createStream('error.log', {
-          size: '5M',
-          path: LogService.logsFilePath,
-          interval: '1d',
-        }),
+      })
+      streamDisk.push({
+        stream: createStream('error.log', options),
         level: 'error',
-      },
-      {
-        stream: createStream('warn.log', {
-          size: '5M',
-          path: LogService.logsFilePath,
-          interval: '1d',
-        }),
+      })
+      streamDisk.push({
+        stream: createStream('warn.log', options),
         level: 'warn',
-      },
-    ]
+      })
+    }
 
     const streamStandar: pretty.PrettyStream[] = []
-    streamStandar.push(
-      pretty({
-        colorize: true,
-        sync: false,
-      })
-    )
+    if (process.env.LOG_STD_OUT) {
+      streamStandar.push(
+        pretty({
+          colorize: true,
+          sync: false,
+        })
+      )
+    }
 
-    const streamHttp =
-      this.logsLogstashUrl.length > 5
-        ? [
-            createWriteStream({
-              url: this.logsLogstashUrl,
-              headers: {
-                Authorization: this.logsLogstashToken,
-              },
-              batchSize: 1,
-            }),
-          ]
-        : []
+    const streamHttp: any[] = []
+    if (process.env.LOG_URL && process.env.LOG_URL_TOKEN) {
+      streamHttp.push(
+        createWriteStream({
+          url: process.env.LOG_URL,
+          headers: {
+            Authorization: process.env.LOG_URL_TOKEN,
+          },
+          batchSize: 1,
+        })
+      )
+    }
 
     return multistream([...streamDisk, ...streamStandar, ...streamHttp])
   }
@@ -122,7 +115,7 @@ export class LogService {
 
   static getPinoHttpConfig(): Options {
     return {
-      name: this.sistemName,
+      name: process.env.npm_package_name || 'APP',
       genReqId: (req) => {
         return (req.id || rTracer.id()) as ReqId
       },
@@ -143,6 +136,8 @@ export class LogService {
         },
       },
       formatters: undefined,
+      level: 'info',
+      timestamp: pino.stdTimeFunctions.isoTime,
       customLogLevel: this.customLogLevel,
       customSuccessMessage: this.customSuccessMessage,
       customErrorMessage: this.customErrorMessage,
@@ -152,8 +147,8 @@ export class LogService {
         err: `error`,
         responseTime: `response time [ms]`,
       },
-      level: 'info',
-      timestamp: pino.stdTimeFunctions.isoTime,
+      // level: 'info',
+      // timestamp: pino.stdTimeFunctions.isoTime,
     }
   }
 }
