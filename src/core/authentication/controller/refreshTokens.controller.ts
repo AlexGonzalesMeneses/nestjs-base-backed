@@ -1,16 +1,16 @@
 import {
   Controller,
   Delete,
-  Param,
-  UseGuards,
-  Post,
-  Res,
   Inject,
+  Param,
+  Post,
   Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request, Response } from 'express'
-import { Logger } from 'nestjs-pino'
+import { PinoLogger } from 'nestjs-pino'
 
 import { CookieService } from '../../../common/lib/cookie.service'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
@@ -22,15 +22,15 @@ export class RefreshTokensController {
   constructor(
     private readonly refreshTokensService: RefreshTokensService,
     @Inject(ConfigService) private readonly configService: ConfigService,
-    private readonly logger: Logger
-  ) {}
+    private readonly logger: PinoLogger
+  ) {
+    this.logger.setContext(RefreshTokensController.name)
+  }
 
   @Post('token')
   async getAccessToken(@Req() req: Request, @Res() res: Response) {
-    this.logger.log('[getAccessToken] init...')
     const jid = req.cookies['jid']
     const result = await this.refreshTokensService.createAccessToken(jid)
-    this.logger.log('[getAccessToken] result: ')
 
     if (result.refresh_token) {
       // sendRefreshToken(res, result.refresh_token.id);

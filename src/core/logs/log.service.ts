@@ -5,7 +5,7 @@ import { createWriteStream } from 'pino-http-send'
 import pino, { multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
 import pretty from 'pino-pretty'
-import * as rfs from 'rotating-file-stream'
+import { createStream } from 'rotating-file-stream'
 import { Request, Response } from 'express'
 
 @Injectable()
@@ -16,12 +16,12 @@ export class LogService {
   static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true'
   static sistemName = process.env.npm_package_name || 'APP'
 
-  static getStream(): any {
+  static getStream(): pino.MultiStreamRes {
     // size     = rota por tamaño                G:GigaBytes | M:MegaBytes | K:KiloBytes | B:Bytes
     // interval = rota por intérvalo de tiempo   M:mes | s:semana | d:día | h:hora | m:minuto | s:segundo
     const streamDisk: pino.StreamEntry[] = [
       {
-        stream: rfs.createStream('info.log', {
+        stream: createStream('info.log', {
           size: '5M',
           path: LogService.logsFilePath,
           interval: '1d',
@@ -29,7 +29,7 @@ export class LogService {
         level: 'info',
       },
       {
-        stream: rfs.createStream('error.log', {
+        stream: createStream('error.log', {
           size: '5M',
           path: LogService.logsFilePath,
           interval: '1d',
@@ -37,7 +37,7 @@ export class LogService {
         level: 'error',
       },
       {
-        stream: rfs.createStream('warn.log', {
+        stream: createStream('warn.log', {
           size: '5M',
           path: LogService.logsFilePath,
           interval: '1d',
@@ -131,8 +131,12 @@ export class LogService {
           return err.type === 'Error' ? undefined : err
         },
         req: (req) => {
-          req.body = req.raw.body
-          return { id: req.id, method: req.method, url: req.url }
+          return {
+            id: req.id,
+            method: req.method,
+            url: req.url,
+            body: req.raw.body,
+          }
         },
         res: (res) => {
           return { statusCode: res.statusCode }
@@ -148,6 +152,8 @@ export class LogService {
         err: `error`,
         responseTime: `response time [ms]`,
       },
+      level: 'info',
+      timestamp: pino.stdTimeFunctions.isoTime,
     }
   }
 }

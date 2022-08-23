@@ -18,12 +18,17 @@ import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
 export class ModuloController extends AbstractController {
-  constructor(private moduloService: ModuloService) {
+  constructor(
+    private moduloService: ModuloService,
+    private readonly logger: PinoLogger
+  ) {
     super()
+    this.logger.setContext(ModuloController.name)
   }
 
   @Get()

@@ -3,6 +3,7 @@ import {
   Check,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -49,6 +50,7 @@ export class Usuario extends AbstractEntity {
   })
   intentos: number
 
+  @Index()
   @Column({
     name: 'codigo_desbloqueo',
     length: 100,
@@ -57,6 +59,7 @@ export class Usuario extends AbstractEntity {
   })
   codigoDesbloqueo: string | null
 
+  @Index()
   @Column({
     name: 'codigo_recuperacion',
     length: 100,
@@ -65,6 +68,7 @@ export class Usuario extends AbstractEntity {
   })
   codigoRecuperacion: string | null
 
+  @Index()
   @Column({
     name: 'codigo_transaccion',
     length: 100,

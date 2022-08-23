@@ -13,12 +13,17 @@ import { AbstractController } from '../../../common/dto/abstract-controller.dto'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
 export class AuthorizationController extends AbstractController {
-  constructor(private readonly authorizationService: AuthorizationService) {
+  constructor(
+    private readonly authorizationService: AuthorizationService,
+    private readonly logger: PinoLogger
+  ) {
     super()
+    this.logger.setContext(AuthorizationController.name)
   }
 
   @Post('/politicas')

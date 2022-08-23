@@ -30,11 +30,16 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
-  constructor(private usuarioService: UsuarioService) {
+  constructor(
+    private usuarioService: UsuarioService,
+    private readonly logger: PinoLogger
+  ) {
     super()
+    this.logger.setContext(UsuarioController.name)
   }
 
   // GET users
