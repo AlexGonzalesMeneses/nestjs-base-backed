@@ -40,7 +40,9 @@ export const SessionAppDataSource = new DataSource({
 })
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: false })
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn'],
+  })
   app.useLogger(app.get(Logger))
   const configService = app.get(ConfigService)
   // swagger
