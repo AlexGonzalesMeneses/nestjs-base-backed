@@ -11,6 +11,7 @@
     "setup": "rimraf database/migrations/*; npm run schema:drop; npm run migrations:generate database/migrations/init; npm run migrations:run; npm run seeds:run;",
     "start": "nest start",
     "start:dev": "NODE_ENV=development nest start --watch",
+    "start:devsql": "NODE_ENV=development FORCE_SQL_LOG=true nest start --watch",
     "start:database": "./scripts/database.sh",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/src/main",

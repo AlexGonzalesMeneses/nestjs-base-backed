@@ -10,78 +10,61 @@ import {
   PreconditionFailedException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { PinoLogger } from 'nestjs-pino'
 import { Messages } from '../constants/response-messages'
+import { LogService } from './../../core/logs/log.service'
+import { AxiosError } from 'axios'
 
-class HttpExceptionFilterError extends Error {
-  constructor(original: Error) {
-    super(original.message)
-    this.stack = original.stack
-  }
+type ObjectOrError = {
+  statusCode?: number
+  message?: string | string[] | object | object[]
+  error?: string
 }
 
-@Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: PinoLogger) {
-    this.logger.setContext(HttpExceptionFilter.name)
+class HttpExceptionFilterError extends Error {
+  codigo: number
+  mensaje: string
+  errores: (string | object)[]
+
+  constructor(original: unknown) {
+    super()
+    if (original instanceof HttpException) {
+      this.codigo = original.getStatus()
+      this.mensaje = HttpExceptionFilterError.getMessage(original)
+      this.errores = HttpExceptionFilterError.getErrors(original)
+      this.stack = original.stack
+    } else if (original instanceof AxiosError) {
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [{ axiosError: original }]
+      this.stack = original.stack
+    } else if (original instanceof Error) {
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [original.toString()]
+      this.stack = original.stack
+    } else {
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [String(original)]
+    }
   }
 
-  catch(exception: HttpException | Error, host: ArgumentsHost) {
-    const ctx = host.switchToHttp()
-    const response = ctx.getResponse<Response>()
-
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR
-
-    const esErrorInterno = status === HttpStatus.INTERNAL_SERVER_ERROR
-
-    if (esErrorInterno) {
-      const error = new HttpExceptionFilterError(exception)
-      this.logger.error({ error }, '[Http Exception Filter]')
-    }
-
-    let errores: Array<string> = []
-
-    if (exception instanceof HttpException) {
-      const r: any = exception.getResponse()
-      const msg = r instanceof Error ? r.toString() : r.message ? r.message : r
-
-      if (Array.isArray(msg)) {
-        msg.map((item) => errores.push(item))
-      } else if (typeof msg === 'object') {
-        errores.push(msg)
-      } else if (typeof msg === 'string') {
-        errores.push(msg)
+  static getMessage(exception: HttpException): string {
+    const response = exception.getResponse() as ObjectOrError
+    if (response.message && response.error) {
+      if (typeof response.message === 'string') {
+        return response.message
+      }
+      if (
+        Array.isArray(response.message) &&
+        response.message.length > 0 &&
+        typeof response.message[0] === 'string'
+      ) {
+        return response.message[0]
       }
     }
-
-    if (process.env.NODE_ENV === 'production') {
-      errores = []
-    }
-
-    const mensaje = this.isBusinessException(exception)
-    const errorResponse = {
-      finalizado: false,
-      codigo: status,
-      timestamp: Math.floor(Date.now() / 1000),
-      mensaje,
-      datos: {
-        errores,
-      },
-    }
-    response.status(status).json(errorResponse)
-  }
-
-  public isBusinessException(exception: HttpException | Error): string {
-    return this.filterMessage(exception)
-  }
-
-  filterMessage(exception: HttpException | Error): string {
-    const message: string = exception.message
-    if (message) return message
 
     switch (exception.constructor) {
       case BadRequestException:
@@ -97,5 +80,84 @@ export class HttpExceptionFilter implements ExceptionFilter {
       default:
         return Messages.EXCEPTION_INTERNAL_SERVER_ERROR
     }
+  }
+
+  static getErrors(exception: HttpException): (string | object)[] {
+    const response = exception.getResponse() as ObjectOrError
+    if (!response.statusCode || !response.message) {
+      return [response]
+    }
+    if (Array.isArray(response.message)) {
+      if (
+        response.message.length === 1 &&
+        typeof response.message[0] === 'string'
+      ) {
+        return []
+      }
+      return response.message
+    }
+    return []
+  }
+}
+
+@Catch()
+export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: PinoLogger) {
+    this.logger.setContext(HttpExceptionFilter.name)
+  }
+
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse<Response>()
+    const request = ctx.getRequest<Request>()
+
+    const errorRequest = {
+      method: request.method,
+      originalUrl: request.originalUrl,
+      headers: request.headers,
+      params: request.params,
+      query: request.query,
+      body: request.body,
+      user: request.user,
+    }
+
+    const filterError = new HttpExceptionFilterError(exception)
+    const errorResponse = {
+      finalizado: false,
+      codigo: filterError.codigo,
+      timestamp: Math.floor(Date.now() / 1000),
+      mensaje: filterError.mensaje,
+      datos: {
+        errores: filterError.errores,
+      },
+    }
+
+    const logData = {
+      errorRequest,
+      errorResponse,
+      errorStack: filterError.stack,
+    }
+
+    const errorRequestForPrint = { ...errorRequest, headers: undefined }
+    const printRequest = JSON.stringify(errorRequestForPrint, null, 2)
+    const printResponse = JSON.stringify(errorResponse, null, 2)
+
+    if (errorResponse.codigo >= 400 && errorResponse.codigo < 500) {
+      this.logger.warn(logData, '[Http Exception Filter]')
+      LogService.info(printRequest)
+      LogService.warn(printResponse)
+      if (filterError.stack) LogService.warn(filterError.stack)
+    } else {
+      this.logger.error(logData, '[Http Exception Filter]')
+      LogService.info(printRequest)
+      LogService.error(printResponse)
+      if (filterError.stack) LogService.error(filterError.stack)
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      errorResponse.datos.errores = []
+    }
+
+    response.status(filterError.codigo).json(errorResponse)
   }
 }

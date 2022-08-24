@@ -10,7 +10,7 @@ export enum Messages {
   EXCEPTION_DEFAULT = 'Ocurrio un error desconocido',
   EXCEPTION_REFRESH_TOKEN_NOT_FOUND = 'Sesión finalizada.',
   EXCEPTION_REFRESH_TOKEN_EXPIRED = 'Sesión expirada por inactividad.',
-  EXCEPTION_INTERNAL_SERVER_ERROR = 'Error interno.',
+  EXCEPTION_INTERNAL_SERVER_ERROR = 'Ocurrió un error interno.',
 
   // generic messages success
   SUCCESS_DEFAULT = '¡Tarea completada con éxito!',

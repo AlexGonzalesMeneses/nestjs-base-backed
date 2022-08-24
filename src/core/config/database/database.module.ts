@@ -17,7 +17,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
         entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
         keepConnectionAlive: true,
         synchronize: false,
-        logging: configService.get('NODE_ENV') === 'development',
+        logging:
+          configService.get('FORCE_SQL_LOG') === 'true' ||
+          (configService.get('NODE_ENV') === 'development' &&
+            configService.get('LOG_SQL') === 'true'),
       }),
     }),
   ],

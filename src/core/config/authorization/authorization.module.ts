@@ -21,7 +21,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
             password: configService.get('DB_PASSWORD'),
             database: configService.get('DB_DATABASE'),
             schema: configService.get('DB_SCHEMA_USUARIOS'),
-            logging: configService.get('NODE_ENV') === 'development',
+            logging:
+              configService.get('NODE_ENV') === 'development' &&
+              configService.get('LOG_SQL') === 'true',
             synchronize: false,
           })
           const enforcer = await newEnforcer(

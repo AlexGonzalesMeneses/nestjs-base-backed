@@ -96,8 +96,8 @@ export class LogService {
         return (req.id || rTracer.id()) as ReqId
       },
       serializers: {
-        err: (err) => {
-          return err.type === 'Error' ? undefined : err
+        err: () => {
+          return
         },
         req: (req) => {
           return {
@@ -127,5 +127,20 @@ export class LogService {
         censor: '*****',
       },
     }
+  }
+
+  static info(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[36m${msg}\x1b[0m`)
+  }
+
+  static warn(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[33m${msg}\x1b[0m`)
+  }
+
+  static error(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[91m${msg}\x1b[0m`)
   }
 }

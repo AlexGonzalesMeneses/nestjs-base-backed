@@ -21,6 +21,8 @@ import {
   SWAGGER_API_ROOT,
 } from './common/constants'
 import { DataSource } from 'typeorm'
+import { LogService } from './core/logs/log.service'
+import { NextFunction, Request, Response } from 'express'
 
 dotenv.config()
 
@@ -32,7 +34,7 @@ export const SessionAppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false,
-  logging: true,
+  logging: process.env.LOG_SQL === 'true',
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 
@@ -81,6 +83,13 @@ async function bootstrap() {
   app.use(helmet.hidePoweredBy())
   app.use(helmet())
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN') || 'api')
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const msg = `${req.method} ${req.originalUrl}`
+    LogService.info(msg)
+    next()
+  })
+
   const port = configService.get('PORT')
   await app.listen(port)
   console.log(
