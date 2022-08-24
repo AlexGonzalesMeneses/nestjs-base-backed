@@ -1,65 +1,70 @@
 import { Injectable } from '@nestjs/common'
-import { id } from 'cls-rtracer'
+import * as rTracer from 'cls-rtracer'
 import { Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
 import pino, { multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
-import fsr from 'file-stream-rotator'
+import pretty from 'pino-pretty'
+import { createStream, Options as RotateOptions } from 'rotating-file-stream'
+import { Request, Response } from 'express'
 
 @Injectable()
 export class LogService {
-  static logsLogstashUrl: string = process.env.LOG_URL || ''
-  static logsLogstashToken: string = process.env.LOG_URL_TOKEN || ''
-  static logsFilePath: string = process.env.LOG_PATH || ''
-  static logsEstandarOut: boolean = process.env.LOG_STD_OUT === 'true'
+  static getStream(): pino.MultiStreamRes {
+    const streamDisk: pino.StreamEntry[] = []
+    if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
+      const options: RotateOptions = {
+        size: process.env.LOG_SIZE || '5M',
+        path: process.env.LOG_PATH || './logs',
+        interval: process.env.LOG_INTERVAL || '1d',
+      }
 
-  static sistemName = process.env.npm_package_name || 'APP'
+      if (process.env.LOG_COMPRESS && process.env.LOG_COMPRESS === 'true') {
+        options.compress = true
+      }
 
-  static getStream() {
-    const streamHttp =
-      this.logsLogstashUrl.length > 5
-        ? [
-            createWriteStream({
-              url: this.logsLogstashUrl,
-              headers: {
-                Authorization: this.logsLogstashToken,
-              },
-              batchSize: 1,
-            }),
-          ]
-        : []
+      streamDisk.push({
+        stream: createStream('info.log', options),
+        level: 'info',
+      })
+      streamDisk.push({
+        stream: createStream('error.log', options),
+        level: 'error',
+      })
+      streamDisk.push({
+        stream: createStream('warn.log', options),
+        level: 'warn',
+      })
+    }
 
-    const streamDisk =
-      this.logsFilePath.length > 2
-        ? [
-            {
-              stream: fsr.getStream({
-                filename: `${this.logsFilePath}/${this.sistemName}-out.log`,
-                frequency: '1H',
-              }),
-            },
-            {
-              level: 'error',
+    const streamStandar: pretty.PrettyStream[] = []
+    if (process.env.LOG_STD_OUT && process.env.LOG_STD_OUT === 'true') {
+      streamStandar.push(
+        pretty({
+          colorize: true,
+          sync: false,
+        })
+      )
+    }
 
-              stream: fsr.getStream({
-                filename: `${this.logsFilePath}/${this.sistemName}-error.log`,
-                frequency: '1H',
-              }),
-            },
-            {
-              level: 'fatal',
-              stream: fsr.getStream({
-                filename: `${this.logsFilePath}/${this.sistemName}-fatal.log`,
-                frequency: '1H',
-              }),
-            },
-          ]
-        : []
+    const streamHttp: any[] = []
+    if (
+      process.env.LOG_URL &&
+      process.env.LOG_URL.length > 0 &&
+      process.env.LOG_URL_TOKEN
+    ) {
+      streamHttp.push(
+        createWriteStream({
+          url: process.env.LOG_URL,
+          headers: {
+            Authorization: process.env.LOG_URL_TOKEN,
+          },
+          batchSize: 1,
+        })
+      )
+    }
 
-    const streamsEstandar = this.logsEstandarOut
-      ? [{ stream: process.stdout }]
-      : []
-    return multistream([...streamsEstandar, ...streamDisk, ...streamHttp])
+    return multistream([...streamDisk, ...streamStandar, ...streamHttp])
   }
 
   static getLoggerConfig() {
@@ -68,58 +73,44 @@ export class LogService {
     }
   }
 
-  static customSuccessMessage(req: IncomingMessage, res: any) {
-    if (res.statusCode <= 304) {
-      return `Peticion concluida - ${res.statusCode} ${JSON.stringify(
-        res.req.headers
-      )}`
-    }
-    return `Peticion concluida - : ${
-      res.statusCode
-    } Datos de la Peticion: { "headers":"${JSON.stringify(
-      res.req.headers
-    )}, "body": ${JSON.stringify(res.req.body)} }`
+  static customSuccessMessage(req: Request, res: Response) {
+    return `Petición concluida - ${res.statusCode}`
   }
 
-  static customErrorMessage(req: IncomingMessage, res) {
-    return `Peticion concluida - ${
-      res.statusCode
-    } Datos de la Peticion: { "headers":"${JSON.stringify(
-      res.req.headers
-    )}, "body": ${JSON.stringify(res.req.body)} }`
+  static customErrorMessage(req: Request, res: Response) {
+    return `Petición concluida - ${res.statusCode}`
   }
 
-  static customLogLevel(req: IncomingMessage, res: ServerResponse, err) {
-    if (err) {
-      if (res.statusCode >= 500) {
-        return 'error'
-      } else if (res.statusCode > 304 && res.statusCode < 500) {
-        return 'warn'
-      } else {
-        return 'error'
-      }
-    }
+  static customLogLevel(req: IncomingMessage, res: ServerResponse, err: Error) {
+    if (res.statusCode >= 200 && res.statusCode < 400) return 'info'
+    if (res.statusCode >= 400 && res.statusCode < 500) return 'warn'
+    if (res.statusCode >= 500) return 'error'
+    if (err) return 'error'
     return 'info'
   }
 
   static getPinoHttpConfig(): Options {
     return {
-      name: this.sistemName,
+      name: process.env.npm_package_name || 'APP',
       genReqId: (req) => {
-        return (req.id || id()) as ReqId
+        return (req.id || rTracer.id()) as ReqId
       },
       serializers: {
-        err: pino.stdSerializers.err,
-        req: (req) => {
-          req.body = req.raw.body
-          return { id: req.id, method: req.method, url: req.url }
+        err: () => {
+          return
         },
-        res: pino.stdSerializers.res,
+        req: (req) => {
+          return {
+            id: req.id,
+            method: req.method,
+            url: req.url,
+          }
+        },
+        res: (res) => {
+          return { statusCode: res.statusCode }
+        },
       },
-      redact: {
-        paths: (process.env.LOG_HIDE || '').split(' '),
-        censor: '*****',
-      },
+      formatters: undefined,
       level: 'info',
       timestamp: pino.stdTimeFunctions.isoTime,
       customLogLevel: this.customLogLevel,
@@ -129,19 +120,37 @@ export class LogService {
         req: `request`,
         res: `response`,
         err: `error`,
-        responseTime: `Tiempo de la transaccion:ms`,
+        responseTime: `response time [ms]`,
       },
-      prettyPrint: !(
-        this.logsFilePath.length > 2 || this.logsLogstashUrl.length > 5
-      ), //false, //process.env.NODE_ENV !== 'production',
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          levelFirst: true,
-          translateTime: true,
-          colorize: true,
-        },
+      redact: {
+        paths: (process.env.LOG_HIDE || '').split(' '),
+        censor: '*****',
       },
     }
+  }
+
+  static info(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[36m${msg}\x1b[0m`)
+  }
+
+  static warn(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[33m${msg}\x1b[0m`)
+  }
+
+  static error(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[91m${msg}\x1b[0m`)
+  }
+
+  static success(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[92m${msg}\x1b[0m`)
+  }
+
+  static log(msg: string): void {
+    if (process.env.NODE_ENV === 'production') return
+    console.log(`\x1b[37m${msg}\x1b[0m`)
   }
 }

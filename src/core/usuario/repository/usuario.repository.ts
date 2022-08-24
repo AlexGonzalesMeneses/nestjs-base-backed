@@ -160,11 +160,12 @@ export class UsuarioRepository {
         nombres: usuarioDto?.persona?.nombres,
         primerApellido: usuarioDto?.persona?.primerApellido,
         segundoApellido: usuarioDto?.persona?.segundoApellido,
-        nroDocumento: usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario,
+        nroDocumento: usuarioDto?.persona?.nroDocumento,
         fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
+        tipoDocumento: usuarioDto.persona.tipoDocumento,
       },
       usuarioRol: usuarioRoles,
-      usuario: usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario,
+      usuario: usuarioDto.usuario,
       estado: usuarioDto?.estado ?? Status.CREATE,
       correoElectronico: usuarioDto?.correoElectronico,
       contrasena:
@@ -259,12 +260,63 @@ export class UsuarioRepository {
     return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
+  async actualizarDatosRecuperacion(idUsuario, codigo) {
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.codigoRecuperacion = codigo
+
+    return await this.dataSource.getRepository(Usuario).save(usuario)
+  }
+
+  async actualizarDatosActivacion(idUsuario, codigo) {
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.codigoActivacion = codigo
+
+    return await this.dataSource.getRepository(Usuario).save(usuario)
+  }
+
+  async actualizarDatosTransaccion(idUsuario, codigo) {
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.codigoTransaccion = codigo
+
+    return await this.dataSource.getRepository(Usuario).save(usuario)
+  }
+
   async buscarPorCodigoDesbloqueo(codigo: string) {
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
+      .getOne()
+  }
+
+  async buscarPorCodigoRecuperacion(codigo: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .where('usuario.codigoRecuperacion = :codigo', { codigo })
+      .getOne()
+  }
+
+  async buscarPorCodigoTransaccion(codigo: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .where('usuario.codigoTransaccion = :codigo', { codigo })
+      .getOne()
+  }
+
+  async buscarPorCodigoActivacion(codigo: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .where('usuario.codigoActivacion = :codigo', { codigo })
       .getOne()
   }
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
 import { Usuario } from '../entity/usuario.entity'
-import { Status } from '../../../common/constants'
+import { Status, TipoDocumento } from '../../../common/constants'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { TextService } from '../../../common/lib/text.service'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
@@ -24,6 +24,13 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { EntityManager, Repository } from 'typeorm'
+import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
+import {
+  NuevaContrasenaDto,
+  RecuperarCuentaDto,
+  ValidarRecuperarCuentaDto,
+} from '../dto/recuperar-cuenta.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
 export class UsuarioService {
@@ -38,7 +45,8 @@ export class UsuarioService {
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private readonly logger: PinoLogger
   ) {}
 
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
@@ -89,6 +97,185 @@ export class UsuarioService {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
     }
     throw new PreconditionFailedException(Messages.EXISTING_USER)
+  }
+
+  async crearCuenta(usuarioDto: CrearUsuarioCuentaDto) {
+    // verificar si el usuario ya fue registrado con su correo
+    const usuario = await this.usuarioRepositorio.buscarUsuario(
+      usuarioDto.correoElectronico
+    )
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
+    }
+
+    // verificar si el correo no esta registrado
+    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      usuarioDto.correoElectronico
+    )
+
+    if (correo) {
+      throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+    }
+
+    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
+      'USUARIO'
+    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+
+    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
+
+    if (!TextService.validateLevelPassword(usuarioDto.contrasenaNueva)) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+    }
+
+    const usuarioNuevo = await this.usuarioRepositorio.crear(
+      {
+        usuario: usuarioDto.correoElectronico,
+        persona: {
+          nombres: usuarioDto.nombres,
+          primerApellido: '',
+          segundoApellido: '',
+          nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
+          fechaNacimiento: new Date(),
+          tipoDocumento: TipoDocumento.OTRO,
+        },
+        correoElectronico: usuarioDto.correoElectronico,
+        roles: rol?.id ? [rol?.id] : [],
+        estado: Status.PENDING,
+        contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
+      },
+      usuarioAuditoria?.id ?? ''
+    )
+
+    if (usuarioNuevo?.id) {
+      const codigo = TextService.generateUuid()
+      const urlActivacion = `${this.configService.get(
+        'URL_FRONTEND'
+      )}/activacion?q=${codigo}`
+
+      this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+
+      await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
+
+      const template =
+        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+
+      if (usuarioNuevo.correoElectronico) {
+        await this.mensajeriaService.sendEmail(
+          usuarioNuevo.correoElectronico,
+          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+          template
+        )
+      }
+    }
+
+    return { id: usuarioNuevo.id, estado: usuarioNuevo.estado }
+  }
+
+  async activarCuenta(codigo) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoActivacion(
+      codigo
+    )
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
+      'USUARIO'
+    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      usuario?.id,
+      {
+        estado: Status.ACTIVE,
+        codigoActivacion: null,
+        usuarioActualizacion: usuarioAuditoria?.id,
+      }
+    )
+    return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
+  }
+
+  async recuperarCuenta(recuperarCuentaDto: RecuperarCuentaDto) {
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      recuperarCuentaDto.correoElectronico
+    )
+
+    if (!usuario) {
+      this.logger.info(`Usuario no encontrado`)
+      return 'Busqueda terminada'
+    }
+
+    const codigo = TextService.generateUuid()
+    const urlRecuperacion = `${this.configService.get(
+      'URL_FRONTEND'
+    )}/recuperacion?q=${codigo}`
+
+    this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
+
+    await this.actualizarDatosRecuperacion(usuario.id, codigo)
+
+    const template =
+      TemplateEmailService.armarPlantillaRecuperacionCuenta(urlRecuperacion)
+
+    if (usuario.correoElectronico) {
+      await this.mensajeriaService.sendEmail(
+        usuario.correoElectronico,
+        Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+        template
+      )
+    }
+    return 'Busqueda terminada'
+  }
+
+  async validarRecuperar(validarRecuperarCuentaDto: ValidarRecuperarCuentaDto) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoRecuperacion(
+      validarRecuperarCuentaDto.codigo
+    )
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    const codigo = TextService.generateUuid()
+
+    const usuarioActualizado =
+      await this.actualizarDatosTransaccionRecuperacion(usuario.id, codigo)
+
+    return { code: usuarioActualizado.codigoTransaccion }
+  }
+
+  async nuevaContrasenaTransaccion(nuevaContrasenaDto: NuevaContrasenaDto) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoTransaccion(
+      nuevaContrasenaDto.codigo
+    )
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    if (
+      !TextService.validateLevelPassword(nuevaContrasenaDto.contrasenaNueva)
+    ) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+    }
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      usuario.id,
+      {
+        fechaBloqueo: null,
+        intentos: 0,
+        codigoDesbloqueo: null,
+        codigoTransaccion: null,
+        codigoRecuperacion: null,
+        contrasena: await TextService.encrypt(
+          TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
+        ),
+        estado: Status.ACTIVE,
+      }
+    )
+
+    return { id: usuarioActualizado.id }
   }
 
   async crearConCiudadania(
@@ -409,31 +596,31 @@ export class UsuarioService {
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
-    if (usuario?.usuarioRol?.length) {
-      return {
-        id: usuario.id,
-        usuario: usuario.usuario,
-        ciudadania_digital: usuario.ciudadaniaDigital,
-        estado: usuario.estado,
-        roles: await Promise.all(
-          usuario.usuarioRol
-            .filter((value) => value.estado === Status.ACTIVE)
-            .map(async (usuarioRol) => {
-              const { id, rol, nombre } = usuarioRol.rol
-              const modulos =
-                await this.authorizationService.obtenerPermisosPorRol(rol)
-              return {
-                idRol: id,
-                rol,
-                nombre,
-                modulos,
-              }
-            })
-        ),
-        persona: usuario.persona,
-      }
-    } else {
+    if (!usuario) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
+    }
+
+    return {
+      id: usuario.id,
+      usuario: usuario.usuario,
+      ciudadania_digital: usuario.ciudadaniaDigital,
+      estado: usuario.estado,
+      roles: await Promise.all(
+        usuario.usuarioRol
+          .filter((value) => value.estado === Status.ACTIVE)
+          .map(async (usuarioRol) => {
+            const { id, rol, nombre } = usuarioRol.rol
+            const modulos =
+              await this.authorizationService.obtenerPermisosPorRol(rol)
+            return {
+              idRol: id,
+              rol,
+              nombre,
+              modulos,
+            }
+          })
+      ),
+      persona: usuario.persona,
     }
   }
 
@@ -453,6 +640,27 @@ export class UsuarioService {
       idUsuario,
       codigo,
       fechaBloqueo
+    )
+  }
+
+  async actualizarDatosRecuperacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosRecuperacion(
+      idUsuario,
+      codigo
+    )
+  }
+
+  async actualizarDatosActivacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosActivacion(
+      idUsuario,
+      codigo
+    )
+  }
+
+  async actualizarDatosTransaccionRecuperacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosTransaccion(
+      idUsuario,
+      codigo
     )
   }
 

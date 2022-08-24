@@ -77,37 +77,48 @@ export class AuthenticationService {
 
   async validarUsuario(usuario: string, contrasena: string): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuario(usuario)
-    if (respuesta) {
-      // verificar si la cuenta contiene un estado válido
-      const statusValid = [Status.ACTIVE, Status.PENDING]
-      if (!statusValid.includes(respuesta.estado as Status)) {
-        throw new EntityUnauthorizedException(Messages.INVALID_USER)
-      }
-      // verificar si la cuenta esta bloqueada
-      const verificacionBloqueo = await this.verificarBloqueo(respuesta)
-      if (verificacionBloqueo) {
-        throw new EntityUnauthorizedException(Messages.USER_BLOCKED)
-      }
 
-      const pass = TextService.decodeBase64(contrasena)
-      if (!(await TextService.compare(pass, respuesta.contrasena))) {
-        await this.generarIntentoBloqueo(respuesta)
-        throw new EntityUnauthorizedException(Messages.INVALID_USER_CREDENTIALS)
-      }
-      // si se logra autenticar con exito => reiniciar contador de intentos a 0
-      if (respuesta.intentos > 0) {
-        await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0)
-      }
-      let roles: Array<string | null> = []
-      if (respuesta.usuarioRol.length) {
-        roles = respuesta.usuarioRol
-          .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
-          .map((usuarioRol) => usuarioRol.rol.rol)
-      }
-
-      return { id: respuesta.id, roles }
+    if (!respuesta) {
+      return null
     }
-    return null
+
+    if (respuesta?.usuarioRol.length == 0) {
+      throw new EntityUnauthorizedException(Messages.NO_PERMISSION_USER)
+    }
+
+    if (respuesta?.estado === Status.PENDING) {
+      throw new EntityUnauthorizedException(Messages.PENDING_USER)
+    }
+
+    if (respuesta?.estado === Status.INACTIVE) {
+      throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
+    }
+
+    // verificar si la cuenta esta bloqueada
+    const verificacionBloqueo = await this.verificarBloqueo(respuesta)
+
+    if (verificacionBloqueo) {
+      throw new EntityUnauthorizedException(Messages.USER_BLOCKED)
+    }
+
+    const pass = TextService.decodeBase64(contrasena)
+
+    if (!(await TextService.compare(pass, respuesta.contrasena))) {
+      await this.generarIntentoBloqueo(respuesta)
+      throw new EntityUnauthorizedException(Messages.INVALID_USER_CREDENTIALS)
+    }
+    // si se logra autenticar con exito => reiniciar contador de intentos a 0
+    if (respuesta.intentos > 0) {
+      await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0)
+    }
+    let roles: Array<string | null> = []
+    if (respuesta.usuarioRol.length) {
+      roles = respuesta.usuarioRol
+        .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
+        .map((usuarioRol) => usuarioRol.rol.rol)
+    }
+
+    return { id: respuesta.id, roles }
   }
 
   async autenticar(user: PassportUser) {
@@ -222,7 +233,7 @@ export class AuthenticationService {
         nuevoUsuario = await this.usuarioService.crearConPersonaExistente(
           respPersona,
           datosUsuario,
-          '1'
+          '1' // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
         )
       } else {
         // No existe la persona en base de datos, crear registro completo de persona

@@ -4,6 +4,8 @@ import { AuthZManagementService } from 'nest-authz'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { AuthorizationController } from './authorization.controller'
 import { AuthorizationService } from './authorization.service'
+import { LoggerModule } from 'nestjs-pino'
+import { LogService } from '../../logs/log.service'
 
 const resPolitica = {
   sujeto: 'ADMINISTRADOR',
@@ -22,7 +24,11 @@ describe('AuthorizationController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
+      imports: [
+        LoggerModule.forRoot({
+          pinoHttp: [LogService.getPinoHttpConfig(), LogService.getStream()],
+        }),
+      ],
       controllers: [AuthorizationController],
       providers: [
         {
@@ -48,7 +54,14 @@ describe('AuthorizationController', () => {
   })
 
   it('[listar] Debería listar politicas en formato filas y total', async () => {
-    const result = await controller.listarPoliticas('frontend')
+    const result = await controller.listarPoliticas({
+      limite: 0,
+      pagina: 0,
+      get saltar(): number {
+        return 0
+      },
+      filtro: 'q',
+    })
     expect(result).toBeDefined()
     expect(result).toHaveProperty('finalizado')
     expect(result).toHaveProperty('mensaje')

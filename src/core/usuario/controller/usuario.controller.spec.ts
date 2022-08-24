@@ -10,6 +10,8 @@ import { UsuarioService } from '../service/usuario.service'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CanActivate } from '@nestjs/common'
 import { CasbinGuard } from '../../authorization/guards/casbin.guard'
+import { LoggerModule } from 'nestjs-pino'
+import { LogService } from '../../logs/log.service'
 
 const resUsuario = {
   id: TextService.generateUuid(),
@@ -42,7 +44,11 @@ describe('UsuarioController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
+      imports: [
+        LoggerModule.forRoot({
+          pinoHttp: [LogService.getPinoHttpConfig(), LogService.getStream()],
+        }),
+      ],
       controllers: [UsuarioController],
       providers: [
         {

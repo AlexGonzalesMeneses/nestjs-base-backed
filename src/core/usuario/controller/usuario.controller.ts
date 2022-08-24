@@ -24,12 +24,25 @@ import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto'
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CasbinGuard } from '../../authorization/guards/casbin.guard'
+import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
+import {
+  ActivarCuentaDto,
+  NuevaContrasenaDto,
+  RecuperarCuentaDto,
+  ValidarRecuperarCuentaDto,
+} from '../dto/recuperar-cuenta.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Controller('usuarios')
 export class UsuarioController extends AbstractController {
-  constructor(private usuarioService: UsuarioService) {
+  constructor(
+    private usuarioService: UsuarioService,
+    private readonly logger: PinoLogger
+  ) {
     super()
+    this.logger.setContext(UsuarioController.name)
   }
+
   // GET users
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(
@@ -59,6 +72,65 @@ export class UsuarioController extends AbstractController {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.crear(usuarioDto, usuarioAuditoria)
     return this.successCreate(result)
+  }
+
+  //create user account
+  @Post('crear-cuenta')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async crearUsuario(@Req() req, @Body() usuarioDto: CrearUsuarioCuentaDto) {
+    const result = await this.usuarioService.crearCuenta(usuarioDto)
+    return this.successCreate(result, Messages.NEW_USER_ACCOUNT)
+  }
+
+  //restore user account
+  @Post('recuperar')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async recuperarCuenta(
+    @Req() req,
+    @Body() recuperarCuentaDto: RecuperarCuentaDto
+  ) {
+    const result = await this.usuarioService.recuperarCuenta(recuperarCuentaDto)
+    return this.successList(result, Messages.SUBJECT_EMAIL_ACCOUNT_RECOVERY)
+  }
+
+  // validate restore user account
+  @Post('validar-recuperar')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async validarRecuperarCuenta(
+    @Req() req,
+    @Body() validarRecuperarCuentaDto: ValidarRecuperarCuentaDto
+  ) {
+    const result = await this.usuarioService.validarRecuperar(
+      validarRecuperarCuentaDto
+    )
+    return this.success(result, Messages.SUCCESS_DEFAULT)
+  }
+
+  // activar usuario
+  @Patch('/cuenta/activacion')
+  @UsePipes(ValidationPipe)
+  async activarCuenta(@Req() req, @Body() activarCuentaDto: ActivarCuentaDto) {
+    const result = await this.usuarioService.activarCuenta(
+      activarCuentaDto.codigo
+    )
+    return this.successUpdate(result, Messages.ACCOUNT_ACTIVED_SUCCESSFULLY)
+  }
+
+  // validate restore user account
+  @Patch('/cuenta/nueva-contrasena')
+  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async nuevaContrasena(
+    @Req() req,
+    @Body() nuevaContrasenaDto: NuevaContrasenaDto
+  ) {
+    const result = await this.usuarioService.nuevaContrasenaTransaccion(
+      nuevaContrasenaDto
+    )
+    return this.success(result, Messages.SUCCESS_DEFAULT)
   }
 
   @UseGuards(JwtAuthGuard, CasbinGuard)

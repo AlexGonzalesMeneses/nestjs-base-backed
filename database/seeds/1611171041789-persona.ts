@@ -1,6 +1,7 @@
 import { Persona } from 'src/core/usuario/entity/persona.entity'
 import { TextService } from 'src/common/lib/text.service'
 import { MigrationInterface, QueryRunner } from 'typeorm'
+import dayjs from 'dayjs'
 
 export class usuario1611171041789 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -18,7 +19,7 @@ export class usuario1611171041789 implements MigrationInterface {
         primerApellido: 'PEREZ',
         segundoApellido: 'PEREZ',
         nroDocumento: '1765251',
-        fechaNacimiento: '2002-02-09',
+        fechaNacimiento: '2002-02-10',
         genero: 'F',
       },
       {
@@ -26,7 +27,7 @@ export class usuario1611171041789 implements MigrationInterface {
         primerApellido: 'PEREZ',
         segundoApellido: 'PEREZ',
         nroDocumento: '6114767',
-        fechaNacimiento: '2002-02-09',
+        fechaNacimiento: '2002-02-11',
         genero: 'M',
       },
     ]
@@ -38,7 +39,7 @@ export class usuario1611171041789 implements MigrationInterface {
       p.segundoApellido = item.segundoApellido
       p.tipoDocumento = 'CI'
       p.nroDocumento = item.nroDocumento
-      p.fechaNacimiento = item.fechaNacimiento
+      p.fechaNacimiento = dayjs(item.fechaNacimiento, 'YYYY-MM-DD').toDate()
       p.genero = item.genero
       return p
     })

@@ -10,81 +10,158 @@ import {
   PreconditionFailedException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Response } from 'express'
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception'
-import { EntityUnauthorizedException } from '../exceptions/entity-unauthorized.exception'
-import { Messages } from '../constants/response-messages'
-import { ExternalServiceException } from '../exceptions/external-service.exception'
+import { Request, Response } from 'express'
 import { PinoLogger } from 'nestjs-pino'
-import { EntityForbiddenException } from '../exceptions/entity-forbidden.exception'
+import { Messages } from '../constants/response-messages'
+import { LogService } from './../../core/logs/log.service'
+import { AxiosError } from 'axios'
 
-@Catch(HttpException)
-export class HttpExceptionFilter implements ExceptionFilter {
-  static staticLogger: PinoLogger
+type ObjectOrError = {
+  statusCode?: number
+  message?: string | string[] | object | object[]
+  error?: string
+}
 
-  constructor(private readonly logger: PinoLogger) {
-    this.logger.setContext(HttpExceptionFilter.name)
-    HttpExceptionFilter.staticLogger = this.logger
-  }
-  catch(exception: HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp()
-    const response = ctx.getResponse<Response>()
-    let status = exception.getStatus()
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR
-    const r = <any>exception.getResponse()
-    let errores = []
-    this.logger.error('[error] %o', r)
-    if (Array.isArray(r.message)) {
-      status = HttpStatus.BAD_REQUEST
-      errores = r.message
-    }
-    const mensaje = this.isBusinessException(exception)
-    const errorResponse = {
-      finalizado: false,
-      codigo: status,
-      timestamp: Math.floor(Date.now() / 1000),
-      mensaje,
-      datos: {
-        errores,
-      },
-    }
-    response.status(status).json(errorResponse)
-  }
-  public isBusinessException(exception: Error): any {
-    if (
-      exception instanceof EntityNotFoundException ||
-      exception instanceof EntityUnauthorizedException ||
-      exception instanceof EntityForbiddenException ||
-      exception instanceof ExternalServiceException
-    ) {
-      return exception.message
+class HttpExceptionFilterError extends Error {
+  codigo: number
+  mensaje: string
+  errores: (string | object)[]
+
+  constructor(original: unknown) {
+    super()
+    if (original instanceof HttpException) {
+      this.codigo = original.getStatus()
+      this.mensaje = HttpExceptionFilterError.getMessage(original)
+      this.errores = HttpExceptionFilterError.getErrors(original)
+      this.stack = original.stack
+    } else if (original instanceof AxiosError) {
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [{ axiosError: original }]
+      this.stack = original.stack
+    } else if (original instanceof Error) {
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [original.toString()]
+      this.stack = original.stack
     } else {
-      return this.filterMessage(exception)
+      this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
+      this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
+      this.errores = [String(original)]
     }
   }
 
-  filterMessage(exception) {
-    let message
+  static getMessage(exception: HttpException): string {
+    const response = exception.getResponse() as ObjectOrError
+    if (typeof response === 'string') {
+      return response
+    }
+
+    if (response.message && response.error) {
+      if (typeof response.message === 'string') {
+        return response.message
+      }
+      if (
+        Array.isArray(response.message) &&
+        response.message.length > 0 &&
+        typeof response.message[0] === 'string'
+      ) {
+        return response.message[0]
+      }
+    }
+
     switch (exception.constructor) {
       case BadRequestException:
-        message = Messages.EXCEPTION_BAD_REQUEST
-        break
+        return Messages.EXCEPTION_BAD_REQUEST
       case UnauthorizedException:
-        message = Messages.EXCEPTION_UNAUTHORIZED
-        break
+        return Messages.EXCEPTION_UNAUTHORIZED
       case NotFoundException:
-        message = Messages.EXCEPTION_NOT_FOUND
-        break
+        return Messages.EXCEPTION_NOT_FOUND
       case PreconditionFailedException:
-        message = exception.message || Messages.EXCEPTION_PRECONDITION_FAILED
-        break
+        return Messages.EXCEPTION_PRECONDITION_FAILED
       case ForbiddenException:
-        message = Messages.EXCEPTION_FORBIDDEN
-        break
+        return Messages.EXCEPTION_FORBIDDEN
       default:
-        message = Messages.EXCEPTION_DEFAULT
+        return Messages.EXCEPTION_INTERNAL_SERVER_ERROR
     }
-    return message
+  }
+
+  static getErrors(exception: HttpException): (string | object)[] {
+    const response = exception.getResponse() as ObjectOrError
+    if (!response.statusCode || !response.message) {
+      return [response]
+    }
+    if (Array.isArray(response.message)) {
+      if (
+        response.message.length === 1 &&
+        typeof response.message[0] === 'string'
+      ) {
+        return []
+      }
+      return response.message
+    }
+    return []
+  }
+}
+
+@Catch()
+export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: PinoLogger) {
+    this.logger.setContext(HttpExceptionFilter.name)
+  }
+
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse<Response>()
+    const request = ctx.getRequest<Request>()
+
+    const errorRequest = {
+      method: request.method,
+      originalUrl: request.originalUrl,
+      headers: request.headers,
+      params: request.params,
+      query: request.query,
+      body: request.body,
+      user: request.user,
+    }
+
+    const filterError = new HttpExceptionFilterError(exception)
+    const errorResponse = {
+      finalizado: false,
+      codigo: filterError.codigo,
+      timestamp: Math.floor(Date.now() / 1000),
+      mensaje: filterError.mensaje,
+      datos: {
+        errores: filterError.errores,
+      },
+    }
+
+    const logData = {
+      errorRequest,
+      errorResponse,
+      errorStack: filterError.stack,
+    }
+
+    const errorRequestForPrint = { ...errorRequest, headers: undefined }
+    const printRequest = JSON.stringify(errorRequestForPrint, null, 2)
+    const printResponse = JSON.stringify(errorResponse, null, 2)
+
+    if (errorResponse.codigo >= 400 && errorResponse.codigo < 500) {
+      this.logger.warn(logData, '[Http Exception Filter]')
+      LogService.info(printRequest)
+      LogService.warn(printResponse)
+      if (filterError.stack) LogService.warn(filterError.stack)
+    } else {
+      this.logger.error(logData, '[Http Exception Filter]')
+      LogService.info(printRequest)
+      LogService.error(printResponse)
+      if (filterError.stack) LogService.error(filterError.stack)
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      errorResponse.datos.errores = []
+    }
+
+    response.status(filterError.codigo).json(errorResponse)
   }
 }

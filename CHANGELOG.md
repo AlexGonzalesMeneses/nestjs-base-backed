@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.3.2...v1.5.0) (2022-08-24)
+
+
+### Features
+
+* actualización de librerías NestJS 9.0.9 ([b309f4d](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b309f4d0b6e91c0ace7c4ec43e0ec3283e64f8c9))
+* agregando carpeta de logs por defecto al gitignore ([dd4f28b](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/dd4f28b32e3f14dbb14f5473b981330e905b9530))
+* agregando variables de entorno a LogService ([ec329ed](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/ec329ed2657192746057511bfa1d2b76be102041))
+* añadidas API's necesarias para crear y recuperar una cuenta con envio de correos ([d2708a3](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/d2708a3c994ec2e8f57410f8f58eb2dfe60dfd9f))
+* añadido flujo de activación de cuenta, con envio de correo y ajustes menores de logs ([3412178](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/3412178cd23eb77d870988a4b70b1903da9dfc4f))
+* añadido PinnoLogger para el contexto de cada controlador, corregidos test de logs y propiedad req ([e20a197](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/e20a197f0d22dc757a82b16fb521a8012cb4e195))
+* ficheros de log actualizados ([e587dfb](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/e587dfb5368ed22e4a28451a6adec6418ac520eb))
+* mejoras en los mensajes de log para el modo desarrollo ([0b3721f](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/0b3721f2169eac3994b6f10e10835f25739f5a5c))
+* se agregó morgan para logs de desarrollo ([b6ddb4e](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b6ddb4e2d50e72587786bdec547b9b4910cc72a1))
+
+
+### Bug Fixes
+
+* corrección en paginado para API's de parámetros, módulos y usuarios ([2c6e5d8](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2c6e5d8f397f4812027f673b3f9b0eca46ccbc76))
+* filtros de politicas ([ae277eb](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/ae277eb99181f26a35afd17f5039773a105f1877))
+* log de todas las rutas registradas ([5940712](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/5940712b4181cbe066c5deed20ef729b190daa96))
+* log en modo producción ([8c5f155](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/8c5f15571f3635018591af26374afccc4300b88e))
+* log service test ([66bad15](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/66bad157f44a366880c8563a6de436262e7c9219))
+* mejoras en la configuración de logs ([0ed8568](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/0ed85682cb41495250544817488d28f1b7228f0a))
+* mensajes de error para errores personalizados ([1867dd7](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/1867dd72768c15b2206f1633056887f98645fb29))
+* modificado registro de cuenta con datos del usuario sin datos personales y tipos de dato fecha ([76c39a0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/76c39a01938f3703f32716d68f5925ece764de46))
+
+## [1.4.0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.3.2...v1.4.0) (2022-08-15)
+
+
+### Features
+
+* actualización de librerías NestJS 9.0.9 ([b309f4d](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b309f4d0b6e91c0ace7c4ec43e0ec3283e64f8c9))
+
+
+### Bug Fixes
+
+* corrección en paginado para API's de parámetros, módulos y usuarios ([2c6e5d8](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2c6e5d8f397f4812027f673b3f9b0eca46ccbc76))
+
 ### [1.3.2](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.3.0...v1.3.2) (2022-08-07)
 
 

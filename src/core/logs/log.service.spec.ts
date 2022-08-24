@@ -15,7 +15,7 @@ describe('LogService', () => {
     expect(service).toBeDefined()
   })
   it('streams', () => {
-    expect(LogService.getStream().streams).toEqual([])
+    expect(Array.isArray(LogService.getStream().streams)).toEqual(true)
   })
   it('Configuracion', () => {
     expect(LogService.getLoggerConfig().pinoHttp).toHaveProperty('name')

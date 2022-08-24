@@ -48,4 +48,4 @@ export const Configurations = {
     'maildrop',
     'mailnesia',
   ],
-};
+}

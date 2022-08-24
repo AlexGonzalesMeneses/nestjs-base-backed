@@ -1,17 +1,19 @@
 import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
   Check,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 import { Persona } from './persona.entity'
 import { Status } from '../../../common/constants'
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
@@ -48,6 +50,7 @@ export class Usuario extends AbstractEntity {
   })
   intentos: number
 
+  @Index()
   @Column({
     name: 'codigo_desbloqueo',
     length: 100,
@@ -55,6 +58,33 @@ export class Usuario extends AbstractEntity {
     type: 'varchar',
   })
   codigoDesbloqueo: string | null
+
+  @Index()
+  @Column({
+    name: 'codigo_recuperacion',
+    length: 100,
+    nullable: true,
+    type: 'varchar',
+  })
+  codigoRecuperacion: string | null
+
+  @Index()
+  @Column({
+    name: 'codigo_transaccion',
+    length: 100,
+    nullable: true,
+    type: 'varchar',
+  })
+  codigoTransaccion: string | null
+
+  @Index()
+  @Column({
+    name: 'codigo_activacion',
+    length: 100,
+    nullable: true,
+    type: 'varchar',
+  })
+  codigoActivacion: string | null
 
   @Column({
     name: 'fecha_bloqueo',

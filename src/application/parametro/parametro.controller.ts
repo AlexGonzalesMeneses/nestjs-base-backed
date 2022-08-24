@@ -1,14 +1,14 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  UsePipes,
-  ValidationPipe,
-  UseGuards,
-  Query,
   Param,
   Patch,
+  Post,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import { ParametroService } from './parametro.service'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -19,12 +19,17 @@ import { AbstractController } from '../../common/dto/abstract-controller.dto'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController extends AbstractController {
-  constructor(private parametroServicio: ParametroService) {
+  constructor(
+    private parametroServicio: ParametroService,
+    private readonly logger: PinoLogger
+  ) {
     super()
+    logger.setContext(ParametroController.name)
   }
 
   @UsePipes(

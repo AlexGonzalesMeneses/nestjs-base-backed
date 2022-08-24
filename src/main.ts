@@ -21,6 +21,9 @@ import {
   SWAGGER_API_ROOT,
 } from './common/constants'
 import { DataSource } from 'typeorm'
+import { LogService } from './core/logs/log.service'
+import { NextFunction, Request, Response } from 'express'
+import morgan from 'morgan'
 
 dotenv.config()
 
@@ -32,14 +35,13 @@ export const SessionAppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false,
-  logging: true,
+  logging: process.env.LOG_SQL === 'true',
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
-    // logger: false,
   })
   app.useLogger(app.get(Logger))
   const configService = app.get(ConfigService)
@@ -52,6 +54,15 @@ async function bootstrap() {
   const repositorySession = SessionAppDataSource.getRepository(Session)
 
   app.use(expressMiddleware())
+
+  // Show request logs
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(
+      morgan('dev', {
+        skip: (req: Request) => req.method.toLowerCase() === 'options',
+      })
+    )
+  }
 
   app.use(
     session({
@@ -81,14 +92,33 @@ async function bootstrap() {
   app.use(helmet.hidePoweredBy())
   app.use(helmet())
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN') || 'api')
+
+  if (process.env.NODE_ENV !== 'production') {
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.method.toLowerCase() === 'options') return next()
+      LogService.info(`${req.method} ${req.originalUrl}`)
+      return next()
+    })
+  }
+
   const port = configService.get('PORT')
   await app.listen(port)
-  console.log(
-    `Path de la aplicación configurada como /${configService.get(
-      'PATH_SUBDOMAIN'
-    )}`
-  )
-  console.log(`Aplicación iniciada en el puerto ${port}`)
+
+  const apiPath = configService.get('PATH_SUBDOMAIN')
+  LogService.info(`Path de la aplicación configurada como /${apiPath}`)
+
+  LogService.log(`
+                      \^    \^
+                     / \\  //\\
+       |\\___/|      /   \\//  .\\    NestJS Base Backend
+       /O  O  \\__  /    //  | \\ \\
+      /     /  \\/_/    //   |  \\  \\
+      @___@'    \\/_   //    |   \\   \\
+         |       \\/_ //     |    \\    \\
+         |        \\///      |     \\     \\
+  `)
+
+  LogService.success(`Aplicación iniciada en el puerto ${port}`)
 }
 
 function createSwagger(app: INestApplication) {
