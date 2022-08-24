@@ -26,6 +26,7 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CasbinGuard } from '../../authorization/guards/casbin.guard'
 import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
 import {
+  ActivarCuentaDto,
   NuevaContrasenaDto,
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
@@ -91,7 +92,7 @@ export class UsuarioController extends AbstractController {
     @Body() recuperarCuentaDto: RecuperarCuentaDto
   ) {
     const result = await this.usuarioService.recuperarCuenta(recuperarCuentaDto)
-    return this.successList(result, Messages.SUCCESS_DEFAULT)
+    return this.successList(result, Messages.SUBJECT_EMAIL_ACCOUNT_RECOVERY)
   }
 
   // validate restore user account
@@ -106,6 +107,16 @@ export class UsuarioController extends AbstractController {
       validarRecuperarCuentaDto
     )
     return this.success(result, Messages.SUCCESS_DEFAULT)
+  }
+
+  // activar usuario
+  @Patch('/cuenta/activacion')
+  @UsePipes(ValidationPipe)
+  async activarCuenta(@Req() req, @Body() activarCuentaDto: ActivarCuentaDto) {
+    const result = await this.usuarioService.activarCuenta(
+      activarCuentaDto.codigo
+    )
+    return this.successUpdate(result, Messages.ACCOUNT_ACTIVED_SUCCESSFULLY)
   }
 
   // validate restore user account

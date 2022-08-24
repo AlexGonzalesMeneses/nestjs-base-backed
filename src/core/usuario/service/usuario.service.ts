@@ -30,6 +30,7 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
+import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
 export class UsuarioService {
@@ -44,7 +45,8 @@ export class UsuarioService {
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private readonly logger: PinoLogger
   ) {}
 
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
@@ -121,7 +123,7 @@ export class UsuarioService {
     }
 
     const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
-      'ADMINISTRADOR'
+      'USUARIO'
     ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
 
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
@@ -130,7 +132,7 @@ export class UsuarioService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    const result = await this.usuarioRepositorio.crear(
+    const usuarioNuevo = await this.usuarioRepositorio.crear(
       {
         usuario: usuarioDto.correoElectronico,
         persona: {
@@ -148,47 +150,84 @@ export class UsuarioService {
       },
       usuarioAuditoria?.id ?? ''
     )
-    // enviar correo con credenciales
-    const datosCorreo = {
-      correo: usuarioDto.correoElectronico,
-      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+
+    if (usuarioNuevo?.id) {
+      const codigo = TextService.generateUuid()
+      const urlActivacion = `${this.configService.get(
+        'URL_FRONTEND'
+      )}/activacion?q=${codigo}`
+
+      this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+
+      await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
+
+      const template =
+        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+
+      if (usuarioNuevo.correoElectronico) {
+        await this.mensajeriaService.sendEmail(
+          usuarioNuevo.correoElectronico,
+          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+          template
+        )
+      }
     }
-    await this.enviarCorreoContrasenia(
-      datosCorreo,
-      usuarioDto.correoElectronico,
-      usuarioDto.contrasenaNueva
+
+    return { id: usuarioNuevo.id, estado: usuarioNuevo.estado }
+  }
+
+  async activarCuenta(codigo) {
+    const usuario = await this.usuarioRepositorio.buscarPorCodigoActivacion(
+      codigo
     )
-    return { id: result.id, estado: result.estado }
+
+    if (!usuario) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
+    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
+      'USUARIO'
+    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      usuario?.id,
+      {
+        estado: Status.ACTIVE,
+        codigoActivacion: null,
+        usuarioActualizacion: usuarioAuditoria?.id,
+      }
+    )
+    return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
   async recuperarCuenta(recuperarCuentaDto: RecuperarCuentaDto) {
-    try {
-      const usuario = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        recuperarCuentaDto.correoElectronico
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      recuperarCuentaDto.correoElectronico
+    )
+
+    if (!usuario) {
+      this.logger.info(`Usuario no encontrado`)
+      return 'Busqueda terminada'
+    }
+
+    const codigo = TextService.generateUuid()
+    const urlRecuperacion = `${this.configService.get(
+      'URL_FRONTEND'
+    )}/recuperacion?q=${codigo}`
+
+    this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
+
+    await this.actualizarDatosRecuperacion(usuario.id, codigo)
+
+    const template =
+      TemplateEmailService.armarPlantillaRecuperacionCuenta(urlRecuperacion)
+
+    if (usuario.correoElectronico) {
+      await this.mensajeriaService.sendEmail(
+        usuario.correoElectronico,
+        Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+        template
       )
-      if (usuario?.id) {
-        const codigo = TextService.generateUuid()
-        const urlRecuperacion = `${this.configService.get(
-          'URL_FRONTEND'
-        )}/recuperacion?q=${codigo}`
-
-        await this.actualizarDatosRecuperacion(usuario.id, codigo)
-
-        const template =
-          TemplateEmailService.armarPlantillaRecuperacionCuenta(urlRecuperacion)
-
-        if (usuario.correoElectronico) {
-          await this.mensajeriaService.sendEmail(
-            usuario.correoElectronico,
-            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-            template
-          )
-        }
-      } else {
-        console.log(`Usuario no encontrado`)
-      }
-    } catch (e) {
-      console.log(`Error al buscar usuario: ${e}`)
     }
     return 'Busqueda terminada'
   }
@@ -564,31 +603,31 @@ export class UsuarioService {
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
-    if (usuario?.usuarioRol?.length) {
-      return {
-        id: usuario.id,
-        usuario: usuario.usuario,
-        ciudadania_digital: usuario.ciudadaniaDigital,
-        estado: usuario.estado,
-        roles: await Promise.all(
-          usuario.usuarioRol
-            .filter((value) => value.estado === Status.ACTIVE)
-            .map(async (usuarioRol) => {
-              const { id, rol, nombre } = usuarioRol.rol
-              const modulos =
-                await this.authorizationService.obtenerPermisosPorRol(rol)
-              return {
-                idRol: id,
-                rol,
-                nombre,
-                modulos,
-              }
-            })
-        ),
-        persona: usuario.persona,
-      }
-    } else {
+    if (!usuario) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
+    }
+
+    return {
+      id: usuario.id,
+      usuario: usuario.usuario,
+      ciudadania_digital: usuario.ciudadaniaDigital,
+      estado: usuario.estado,
+      roles: await Promise.all(
+        usuario.usuarioRol
+          .filter((value) => value.estado === Status.ACTIVE)
+          .map(async (usuarioRol) => {
+            const { id, rol, nombre } = usuarioRol.rol
+            const modulos =
+              await this.authorizationService.obtenerPermisosPorRol(rol)
+            return {
+              idRol: id,
+              rol,
+              nombre,
+              modulos,
+            }
+          })
+      ),
+      persona: usuario.persona,
     }
   }
 
@@ -613,6 +652,13 @@ export class UsuarioService {
 
   async actualizarDatosRecuperacion(idUsuario, codigo) {
     return await this.usuarioRepositorio.actualizarDatosRecuperacion(
+      idUsuario,
+      codigo
+    )
+  }
+
+  async actualizarDatosActivacion(idUsuario, codigo) {
+    return await this.usuarioRepositorio.actualizarDatosActivacion(
       idUsuario,
       codigo
     )

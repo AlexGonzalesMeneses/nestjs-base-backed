@@ -12,6 +12,7 @@ export class TemplateEmailService {
               margin-top: 10vh;
             }
           </style>
+          <title>Activa tu cuenta</title>
         </head>
         <body>
           <div class='container'>
@@ -40,6 +41,7 @@ export class TemplateEmailService {
               margin-top: 10vh;
             }
           </style>
+          <title>Desbloquear cuenta</title>
         </head>
         <body>
           <div class='container'>
@@ -64,11 +66,37 @@ export class TemplateEmailService {
               margin-top: 10vh;
             }
           </style>
+          <title>Recupera de cuenta</title>
         </head>
         <body>
           <div class='container'>
             
             Para recuperar tu cuenta haz clic en la siguiente url: <a href='${url}'>${url}</a><br/>
+          </div>
+        </body>
+      </html>
+    `
+  }
+
+  static armarPlantillaActivacionCuentaManual(url) {
+    return `
+      <!DOCTYPE html>
+      <html lang='es'>
+        <head>
+          <meta charset='UTF-8'>
+          <style>
+            .container {
+              width: 100%;
+              max-width: 640px;
+              margin-top: 10vh;
+            }
+          </style>
+          <title>Activación de cuenta</title>
+        </head>
+        <body>
+          <div class='container'>
+            
+            Para activar tu cuenta haz clic en la siguiente url: <a href='${url}'>${url}</a><br/>
           </div>
         </body>
       </html>

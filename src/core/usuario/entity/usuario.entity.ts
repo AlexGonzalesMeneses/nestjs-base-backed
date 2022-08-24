@@ -77,6 +77,15 @@ export class Usuario extends AbstractEntity {
   })
   codigoTransaccion: string | null
 
+  @Index()
+  @Column({
+    name: 'codigo_activacion',
+    length: 100,
+    nullable: true,
+    type: 'varchar',
+  })
+  codigoActivacion: string | null
+
   @Column({
     name: 'fecha_bloqueo',
     type: 'timestamp',

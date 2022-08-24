@@ -14,6 +14,12 @@ export class ValidarRecuperarCuentaDto {
   codigo: string
 }
 
+export class ActivarCuentaDto {
+  @IsString()
+  @IsNotEmpty()
+  codigo: string
+}
+
 export class NuevaContrasenaDto {
   @IsString()
   @IsNotEmpty()

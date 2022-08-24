@@ -268,6 +268,14 @@ export class UsuarioRepository {
     return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
+  async actualizarDatosActivacion(idUsuario, codigo) {
+    const usuario = new Usuario()
+    usuario.id = idUsuario
+    usuario.codigoActivacion = codigo
+
+    return await this.dataSource.getRepository(Usuario).save(usuario)
+  }
+
   async actualizarDatosTransaccion(idUsuario, codigo) {
     const usuario = new Usuario()
     usuario.id = idUsuario
@@ -300,6 +308,15 @@ export class UsuarioRepository {
       .createQueryBuilder('usuario')
       .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoTransaccion = :codigo', { codigo })
+      .getOne()
+  }
+
+  async buscarPorCodigoActivacion(codigo: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .where('usuario.codigoActivacion = :codigo', { codigo })
       .getOne()
   }
 
