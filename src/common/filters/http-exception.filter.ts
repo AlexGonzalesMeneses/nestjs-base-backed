@@ -53,6 +53,10 @@ class HttpExceptionFilterError extends Error {
 
   static getMessage(exception: HttpException): string {
     const response = exception.getResponse() as ObjectOrError
+    if (typeof response === 'string') {
+      return response
+    }
+
     if (response.message && response.error) {
       if (typeof response.message === 'string') {
         return response.message
