@@ -44,7 +44,7 @@ export class ParametroService {
       await this.parametroRepositorio.actualizar(idParametro, parametroDto)
       return {
         id: idParametro,
-        estado: parametroDto.estado,
+        _estado: parametroDto.estado,
       }
     }
     throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
@@ -58,7 +58,7 @@ export class ParametroService {
       await this.parametroRepositorio.actualizar(idParametro, parametroDto)
       return {
         id: idParametro,
-        estado: parametroDto.estado,
+        _estado: parametroDto.estado,
       }
     }
     throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)

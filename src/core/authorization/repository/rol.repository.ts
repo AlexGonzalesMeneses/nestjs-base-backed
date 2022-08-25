@@ -6,6 +6,7 @@ import { Rol } from '../entity/rol.entity'
 @Injectable()
 export class RolRepository {
   constructor(private dataSource: DataSource) {}
+
   async listar() {
     return await this.dataSource
       .getRepository(Rol)
@@ -28,7 +29,7 @@ export class RolRepository {
       .getRepository(Rol)
       .createQueryBuilder('rol')
       .select(['rol.id', 'rol.rol'])
-      .where({ estado: Status.ACTIVE, usuarioRol: idUsuario })
+      .where({ _estado: Status.ACTIVE, usuarioRol: idUsuario })
       .getMany()
   }
 }

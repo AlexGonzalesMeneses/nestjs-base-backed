@@ -1,6 +1,5 @@
-import { TextService } from 'src/common/lib/text.service'
-import { PropiedadesDto } from 'src/core/authorization/dto/crear-modulo.dto'
-import { Modulo } from 'src/core/authorization/entity/modulo.entity'
+import { PropiedadesDto } from '../../src/core/authorization/dto/crear-modulo.dto'
+import { Modulo } from '../../src/core/authorization/entity/modulo.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class modulo1611497480901 implements MigrationInterface {
@@ -8,6 +7,7 @@ export class modulo1611497480901 implements MigrationInterface {
     const items = [
       // MENU SESSION PRINCIPAL
       {
+        id: '1',
         nombre: 'Principal',
         url: '/principal',
         label: 'Principal',
@@ -18,6 +18,7 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
+        id: '2',
         nombre: 'inicio',
         url: '/admin/home',
         label: 'Inicio',
@@ -27,9 +28,10 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
-        fidModulo: TextService.textToUuid('Principal'),
+        fidModulo: '1',
       },
       {
+        id: '3',
         nombre: 'perfil',
         url: '/admin/perfil',
         label: 'Perfil',
@@ -39,10 +41,12 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
-        fidModulo: TextService.textToUuid('Principal'),
+        fidModulo: '1',
       },
+
       // MENU SECCION CONFIGURACIONES
       {
+        id: '4',
         nombre: 'configuraciones',
         url: '/configuraciones',
         label: 'Configuración',
@@ -53,6 +57,7 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
+        id: '5',
         nombre: 'usuarios',
         url: '/admin/usuarios',
         label: 'Usuarios',
@@ -62,9 +67,10 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
-        fidModulo: TextService.textToUuid('configuraciones'),
+        fidModulo: '4',
       },
       {
+        id: '6',
         nombre: 'parametros',
         url: '/admin/parametros',
         label: 'Parámetros',
@@ -74,9 +80,10 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#312403',
           color_dark: '#B77346',
         },
-        fidModulo: TextService.textToUuid('configuraciones'),
+        fidModulo: '4',
       },
       {
+        id: '7',
         nombre: 'modulos',
         url: '/admin/modulos',
         label: 'Módulos',
@@ -86,9 +93,10 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#312403',
           color_dark: '#B77346',
         },
-        fidModulo: TextService.textToUuid('configuraciones'),
+        fidModulo: '4',
       },
       {
+        id: '8',
         nombre: 'politicas',
         url: '/admin/politicas',
         label: 'Políticas',
@@ -98,17 +106,18 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
-        fidModulo: TextService.textToUuid('configuraciones'),
+        fidModulo: '4',
       },
     ]
     const modulos = items.map((item) => {
       const m = new Modulo()
-      m.id = TextService.textToUuid(item.nombre)
+      m.id = item.id
       m.nombre = item.nombre
       m.url = item.url
       m.label = item.label
-      m.usuarioCreacion = '1'
-      m.fechaCreacion = new Date()
+      m._usuarioCreacion = '1'
+      m._fechaCreacion = new Date()
+      m._transaccion = 'SEEDS'
       if (item.fidModulo) {
         const submodulo = new Modulo()
         submodulo.id = item.fidModulo

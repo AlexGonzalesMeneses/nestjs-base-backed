@@ -8,12 +8,14 @@ import {
 import { Usuario } from './usuario.entity'
 import { Genero, Status, TipoDocumento } from '../../../common/constants'
 import dotenv from 'dotenv'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class Persona {
-  @PrimaryGeneratedColumn('uuid')
+export class Persona extends AuditoriaEntity {
+  @PrimaryGeneratedColumn()
+  @Column('bigint', { primary: true, name: 'id' })
   id: string
 
   @Column({ length: 100, type: 'varchar', nullable: true })
@@ -76,9 +78,9 @@ export class Persona {
   @Column({ length: 255, type: 'varchar', nullable: true })
   observacion: string | null
 
-  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
   @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
-  estado: string
+  _estado: string
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)
   usuarios: Usuario[]

@@ -86,11 +86,11 @@ export class AuthenticationService {
       throw new EntityUnauthorizedException(Messages.NO_PERMISSION_USER)
     }
 
-    if (respuesta?.estado === Status.PENDING) {
+    if (respuesta?._estado === Status.PENDING) {
       throw new EntityUnauthorizedException(Messages.PENDING_USER)
     }
 
-    if (respuesta?.estado === Status.INACTIVE) {
+    if (respuesta?._estado === Status.INACTIVE) {
       throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
     }
 
@@ -114,7 +114,7 @@ export class AuthenticationService {
     let roles: Array<string | null> = []
     if (respuesta.usuarioRol.length) {
       roles = respuesta.usuarioRol
-        .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
+        .filter((usuarioRol) => usuarioRol._estado === Status.ACTIVE)
         .map((usuarioRol) => usuarioRol.rol.rol)
     }
 
@@ -141,8 +141,8 @@ export class AuthenticationService {
   async validarUsuarioOidc(persona: PersonaDto): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
     if (respuesta) {
-      const { estado, persona: datosPersona } = respuesta
-      if (estado === Status.INACTIVE) {
+      const { _estado, persona: datosPersona } = respuesta
+      if (_estado === Status.INACTIVE) {
         throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
       }
       // actualizar datos persona
@@ -175,8 +175,8 @@ export class AuthenticationService {
     if (respuesta) {
       // Persona y usuario existen en BD
       // console.log('persona', respuesta);
-      const { estado, persona: datosPersona } = respuesta
-      if (estado === Status.INACTIVE) {
+      const { _estado, persona: datosPersona } = respuesta
+      if (_estado === Status.INACTIVE) {
         throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
       }
 
@@ -217,7 +217,7 @@ export class AuthenticationService {
       const respPersona = await this.personaService.buscarPersonaPorCI(persona)
       if (respPersona) {
         // Persona existe en base de datos, sólo crear usuario
-        if (respPersona.estado === Status.INACTIVE) {
+        if (respPersona._estado === Status.INACTIVE) {
           throw new EntityUnauthorizedException(Messages.INACTIVE_PERSON)
         }
         // Actualizar datos persona

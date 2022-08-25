@@ -23,7 +23,10 @@ export class UsuarioRolRepository {
       .getRepository(UsuarioRol)
       .createQueryBuilder()
       .update(UsuarioRol)
-      .set({ estado: Status.ACTIVE, usuarioActualizacion })
+      .set({
+        _estado: Status.ACTIVE,
+        _usuarioModificacion: usuarioActualizacion,
+      })
       .where('id_usuario = :idUsuario', { idUsuario })
       .andWhere('id_rol IN(:...ids)', { ids: roles })
       .execute()
@@ -34,7 +37,10 @@ export class UsuarioRolRepository {
       .getRepository(UsuarioRol)
       .createQueryBuilder()
       .update(UsuarioRol)
-      .set({ estado: Status.INACTIVE, usuarioActualizacion })
+      .set({
+        _estado: Status.INACTIVE,
+        _usuarioModificacion: usuarioActualizacion,
+      })
       .where('id_usuario = :idUsuario', { idUsuario })
       .andWhere('id_rol IN(:...ids)', { ids: roles })
       .execute()
@@ -51,7 +57,7 @@ export class UsuarioRolRepository {
       const usuarioRol = new UsuarioRol()
       usuarioRol.usuario = usuario
       usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
+      usuarioRol._usuarioCreacion = usuarioAuditoria
 
       return usuarioRol
     })

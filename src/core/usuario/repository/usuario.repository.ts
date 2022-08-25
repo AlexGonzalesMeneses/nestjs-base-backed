@@ -26,7 +26,7 @@ export class UsuarioRepository {
         'usuario.id',
         'usuario.usuario',
         'usuario.correoElectronico',
-        'usuario.estado',
+        'usuario._estado',
         'usuario.ciudadaniaDigital',
         'usuarioRol',
         'rol.id',
@@ -38,7 +38,7 @@ export class UsuarioRepository {
         'persona.fechaNacimiento',
         'persona.tipoDocumento',
       ])
-      .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
+      .where('usuarioRol._estado = :estado', { estado: Status.ACTIVE })
       .andWhere(rol ? 'rol.id IN(:...roles)' : '1=1', {
         roles: rol,
       })
@@ -95,7 +95,7 @@ export class UsuarioRepository {
         'usuario.id',
         'usuario.usuario',
         'usuario.contrasena',
-        'usuario.estado',
+        'usuario._estado',
         'usuario.ciudadaniaDigital',
         'persona.nombres',
         'persona.primerApellido',
@@ -148,7 +148,7 @@ export class UsuarioRepository {
       // UsuarioRol
       const usuarioRol = new UsuarioRol()
       usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
+      usuarioRol._usuarioCreacion = usuarioAuditoria
 
       return usuarioRol
     })
@@ -180,7 +180,7 @@ export class UsuarioRepository {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
       const usuarioRol = new UsuarioRol()
       usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
+      usuarioRol._usuarioCreacion = usuarioAuditoria
 
       return usuarioRol
     })
@@ -193,7 +193,7 @@ export class UsuarioRepository {
     persona.nroDocumento =
       usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
     persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null
-    // persona.usuarioCreacion = usuarioAuditoria;
+    // persona._usuarioCreacion = usuarioAuditoria;
 
     persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null
     persona.telefono = usuarioDto?.persona?.telefono ?? null
@@ -204,13 +204,13 @@ export class UsuarioRepository {
     usuario.usuarioRol = usuarioRoles
 
     usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE
+    usuario._estado = usuarioDto?._estado ?? Status.CREATE
     usuario.correoElectronico = usuarioDto?.correoElectronico
     usuario.contrasena =
       usuarioDto?.contrasena ??
       (await TextService.encrypt(TextService.generateUuid()))
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false
-    usuario.usuarioCreacion = usuarioAuditoria
+    usuario._usuarioCreacion = usuarioAuditoria
 
     return await this.dataSource.getRepository(Usuario).save(usuario)
   }
@@ -219,7 +219,7 @@ export class UsuarioRepository {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
       const usuarioRol = new UsuarioRol()
       usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
+      usuarioRol._usuarioCreacion = usuarioAuditoria
 
       return usuarioRol
     })
@@ -232,13 +232,13 @@ export class UsuarioRepository {
     usuario.persona = usuarioDto.persona
 
     usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE
+    usuario._estado = usuarioDto?._estado ?? Status.CREATE
     usuario.correoElectronico = usuarioDto?.correoElectronico
     usuario.contrasena =
       usuarioDto?.contrasena ??
       (await TextService.encrypt(TextService.generateUuid()))
     usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false
-    usuario.usuarioCreacion = usuarioAuditoria
+    usuario._usuarioCreacion = usuarioAuditoria
 
     return await this.dataSource.getRepository(Usuario).save(usuario)
   }
@@ -288,7 +288,7 @@ export class UsuarioRepository {
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
-      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .select(['usuario.id', 'usuario._estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoDesbloqueo = :codigo', { codigo })
       .getOne()
   }
@@ -297,7 +297,7 @@ export class UsuarioRepository {
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
-      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .select(['usuario.id', 'usuario._estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoRecuperacion = :codigo', { codigo })
       .getOne()
   }
@@ -306,7 +306,7 @@ export class UsuarioRepository {
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
-      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .select(['usuario.id', 'usuario._estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoTransaccion = :codigo', { codigo })
       .getOne()
   }
@@ -315,7 +315,7 @@ export class UsuarioRepository {
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
-      .select(['usuario.id', 'usuario.estado', 'usuario.fechaBloqueo'])
+      .select(['usuario.id', 'usuario._estado', 'usuario.fechaBloqueo'])
       .where('usuario.codigoActivacion = :codigo', { codigo })
       .getOne()
   }

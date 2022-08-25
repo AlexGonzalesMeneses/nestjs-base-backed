@@ -24,12 +24,14 @@ export class ModuloService {
   async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
     return await this.moduloRepositorio.crear(moduloDto, usuarioAuditoria)
   }
+
   async actualizar(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.actualizar({
       ...moduloDto,
       ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
     })
   }
+
   async eliminar(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.eliminar(moduloDto)
   }
@@ -39,12 +41,12 @@ export class ModuloService {
     if (modulo) {
       const moduloActualizado = await this.moduloRepositorio.actualizar({
         id: idModulo,
-        estado: Status.ACTIVE,
-        usuarioActualizacion: usuarioAuditoria,
+        _estado: Status.ACTIVE,
+        _usuarioModificacion: usuarioAuditoria,
       })
       return {
         id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
+        estado: moduloActualizado._estado,
       }
     } else {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
@@ -56,12 +58,12 @@ export class ModuloService {
     if (modulo) {
       const moduloActualizado = await this.moduloRepositorio.actualizar({
         id: idModulo,
-        estado: Status.INACTIVE,
-        usuarioActualizacion: usuarioAuditoria,
+        _estado: Status.INACTIVE,
+        _usuarioModificacion: usuarioAuditoria,
       })
       return {
         id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
+        estado: moduloActualizado._estado,
       }
     } else {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)

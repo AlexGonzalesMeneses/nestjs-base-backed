@@ -7,15 +7,17 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Status } from '../../../common/constants'
 import { PropiedadesDto } from '../dto/crear-modulo.dto'
 import dotenv from 'dotenv'
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { Status } from '../../../common/constants'
+
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class Modulo extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
+export class Modulo extends AuditoriaEntity {
+  @PrimaryGeneratedColumn()
+  @Column('bigint', { primary: true, name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -32,9 +34,9 @@ export class Modulo extends AbstractEntity {
   })
   propiedades: PropiedadesDto
 
-  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
   @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
-  estado: string
+  _estado: string
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
   subModulo: Modulo[]

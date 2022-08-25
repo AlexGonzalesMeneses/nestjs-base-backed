@@ -1,26 +1,28 @@
 import { Usuario } from '../../usuario/entity/usuario.entity'
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
   Check,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Rol } from './rol.entity'
 import { Status } from '../../../common/constants'
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
 import dotenv from 'dotenv'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class UsuarioRol extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
+export class UsuarioRol extends AuditoriaEntity {
+  @PrimaryGeneratedColumn()
+  @Column('bigint', { primary: true, name: 'id' })
   id: string
 
-  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
+  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
   @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
-  estado: string
+  _estado: string
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)
   @JoinColumn({ name: 'id_rol', referencedColumnName: 'id' })

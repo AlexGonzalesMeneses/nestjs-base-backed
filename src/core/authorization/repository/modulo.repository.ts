@@ -32,7 +32,7 @@ export class ModuloRepository {
         'modulo.url',
         'modulo.nombre',
         'modulo.propiedades',
-        'modulo.estado',
+        'modulo._estado',
         'fidModulo.id',
       ])
       .where(
@@ -64,9 +64,9 @@ export class ModuloRepository {
       .leftJoinAndSelect(
         'modulo.subModulo',
         'subModulo',
-        'subModulo.estado = :estado',
+        'subModulo._estado = :estado',
         {
-          estado: Status.ACTIVE,
+          _estado: Status.ACTIVE,
         }
       )
       .orderBy('subModulo.id', 'ASC')
@@ -76,17 +76,17 @@ export class ModuloRepository {
         'modulo.url',
         'modulo.nombre',
         'modulo.propiedades',
-        'modulo.estado',
+        'modulo._estado',
         'subModulo.id',
         'subModulo.label',
         'subModulo.url',
         'subModulo.nombre',
         'subModulo.propiedades',
-        'subModulo.estado',
+        'subModulo._estado',
       ])
       .where('modulo.fid_modulo is NULL')
-      .andWhere('modulo.estado = :estado', {
-        estado: Status.ACTIVE,
+      .andWhere('modulo._estado = :estado', {
+        _estado: Status.ACTIVE,
       })
       .orderBy('modulo.id', 'ASC')
       .getMany()
@@ -105,8 +105,8 @@ export class ModuloRepository {
     modulo.url = moduloDto.url
     modulo.nombre = moduloDto.nombre
     modulo.propiedades = propiedades
-    modulo.usuarioCreacion = usuarioAuditoria
-    modulo.fechaCreacion = new Date()
+    modulo._usuarioCreacion = usuarioAuditoria
+    modulo._fechaCreacion = new Date()
     if (moduloDto.fidModulo != '') {
       const em = new Modulo()
       em.id = moduloDto.fidModulo

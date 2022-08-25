@@ -1,4 +1,3 @@
-import { TextService } from 'src/common/lib/text.service'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class insertsParametros1617820337609 implements MigrationInterface {
@@ -6,99 +5,99 @@ export class insertsParametros1617820337609 implements MigrationInterface {
     // TIPO DOCUMENTO
     const parametros = [
       {
-        id: TextService.generateUuid(),
         codigo: 'TD-CI',
         nombre: 'Cédula de identidad',
         grupo: 'TD',
         descripcion: 'Cédula de Identidad',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TD-CIE',
         nombre: 'Cédula de identidad de extranjero',
         grupo: 'TD',
         descripcion: 'Cédula de identidad de extranjero',
+        _transaccion: 'SEEDS',
       },
       // APPS
       {
-        id: TextService.generateUuid(),
         codigo: 'TAPP-B',
         nombre: 'Backend',
         grupo: 'TAPP',
         descripcion: 'Backend',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TAPP-F',
         nombre: 'Frontend',
         grupo: 'TAPP',
         descripcion: 'Frontend',
+        _transaccion: 'SEEDS',
       },
       // ACCIONES
       // FRONTEND
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCF-R',
         nombre: 'read',
         grupo: 'TACCF',
         descripcion: 'READ',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCF-U',
         nombre: 'update',
         grupo: 'TACCF',
         descripcion: 'UPDATE',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCF-C',
         nombre: 'create',
         grupo: 'TACCF',
         descripcion: 'CREATE',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCF-D',
         nombre: 'delete',
         grupo: 'TACCF',
         descripcion: 'DELETE',
+        _transaccion: 'SEEDS',
       },
       // BACKEND
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCB-G',
         nombre: 'GET',
         grupo: 'TACCB',
         descripcion: 'GET',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCB-U',
         nombre: 'UPDATE',
         grupo: 'TACCB',
         descripcion: 'UPDATE',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCF-P',
         nombre: 'PATCH',
         grupo: 'TACC',
         descripcion: 'PATCH',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCB-C',
         nombre: 'POST',
         grupo: 'TACCB',
         descripcion: 'POST',
+        _transaccion: 'SEEDS',
       },
       {
-        id: TextService.generateUuid(),
         codigo: 'TACCB-D',
         nombre: 'DELETE',
         grupo: 'TACCB',
         descripcion: 'DELETE',
+        _transaccion: 'SEEDS',
       },
     ]
     await queryRunner.manager

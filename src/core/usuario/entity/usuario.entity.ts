@@ -1,4 +1,3 @@
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
 import {
   Check,
   Column,
@@ -11,14 +10,16 @@ import {
 } from 'typeorm'
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 import { Persona } from './persona.entity'
-import { Status } from '../../../common/constants'
 import dotenv from 'dotenv'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { Status } from '../../../common/constants'
 
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class Usuario extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
+export class Usuario extends AuditoriaEntity {
+  @PrimaryGeneratedColumn()
+  @Column('bigint', { primary: true, name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -34,15 +35,15 @@ export class Usuario extends AbstractEntity {
   correoElectronico: string | null
 
   @Check(
-    `estado in (
+    `_estado in (
       '${Status.CREATE}',
       '${Status.PENDING}',
       '${Status.ACTIVE}',
       '${Status.INACTIVE}'
     )`
   )
-  @Column({ length: 15, type: 'varchar', default: Status.CREATE })
-  estado: string
+  @Column({ length: 30, type: 'varchar', default: Status.CREATE })
+  _estado: string
 
   @Column({
     type: 'integer',
