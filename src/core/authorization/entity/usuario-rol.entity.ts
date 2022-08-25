@@ -16,19 +16,36 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class UsuarioRol extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
-  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
+  @Column({
+    name: 'id_rol',
+    type: 'bigint',
+    nullable: false,
+  })
+  idRol: string
+
+  @Column({
+    name: 'id_usuario',
+    type: 'bigint',
+    nullable: false,
+  })
+  idUsuario: string
+
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`
+  )
   _estado: string
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)
   @JoinColumn({ name: 'id_rol', referencedColumnName: 'id' })
-  public rol!: Rol
+  rol: Rol
 
   @ManyToOne(() => Usuario, (usuario) => usuario.usuarioRol)
   @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
-  public usuario!: Usuario
+  usuario: Usuario
 }

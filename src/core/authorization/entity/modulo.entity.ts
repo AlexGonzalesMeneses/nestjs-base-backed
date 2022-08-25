@@ -7,17 +7,22 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { PropiedadesDto } from '../dto/crear-modulo.dto'
 import dotenv from 'dotenv'
 import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 import { Status } from '../../../common/constants'
 
 dotenv.config()
 
+export type Propiedades = {
+  icono?: string
+  descripcion?: string
+  color_light?: string
+  color_dark?: string
+}
+
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -29,13 +34,15 @@ export class Modulo extends AuditoriaEntity {
   @Column({ length: 50, type: 'varchar', unique: true })
   nombre: string
 
-  @Column({
-    type: 'jsonb',
-  })
-  propiedades: PropiedadesDto
+  @Column({ type: 'jsonb' })
+  propiedades: Propiedades
 
-  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`
+  )
   _estado: string
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)

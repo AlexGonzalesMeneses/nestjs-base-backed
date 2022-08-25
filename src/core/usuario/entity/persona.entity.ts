@@ -14,8 +14,7 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 100, type: 'varchar', nullable: true })
@@ -78,8 +77,12 @@ export class Persona extends AuditoriaEntity {
   @Column({ length: 255, type: 'varchar', nullable: true })
   observacion: string | null
 
-  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`
+  )
   _estado: string
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)

@@ -18,8 +18,7 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -33,17 +32,6 @@ export class Usuario extends AuditoriaEntity {
 
   @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
   correoElectronico: string | null
-
-  @Check(
-    `_estado in (
-      '${Status.CREATE}',
-      '${Status.PENDING}',
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}'
-    )`
-  )
-  @Column({ length: 30, type: 'varchar', default: Status.CREATE })
-  _estado: string
 
   @Column({
     type: 'integer',
@@ -89,15 +77,32 @@ export class Usuario extends AuditoriaEntity {
 
   @Column({
     name: 'fecha_bloqueo',
-    type: 'timestamp',
+    type: 'timestamp without time zone',
     nullable: true,
   })
   fechaBloqueo: Date | null
 
+  @Column({
+    name: 'id_persona',
+    type: 'bigint',
+    nullable: false,
+  })
+  idPersona: string
+
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}',
+      '${Status.CREATE}',
+      '${Status.PENDING}'
+    )`
+  )
+  _estado: string
+
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,
   })
-  public usuarioRol!: UsuarioRol[]
+  usuarioRol: UsuarioRol[]
 
   @ManyToOne(() => Persona, (persona) => persona.usuarios, {
     nullable: false,

@@ -14,8 +14,7 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Rol extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -24,8 +23,12 @@ export class Rol extends AuditoriaEntity {
   @Column({ length: 100, type: 'varchar' })
   nombre: string
 
-  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`
+  )
   _estado: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)

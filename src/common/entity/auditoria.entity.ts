@@ -1,27 +1,30 @@
 import { BaseEntity, Column } from 'typeorm'
 
 export abstract class AuditoriaEntity extends BaseEntity {
-  // @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  // @Column({
-  //   name: '_estado',
-  //   length: 30,
-  //   type: 'varchar',
-  //   default: Status.ACTIVE,
-  // })
+  @Column({
+    name: '_estado',
+    length: 30,
+    type: 'varchar',
+    nullable: false,
+  })
   _estado: string
 
-  @Column('character varying', {
+  @Column('varchar', {
     name: '_transaccion',
     length: 30,
     nullable: false,
   })
   _transaccion: string
 
-  @Column('bigint', { name: '_usuario_creacion', nullable: true })
+  @Column('bigint', {
+    name: '_usuario_creacion',
+    nullable: false,
+  })
   _usuarioCreacion: string
 
   @Column('timestamp without time zone', {
     name: '_fecha_creacion',
+    nullable: false,
     default: () => 'now()',
   })
   _fechaCreacion: Date

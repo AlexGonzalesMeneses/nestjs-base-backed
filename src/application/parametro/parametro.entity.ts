@@ -7,8 +7,7 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
-  @PrimaryGeneratedColumn()
-  @Column('bigint', { primary: true, name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 15, type: 'varchar', unique: true })
@@ -23,7 +22,11 @@ export class Parametro extends AuditoriaEntity {
   @Column({ length: 255, type: 'varchar' })
   descripcion: string
 
-  @Check(`_estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
+  @Check(
+    `_estado in (
+      '${Status.ACTIVE}',
+      '${Status.INACTIVE}'
+    )`
+  )
   _estado: string
 }
