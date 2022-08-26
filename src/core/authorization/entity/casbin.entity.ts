@@ -54,4 +54,9 @@ export class CasbinRule extends BaseEntity {
     type: 'varchar',
   })
   public v6: string | null
+
+  constructor(data?: Partial<CasbinRule>) {
+    super()
+    if (data) Object.assign(this, data)
+  }
 }

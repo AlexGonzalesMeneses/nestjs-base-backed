@@ -9,7 +9,7 @@ export class modulo1611497480901 implements MigrationInterface {
     const items = [
       // MENU SESSION PRINCIPAL
       {
-        id: '1',
+        // id: '1',
         nombre: 'Principal',
         url: '/principal',
         label: 'Principal',
@@ -20,7 +20,7 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
-        id: '2',
+        // id: '2',
         nombre: 'inicio',
         url: '/admin/home',
         label: 'Inicio',
@@ -33,7 +33,7 @@ export class modulo1611497480901 implements MigrationInterface {
         fidModulo: '1',
       },
       {
-        id: '3',
+        // id: '3',
         nombre: 'perfil',
         url: '/admin/perfil',
         label: 'Perfil',
@@ -48,7 +48,7 @@ export class modulo1611497480901 implements MigrationInterface {
 
       // MENU SECCION CONFIGURACIONES
       {
-        id: '4',
+        // id: '4',
         nombre: 'configuraciones',
         url: '/configuraciones',
         label: 'Configuración',
@@ -59,7 +59,7 @@ export class modulo1611497480901 implements MigrationInterface {
         },
       },
       {
-        id: '5',
+        // id: '5',
         nombre: 'usuarios',
         url: '/admin/usuarios',
         label: 'Usuarios',
@@ -72,7 +72,7 @@ export class modulo1611497480901 implements MigrationInterface {
         fidModulo: '4',
       },
       {
-        id: '6',
+        // id: '6',
         nombre: 'parametros',
         url: '/admin/parametros',
         label: 'Parámetros',
@@ -85,7 +85,7 @@ export class modulo1611497480901 implements MigrationInterface {
         fidModulo: '4',
       },
       {
-        id: '7',
+        // id: '7',
         nombre: 'modulos',
         url: '/admin/modulos',
         label: 'Módulos',
@@ -98,7 +98,7 @@ export class modulo1611497480901 implements MigrationInterface {
         fidModulo: '4',
       },
       {
-        id: '8',
+        // id: '8',
         nombre: 'politicas',
         url: '/admin/politicas',
         label: 'Políticas',
@@ -112,28 +112,24 @@ export class modulo1611497480901 implements MigrationInterface {
       },
     ]
     const modulos = items.map((item) => {
-      const m = new Modulo()
-      m.id = item.id
-      m.nombre = item.nombre
-      m.url = item.url
-      m.label = item.label
-      m._usuarioCreacion = '1'
-      m._fechaCreacion = new Date()
-      m._transaccion = 'SEEDS'
-      if (item.fidModulo) {
-        const submodulo = new Modulo()
-        submodulo.id = item.fidModulo
-        m.fidModulo = submodulo
-      }
       const propiedades: Propiedades = {
         color_dark: item.propiedades.color_dark,
         color_light: item.propiedades.color_light,
         icono: item.propiedades.icono,
         descripcion: item.propiedades.descripcion,
       }
-
-      m.propiedades = propiedades
-      return m
+      const modulo = new Modulo({
+        nombre: item.nombre,
+        url: item.url,
+        label: item.label,
+        idModulo: item.fidModulo,
+        propiedades: propiedades,
+        estado: 'ACTIVO',
+        transaccion: 'SEEDS',
+        usuarioCreacion: '1',
+        fechaCreacion: new Date(),
+      })
+      return modulo
     })
     await queryRunner.manager.save(modulos)
   }

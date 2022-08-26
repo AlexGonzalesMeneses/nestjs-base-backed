@@ -29,8 +29,12 @@ export class Rol extends AuditoriaEntity {
       '${Status.INACTIVE}'
     )`
   )
-  _estado: string
+  estado: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)
-  public usuarioRol!: UsuarioRol[]
+  usuarioRol: UsuarioRol[]
+
+  constructor(data?: Partial<Rol>) {
+    super(data)
+  }
 }

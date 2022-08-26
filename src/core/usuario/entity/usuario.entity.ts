@@ -31,7 +31,7 @@ export class Usuario extends AuditoriaEntity {
   ciudadaniaDigital: boolean
 
   @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
-  correoElectronico: string | null
+  correoElectronico?: string | null
 
   @Column({
     type: 'integer',
@@ -46,7 +46,7 @@ export class Usuario extends AuditoriaEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoDesbloqueo: string | null
+  codigoDesbloqueo?: string | null
 
   @Index()
   @Column({
@@ -55,7 +55,7 @@ export class Usuario extends AuditoriaEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoRecuperacion: string | null
+  codigoRecuperacion?: string | null
 
   @Index()
   @Column({
@@ -64,7 +64,7 @@ export class Usuario extends AuditoriaEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoTransaccion: string | null
+  codigoTransaccion?: string | null
 
   @Index()
   @Column({
@@ -73,14 +73,14 @@ export class Usuario extends AuditoriaEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoActivacion: string | null
+  codigoActivacion?: string | null
 
   @Column({
     name: 'fecha_bloqueo',
     type: 'timestamp without time zone',
     nullable: true,
   })
-  fechaBloqueo: Date | null
+  fechaBloqueo?: Date | null
 
   @Column({
     name: 'id_persona',
@@ -97,7 +97,7 @@ export class Usuario extends AuditoriaEntity {
       '${Status.PENDING}'
     )`
   )
-  _estado: string
+  estado: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,
@@ -113,4 +113,8 @@ export class Usuario extends AuditoriaEntity {
     referencedColumnName: 'id',
   })
   persona: Persona
+
+  constructor(data?: Partial<Usuario>) {
+    super(data)
+  }
 }

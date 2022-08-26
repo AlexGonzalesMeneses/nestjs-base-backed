@@ -37,7 +37,7 @@ export class ParametroRepository {
         'parametro.nombre',
         'parametro.grupo',
         'parametro.descripcion',
-        'parametro._estado',
+        'parametro.estado',
       ])
       .where(
         filtro

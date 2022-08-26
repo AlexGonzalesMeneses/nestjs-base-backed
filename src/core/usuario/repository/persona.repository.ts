@@ -25,7 +25,7 @@ export class PersonaRepository {
       .createQueryBuilder('p')
       .where('p.nro_documento = :numeroDocumento', { numeroDocumento })
       .andWhere('p.tipo_documento = :tipoDocumento', { tipoDocumento })
-      .andWhere('p._estado = :estado', { estado: Status.ACTIVE })
+      .andWhere('p.estado = :estado', { estado: Status.ACTIVE })
       .getOne()
   }
 }

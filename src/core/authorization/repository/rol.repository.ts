@@ -29,7 +29,7 @@ export class RolRepository {
       .getRepository(Rol)
       .createQueryBuilder('rol')
       .select(['rol.id', 'rol.rol'])
-      .where({ _estado: Status.ACTIVE, usuarioRol: idUsuario })
+      .where({ estado: Status.ACTIVE, usuarioRol: idUsuario })
       .getMany()
   }
 }

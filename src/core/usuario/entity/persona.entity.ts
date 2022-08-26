@@ -18,7 +18,7 @@ export class Persona extends AuditoriaEntity {
   id: string
 
   @Column({ length: 100, type: 'varchar', nullable: true })
-  nombres: string | null
+  nombres?: string | null
 
   @Column({
     name: 'primer_apellido',
@@ -26,7 +26,7 @@ export class Persona extends AuditoriaEntity {
     length: 100,
     nullable: true,
   })
-  primerApellido: string | null
+  primerApellido?: string | null
 
   @Column({
     name: 'segundo_apellido',
@@ -34,7 +34,7 @@ export class Persona extends AuditoriaEntity {
     length: 100,
     nullable: true,
   })
-  segundoApellido: string | null
+  segundoApellido?: string | null
 
   @Check(
     `tipo_documento in ('${TipoDocumento.CI}', '${TipoDocumento.PASAPORTE}', '${TipoDocumento.OTRO}')`
@@ -53,7 +53,7 @@ export class Persona extends AuditoriaEntity {
     length: 50,
     nullable: true,
   })
-  tipoDocumentoOtro: string | null
+  tipoDocumentoOtro?: string | null
 
   @Column({ name: 'nro_documento', length: 50 })
   nroDocumento: string
@@ -63,19 +63,19 @@ export class Persona extends AuditoriaEntity {
     type: 'date',
     nullable: true,
   })
-  fechaNacimiento: Date | null
+  fechaNacimiento?: Date | null
 
   @Column({ length: 50, type: 'varchar', nullable: true })
-  telefono: string | null
+  telefono?: string | null
 
   @Check(
     `genero in ('${Genero.MASCULINO}', '${Genero.FEMENINO}', '${Genero.OTRO}')`
   )
   @Column({ length: 15, type: 'varchar', nullable: true })
-  genero: string | null
+  genero?: string | null
 
   @Column({ length: 255, type: 'varchar', nullable: true })
-  observacion: string | null
+  observacion?: string | null
 
   @Check(
     `_estado in (
@@ -83,8 +83,12 @@ export class Persona extends AuditoriaEntity {
       '${Status.INACTIVE}'
     )`
   )
-  _estado: string
+  estado: string
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)
   usuarios: Usuario[]
+
+  constructor(data?: Partial<Persona>) {
+    super(data)
+  }
 }

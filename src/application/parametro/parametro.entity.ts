@@ -28,5 +28,9 @@ export class Parametro extends AuditoriaEntity {
       '${Status.INACTIVE}'
     )`
   )
-  _estado: string
+  estado: string
+
+  constructor(data?: Partial<Parametro>) {
+    super(data)
+  }
 }

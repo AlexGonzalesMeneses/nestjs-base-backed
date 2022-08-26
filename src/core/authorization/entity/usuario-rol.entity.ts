@@ -39,7 +39,7 @@ export class UsuarioRol extends AuditoriaEntity {
       '${Status.INACTIVE}'
     )`
   )
-  _estado: string
+  estado: string
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)
   @JoinColumn({ name: 'id_rol', referencedColumnName: 'id' })
@@ -48,4 +48,8 @@ export class UsuarioRol extends AuditoriaEntity {
   @ManyToOne(() => Usuario, (usuario) => usuario.usuarioRol)
   @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
   usuario: Usuario
+
+  constructor(data?: Partial<UsuarioRol>) {
+    super(data)
+  }
 }

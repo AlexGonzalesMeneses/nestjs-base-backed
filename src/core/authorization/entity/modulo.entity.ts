@@ -37,13 +37,20 @@ export class Modulo extends AuditoriaEntity {
   @Column({ type: 'jsonb' })
   propiedades: Propiedades
 
+  @Column({
+    name: 'fid_modulo',
+    type: 'bigint',
+    nullable: true,
+  })
+  idModulo?: string | null
+
   @Check(
     `_estado in (
       '${Status.ACTIVE}',
       '${Status.INACTIVE}'
     )`
   )
-  _estado: string
+  estado: string
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
   subModulo: Modulo[]
@@ -51,4 +58,8 @@ export class Modulo extends AuditoriaEntity {
   @ManyToOne(() => Modulo, (modulo) => modulo.subModulo)
   @JoinColumn({ name: 'fid_modulo', referencedColumnName: 'id' })
   fidModulo: Modulo
+
+  constructor(data?: Partial<Modulo>) {
+    super(data)
+  }
 }

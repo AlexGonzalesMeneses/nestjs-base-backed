@@ -1,9 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
+import { Parametro } from './../../src/application/parametro/parametro.entity';
 
 export class insertsParametros1617820337609 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // TIPO DOCUMENTO
-    const parametros = [
+    const items = [
       {
         codigo: 'TD-CI',
         nombre: 'Cédula de identidad',
@@ -100,12 +101,20 @@ export class insertsParametros1617820337609 implements MigrationInterface {
         _transaccion: 'SEEDS',
       },
     ]
-    await queryRunner.manager
-      .createQueryBuilder()
-      .insert()
-      .into('parametro')
-      .values(parametros)
-      .execute()
+    const parametros = items.map((item) => {
+      const param = new Parametro({
+        codigo: item.codigo,
+        nombre: item.nombre,
+        grupo: item.grupo,
+        descripcion: item.descripcion,
+        estado: 'ACTIVO',
+        transaccion: 'SEEDS',
+        usuarioCreacion: '1',
+        fechaCreacion: new Date(),
+      })
+      return param
+    })
+    await queryRunner.manager.save(parametros)
   }
 
   /* eslint-disable */

@@ -219,16 +219,17 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         v3: 'backend',
       },
     ]
-    const casbin = items.map((item) => {
-      const c = new CasbinRule()
-      c.ptype = 'p'
-      c.v0 = item.v0
-      c.v1 = item.v1
-      c.v2 = item.v2
-      c.v3 = item.v3
-      return c
+    const casbinList = items.map((item) => {
+      const casbinRule = new CasbinRule({
+        ptype: 'p',
+        v0: item.v0,
+        v1: item.v1,
+        v2: item.v2,
+        v3: item.v3,
+      })
+      return casbinRule
     })
-    await queryRunner.manager.save(casbin)
+    await queryRunner.manager.save(casbinList)
   }
   /* eslint-disable */
   public async down(queryRunner: QueryRunner): Promise<void> {}

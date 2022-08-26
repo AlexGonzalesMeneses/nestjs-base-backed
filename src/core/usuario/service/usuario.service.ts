@@ -169,7 +169,7 @@ export class UsuarioService {
       }
     }
 
-    return { id: usuarioNuevo.id, estado: usuarioNuevo._estado }
+    return { id: usuarioNuevo.id, estado: usuarioNuevo.estado }
   }
 
   async activarCuenta(codigo) {
@@ -188,12 +188,12 @@ export class UsuarioService {
     const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
       usuario?.id,
       {
-        _estado: Status.ACTIVE,
+        estado: Status.ACTIVE,
         codigoActivacion: null,
-        _usuarioModificacion: usuarioAuditoria?.id,
+        usuarioModificacion: usuarioAuditoria?.id,
       }
     )
-    return { id: usuarioActualizado.id, estado: usuarioActualizado._estado }
+    return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
   async recuperarCuenta(recuperarCuentaDto: RecuperarCuentaDto) {
@@ -271,7 +271,7 @@ export class UsuarioService {
         contrasena: await TextService.encrypt(
           TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
         ),
-        _estado: Status.ACTIVE,
+        estado: Status.ACTIVE,
       }
     )
 
@@ -310,7 +310,7 @@ export class UsuarioService {
       const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
       const nuevoUsuario = {
-        _estado: Status.ACTIVE,
+        estado: Status.ACTIVE,
         correoElectronico: otrosDatos?.correoElectronico,
         persona,
         ciudadaniaDigital: true,
@@ -320,8 +320,8 @@ export class UsuarioService {
         nuevoUsuario,
         usuarioAuditoria
       )
-      const { id, _estado } = result
-      return { id, estado: _estado }
+      const { id, estado } = result
+      return { id, estado: estado }
     }
     throw new PreconditionFailedException(Messages.EXISTING_USER)
   }
@@ -349,7 +349,7 @@ export class UsuarioService {
 
     const nuevoUsuario = {
       usuario: personaCiudadania.nroDocumento,
-      _estado: Status.ACTIVE,
+      estado: Status.ACTIVE,
       correoElectronico: otrosDatos?.correoElectronico,
       persona,
       ciudadaniaDigital: true,
@@ -359,23 +359,23 @@ export class UsuarioService {
       nuevoUsuario,
       usuarioAuditoria
     )
-    const { id, _estado } = result
-    return { id, estado: _estado }
+    const { id, estado } = result
+    return { id, estado: estado }
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING]
-    if (usuario && statusValid.includes(usuario._estado as Status)) {
+    if (usuario && statusValid.includes(usuario.estado as Status)) {
       // cambiar estado al usuario y generar una nueva contrasena
       const contrasena = TextService.generateShortRandomText()
 
       const usuarioActualizado =
         await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
           contrasena: await TextService.encrypt(contrasena),
-          _estado: Status.PENDING,
-          _usuarioModificacion: usuarioAuditoria,
+          estado: Status.PENDING,
+          usuarioModificacion: usuarioAuditoria,
         })
       // si está bien ≥ enviar el mail con la contraseña generada
       const datosCorreo = {
@@ -387,7 +387,7 @@ export class UsuarioService {
         usuario.usuario,
         contrasena
       )
-      return { id: usuarioActualizado.id, estado: usuarioActualizado._estado }
+      return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
@@ -399,12 +399,12 @@ export class UsuarioService {
     if (usuario) {
       const usuarioActualizado =
         await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-          _usuarioModificacion: usuarioAuditoria,
-          _estado: Status.INACTIVE,
+          usuarioModificacion: usuarioAuditoria,
+          estado: Status.INACTIVE,
         })
       return {
         id: usuarioActualizado.id,
-        estado: usuarioActualizado._estado,
+        estado: usuarioActualizado.estado,
       }
     } else {
       throw new EntityNotFoundException(Messages.INVALID_USER)
@@ -446,11 +446,11 @@ export class UsuarioService {
         const usuarioActualizado =
           await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
             contrasena: await TextService.encrypt(contrasena),
-            _estado: Status.ACTIVE,
+            estado: Status.ACTIVE,
           })
         return {
           id: usuarioActualizado.id,
-          estado: usuarioActualizado._estado,
+          estado: usuarioActualizado.estado,
         }
       } else {
         throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
@@ -464,7 +464,7 @@ export class UsuarioService {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
     const statusValid = [Status.ACTIVE, Status.PENDING]
-    if (!(usuario && statusValid.includes(usuario._estado as Status))) {
+    if (!(usuario && statusValid.includes(usuario.estado as Status))) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
@@ -474,8 +474,8 @@ export class UsuarioService {
         transaction.getRepository(Usuario)
       await usuarioRepository.update(idUsuario, {
         contrasena: await TextService.encrypt(contrasena),
-        _estado: Status.PENDING,
-        _usuarioModificacion: usuarioAuditoria,
+        estado: Status.PENDING,
+        usuarioModificacion: usuarioAuditoria,
       })
 
       const usuarioActualizado = await usuarioRepository.findOne({
@@ -501,7 +501,7 @@ export class UsuarioService {
     }
     const usuario1 = await this.usuarioRepositorio.runTransaction<Usuario>(op)
 
-    return { id: idUsuario, estado: usuario1._estado }
+    return { id: idUsuario, estado: usuario1.estado }
   }
 
   async actualizarDatos(
@@ -528,7 +528,7 @@ export class UsuarioService {
         }
         await this.usuarioRepositorio.actualizarUsuario(id, {
           correoElectronico: correoElectronico,
-          _usuarioModificacion: usuarioAuditoria,
+          usuarioModificacion: usuarioAuditoria,
         })
       }
       if (roles)
@@ -567,7 +567,7 @@ export class UsuarioService {
     const inactivos = roles.filter((rol) =>
       usuarioRoles.some(
         (usuarioRol) =>
-          usuarioRol.rol.id === rol && usuarioRol._estado === Status.INACTIVE
+          usuarioRol.rol.id === rol && usuarioRol.estado === Status.INACTIVE
       )
     )
 
@@ -575,7 +575,7 @@ export class UsuarioService {
       .map((usuarioRol) =>
         roles.every(
           (rol) =>
-            rol !== usuarioRol.rol.id && usuarioRol._estado === Status.ACTIVE
+            rol !== usuarioRol.rol.id && usuarioRol.estado === Status.ACTIVE
         )
           ? usuarioRol.rol.id
           : null
@@ -604,10 +604,10 @@ export class UsuarioService {
       id: usuario.id,
       usuario: usuario.usuario,
       ciudadania_digital: usuario.ciudadaniaDigital,
-      estado: usuario._estado,
+      estado: usuario.estado,
       roles: await Promise.all(
         usuario.usuarioRol
-          .filter((value) => value._estado === Status.ACTIVE)
+          .filter((value) => value.estado === Status.ACTIVE)
           .map(async (usuarioRol) => {
             const { id, rol, nombre } = usuarioRol.rol
             const modulos =

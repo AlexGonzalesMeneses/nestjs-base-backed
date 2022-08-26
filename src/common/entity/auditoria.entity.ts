@@ -7,37 +7,42 @@ export abstract class AuditoriaEntity extends BaseEntity {
     type: 'varchar',
     nullable: false,
   })
-  _estado: string
+  estado: string
 
   @Column('varchar', {
     name: '_transaccion',
     length: 30,
     nullable: false,
   })
-  _transaccion: string
+  transaccion: string
 
   @Column('bigint', {
     name: '_usuario_creacion',
     nullable: false,
   })
-  _usuarioCreacion: string
+  usuarioCreacion: string
 
   @Column('timestamp without time zone', {
     name: '_fecha_creacion',
     nullable: false,
     default: () => 'now()',
   })
-  _fechaCreacion: Date
+  fechaCreacion: Date
 
   @Column('bigint', {
     name: '_usuario_modificacion',
     nullable: true,
   })
-  _usuarioModificacion: string | null
+  usuarioModificacion?: string | null
 
   @Column('timestamp without time zone', {
     name: '_fecha_modificacion',
     nullable: true,
   })
-  _fechaModificacion: Date | null
+  fechaModificacion?: Date | null
+
+  constructor(data?: Partial<AuditoriaEntity>) {
+    super()
+    if (data) Object.assign(this, data)
+  }
 }

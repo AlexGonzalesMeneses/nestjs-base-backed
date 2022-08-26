@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 import dotenv from 'dotenv'
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class RefreshTokens {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  @PrimaryColumn()
   id: string
 
   @Column({ name: 'grant_id' })

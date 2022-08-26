@@ -25,7 +25,7 @@ const resListar = [1, resUsuario]
 const resPerfil = {
   id: TextService.generateUuid(),
   usuario: '7171717',
-  _estado: Status.ACTIVE,
+  estado: Status.ACTIVE,
   roles: {},
   persona: {},
 }

@@ -27,22 +27,18 @@ export class usuarioRol1611516017924 implements MigrationInterface {
         usuario: '3', // TextService.textToUuid('TECNICO'),
       },
     ]
-    const usuarioRol = items.map((item) => {
-      const r = new Rol()
-      r.id = item.rol
-
-      const u = new Usuario()
-      u.id = item.usuario
-
-      const ur = new UsuarioRol()
-      ur.id = item.id
-      ur._usuarioCreacion = '1'
-      ur.rol = r
-      ur.usuario = u
-      ur._transaccion = 'SEEDS'
-      return ur
+    const usuariosRoles = items.map((item) => {
+      const usuarioRol = new UsuarioRol({
+        idRol: item.rol,
+        idUsuario: item.usuario,
+        estado: 'ACTIVO',
+        transaccion: 'SEEDS',
+        usuarioCreacion: '1',
+        fechaCreacion: new Date(),
+      })
+      return usuarioRol
     })
-    await queryRunner.manager.save(usuarioRol)
+    await queryRunner.manager.save(usuariosRoles)
   }
 
   /* eslint-disable */

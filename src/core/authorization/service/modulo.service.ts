@@ -41,12 +41,12 @@ export class ModuloService {
     if (modulo) {
       const moduloActualizado = await this.moduloRepositorio.actualizar({
         id: idModulo,
-        _estado: Status.ACTIVE,
-        _usuarioModificacion: usuarioAuditoria,
+        estado: Status.ACTIVE,
+        usuarioModificacion: usuarioAuditoria,
       })
       return {
         id: moduloActualizado.id,
-        estado: moduloActualizado._estado,
+        estado: moduloActualizado.estado,
       }
     } else {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
@@ -58,12 +58,12 @@ export class ModuloService {
     if (modulo) {
       const moduloActualizado = await this.moduloRepositorio.actualizar({
         id: idModulo,
-        _estado: Status.INACTIVE,
-        _usuarioModificacion: usuarioAuditoria,
+        estado: Status.INACTIVE,
+        usuarioModificacion: usuarioAuditoria,
       })
       return {
         id: moduloActualizado.id,
-        estado: moduloActualizado._estado,
+        estado: moduloActualizado.estado,
       }
     } else {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)

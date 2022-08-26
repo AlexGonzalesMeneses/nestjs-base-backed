@@ -28,7 +28,7 @@ export class SinService {
       )
 
       if (
-        !respuesta._estado &&
+        !respuesta.estado &&
         respuesta.message &&
         respuesta.message.match(/You cannot consume this service/) !== null &&
         respuesta.message.match(/You cannot consume this service/).length === 1
@@ -38,7 +38,7 @@ export class SinService {
         )
       }
       if (
-        !respuesta._estado &&
+        !respuesta.estado &&
         respuesta.message &&
         respuesta.message.match(/no API found with those valuese/) !== null &&
         respuesta.message.match(/no API found with those valuese/).length === 1
@@ -50,7 +50,7 @@ export class SinService {
       if (respuesta.Autenticado) {
         return {
           resultado: true,
-          mensaje: respuesta._estado,
+          mensaje: respuesta.estado,
         }
       } else {
         throw new Error(respuesta.Mensaje || 'Error con el servicio web SIN')
