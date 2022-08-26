@@ -5,6 +5,12 @@ import { Status } from '../../common/constants'
 
 dotenv.config()
 
+@Check(
+  `_estado in (
+    '${Status.ACTIVE}',
+    '${Status.INACTIVE}'
+  )`
+)
 @Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -21,14 +27,6 @@ export class Parametro extends AuditoriaEntity {
 
   @Column({ length: 255, type: 'varchar' })
   descripcion: string
-
-  @Check(
-    `_estado in (
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}'
-    )`
-  )
-  estado: string
 
   constructor(data?: Partial<Parametro>) {
     super(data)

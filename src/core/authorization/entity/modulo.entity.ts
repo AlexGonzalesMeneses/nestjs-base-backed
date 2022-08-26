@@ -20,6 +20,12 @@ export type Propiedades = {
   color_dark?: string
 }
 
+@Check(
+  `_estado in (
+    '${Status.ACTIVE}',
+    '${Status.INACTIVE}'
+  )`
+)
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -43,14 +49,6 @@ export class Modulo extends AuditoriaEntity {
     nullable: true,
   })
   idModulo?: string | null
-
-  @Check(
-    `_estado in (
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}'
-    )`
-  )
-  estado: string
 
   @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
   subModulo: Modulo[]

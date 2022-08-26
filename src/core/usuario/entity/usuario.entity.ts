@@ -16,6 +16,14 @@ import { Status } from '../../../common/constants'
 
 dotenv.config()
 
+@Check(
+  `_estado in (
+    '${Status.ACTIVE}',
+    '${Status.INACTIVE}',
+    '${Status.CREATE}',
+    '${Status.PENDING}'
+  )`
+)
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -88,16 +96,6 @@ export class Usuario extends AuditoriaEntity {
     nullable: false,
   })
   idPersona: string
-
-  @Check(
-    `_estado in (
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}',
-      '${Status.CREATE}',
-      '${Status.PENDING}'
-    )`
-  )
-  estado: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
     cascade: true,

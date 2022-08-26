@@ -12,6 +12,12 @@ import { Status } from '../../../common/constants'
 
 dotenv.config()
 
+@Check(
+  `_estado in (
+    '${Status.ACTIVE}',
+    '${Status.INACTIVE}'
+  )`
+)
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Rol extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -22,14 +28,6 @@ export class Rol extends AuditoriaEntity {
 
   @Column({ length: 100, type: 'varchar' })
   nombre: string
-
-  @Check(
-    `_estado in (
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}'
-    )`
-  )
-  estado: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)
   usuarioRol: UsuarioRol[]
