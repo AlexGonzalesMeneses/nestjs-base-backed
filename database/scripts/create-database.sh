@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+set -e -o errtrace
+trap "echo -e '\n\nERROR: Ocurrió un error mientras se ejecutaba el script :(\n\n'" ERR
+
 arg1=${1:-pg14}
 arg2=${2:-database_db}
 
@@ -20,13 +23,15 @@ dbpass="${arg6}"
 echo -e "\n\n >>> Creando Base de datos $dbname ($dbhost:$dbport)...\n"
 
 docker restart $dockerContainer
+
+echo -e "\nReiniciando el contenedor $dockerContainer...\n";
+sleep 2;
+
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "DROP DATABASE IF EXISTS $dbname"
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "CREATE DATABASE $dbname ENCODING 'UTF-8'"
+
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -d $dbname -c "CREATE SCHEMA usuarios AUTHORIZATION $dbuser"
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -d $dbname -c "CREATE SCHEMA parametricas AUTHORIZATION $dbuser"
-docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "SELECT 1 FROM pg_user WHERE usename = '$dbuser'" | grep -q 1 \
-|| docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "CREATE USER $dbuser WITH LOGIN SUPERUSER PASSWORD '$dbpass'"
-docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "ALTER DATABASE $dbname OWNER TO $dbuser"
 
 echo -e "\n - [éxito] $dbname ($dbhost)"
 # [END] SQL

@@ -7,15 +7,17 @@ import { IncomingMessage, ServerResponse } from 'http'
 import pretty from 'pino-pretty'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
+import path from 'path'
 
 @Injectable()
 export class LogService {
+  static appName = process.env.npm_package_name || 'APP'
   static getStream(): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
     if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
       const options: RotateOptions = {
         size: process.env.LOG_SIZE || '5M',
-        path: process.env.LOG_PATH || './logs',
+        path: path.resolve(process.env.LOG_PATH, LogService.appName),
         interval: process.env.LOG_INTERVAL || '1d',
       }
 
@@ -91,7 +93,7 @@ export class LogService {
 
   static getPinoHttpConfig(): Options {
     return {
-      name: process.env.npm_package_name || 'APP',
+      name: LogService.appName,
       genReqId: (req) => {
         return (req.id || rTracer.id()) as ReqId
       },
