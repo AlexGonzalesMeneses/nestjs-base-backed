@@ -12,8 +12,8 @@ const SeedDataSource = new DataSource({
   database: process.env.DB_DATABASE,
   synchronize: false,
   logging: true,
-  migrations: ['database/seeds/*.ts'],
   entities: ['src/**/*.entity.ts'],
+  migrations: ['database/seeds/*.ts'],
 })
 
 export default SeedDataSource
