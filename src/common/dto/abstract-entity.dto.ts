@@ -1,6 +1,6 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
-export abstract class AbstractEntity {
+export abstract class AbstractEntity extends BaseEntity {
   // datos de auditoria
   @CreateDateColumn({ name: 'fecha_creacion', type: 'timestamp' })
   fechaCreacion: Date

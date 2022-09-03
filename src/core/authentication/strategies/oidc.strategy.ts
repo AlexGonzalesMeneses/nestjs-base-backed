@@ -48,9 +48,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
 
   async validate(tokenset: TokenSet): Promise<PassportUser> {
     try {
-      const userinfo: UserinfoResponse = await this.client.userinfo(tokenset)
+      const userinfo: UserinfoResponse<userInfoType> =
+        await this.client.userinfo(tokenset)
 
-      const ci = <documentoIdentidad>userinfo.documento_identidad
+      const ci = <DocumentoIdentidadType>userinfo?.profile?.documento_identidad
 
       /*if (/[a-z]/i.test(ci.numero_documento)) {
         ci.complemento = ci.numero_documento.slice(-2);
@@ -67,7 +68,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.tipoDocumento = ci.tipo_documento
       persona.nroDocumento = ci.numero_documento
       persona.fechaNacimiento = fechaNacimiento
-      const nombre = <nombre>userinfo.nombre
+      const nombre = <NombreType>userinfo.profile?.nombre ?? ''
       persona.nombres = nombre.nombres
       persona.primerApellido = nombre.primer_apellido
       persona.segundoApellido = nombre.segundo_apellido
@@ -97,19 +98,33 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
+      console.log(`🚨 error validate`, err)
       throw new UnauthorizedException()
     }
   }
 }
 
-export interface documentoIdentidad {
+export interface DocumentoIdentidadType {
   tipo_documento: string
   numero_documento: string
   complemento: string
 }
 
-export interface nombre {
+export interface NombreType {
   nombres: string
   primer_apellido: string
   segundo_apellido: string
+}
+
+export interface ProfileType {
+  documento_identidad: DocumentoIdentidadType
+  nombre: NombreType
+}
+
+export interface userInfoType {
+  sub: string
+  profile: ProfileType
+  fecha_nacimiento: string
+  email: string
+  celular: string
 }
