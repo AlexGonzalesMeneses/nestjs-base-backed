@@ -82,9 +82,9 @@ export class UsuarioService {
     if (contrastaSegip?.finalizado) {
       const contrasena = TextService.generateShortRandomText()
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
-      usuarioDto.estado = Status.PENDING
+      usuarioDto.estado = Status.ACTIVE
       const result = await this.usuarioRepositorio.crear(
-        usuarioDto,
+        { ...usuarioDto, usuario: persona.nroDocumento },
         usuarioAuditoria
       )
       // enviar correo con credenciales
