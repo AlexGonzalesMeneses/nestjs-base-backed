@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsObject } from 'class-validator'
+import { IsNotEmpty, IsObject, IsString } from 'class-validator'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 
 export class PropiedadesDto {
@@ -32,7 +32,7 @@ export class CrearModuloDto {
   @IsObject()
   propiedades: PropiedadesDto
 
-  fidModulo: string
+  fidModulo?: string
   estado?: string
 }
 
