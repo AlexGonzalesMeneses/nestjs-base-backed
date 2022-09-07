@@ -11,9 +11,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Request, Response } from 'express'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../core/logger/logger.service'
 import { Messages } from '../constants/response-messages'
-import { LogService } from './../../core/logs/log.service'
 import { AxiosError } from 'axios'
 
 type ObjectOrError = {
@@ -106,7 +105,7 @@ class HttpExceptionFilterError extends Error {
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: PinoLogger) {
+  constructor(protected logger: LoggerService) {
     this.logger.setContext(HttpExceptionFilter.name)
   }
 
@@ -136,26 +135,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
       },
     }
 
-    const logData = {
-      errorRequest,
-      errorResponse,
-      errorStack: filterError.stack,
-    }
-
-    const errorRequestForPrint = { ...errorRequest, headers: undefined }
-    const printRequest = JSON.stringify(errorRequestForPrint, null, 2)
-    const printResponse = JSON.stringify(errorResponse, null, 2)
-
     if (errorResponse.codigo >= 400 && errorResponse.codigo < 500) {
-      this.logger.warn(logData, '[Http Exception Filter]')
-      LogService.info(printRequest)
-      LogService.warn(printResponse)
-      if (filterError.stack) LogService.warn(filterError.stack)
+      this.logger.warn({ errorRequest })
+      this.logger.warn({ errorResponse })
+      if (filterError.stack) {
+        this.logger.warn(filterError.stack)
+      }
     } else {
-      this.logger.error(logData, '[Http Exception Filter]')
-      LogService.info(printRequest)
-      LogService.error(printResponse)
-      if (filterError.stack) LogService.error(filterError.stack)
+      this.logger.error({ errorRequest })
+      this.logger.error({ errorResponse })
+      if (filterError.stack) {
+        this.logger.error(filterError.stack)
+      }
     }
 
     if (process.env.NODE_ENV === 'production') {

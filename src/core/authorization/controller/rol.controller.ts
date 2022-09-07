@@ -1,19 +1,18 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { RolService } from '../service/rol.service'
-import { AbstractController } from '../../../common/dto/abstract-controller.dto'
+import { BaseController } from '../../../common/base/base-controller'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../logger/logger.service'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/roles')
-export class RolController extends AbstractController {
+export class RolController extends BaseController {
   constructor(
-    private rolService: RolService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService, //
+    private rolService: RolService
   ) {
-    super()
-    this.logger.setContext(RolController.name)
+    super(logger, RolController.name)
   }
 
   @Get()

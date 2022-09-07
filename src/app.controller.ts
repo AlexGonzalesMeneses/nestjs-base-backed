@@ -1,16 +1,16 @@
 import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common'
 import { Response } from 'express'
 import { ConfigService } from '@nestjs/config'
-
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './core/logger/logger.service'
+import { BaseController } from './common/base/base-controller'
 
 @Controller()
-export class AppController {
+export class AppController extends BaseController {
   constructor(
-    private readonly logger: PinoLogger,
-    @Inject(ConfigService) private readonly configService: ConfigService
+    protected logger: LoggerService,
+    @Inject(ConfigService) private configService: ConfigService
   ) {
-    this.logger.setContext(AppController.name)
+    super(logger, AppController.name)
   }
 
   @Get('/estado')

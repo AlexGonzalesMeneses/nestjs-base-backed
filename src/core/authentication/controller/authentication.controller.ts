@@ -11,25 +11,25 @@ import {
 import { Request, Response } from 'express'
 import { Issuer } from 'openid-client'
 import { CookieService } from '../../../common/lib/cookie.service'
-
+import { BaseController } from '../../../common/base/base-controller'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../logger/logger.service'
 import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 import { ConfigService } from '@nestjs/config'
 
 @Controller()
-export class AuthenticationController {
+export class AuthenticationController extends BaseController {
   // eslint-disable-next-line max-params
   constructor(
-    private readonly autenticacionService: AuthenticationService,
-    private readonly refreshTokensService: RefreshTokensService,
-    private readonly logger: PinoLogger,
-    @Inject(ConfigService) private readonly configService: ConfigService
+    protected logger: LoggerService,
+    private autenticacionService: AuthenticationService,
+    private refreshTokensService: RefreshTokensService,
+    @Inject(ConfigService) private configService: ConfigService
   ) {
-    this.logger.setContext(AuthenticationController.name)
+    super(logger, AuthenticationController.name)
   }
 
   @UseGuards(LocalAuthGuard)
@@ -42,7 +42,7 @@ export class AuthenticationController {
     }
     const result = await this.autenticacionService.autenticar(req.user)
 
-    this.logger.info(`Usuario: ${result.data.id} ingreso al sistema`)
+    this.logger.info(`Usuario: ${result.data.id} ingresó al sistema`)
     /* sendRefreshToken(res, result.refresh_token.id); */
     const refreshToken = result.refresh_token.id
     return res
@@ -113,7 +113,7 @@ export class AuthenticationController {
         ).id
       : null
 
-    this.logger.info(`Usuario: ${idUsuario} salio del sistema`)
+    this.logger.info(`Usuario: ${idUsuario} salió del sistema`)
 
     if (url && idToken) {
       return res.status(200).json({

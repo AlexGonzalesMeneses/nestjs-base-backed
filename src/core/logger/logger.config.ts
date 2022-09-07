@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common'
 import * as rTracer from 'cls-rtracer'
 import { Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
@@ -9,15 +8,15 @@ import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
 import path from 'path'
 
-@Injectable()
-export class LogService {
+export class LoggerConfig {
   static appName = process.env.npm_package_name || 'APP'
+
   static getStream(): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
     if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
       const options: RotateOptions = {
         size: process.env.LOG_SIZE || '5M',
-        path: path.resolve(process.env.LOG_PATH, LogService.appName),
+        path: path.resolve(process.env.LOG_PATH, LoggerConfig.appName),
         interval: process.env.LOG_INTERVAL || '1d',
       }
 
@@ -93,7 +92,7 @@ export class LogService {
 
   static getPinoHttpConfig(): Options {
     return {
-      name: LogService.appName,
+      name: LoggerConfig.appName,
       genReqId: (req) => {
         return (req.id || rTracer.id()) as ReqId
       },
@@ -129,30 +128,5 @@ export class LogService {
         censor: '*****',
       },
     }
-  }
-
-  static info(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[36m${msg}\x1b[0m`)
-  }
-
-  static warn(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[33m${msg}\x1b[0m`)
-  }
-
-  static error(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[91m${msg}\x1b[0m`)
-  }
-
-  static success(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[92m${msg}\x1b[0m`)
-  }
-
-  static log(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[37m${msg}\x1b[0m`)
   }
 }

@@ -21,7 +21,7 @@ import {
   SWAGGER_API_ROOT,
 } from './common/constants'
 import { DataSource } from 'typeorm'
-import { LogService } from './core/logs/log.service'
+import { LoggerService } from './core/logger/logger.service'
 import { NextFunction, Request, Response } from 'express'
 import morgan from 'morgan'
 
@@ -45,6 +45,8 @@ async function bootstrap() {
   })
   app.useLogger(app.get(Logger))
   const configService = app.get(ConfigService)
+  const loggerService = await app.resolve(LoggerService)
+
   // swagger
   createSwagger(app)
 
@@ -96,7 +98,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method.toLowerCase() === 'options') return next()
-      LogService.info(`${req.method} ${req.originalUrl}`)
+      loggerService.log(`${req.method} ${req.originalUrl}`)
       return next()
     })
   }
@@ -104,11 +106,9 @@ async function bootstrap() {
   const port = configService.get('PORT')
   await app.listen(port)
 
-  const apiPath = configService.get('PATH_SUBDOMAIN')
-  LogService.info(`Path de la aplicación configurada como /${apiPath}`)
-
-  LogService.log(`
-                                   $@@  @,
+  loggerService.log(`
+                                 $@@.
+                                  $@@@  @@,
                                    ]@@"g@@@@g
                                    @,@@@@@@@@@
                 ,ggg&@@@@@@BNggg,  P@@@@@@@@@@@
@@ -134,9 +134,15 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
                                 ,@@@@B@@@@@@P  @@P
                                ""  ,g@@@@@P  ,@P'
  NestJS Base Backend             ,@@@@@P-   7P
+                              ,@@@P-
   `)
 
-  LogService.success(`Aplicación iniciada en el puerto ${port}`)
+  const appName = configService.get('npm_package_name')
+  const appVersion = configService.get('npm_package_version')
+  const nodeEnv = configService.get('NODE_ENV')
+  const appUrl = `http://localhost:${port}`
+  const serviceInfo = `${appName} v${appVersion}\n\n - Servicio : Activo\n - Entorno  : ${nodeEnv}\n - URL      : ${appUrl}`
+  loggerService.info(serviceInfo)
 }
 
 function createSwagger(app: INestApplication) {

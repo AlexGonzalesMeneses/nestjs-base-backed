@@ -12,23 +12,22 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
-import { AbstractController } from '../../../common/dto/abstract-controller.dto'
+import { BaseController } from '../../../common/base/base-controller'
 import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../logger/logger.service'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
-export class ModuloController extends AbstractController {
+export class ModuloController extends BaseController {
   constructor(
-    private moduloService: ModuloService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService,
+    private moduloService: ModuloService
   ) {
-    super()
-    this.logger.setContext(ModuloController.name)
+    super(logger, ModuloController.name)
   }
 
   @Get()

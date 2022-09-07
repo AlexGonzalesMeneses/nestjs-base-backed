@@ -10,21 +10,21 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request, Response } from 'express'
-import { PinoLogger } from 'nestjs-pino'
-
+import { LoggerService } from './../../logger/logger.service'
 import { CookieService } from '../../../common/lib/cookie.service'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { RefreshTokensService } from '../service/refreshTokens.service'
+import { BaseController } from '../../../common/base/base-controller'
 
 @Controller()
-export class RefreshTokensController {
+export class RefreshTokensController extends BaseController {
   constructor(
-    private readonly refreshTokensService: RefreshTokensService,
-    @Inject(ConfigService) private readonly configService: ConfigService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService,
+    private refreshTokensService: RefreshTokensService,
+    @Inject(ConfigService) private configService: ConfigService
   ) {
-    this.logger.setContext(RefreshTokensController.name)
+    super(logger, RefreshTokensController.name)
   }
 
   @Post('token')

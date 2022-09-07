@@ -15,21 +15,20 @@ import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../../core/authorization/guards/casbin.guard'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { AbstractController } from '../../common/dto/abstract-controller.dto'
+import { BaseController } from '../../common/base/base-controller'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from '../../core/logger/logger.service'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
-export class ParametroController extends AbstractController {
+export class ParametroController extends BaseController {
   constructor(
-    private parametroServicio: ParametroService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService,
+    private parametroServicio: ParametroService
   ) {
-    super()
-    logger.setContext(ParametroController.name)
+    super(logger, ParametroController.name)
   }
 
   @UsePipes(

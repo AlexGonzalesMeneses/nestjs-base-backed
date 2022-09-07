@@ -12,10 +12,9 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
-import { AbstractController } from '../../../common/dto/abstract-controller.dto'
+import { BaseController } from '../../../common/base/base-controller'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UsuarioService } from '../service/usuario.service'
 import { Messages } from '../../../common/constants/response-messages'
 import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
@@ -31,16 +30,15 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../logger/logger.service'
 
 @Controller('usuarios')
-export class UsuarioController extends AbstractController {
+export class UsuarioController extends BaseController {
   constructor(
-    private usuarioService: UsuarioService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService,
+    private usuarioService: UsuarioService
   ) {
-    super()
-    this.logger.setContext(UsuarioController.name)
+    super(logger, UsuarioController.name)
   }
 
   // GET users

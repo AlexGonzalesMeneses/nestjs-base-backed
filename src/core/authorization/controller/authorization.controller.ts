@@ -9,21 +9,20 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
-import { AbstractController } from '../../../common/dto/abstract-controller.dto'
+import { BaseController } from '../../../common/base/base-controller'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
-import { PinoLogger } from 'nestjs-pino'
+import { LoggerService } from './../../logger/logger.service'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
-export class AuthorizationController extends AbstractController {
+export class AuthorizationController extends BaseController {
   constructor(
-    private readonly authorizationService: AuthorizationService,
-    private readonly logger: PinoLogger
+    protected logger: LoggerService,
+    private authorizationService: AuthorizationService
   ) {
-    super()
-    this.logger.setContext(AuthorizationController.name)
+    super(logger, AuthorizationController.name)
   }
 
   @Post('/politicas')
