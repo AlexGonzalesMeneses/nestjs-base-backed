@@ -7,6 +7,8 @@ import pretty from 'pino-pretty'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
 import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export class LoggerConfig {
   static appName = process.env.npm_package_name || 'APP'
