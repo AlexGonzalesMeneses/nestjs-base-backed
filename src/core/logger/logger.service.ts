@@ -73,12 +73,13 @@ export class LoggerService extends Logger {
     }
     if (process.env.NODE_ENV === 'production') return
     const color = this.getColor(level)
-    process.stdout.write(color)
-    process.stdout.write(`\n[${this.context}:${level}]\n`)
+    process.stdout.write(`\n${color}[${this.context}:${level}]\n`)
     optionalParams.map((data) => {
       const toPrint =
-        typeof data === 'object' ? inspect(data, false, null, false) : data
-      console.log(toPrint)
+        typeof data === 'object'
+          ? inspect(data, false, null, false)
+          : String(data)
+      console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
     })
     process.stdout.write(LOG_COLOR.RESET)
     process.stdout.write('\n')
