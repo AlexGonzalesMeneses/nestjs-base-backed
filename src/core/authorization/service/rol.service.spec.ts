@@ -1,3 +1,4 @@
+import { LoggerModule } from '../../logger/logger.module'
 import { Test, TestingModule } from '@nestjs/testing'
 import { RolService } from './rol.service'
 import { RolRepository } from '../repository/rol.repository'
@@ -11,6 +12,7 @@ describe('RolService', () => {
   let service: RolService
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         RolService,
         {

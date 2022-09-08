@@ -1,3 +1,4 @@
+import { LoggerModule } from './../logger/logger.module'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -39,6 +40,7 @@ const OidcStrategyFactory = {
 
 @Module({
   imports: [
+    LoggerModule,
     PassportModule.register({ session: true, defaultStrategy: 'oidc' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -1,3 +1,4 @@
+import { LoggerModule } from './../../logger/logger.module';
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
@@ -49,6 +50,7 @@ describe('AuthenticationService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         PersonaService,
         ConfigService,
