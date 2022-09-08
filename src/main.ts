@@ -7,7 +7,7 @@ import passport from 'passport'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { INestApplication } from '@nestjs/common'
-
+import packageJson from '../package.json'
 import { TypeormStore } from 'connect-typeorm'
 import { Session } from './core/authentication/entity/session.entity'
 import { Logger } from 'nestjs-pino'
@@ -137,8 +137,8 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
                               ,@@@P-
   `)
 
-  const appName = configService.get('npm_package_name')
-  const appVersion = configService.get('npm_package_version')
+  const appName = packageJson.name
+  const appVersion = packageJson.version
   const nodeEnv = configService.get('NODE_ENV')
   const appUrl = `http://localhost:${port}`
   const serviceInfo = `${appName} v${appVersion}\n\n - Servicio : Activo\n - Entorno  : ${nodeEnv}\n - URL      : ${appUrl}`
