@@ -13,6 +13,7 @@ import { Session } from './core/authentication/entity/session.entity'
 import { Logger } from 'nestjs-pino'
 import { expressMiddleware } from 'cls-rtracer'
 import dotenv from 'dotenv'
+import ip from 'ip'
 
 import {
   SWAGGER_API_CURRENT_VERSION,
@@ -24,6 +25,7 @@ import { DataSource } from 'typeorm'
 import { LoggerService } from './core/logger/logger.service'
 import { NextFunction, Request, Response } from 'express'
 import morgan from 'morgan'
+import { COLOR } from './core/logger/constants'
 
 dotenv.config()
 
@@ -140,8 +142,15 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
   const appName = packageJson.name
   const appVersion = packageJson.version
   const nodeEnv = configService.get('NODE_ENV')
-  const appUrl = `http://localhost:${port}`
-  const serviceInfo = `${appName} v${appVersion}\n\n - Servicio : Activo\n - Entorno  : ${nodeEnv}\n - URL      : ${appUrl}`
+  const appLocalUrl = `http://localhost:${port}`
+  const appNetworkUrl = `http://${ip.address()}:${port}`
+
+  const serviceInfo = `${appName} v${appVersion}
+
+${COLOR.RESET} - Servicio    : ${COLOR.LIGHT_GREEN}Activo
+${COLOR.RESET} - Entorno     : ${COLOR.LIGHT_GREEN}${nodeEnv}
+${COLOR.RESET} - URL (local) : ${COLOR.LIGHT_GREEN}${appLocalUrl}
+${COLOR.RESET} - URL (red)   : ${COLOR.LIGHT_GREEN}${appNetworkUrl}${COLOR.RESET}`
   loggerService.info(serviceInfo)
 }
 

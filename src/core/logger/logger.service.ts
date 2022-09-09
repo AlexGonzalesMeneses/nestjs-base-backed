@@ -68,21 +68,26 @@ export class LoggerService extends Logger {
   }
 
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
-    if ([LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR].includes(level)) {
-      optionalParams.map((param) => this.logger[level](param))
+    try {
+      if ([LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR].includes(level)) {
+        optionalParams.map((param) => this.logger[level](param))
+      }
+      if (process.env.NODE_ENV === 'production') return
+
+      const color = this.getColor(level)
+      process.stdout.write(`\n${color}[${this.context}:${level}]\n`)
+      optionalParams.map((data) => {
+        const toPrint =
+          typeof data === 'object'
+            ? inspect(data, false, null, false)
+            : String(data)
+        console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
+      })
+      process.stdout.write(LOG_COLOR.RESET)
+      process.stdout.write('\n')
+    } catch (e) {
+      console.error(e)
     }
-    if (process.env.NODE_ENV === 'production') return
-    const color = this.getColor(level)
-    process.stdout.write(`\n${color}[${this.context}:${level}]\n`)
-    optionalParams.map((data) => {
-      const toPrint =
-        typeof data === 'object'
-          ? inspect(data, false, null, false)
-          : String(data)
-      console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
-    })
-    process.stdout.write(LOG_COLOR.RESET)
-    process.stdout.write('\n')
   }
 
   private getColor(level: LOG_LEVEL) {
