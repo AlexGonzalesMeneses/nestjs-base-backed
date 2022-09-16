@@ -51,6 +51,7 @@ CREATE DATABASE database_db ENCODING 'UTF-8';
 
 ```sql
 -- creamos los esquemas correspondientes
+CREATE SCHEMA proyecto AUTHORIZATION postgres;
 CREATE SCHEMA usuarios AUTHORIZATION postgres;
 CREATE SCHEMA parametricas AUTHORIZATION postgres;
 ```
