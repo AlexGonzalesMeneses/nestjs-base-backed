@@ -148,10 +148,10 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
 
   const serviceInfo = `${appName} v${appVersion}
 
-${COLOR.RESET} - Servicio    : ${COLOR.LIGHT_GREEN}Activo
-${COLOR.RESET} - Entorno     : ${COLOR.LIGHT_GREEN}${nodeEnv}
-${COLOR.RESET} - URL (local) : ${COLOR.LIGHT_GREEN}${appLocalUrl}
-${COLOR.RESET} - URL (red)   : ${COLOR.LIGHT_GREEN}${appNetworkUrl}${COLOR.RESET}`
+${COLOR.RESET} - Servicio    : ${COLOR.GREEN}Activo
+${COLOR.RESET} - Entorno     : ${COLOR.GREEN}${nodeEnv}
+${COLOR.RESET} - URL (local) : ${COLOR.GREEN}${appLocalUrl}
+${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}${COLOR.RESET}`
   loggerService.info(serviceInfo)
 }
 

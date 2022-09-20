@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppController } from './app.controller'
 import { Response } from 'express'
-import { LoggerModule } from './core/logger/logger.module';
+import { LoggerModule } from './core/logger/logger.module'
 import { ConfigModule } from '@nestjs/config'
 
 describe('App controller', () => {

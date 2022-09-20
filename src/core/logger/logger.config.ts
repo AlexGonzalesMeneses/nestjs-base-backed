@@ -86,9 +86,13 @@ export class LoggerConfig {
   }
 
   static customLogLevel(req: IncomingMessage, res: ServerResponse, err: Error) {
-    if (res.statusCode >= 200 && res.statusCode < 400) return 'info'
-    if (res.statusCode >= 400 && res.statusCode < 500) return 'warn'
-    if (res.statusCode >= 500) return 'error'
+    return LoggerConfig.getLogLevel(res.statusCode, err)
+  }
+
+  static getLogLevel(statusCode: number, err?: Error) {
+    if (statusCode >= 200 && statusCode < 400) return 'info'
+    if (statusCode >= 400 && statusCode < 500) return 'warn'
+    if (statusCode >= 500) return 'error'
     if (err) return 'error'
     return 'info'
   }
