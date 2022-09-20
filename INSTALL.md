@@ -213,6 +213,8 @@ npm run seeds:run
 
 - Para deshabilitar la generación de logs en ficheros `LOG_PATH` debe ser una cadena vacía.
 
+- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name` del archivo `package.json`) y dentro de esta última los archivos `info.log`, `warn.log` y `error.log`.
+
 - `LOG_SIZE` acepta los siguientes valores:
 
   - `G`: Tamaño en GigaBytes. Ej.: `1G`
@@ -227,4 +229,6 @@ npm run seeds:run
   - `m`: Se genera un nuevo fichero de logs cada minuto. Ej.: `1m`
   - `s`: Se genera un nuevo fichero de logs cada segundo. Ej.: `1s`
 
-
+- `LOG_HIDE` utiliza la librería [fast-redact](https://github.com/davidmarkclements/fast-redact#fast-redact) algunos ejemplos:
+  - `errorRequest.headers.authorization`
+  - `some.list[*].itemProperty.toHide`

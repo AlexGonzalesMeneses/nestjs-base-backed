@@ -97,6 +97,13 @@ export class LoggerConfig {
     return 'info'
   }
 
+  static redactOptions() {
+    return {
+      paths: process.env.LOG_HIDE ? process.env.LOG_HIDE.split(' ') : [],
+      censor: '*****',
+    }
+  }
+
   static getPinoHttpConfig(): Options {
     return {
       name: LoggerConfig.appName,
@@ -130,10 +137,7 @@ export class LoggerConfig {
         err: `error`,
         responseTime: `response time [ms]`,
       },
-      redact: {
-        paths: process.env.LOG_HIDE ? process.env.LOG_HIDE.split(' ') : [],
-        censor: '*****',
-      },
+      redact: LoggerConfig.redactOptions(),
     }
   }
 }

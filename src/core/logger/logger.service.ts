@@ -4,10 +4,13 @@ import dayjs from 'dayjs'
 import { Logger, Params, PARAMS_PROVIDER_TOKEN, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
 import { LOG_COLOR, LOG_LEVEL } from './constants'
+import fastRedact from 'fast-redact'
+import { LoggerConfig } from './logger.config'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
   context: string = LoggerService.name
+  private redact: fastRedact.redactFn
 
   constructor(
     pinoLogger: PinoLogger,
@@ -16,6 +19,7 @@ export class LoggerService extends Logger {
     params: Params
   ) {
     super(pinoLogger, params)
+    this.redact = fastRedact(LoggerConfig.redactOptions())
   }
 
   setContext(context: string) {
@@ -79,6 +83,12 @@ export class LoggerService extends Logger {
       const time = dayjs().format('DD/MM/YYYY HH:mm:ss')
       process.stdout.write(`\n${color}[${time} ${this.context}:${level}]\n`)
       optionalParams.map((data) => {
+        try {
+          data =
+            data && typeof data === 'object'
+              ? JSON.parse(this.redact(JSON.parse(JSON.stringify(data))))
+              : data
+        } catch (err) {}
         const toPrint =
           typeof data === 'object'
             ? inspect(data, false, null, false)
