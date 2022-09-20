@@ -1,5 +1,6 @@
 import { Scope } from '@nestjs/common'
 import { Inject, Injectable } from '@nestjs/common'
+import dayjs from 'dayjs'
 import { Logger, Params, PARAMS_PROVIDER_TOKEN, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
 import { LOG_COLOR, LOG_LEVEL } from './constants'
@@ -75,7 +76,8 @@ export class LoggerService extends Logger {
       if (process.env.NODE_ENV === 'production') return
 
       const color = this.getColor(level)
-      process.stdout.write(`\n${color}[${this.context}:${level}]\n`)
+      const time = dayjs().format('DD/MM/YYYY HH:mm:ss')
+      process.stdout.write(`\n${color}[${time} ${this.context}:${level}]\n`)
       optionalParams.map((data) => {
         const toPrint =
           typeof data === 'object'
