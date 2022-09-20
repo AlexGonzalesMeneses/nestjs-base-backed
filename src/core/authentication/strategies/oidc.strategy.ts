@@ -1,3 +1,4 @@
+import { LoggerService } from '../../logger/logger.service'
 import { UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import {
@@ -14,7 +15,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 dayjs.extend(customParseFormat)
 
-export const buildOpenIdClient = async () => {
+export const buildOpenIdClient = async (): Promise<Client | undefined> => {
   try {
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER || '')
     return new issuer.Client({
@@ -22,7 +23,13 @@ export const buildOpenIdClient = async () => {
       client_secret: process.env.OIDC_CLIENT_SECRET,
     })
   } catch (error) {
-    console.error('Error al conectar a ciudadanía:', error.message)
+    console.error('\n\n////// ERROR DE CONEXIÓN CON CIUDADANIA //////')
+    console.error(error)
+    console.error('----------------------------------------------')
+    console.error(
+      'El servicio se levantará sin esta característica dentro de 5 segundos\n\n'
+    )
+    await new Promise((resolve) => setTimeout(() => resolve(1), 5000))
   }
 }
 
@@ -30,7 +37,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   client: Client
 
   constructor(
-    private readonly autenticacionService: AuthenticationService,
+    protected logger: LoggerService,
+    private autenticacionService: AuthenticationService,
     client: Client
   ) {
     super({
@@ -44,6 +52,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     })
 
     this.client = client
+    this.logger.setContext(OidcStrategy.name)
   }
 
   async validate(tokenset: TokenSet): Promise<PassportUser> {
@@ -98,7 +107,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
-      console.log(`🚨 error validate`, err)
+      this.logger.error(err)
       throw new UnauthorizedException()
     }
   }

@@ -27,15 +27,19 @@ import { Usuario } from '../usuario/entity/usuario.entity'
 import { RefreshTokens } from './entity/refreshTokens.entity'
 import { UsuarioRol } from '../authorization/entity/usuario-rol.entity'
 import { Rol } from '../authorization/entity/rol.entity'
+import { LoggerService } from '../logger/logger.service'
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
-  useFactory: async (autenticacionService: AuthenticationService) => {
+  useFactory: async (
+    autenticacionService: AuthenticationService,
+    logger: LoggerService
+  ) => {
     const client: BaseClient | undefined = await buildOpenIdClient()
-    if (client) return new OidcStrategy(autenticacionService, client)
+    if (client) return new OidcStrategy(logger, autenticacionService, client)
     else return undefined
   },
-  inject: [AuthenticationService],
+  inject: [AuthenticationService, LoggerService],
 }
 
 @Module({
