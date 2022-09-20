@@ -1,23 +1,21 @@
-#!/bin/bash
-set -e
+#!/usr/bin/bash
 
-SERVER="localhost";
-PW="postgres";
-DB="base_db";
+# En caso de que algún comando falle (exit = 1) finalizará la ejecución del script y mostrará el siguiente mensaje:
+set -e -o errtrace
+trap "echo -e '\n\nERROR: Ocurrió un error mientras se ejecutaba el script :(\n\n'" ERR
 
-echo "Deteniendo y removiendo instancia anterior de [$SERVER] e iniciando una nueva"
-(docker kill $SERVER || :) && \
-  (docker rm $SERVER || :) && \
-  docker run --name $SERVER -e POSTGRES_PASSWORD=$PW \
-  -e PGPASSWORD=$PW \
-  -p 5432:5432 \
-  -d postgres
+# Definición de variables
+arg1=${1:-pg14}
+
+dockerContainer="${arg1}"
+
+# TODO - Aquí definimos las tareas
+echo "Reiniciando instancia de docker [$dockerContainer]"
+docker restart $dockerContainer
 
 # esperando contenedor
-echo "esperando a que el pg-server [$SERVER] inicie";
+echo "Esperando a que la instancia de docker [$dockerContainer] se inicie correctamente";
 sleep 3;
 
-# creando la base de datos
-echo "CREATE DATABASE $DB ENCODING 'UTF-8';" | docker exec -i $SERVER psql -U postgres
-echo "\l" | docker exec -i $SERVER psql -U postgres
-
+# Mensaje final
+echo -e "\n - Tarea completada exitosamente :)\n"
