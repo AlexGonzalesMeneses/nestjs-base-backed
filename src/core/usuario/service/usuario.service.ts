@@ -65,41 +65,54 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
       usuarioDto.persona
     )
-    if (!usuario) {
-      // verificar si el correo no esta registrado
-      const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        usuarioDto.correoElectronico
-      )
-      if (!correo) {
-        // contrastacion segip
-        const { persona } = usuarioDto
-        const contrastaSegip = await this.segipServices.contrastar(persona)
-        if (contrastaSegip?.finalizado) {
-          const contrasena = TextService.generateShortRandomText()
-          usuarioDto.contrasena = await TextService.encrypt(contrasena)
-          usuarioDto.estado = Status.PENDING
-          const result = await this.usuarioRepositorio.crear(
-            usuarioDto,
-            usuarioAuditoria
-          )
-          // enviar correo con credenciales
-          const datosCorreo = {
-            correo: usuarioDto.correoElectronico,
-            asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-          }
-          await this.enviarCorreoContrasenia(
-            datosCorreo,
-            usuarioDto.persona.nroDocumento,
-            contrasena
-          )
-          const { id, estado } = result
-          return { id, estado }
-        }
-        throw new PreconditionFailedException(contrastaSegip?.mensaje)
-      }
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
+    }
+
+    // verificar si el correo no esta registrado
+    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      usuarioDto.correoElectronico
+    )
+
+    if (correo) {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER)
+
+    // contrastacion segip
+    const { persona } = usuarioDto
+    const contrastaSegip = await this.segipServices.contrastar(persona)
+
+    if (!contrastaSegip?.finalizado) {
+      throw new PreconditionFailedException(contrastaSegip?.mensaje)
+    }
+
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      const contrasena = TextService.generateShortRandomText()
+      usuarioDto.contrasena = await TextService.encrypt(contrasena)
+      usuarioDto.estado = Status.PENDING
+      const usuarioResult = await this.usuarioRepositorio.crear(
+        usuarioDto,
+        usuarioAuditoria,
+        transaction
+      )
+      // enviar correo con credenciales
+      const datosCorreo = {
+        correo: usuarioDto.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+      }
+      await this.enviarCorreoContrasenia(
+        datosCorreo,
+        usuarioDto.persona.nroDocumento,
+        contrasena
+      )
+      return usuarioResult
+    }
+
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
+    )
+    return crearResult
   }
 
   async crearCuenta(usuarioDto: CrearUsuarioCuentaDto) {
@@ -131,48 +144,58 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    const usuarioNuevo = await this.usuarioRepositorio.crear(
-      {
-        usuario: usuarioDto.correoElectronico,
-        persona: {
-          nombres: usuarioDto.nombres,
-          primerApellido: '',
-          segundoApellido: '',
-          nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
-          fechaNacimiento: new Date(),
-          tipoDocumento: TipoDocumento.OTRO,
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      const usuarioNuevo = await this.usuarioRepositorio.crear(
+        {
+          usuario: usuarioDto.correoElectronico,
+          persona: {
+            nombres: usuarioDto.nombres,
+            primerApellido: '',
+            segundoApellido: '',
+            nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
+            fechaNacimiento: new Date(),
+            tipoDocumento: TipoDocumento.OTRO,
+          },
+          correoElectronico: usuarioDto.correoElectronico,
+          roles: rol?.id ? [rol?.id] : [],
+          estado: Status.PENDING,
+          contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
         },
-        correoElectronico: usuarioDto.correoElectronico,
-        roles: rol?.id ? [rol?.id] : [],
-        estado: Status.PENDING,
-        contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
-      },
-      usuarioAuditoria?.id ?? ''
-    )
+        usuarioAuditoria?.id ?? '',
+        transaction
+      )
 
-    if (usuarioNuevo?.id) {
-      const codigo = TextService.generateUuid()
-      const urlActivacion = `${this.configService.get(
-        'URL_FRONTEND'
-      )}/activacion?q=${codigo}`
+      if (usuarioNuevo?.id) {
+        const codigo = TextService.generateUuid()
+        const urlActivacion = `${this.configService.get(
+          'URL_FRONTEND'
+        )}/activacion?q=${codigo}`
 
-      this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+        this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
 
-      await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
+        await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
 
-      const template =
-        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+        const template =
+          TemplateEmailService.armarPlantillaActivacionCuentaManual(
+            urlActivacion
+          )
 
-      if (usuarioNuevo.correoElectronico) {
-        await this.mensajeriaService.sendEmail(
-          usuarioNuevo.correoElectronico,
-          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-          template
-        )
+        if (usuarioNuevo.correoElectronico) {
+          await this.mensajeriaService.sendEmail(
+            usuarioNuevo.correoElectronico,
+            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+            template
+          )
+        }
       }
+
+      return usuarioNuevo
     }
 
-    return { id: usuarioNuevo.id, estado: usuarioNuevo.estado }
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
+    )
+    return crearResult
   }
 
   async activarCuenta(codigo) {
@@ -288,16 +311,27 @@ export class UsuarioService extends BaseService {
     const persona = new PersonaDto()
     persona.nroDocumento = usuarioDto.usuario
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
-    if (!usuario) {
-      usuarioDto.estado = Status.ACTIVE
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
+    }
+
+    usuarioDto.estado = Status.ACTIVE
+
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
       const result = await this.usuarioRepositorio.crear(
         usuarioDto as CrearUsuarioDto,
-        usuarioAuditoria
+        usuarioAuditoria,
+        transaction
       )
-      const { id, estado } = result
-      return { id, estado }
+
+      return result
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER)
+
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
+    )
+
+    return crearResult
   }
 
   async crearConPersonaExistente(
