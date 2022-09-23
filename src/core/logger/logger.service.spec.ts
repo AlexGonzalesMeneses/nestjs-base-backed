@@ -21,18 +21,18 @@ describe('LoggerService', () => {
   })
 
   it('Debería ser implementado como ', () => {
-      expect(service).toBeDefined()
-    })
-    it('streams', () => {
-      expect(Array.isArray(LoggerConfig.getStream().streams)).toEqual(true)
-    })
-    it('Configuracion', () => {
-      expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('name')
-      expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('genReqId')
-      expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty(
-        'serializers'
-      )
-      expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('level')
-      expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('timestamp')
+    expect(service).toBeDefined()
+  })
+  it('streams', () => {
+    expect(Array.isArray(LoggerConfig.getStream().streams)).toEqual(true)
+  })
+  it('Configuracion', () => {
+    expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('name')
+    expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('genReqId')
+    expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty(
+      'serializers'
+    )
+    expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('level')
+    expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('timestamp')
   })
 })

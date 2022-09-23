@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { Parametro } from './../../src/application/parametro/parametro.entity';
+import { Parametro } from './../../src/application/parametro/parametro.entity'
 
 export class insertsParametros1617820337609 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
