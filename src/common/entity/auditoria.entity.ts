@@ -1,4 +1,12 @@
-import { BaseEntity, Column } from 'typeorm'
+import {
+  BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm'
+import { Transacccion } from '../constants'
 
 export abstract class AuditoriaEntity extends BaseEntity {
   @Column({
@@ -22,8 +30,9 @@ export abstract class AuditoriaEntity extends BaseEntity {
   })
   usuarioCreacion: string
 
-  @Column('timestamp without time zone', {
+  @CreateDateColumn({
     name: '_fecha_creacion',
+    type: 'timestamp without time zone',
     nullable: false,
     default: () => 'now()',
   })
@@ -35,11 +44,22 @@ export abstract class AuditoriaEntity extends BaseEntity {
   })
   usuarioModificacion?: string | null
 
-  @Column('timestamp without time zone', {
+  @UpdateDateColumn({
     name: '_fecha_modificacion',
+    type: 'timestamp without time zone',
     nullable: true,
   })
   fechaModificacion?: Date | null
+
+  @BeforeInsert()
+  insertarTransaccion() {
+    this.transaccion = this.transaccion || Transacccion.CREAR
+  }
+
+  @BeforeUpdate()
+  actualizarTransaccion() {
+    this.transaccion = this.transaccion || Transacccion.ACTUALIZAR
+  }
 
   constructor(data?: Partial<AuditoriaEntity>) {
     super()
