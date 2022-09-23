@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Check,
   Column,
   Entity,
@@ -88,5 +89,10 @@ export class Persona extends AuditoriaEntity {
 
   constructor(data?: Partial<Persona>) {
     super(data)
+  }
+
+  @BeforeInsert()
+  insertarEstado() {
+    this.estado = this.estado || Status.ACTIVE
   }
 }

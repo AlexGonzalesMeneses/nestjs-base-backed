@@ -65,30 +65,10 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
       usuarioDto.persona
     )
-
-    if (usuario) {
-      throw new PreconditionFailedException(Messages.EXISTING_USER)
-    }
-
-    // verificar si el correo no esta registrado
-    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-      usuarioDto.correoElectronico
-    )
-
-    if (correo) {
-      throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
-    }
-
-    // contrastacion segip
-    const { persona } = usuarioDto
-    const contrastaSegip = await this.segipServices.contrastar(persona)
-    if (contrastaSegip?.finalizado) {
-      const contrasena = TextService.generateShortRandomText()
-      usuarioDto.contrasena = await TextService.encrypt(contrasena)
-      usuarioDto.estado = Status.ACTIVE
-      await this.usuarioRepositorio.crear(
-        { ...usuarioDto, usuario: persona.nroDocumento },
-        usuarioAuditoria
+    if (!usuario) {
+      // verificar si el correo no esta registrado
+      const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+        usuarioDto.correoElectronico
       )
       if (!correo) {
         // contrastacion segip

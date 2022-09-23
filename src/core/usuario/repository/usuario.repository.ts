@@ -156,27 +156,32 @@ export class UsuarioRepository {
     // Usuario
 
     const op = async (transaction: EntityManager): Promise<Usuario> => {
-      const personaResult = await transaction.getRepository(Persona).save({
-        nombres: usuarioDto?.persona?.nombres,
-        primerApellido: usuarioDto?.persona?.primerApellido,
-        segundoApellido: usuarioDto?.persona?.segundoApellido,
-        nroDocumento: usuarioDto?.persona?.nroDocumento,
-        fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
-        tipoDocumento: usuarioDto.persona.tipoDocumento,
-      })
+      const personaResult = await transaction.getRepository(Persona).save(
+        new Persona({
+          nombres: usuarioDto?.persona?.nombres,
+          primerApellido: usuarioDto?.persona?.primerApellido,
+          segundoApellido: usuarioDto?.persona?.segundoApellido,
+          nroDocumento: usuarioDto?.persona?.nroDocumento,
+          fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
+          tipoDocumento: usuarioDto.persona.tipoDocumento,
+          usuarioCreacion: usuarioAuditoria,
+        })
+      )
 
-      const usuarioResult = await transaction.getRepository(Usuario).save({
-        idPersona: personaResult.id,
-        usuarioRol: [],
-        usuario: usuarioDto.usuario,
-        estado: usuarioDto?.estado ?? Status.CREATE,
-        correoElectronico: usuarioDto?.correoElectronico,
-        contrasena:
-          usuarioDto?.contrasena ??
-          (await TextService.encrypt(TextService.generateUuid())),
-        ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
-        usuarioCreacion: usuarioAuditoria,
-      })
+      const usuarioResult = await transaction.getRepository(Usuario).save(
+        new Usuario({
+          idPersona: personaResult.id,
+          usuarioRol: [],
+          usuario: usuarioDto.usuario || usuarioDto?.persona?.nroDocumento, // TODO revisar usuario
+          estado: usuarioDto?.estado ?? Status.CREATE,
+          correoElectronico: usuarioDto?.correoElectronico,
+          contrasena:
+            usuarioDto?.contrasena ??
+            (await TextService.encrypt(TextService.generateUuid())),
+          ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
+          usuarioCreacion: usuarioAuditoria,
+        })
+      )
 
       usuarioRoles.map((ur) => (ur.idUsuario = usuarioResult.id))
 
@@ -361,6 +366,6 @@ export class UsuarioRepository {
   }
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.getRepository(Usuario).manager.transaction(op)
+    return this.dataSource.manager.transaction<T>(op)
   }
 }
