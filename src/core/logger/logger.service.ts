@@ -71,7 +71,7 @@ export class LoggerService extends Logger {
       optionalParams.map((data) => {
         try {
           data =
-            data && typeof data === 'object'
+            data && typeof data === 'object' && !(data instanceof Error)
               ? JSON.parse(this.redact(JSON.parse(JSON.stringify(data))))
               : data
         } catch (err) {}
