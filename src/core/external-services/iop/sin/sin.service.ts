@@ -1,65 +1,80 @@
+import { BaseExternalService } from './../../../../common/base/base-external-service'
+import { ExternalServiceException } from './../../../../common/exceptions/external-service.exception'
+import { LoggerService } from '../../../logger/logger.service'
 import { Injectable } from '@nestjs/common'
-import { map } from 'rxjs/operators'
 import { SINCredencialesDTO } from './credenciales.dto'
 import { HttpService } from '@nestjs/axios'
-import { firstValueFrom } from 'rxjs'
+import { AxiosRequestConfig } from 'axios'
+import { LoginResponse } from './types'
 
 @Injectable()
-export class SinService {
-  constructor(private http: HttpService) {}
+export class SinService extends BaseExternalService {
+  constructor(protected http: HttpService, protected logger: LoggerService) {
+    super(http, logger, SinService.name, 'SIN')
+  }
 
   /**
    * @title Login
    * @description Metodo para verificar si la información de la empresa existe en el servicio del SIN
-   * @param datosSIN Objeto de datos con la información de la empresa
    */
   async login(datosSIN: SINCredencialesDTO) {
-    try {
-      const datosCampos = {
+    const config: AxiosRequestConfig = {
+      url: '/login',
+      method: 'post',
+      data: {
         nit: datosSIN.Nit,
         usuario: datosSIN.Usuario,
         clave: datosSIN.Contrasena,
-      }
+      },
+    }
 
-      const respuesta = await firstValueFrom(
-        await this.http
-          .post('/login', datosCampos)
-          .pipe(map((response) => response.data))
-      )
+    const requestResult = await this.request(config)
+    const responseStatus = requestResult.status
 
-      if (
-        !respuesta.estado &&
-        respuesta.message &&
-        respuesta.message.match(/You cannot consume this service/) !== null &&
-        respuesta.message.match(/You cannot consume this service/).length === 1
-      ) {
-        throw new Error(
-          `Error con el Servicio Web SIN: no tiene permisos para usar este servicio.`
-        )
-      }
-      if (
-        !respuesta.estado &&
-        respuesta.message &&
-        respuesta.message.match(/no API found with those valuese/) !== null &&
-        respuesta.message.match(/no API found with those valuese/).length === 1
-      ) {
-        throw new Error(
-          `Error con el Servicio Web SIN: no se encontró el servicio solicitado.`
-        )
-      }
-      if (respuesta.Autenticado) {
-        return {
-          resultado: true,
-          mensaje: respuesta.estado,
-        }
-      } else {
-        throw new Error(respuesta.Mensaje || 'Error con el servicio web SIN')
-      }
-    } catch (e) {
-      return {
-        resultado: false,
-        mensaje: e.message,
-      }
+    if (responseStatus !== 200 || !requestResult.body) {
+      const errMsg = `Ocurrió un error inesperado, por favor inténtelo nuevamente y si el problema persiste comuníquese con el encargado de sistemas.`
+      return this.errorResponse(errMsg)
+    }
+
+    const body = requestResult.body as LoginResponse
+
+    if (
+      !body.Estado &&
+      body.Mensaje &&
+      body.Mensaje.includes('You cannot consume this service')
+    ) {
+      const errMsg = `No tiene permisos para usar este servicio.`
+      return this.errorResponse(errMsg)
+    }
+
+    if (
+      !body.Estado &&
+      body.Mensaje &&
+      body.Mensaje.includes('no API found with those values')
+    ) {
+      const errMsg = `No se encontró el servicio solicitado.`
+      return this.errorResponse(errMsg)
+    }
+
+    if (!body.Autenticado) {
+      const errMsg = body.Mensaje || 'Error desconocido'
+      return this.errorResponse(errMsg)
+    }
+
+    return this.successResponse(body.Estado)
+  }
+
+  private successResponse(mensaje: string) {
+    return {
+      resultado: true,
+      mensaje,
+    }
+  }
+
+  private errorResponse(mensaje: string) {
+    return {
+      resultado: false,
+      mensaje: new ExternalServiceException(this.serviceName, mensaje).message,
     }
   }
 }

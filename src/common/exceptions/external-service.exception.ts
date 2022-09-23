@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
 
 export class ExternalServiceException extends HttpException {
-  constructor(service, error) {
-    const errorMessage = error?.response?.data || error.request || error.message
-    console.error('Error', errorMessage)
+  constructor(service: string, err: unknown) {
     super(
-      `Ocurrio un error con el servicio de: ${service}`,
-      HttpStatus.FAILED_DEPENDENCY
+      {
+        message: `Error con el Servicio Web ${service}`,
+        error: err,
+        errorStack: err instanceof Error ? err.stack : undefined,
+      },
+      HttpStatus.PRECONDITION_FAILED
     )
   }
 }

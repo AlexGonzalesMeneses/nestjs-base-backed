@@ -4,8 +4,7 @@ import { AuthZManagementService } from 'nest-authz'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { AuthorizationController } from './authorization.controller'
 import { AuthorizationService } from './authorization.service'
-import { LoggerModule } from 'nestjs-pino'
-import { LogService } from '../../logs/log.service'
+import { LoggerModule } from '../../logger/logger.module'
 
 const resPolitica = {
   sujeto: 'ADMINISTRADOR',
@@ -24,11 +23,7 @@ describe('AuthorizationController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        LoggerModule.forRoot({
-          pinoHttp: [LogService.getPinoHttpConfig(), LogService.getStream()],
-        }),
-      ],
+      imports: [LoggerModule],
       controllers: [AuthorizationController],
       providers: [
         {

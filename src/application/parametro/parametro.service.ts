@@ -1,3 +1,5 @@
+import { LoggerService } from '../../core/logger/logger.service'
+import { BaseService } from '../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { ParametroRepository } from './parametro.repository'
 import { Parametro } from './parametro.entity'
@@ -9,11 +11,14 @@ import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { Status } from '../../common/constants'
 
 @Injectable()
-export class ParametroService {
+export class ParametroService extends BaseService {
   constructor(
+    protected logger: LoggerService,
     @Inject(ParametroRepository)
     private parametroRepositorio: ParametroRepository
-  ) {}
+  ) {
+    super(logger, ParametroService.name)
+  }
 
   async crear(parametroDto: CrearParametroDto): Promise<Parametro> {
     return await this.parametroRepositorio.crear(parametroDto)

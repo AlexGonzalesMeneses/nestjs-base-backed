@@ -1,3 +1,5 @@
+import { LoggerService } from './../../logger/logger.service'
+import { BaseService } from './../../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { UsuarioService } from '../../usuario/service/usuario.service'
 import { JwtService } from '@nestjs/jwt'
@@ -17,9 +19,10 @@ import { PersonaService } from '../../usuario/service/persona.service'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 
 @Injectable()
-export class AuthenticationService {
+export class AuthenticationService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
+    protected logger: LoggerService,
     private readonly personaService: PersonaService,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
@@ -30,7 +33,9 @@ export class AuthenticationService {
     @Inject(RolRepository)
     private rolRepositorio: RolRepository,
     @Inject(ConfigService) private readonly configService: ConfigService
-  ) {}
+  ) {
+    super(logger, AuthenticationService.name)
+  }
 
   private async verificarBloqueo(usuario) {
     if (usuario.intentos >= Configurations.WRONG_LOGIN_LIMIT) {

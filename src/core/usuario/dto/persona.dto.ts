@@ -1,4 +1,4 @@
-import { IsDate, ValidateIf } from 'class-validator'
+import { IsDateString, ValidateIf } from 'class-validator'
 import { Transform } from 'class-transformer'
 import {
   IsNotEmpty,
@@ -28,6 +28,6 @@ export class PersonaDto {
   @NombreApellido()
   segundoApellido?: string
 
-  @IsDate()
+  @IsDateString()
   fechaNacimiento?: Date | null
 }

@@ -46,6 +46,7 @@ cp ecosystem.config.js.sample ecosystem.config.js
 
 ```bash
 # Crear los siguientes esquemas de base de datos:
+create schema proyecto;
 create schema usuarios;
 create schema parametricas;
 ```
@@ -113,6 +114,9 @@ npm run seeds:run
 | `NODE_ENV` | `development`     | Ambiente de despliegue.                      |
 | `PORT`     | `3000`            | Puerto en el que se levantará la aplicación. |
 
+
+*** La URL de despliegue sería: `http://localhost:3000/api/estado`
+
 **Configuración de la base de datos**
 
 | Variable                 | Valor por defecto | Descripción                                                                                   |
@@ -122,6 +126,7 @@ npm run seeds:run
 | `DB_PASSWORD`            | `postgres`        | contraseña de la base de datos.                                                               |
 | `DB_DATABASE`            | `database_db`     | nombre de la base de datos.                                                                   |
 | `DB_PORT`                | `5432`            | puerto de despliegue de la base de datos.                                                     |
+| `DB_SCHEMA`              | `proyecto`        | Utilizado para almacenar las tablas del proyecto, y todo lo relacionado con la lógica de negocio. |
 | `DB_SCHEMA_USUARIOS`     | `usuarios`        | Utilizado para almacenar la tabla usuarios, roles y todo lo relacionado con la autenticación. |
 | `DB_SCHEMA_PARAMETRICAS` | `parametricas`    | Utilizado para almanecar tablas de tipo paramétricas.                                         |
 
@@ -208,6 +213,8 @@ npm run seeds:run
 
 - Para deshabilitar la generación de logs en ficheros `LOG_PATH` debe ser una cadena vacía.
 
+- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name` del archivo `package.json`) y dentro de esta última los archivos `info.log`, `warn.log` y `error.log`.
+
 - `LOG_SIZE` acepta los siguientes valores:
 
   - `G`: Tamaño en GigaBytes. Ej.: `1G`
@@ -221,3 +228,7 @@ npm run seeds:run
   - `h`: Se genera un nuevo fichero de logs cada hora. Ej.: `1h`
   - `m`: Se genera un nuevo fichero de logs cada minuto. Ej.: `1m`
   - `s`: Se genera un nuevo fichero de logs cada segundo. Ej.: `1s`
+
+- `LOG_HIDE` utiliza la librería [fast-redact](https://github.com/davidmarkclements/fast-redact#fast-redact) algunos ejemplos:
+  - `errorRequest.headers.authorization`
+  - `some.list[*].itemProperty.toHide`

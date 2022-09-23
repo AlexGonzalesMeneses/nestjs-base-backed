@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common'
 import * as rTracer from 'cls-rtracer'
 import { Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
@@ -7,17 +6,20 @@ import { IncomingMessage, ServerResponse } from 'http'
 import pretty from 'pino-pretty'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
+import packageJson from '../../../package.json'
 import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config()
 
-@Injectable()
-export class LogService {
-  static appName = process.env.npm_package_name || 'APP'
+export class LoggerConfig {
+  static appName = packageJson.name || 'APP'
+
   static getStream(): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
     if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
       const options: RotateOptions = {
         size: process.env.LOG_SIZE || '5M',
-        path: path.resolve(process.env.LOG_PATH, LogService.appName),
+        path: path.resolve(process.env.LOG_PATH, LoggerConfig.appName),
         interval: process.env.LOG_INTERVAL || '1d',
       }
 
@@ -84,16 +86,27 @@ export class LogService {
   }
 
   static customLogLevel(req: IncomingMessage, res: ServerResponse, err: Error) {
-    if (res.statusCode >= 200 && res.statusCode < 400) return 'info'
-    if (res.statusCode >= 400 && res.statusCode < 500) return 'warn'
-    if (res.statusCode >= 500) return 'error'
+    return LoggerConfig.getLogLevel(res.statusCode, err)
+  }
+
+  static getLogLevel(statusCode: number, err?: Error) {
+    if (statusCode >= 200 && statusCode < 400) return 'info'
+    if (statusCode >= 400 && statusCode < 500) return 'warn'
+    if (statusCode >= 500) return 'error'
     if (err) return 'error'
     return 'info'
   }
 
+  static redactOptions() {
+    return {
+      paths: process.env.LOG_HIDE ? process.env.LOG_HIDE.split(' ') : [],
+      censor: '*****',
+    }
+  }
+
   static getPinoHttpConfig(): Options {
     return {
-      name: LogService.appName,
+      name: LoggerConfig.appName,
       genReqId: (req) => {
         return (req.id || rTracer.id()) as ReqId
       },
@@ -124,35 +137,7 @@ export class LogService {
         err: `error`,
         responseTime: `response time [ms]`,
       },
-      redact: {
-        paths: (process.env.LOG_HIDE || '').split(' '),
-        censor: '*****',
-      },
+      redact: LoggerConfig.redactOptions(),
     }
-  }
-
-  static info(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[36m${msg}\x1b[0m`)
-  }
-
-  static warn(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[33m${msg}\x1b[0m`)
-  }
-
-  static error(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[91m${msg}\x1b[0m`)
-  }
-
-  static success(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[92m${msg}\x1b[0m`)
-  }
-
-  static log(msg: string): void {
-    if (process.env.NODE_ENV === 'production') return
-    console.log(`\x1b[37m${msg}\x1b[0m`)
   }
 }

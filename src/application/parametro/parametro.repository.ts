@@ -1,4 +1,4 @@
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto'
+import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { DataSource, UpdateResult } from 'typeorm'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { Parametro } from './parametro.entity'

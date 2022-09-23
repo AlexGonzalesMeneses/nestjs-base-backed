@@ -1,3 +1,4 @@
+import { LoggerModule } from '../../../logger/logger.module'
 import { HttpService } from '@nestjs/axios'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SinService } from './sin.service'
@@ -7,6 +8,7 @@ describe('SinService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         SinService,
         {

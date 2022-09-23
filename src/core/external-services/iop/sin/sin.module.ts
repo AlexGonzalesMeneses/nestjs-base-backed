@@ -1,3 +1,4 @@
+import { LoggerModule } from '../../../logger/logger.module'
 import { Module } from '@nestjs/common'
 import { SinService } from './sin.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -5,6 +6,7 @@ import { HttpModule } from '@nestjs/axios'
 
 @Module({
   imports: [
+    LoggerModule,
     HttpModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -17,5 +19,6 @@ import { HttpModule } from '@nestjs/axios'
     }),
   ],
   providers: [SinService],
+  exports: [SinService],
 })
 export class SinModule {}

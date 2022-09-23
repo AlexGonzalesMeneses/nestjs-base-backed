@@ -104,7 +104,7 @@ export class ModuloRepository {
     modulo.propiedades = propiedades
     modulo.usuarioCreacion = usuarioAuditoria
     modulo.fechaCreacion = new Date()
-    if (moduloDto.fidModulo != '') {
+    if (moduloDto.fidModulo) {
       const em = new Modulo()
       em.id = moduloDto.fidModulo
       modulo.fidModulo = em

@@ -1,3 +1,4 @@
+import { LoggerModule } from '../../core/logger/logger.module'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -15,6 +16,7 @@ describe('ParametroService', () => {
   let service: ParametroService
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         ParametroService,
         {

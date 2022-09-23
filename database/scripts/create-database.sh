@@ -30,6 +30,7 @@ sleep 2;
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "DROP DATABASE IF EXISTS $dbname"
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -c "CREATE DATABASE $dbname ENCODING 'UTF-8'"
 
+docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -d $dbname -c "CREATE SCHEMA proyecto AUTHORIZATION $dbuser"
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -d $dbname -c "CREATE SCHEMA usuarios AUTHORIZATION $dbuser"
 docker exec $dockerContainer psql -h $dbhost -p $dbport -U postgres -d $dbname -c "CREATE SCHEMA parametricas AUTHORIZATION $dbuser"
 

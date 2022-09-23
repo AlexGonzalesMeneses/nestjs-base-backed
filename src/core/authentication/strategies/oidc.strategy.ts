@@ -1,3 +1,4 @@
+import { LoggerService } from '../../logger/logger.service'
 import { UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import {
@@ -14,7 +15,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 dayjs.extend(customParseFormat)
 
-export const buildOpenIdClient = async () => {
+export const buildOpenIdClient = async (): Promise<Client | undefined> => {
   try {
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER || '')
     return new issuer.Client({
@@ -22,7 +23,13 @@ export const buildOpenIdClient = async () => {
       client_secret: process.env.OIDC_CLIENT_SECRET,
     })
   } catch (error) {
-    console.error('Error al conectar a ciudadanía:', error.message)
+    console.error('\n\n////// ERROR DE CONEXIÓN CON CIUDADANIA //////')
+    console.error(error)
+    console.error('----------------------------------------------')
+    console.error(
+      'El servicio se levantará sin esta característica dentro de 5 segundos\n\n'
+    )
+    await new Promise((resolve) => setTimeout(() => resolve(1), 5000))
   }
 }
 
@@ -30,7 +37,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   client: Client
 
   constructor(
-    private readonly autenticacionService: AuthenticationService,
+    protected logger: LoggerService,
+    private autenticacionService: AuthenticationService,
     client: Client
   ) {
     super({
@@ -44,13 +52,15 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     })
 
     this.client = client
+    this.logger.setContext(OidcStrategy.name)
   }
 
   async validate(tokenset: TokenSet): Promise<PassportUser> {
     try {
-      const userinfo: UserinfoResponse = await this.client.userinfo(tokenset)
+      const userinfo: UserinfoResponse<userInfoType> =
+        await this.client.userinfo(tokenset)
 
-      const ci = <documentoIdentidad>userinfo.documento_identidad
+      const ci = <DocumentoIdentidadType>userinfo?.profile?.documento_identidad
 
       /*if (/[a-z]/i.test(ci.numero_documento)) {
         ci.complemento = ci.numero_documento.slice(-2);
@@ -67,7 +77,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.tipoDocumento = ci.tipo_documento
       persona.nroDocumento = ci.numero_documento
       persona.fechaNacimiento = fechaNacimiento
-      const nombre = <nombre>userinfo.nombre
+      const nombre = <NombreType>userinfo.profile?.nombre ?? ''
       persona.nombres = nombre.nombres
       persona.primerApellido = nombre.primer_apellido
       persona.segundoApellido = nombre.segundo_apellido
@@ -97,19 +107,33 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
+      this.logger.error(err)
       throw new UnauthorizedException()
     }
   }
 }
 
-export interface documentoIdentidad {
+export interface DocumentoIdentidadType {
   tipo_documento: string
   numero_documento: string
   complemento: string
 }
 
-export interface nombre {
+export interface NombreType {
   nombres: string
   primer_apellido: string
   segundo_apellido: string
+}
+
+export interface ProfileType {
+  documento_identidad: DocumentoIdentidadType
+  nombre: NombreType
+}
+
+export interface userInfoType {
+  sub: string
+  profile: ProfileType
+  fecha_nacimiento: string
+  email: string
+  celular: string
 }

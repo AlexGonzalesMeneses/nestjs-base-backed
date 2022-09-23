@@ -6,14 +6,11 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter'
 import { ScheduleModule } from '@nestjs/schedule'
 import { CoreModule } from './core/core.module'
 import { ApplicationModule } from './application/application.module'
-import { LoggerModule } from 'nestjs-pino'
-import { LogService } from './core/logs/log.service'
+import { LoggerModule } from './core/logger/logger.module'
 
 @Module({
   imports: [
-    LoggerModule.forRoot({
-      pinoHttp: [LogService.getPinoHttpConfig(), LogService.getStream()],
-    }),
+    LoggerModule,
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     CoreModule,

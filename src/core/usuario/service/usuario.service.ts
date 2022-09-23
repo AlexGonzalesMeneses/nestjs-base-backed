@@ -1,3 +1,5 @@
+import { LoggerService } from './../../logger/logger.service'
+import { BaseService } from './../../../common/base/base-service'
 import {
   Inject,
   Injectable,
@@ -30,12 +32,12 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { PinoLogger } from 'nestjs-pino'
 
 @Injectable()
-export class UsuarioService {
+export class UsuarioService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
+    protected logger: LoggerService,
     @Inject(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     @Inject(UsuarioRolRepository)
@@ -45,9 +47,10 @@ export class UsuarioService {
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
-    private configService: ConfigService,
-    private readonly logger: PinoLogger
-  ) {}
+    private configService: ConfigService
+  ) {
+    super(logger, UsuarioService.name)
+  }
 
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
     return await this.usuarioRepositorio.listar(paginacionQueryDto)
@@ -62,10 +65,30 @@ export class UsuarioService {
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
       usuarioDto.persona
     )
-    if (!usuario) {
-      // verificar si el correo no esta registrado
-      const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        usuarioDto.correoElectronico
+
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
+    }
+
+    // verificar si el correo no esta registrado
+    const correo = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+      usuarioDto.correoElectronico
+    )
+
+    if (correo) {
+      throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+    }
+
+    // contrastacion segip
+    const { persona } = usuarioDto
+    const contrastaSegip = await this.segipServices.contrastar(persona)
+    if (contrastaSegip?.finalizado) {
+      const contrasena = TextService.generateShortRandomText()
+      usuarioDto.contrasena = await TextService.encrypt(contrasena)
+      usuarioDto.estado = Status.ACTIVE
+      await this.usuarioRepositorio.crear(
+        { ...usuarioDto, usuario: persona.nroDocumento },
+        usuarioAuditoria
       )
       if (!correo) {
         // contrastacion segip

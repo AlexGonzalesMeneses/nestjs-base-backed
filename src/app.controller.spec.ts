@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppController } from './app.controller'
 import { Response } from 'express'
-import { LoggerModule } from 'nestjs-pino'
+import { LoggerModule } from './core/logger/logger.module'
 import { ConfigModule } from '@nestjs/config'
 
 describe('App controller', () => {
   let controller: AppController
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule.forRoot(), ConfigModule.forRoot()],
+      imports: [LoggerModule, ConfigModule.forRoot()],
       controllers: [AppController],
       providers: [],
     }).compile()
