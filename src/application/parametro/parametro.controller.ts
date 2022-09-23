@@ -19,16 +19,12 @@ import { BaseController } from '../../common/base/base-controller'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ParamUuidDto } from '../../common/dto/params-uuid.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
-import { LoggerService } from '../../core/logger/logger.service'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private parametroServicio: ParametroService
-  ) {
-    super(logger, ParametroController.name)
+  constructor(private parametroServicio: ParametroService) {
+    super(ParametroController.name)
   }
 
   @UsePipes(

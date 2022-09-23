@@ -1,18 +1,14 @@
 import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common'
 import { Response } from 'express'
 import { ConfigService } from '@nestjs/config'
-import { LoggerService } from './core/logger/logger.service'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
 
 @Controller()
 export class AppController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    @Inject(ConfigService) private configService: ConfigService
-  ) {
-    super(logger, AppController.name)
+  constructor(@Inject(ConfigService) private configService: ConfigService) {
+    super(AppController.name)
   }
 
   @Get('/estado')

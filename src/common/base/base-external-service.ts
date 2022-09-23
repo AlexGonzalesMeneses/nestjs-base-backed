@@ -2,7 +2,6 @@ import { LoggerConfig } from './../../core/logger/logger.config'
 import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig, AxiosError } from 'axios'
 import { firstValueFrom } from 'rxjs'
-import { LoggerService } from './../../core/logger/logger.service'
 import { BaseService } from './base-service'
 
 export type RequestResult = {
@@ -12,12 +11,11 @@ export type RequestResult = {
 
 export class BaseExternalService extends BaseService {
   constructor(
-    protected http: HttpService,
-    protected logger: LoggerService,
     protected context: string,
+    protected http: HttpService,
     protected serviceName: string
   ) {
-    super(logger, context)
+    super(context)
   }
 
   protected async request(

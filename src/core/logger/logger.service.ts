@@ -1,7 +1,7 @@
 import { Scope } from '@nestjs/common'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { Logger, Params, PARAMS_PROVIDER_TOKEN, PinoLogger } from 'nestjs-pino'
+import { Logger, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
 import { LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
@@ -12,13 +12,8 @@ export class LoggerService extends Logger {
   context: string = LoggerService.name
   private redact: fastRedact.redactFn
 
-  constructor(
-    pinoLogger: PinoLogger,
-
-    @Inject(PARAMS_PROVIDER_TOKEN)
-    params: Params
-  ) {
-    super(pinoLogger, params)
+  constructor(pinoLogger: PinoLogger) {
+    super(pinoLogger, {})
     this.redact = fastRedact(LoggerConfig.redactOptions())
   }
 
@@ -95,5 +90,19 @@ export class LoggerService extends Logger {
 
   private getColor(level: LOG_LEVEL) {
     return LOG_COLOR[level]
+  }
+
+  static instances: { [key: string]: LoggerService } = {}
+  static getInstance(context = LoggerService.name) {
+    if (LoggerService.instances[context]) {
+      return LoggerService.instances[context]
+    }
+    const pinoLogger = new PinoLogger({
+      pinoHttp: [LoggerConfig.getPinoHttpConfig(), LoggerConfig.getStream()],
+    })
+    const logger = new LoggerService(pinoLogger)
+    logger.setContext(context)
+    LoggerService.instances[context] = logger
+    return LoggerService.instances[context]
   }
 }

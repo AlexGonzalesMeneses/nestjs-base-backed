@@ -30,15 +30,11 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { LoggerService } from './../../logger/logger.service'
 
 @Controller('usuarios')
 export class UsuarioController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private usuarioService: UsuarioService
-  ) {
-    super(logger, UsuarioController.name)
+  constructor(private usuarioService: UsuarioService) {
+    super(UsuarioController.name)
   }
 
   // GET users

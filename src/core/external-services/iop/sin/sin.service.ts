@@ -1,6 +1,5 @@
 import { BaseExternalService } from './../../../../common/base/base-external-service'
 import { ExternalServiceException } from './../../../../common/exceptions/external-service.exception'
-import { LoggerService } from '../../../logger/logger.service'
 import { Injectable } from '@nestjs/common'
 import { SINCredencialesDTO } from './credenciales.dto'
 import { HttpService } from '@nestjs/axios'
@@ -9,8 +8,8 @@ import { LoginResponse } from './types'
 
 @Injectable()
 export class SinService extends BaseExternalService {
-  constructor(protected http: HttpService, protected logger: LoggerService) {
-    super(http, logger, SinService.name, 'SIN')
+  constructor(protected http: HttpService) {
+    super(SinService.name, http, 'SIN')
   }
 
   /**

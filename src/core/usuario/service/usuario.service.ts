@@ -1,4 +1,3 @@
-import { LoggerService } from './../../logger/logger.service'
 import { BaseService } from './../../../common/base/base-service'
 import {
   Inject,
@@ -37,7 +36,6 @@ import {
 export class UsuarioService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     @Inject(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     @Inject(UsuarioRolRepository)
@@ -49,7 +47,7 @@ export class UsuarioService extends BaseService {
     private readonly segipServices: SegipService,
     private configService: ConfigService
   ) {
-    super(logger, UsuarioService.name)
+    super(UsuarioService.name)
   }
 
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {

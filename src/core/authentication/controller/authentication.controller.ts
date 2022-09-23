@@ -16,7 +16,6 @@ import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { LoggerService } from './../../logger/logger.service'
 import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 import { ConfigService } from '@nestjs/config'
 
@@ -24,12 +23,11 @@ import { ConfigService } from '@nestjs/config'
 export class AuthenticationController extends BaseController {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     private autenticacionService: AuthenticationService,
     private refreshTokensService: RefreshTokensService,
     @Inject(ConfigService) private configService: ConfigService
   ) {
-    super(logger, AuthenticationController.name)
+    super(AuthenticationController.name)
   }
 
   @UseGuards(LocalAuthGuard)

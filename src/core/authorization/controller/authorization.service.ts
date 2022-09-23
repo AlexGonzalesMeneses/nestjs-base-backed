@@ -1,4 +1,3 @@
-import { LoggerService } from '../../logger/logger.service'
 import { BaseService } from '../../../common/base/base-service'
 import { Injectable, Query } from '@nestjs/common'
 import { AuthZManagementService } from 'nest-authz'
@@ -8,11 +7,10 @@ import { ModuloService } from '../service/modulo.service'
 @Injectable()
 export class AuthorizationService extends BaseService {
   constructor(
-    protected logger: LoggerService,
     private readonly authZManagerService: AuthZManagementService,
     private readonly moduloService: ModuloService
   ) {
-    super(logger, AuthorizationService.name)
+    super(AuthorizationService.name)
   }
 
   async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
