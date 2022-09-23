@@ -220,10 +220,7 @@ describe('UsuarioService', () => {
           useValue: {},
         },
       ],
-      imports: [
-        MensajeriaModule,
-        LoggerModule,
-      ],
+      imports: [MensajeriaModule, LoggerModule],
     }).compile()
 
     service = module.get<UsuarioService>(UsuarioService)

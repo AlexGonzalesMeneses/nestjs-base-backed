@@ -1,4 +1,4 @@
-import { LoggerModule } from './../../logger/logger.module';
+import { LoggerModule } from './../../logger/logger.module'
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
