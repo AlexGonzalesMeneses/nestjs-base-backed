@@ -155,25 +155,44 @@ export class UsuarioRepository {
 
     // Usuario
 
-    return await this.dataSource.getRepository(Usuario).save({
-      persona: {
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      const personaResult = await transaction.getRepository(Persona).save({
         nombres: usuarioDto?.persona?.nombres,
         primerApellido: usuarioDto?.persona?.primerApellido,
         segundoApellido: usuarioDto?.persona?.segundoApellido,
         nroDocumento: usuarioDto?.persona?.nroDocumento,
         fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
         tipoDocumento: usuarioDto.persona.tipoDocumento,
-      },
-      usuarioRol: usuarioRoles,
-      usuario: usuarioDto.usuario,
-      estado: usuarioDto?.estado ?? Status.CREATE,
-      correoElectronico: usuarioDto?.correoElectronico,
-      contrasena:
-        usuarioDto?.contrasena ??
-        (await TextService.encrypt(TextService.generateUuid())),
-      ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
-      usuarioCreacion: usuarioAuditoria,
-    })
+      })
+
+      const usuarioResult = await transaction.getRepository(Usuario).save({
+        idPersona: personaResult.id,
+        usuarioRol: [],
+        usuario: usuarioDto.usuario,
+        estado: usuarioDto?.estado ?? Status.CREATE,
+        correoElectronico: usuarioDto?.correoElectronico,
+        contrasena:
+          usuarioDto?.contrasena ??
+          (await TextService.encrypt(TextService.generateUuid())),
+        ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
+        usuarioCreacion: usuarioAuditoria,
+      })
+
+      usuarioRoles.map((ur) => (ur.idUsuario = usuarioResult.id))
+
+      await transaction
+        .createQueryBuilder()
+        .insert()
+        .into(UsuarioRol)
+        .values(usuarioRoles)
+        .execute()
+
+      return usuarioResult
+    }
+
+    const usuario = await this.runTransaction<Usuario>(op)
+
+    return usuario
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
