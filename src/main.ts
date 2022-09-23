@@ -101,7 +101,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method.toLowerCase() === 'options') return next()
-      loggerService.log(`${req.method} ${req.originalUrl}`)
+      loggerService.trace(`${req.method} ${req.originalUrl}`)
       return next()
     })
   }
@@ -109,7 +109,7 @@ async function bootstrap() {
   const port = configService.get('PORT')
   await app.listen(port)
 
-  loggerService.log(`
+  loggerService.trace(`
                                  $@@.
                                   $@@@  @@,
                                    ]@@"g@@@@g

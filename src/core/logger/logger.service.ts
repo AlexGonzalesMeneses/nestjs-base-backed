@@ -26,55 +26,46 @@ export class LoggerService extends Logger {
     this.logger.setContext(context)
     this.context = context
   }
+
   /**
-   * Mensajes para el modo desarrollo.
-   * Estos mensajes solamente serán visibles en la terminal, no se guardarán en los ficheros de logs.
+   * @deprecated Cambiado por el método trace. Ej: this.loggger.trace('message')
    * @param optionalParams
    */
   log(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.NOTICE, ...optionalParams)
-  }
-
-  verbose() {
-    // disabled method
+    this.print(LOG_LEVEL.TRACE, ...optionalParams)
   }
 
   /**
-   * Estos mensajes se guardarán en los ficheros de logs
+   * @deprecated Cambiado por el método trace. Ej: this.loggger.trace('message')
    * @param optionalParams
    */
-  info(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.INFO, ...optionalParams)
+  verbose(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.TRACE, ...optionalParams)
   }
 
-  /**
-   * Estos mensajes se guardarán en los ficheros de logs
-   * @param optionalParams
-   */
-  warn(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.WARN, ...optionalParams)
-  }
-
-  /**
-   * Estos mensajes se guardarán en los ficheros de logs
-   * @param optionalParams
-   */
   error(...optionalParams: unknown[]) {
     this.print(LOG_LEVEL.ERROR, ...optionalParams)
   }
 
-  /**
-   * Mensajes para el modo desarrollo.
-   * Estos mensajes solamente serán visibles en la terminal, no se guardarán en los ficheros de logs.
-   * @param optionalParams
-   */
+  warn(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.WARN, ...optionalParams)
+  }
+
+  info(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.INFO, ...optionalParams)
+  }
+
   debug(...optionalParams: unknown[]) {
     this.print(LOG_LEVEL.DEBUG, ...optionalParams)
   }
 
+  trace(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.TRACE, ...optionalParams)
+  }
+
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
     try {
-      if ([LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR].includes(level)) {
+      if (LoggerConfig.logLevelSelected.includes(level)) {
         optionalParams.map((param) => this.logger[level](param))
       }
       if (process.env.NODE_ENV === 'production') return
@@ -103,11 +94,6 @@ export class LoggerService extends Logger {
   }
 
   private getColor(level: LOG_LEVEL) {
-    if (level === LOG_LEVEL.INFO) return LOG_COLOR.INFO
-    if (level === LOG_LEVEL.WARN) return LOG_COLOR.WARN
-    if (level === LOG_LEVEL.ERROR) return LOG_COLOR.ERROR
-    if (level === LOG_LEVEL.DEBUG) return LOG_COLOR.DEBUG
-    if (level === LOG_LEVEL.NOTICE) return LOG_COLOR.NOTICE
-    return LOG_COLOR.DEBUG
+    return LOG_COLOR[level]
   }
 }

@@ -114,21 +114,20 @@ npm run seeds:run
 | `NODE_ENV` | `development`     | Ambiente de despliegue.                      |
 | `PORT`     | `3000`            | Puerto en el que se levantará la aplicación. |
 
-
-*** La URL de despliegue sería: `http://localhost:3000/api/estado`
+\*\*\* La URL de despliegue sería: `http://localhost:3000/api/estado`
 
 **Configuración de la base de datos**
 
-| Variable                 | Valor por defecto | Descripción                                                                                   |
-| ------------------------ | ----------------- | --------------------------------------------------------------------------------------------- |
-| `DB_HOST`                | `localhost`       | Host de la base de datos.                                                                     |
-| `DB_USERNAME`            | `postgres`        | nombre de usuario de la base de datos.                                                        |
-| `DB_PASSWORD`            | `postgres`        | contraseña de la base de datos.                                                               |
-| `DB_DATABASE`            | `database_db`     | nombre de la base de datos.                                                                   |
-| `DB_PORT`                | `5432`            | puerto de despliegue de la base de datos.                                                     |
+| Variable                 | Valor por defecto | Descripción                                                                                       |
+| ------------------------ | ----------------- | ------------------------------------------------------------------------------------------------- |
+| `DB_HOST`                | `localhost`       | Host de la base de datos.                                                                         |
+| `DB_USERNAME`            | `postgres`        | nombre de usuario de la base de datos.                                                            |
+| `DB_PASSWORD`            | `postgres`        | contraseña de la base de datos.                                                                   |
+| `DB_DATABASE`            | `database_db`     | nombre de la base de datos.                                                                       |
+| `DB_PORT`                | `5432`            | puerto de despliegue de la base de datos.                                                         |
 | `DB_SCHEMA`              | `proyecto`        | Utilizado para almacenar las tablas del proyecto, y todo lo relacionado con la lógica de negocio. |
-| `DB_SCHEMA_USUARIOS`     | `usuarios`        | Utilizado para almacenar la tabla usuarios, roles y todo lo relacionado con la autenticación. |
-| `DB_SCHEMA_PARAMETRICAS` | `parametricas`    | Utilizado para almanecar tablas de tipo paramétricas.                                         |
+| `DB_SCHEMA_USUARIOS`     | `usuarios`        | Utilizado para almacenar la tabla usuarios, roles y todo lo relacionado con la autenticación.     |
+| `DB_SCHEMA_PARAMETRICAS` | `parametricas`    | Utilizado para almanecar tablas de tipo paramétricas.                                             |
 
 **Configuración general de la aplicación**
 
@@ -199,7 +198,8 @@ npm run seeds:run
 
 | Variable        | Valor por defecto                        | Descripción                                                                    |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
-| `LOG_PATH`      |                                          | Ruta absoluta de la carpeta logs.                                              |
+| `LOG_LEVEL`     | `info`                                   | Indica el nivel de logs de los ficheros. error, warn, info, debug o trace      |
+| `LOG_PATH`      |                                          | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_STD_OUT`   | `false`                                  | Para la consola muestra los logs tal y como se guardan en los archivos.        |
 | `LOG_SQL`       | `false`                                  | Para la consola muestra las consultas SQL.                                     |
 | `LOG_SIZE`      | `5M`                                     | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
@@ -213,7 +213,15 @@ npm run seeds:run
 
 - Para deshabilitar la generación de logs en ficheros `LOG_PATH` debe ser una cadena vacía.
 
-- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name` del archivo `package.json`) y dentro de esta última los archivos `info.log`, `warn.log` y `error.log`.
+- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name` del archivo `package.json`) y dentro de esta última se crearán los archivos de logs según el parámetro definido en `LOG_LEVEL`.
+
+  Por ejemplo:
+
+  - Si `LOG_LEVEL=error` se creará el archivo `error.log`
+  - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
+  - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
+
+  Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
 - `LOG_SIZE` acepta los siguientes valores:
 
@@ -223,6 +231,7 @@ npm run seeds:run
   - `B`: Tamaño en Bytes. Ej.: `1B`
 
 - `LOG_INTERVAL` acepta los siguientes valores:
+
   - `M`: Se genera un nuevo fichero de logs cada mes. Ej.: `1M`
   - `d`: Se genera un nuevo fichero de logs cada día. Ej.: `1d`
   - `h`: Se genera un nuevo fichero de logs cada hora. Ej.: `1h`
