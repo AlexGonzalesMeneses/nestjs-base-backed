@@ -8,7 +8,6 @@ import { TextService } from '../../common/lib/text.service'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { ParametroController } from './parametro.controller'
 import { ParametroService } from './parametro.service'
-import { LoggerModule } from '../../core/logger/logger.module'
 
 const resParametro = {
   id: TextService.generateUuid(),
@@ -26,7 +25,6 @@ describe('ParametroController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       controllers: [ParametroController],
       providers: [
         {

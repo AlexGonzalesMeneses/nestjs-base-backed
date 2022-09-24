@@ -10,7 +10,6 @@ import { INestApplication } from '@nestjs/common'
 import packageJson from '../package.json'
 import { TypeormStore } from 'connect-typeorm'
 import { Session } from './core/authentication/entity/session.entity'
-import { Logger } from 'nestjs-pino'
 import { expressMiddleware } from 'cls-rtracer'
 import dotenv from 'dotenv'
 import ip from 'ip'
@@ -24,7 +23,6 @@ import {
 import { DataSource } from 'typeorm'
 import { LoggerService } from './core/logger/logger.service'
 import { NextFunction, Request, Response } from 'express'
-import morgan from 'morgan'
 import { COLOR } from './core/logger/constants'
 
 dotenv.config()
@@ -42,13 +40,16 @@ export const SessionAppDataSource = new DataSource({
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 
+const logger = LoggerService.getInstance('main')
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   })
-  app.useLogger(app.get(Logger))
+
+  app.useLogger(logger)
+
   const configService = app.get(ConfigService)
-  const loggerService = await app.resolve(LoggerService)
 
   // swagger
   createSwagger(app)
@@ -59,15 +60,6 @@ async function bootstrap() {
   const repositorySession = SessionAppDataSource.getRepository(Session)
 
   app.use(expressMiddleware())
-
-  // Show request logs
-  if (process.env.NODE_ENV !== 'production') {
-    app.use(
-      morgan('dev', {
-        skip: (req: Request) => req.method.toLowerCase() === 'options',
-      })
-    )
-  }
 
   app.use(
     session({
@@ -101,7 +93,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method.toLowerCase() === 'options') return next()
-      loggerService.trace(`${req.method} ${req.originalUrl}`)
+      logger.trace(`${req.method} ${req.originalUrl}`)
       return next()
     })
   }
@@ -109,7 +101,8 @@ async function bootstrap() {
   const port = configService.get('PORT')
   await app.listen(port)
 
-  loggerService.trace(`
+  logger.trace(`
+
                                  $@@.
                                   $@@@  @@,
                                    ]@@"g@@@@g
@@ -151,8 +144,9 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
 ${COLOR.RESET} - Servicio    : ${COLOR.GREEN}Activo
 ${COLOR.RESET} - Entorno     : ${COLOR.GREEN}${nodeEnv}
 ${COLOR.RESET} - URL (local) : ${COLOR.GREEN}${appLocalUrl}
-${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}${COLOR.RESET}`
-  loggerService.info(serviceInfo)
+${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}${COLOR.RESET}
+  `
+  logger.info(serviceInfo)
 }
 
 function createSwagger(app: INestApplication) {

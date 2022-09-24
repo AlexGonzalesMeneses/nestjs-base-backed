@@ -4,7 +4,6 @@ import { AuthZManagementService } from 'nest-authz'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { AuthorizationController } from './authorization.controller'
 import { AuthorizationService } from './authorization.service'
-import { LoggerModule } from '../../logger/logger.module'
 
 const resPolitica = {
   sujeto: 'ADMINISTRADOR',
@@ -23,7 +22,6 @@ describe('AuthorizationController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       controllers: [AuthorizationController],
       providers: [
         {

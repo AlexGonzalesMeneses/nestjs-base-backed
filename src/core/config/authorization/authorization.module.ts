@@ -30,7 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
             join(__dirname, 'model.conf'),
             adapter
           )
-          enforcer.enableLog(true)
+          enforcer.enableLog(false)
           await enforcer.loadPolicy()
           return enforcer
         },

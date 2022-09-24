@@ -18,7 +18,6 @@ import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto'
 import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto'
 import { RolRepository } from '../../authorization/repository/rol.repository'
-import { LoggerModule } from '../../logger/logger.module'
 
 const resUsuarioList = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -222,7 +221,6 @@ describe('UsuarioService', () => {
       ],
       imports: [
         MensajeriaModule,
-        LoggerModule,
       ],
     }).compile()
 

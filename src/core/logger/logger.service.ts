@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { Logger, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
-import { LOG_COLOR, LOG_LEVEL } from './constants'
+import { COLOR, LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './logger.config'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
-  context: string = LoggerService.name
+  private context: string = LoggerService.name
   private redact: fastRedact.redactFn
 
   constructor(pinoLogger: PinoLogger) {
@@ -18,16 +18,25 @@ export class LoggerService extends Logger {
   }
 
   setContext(context: string) {
+    if (!LoggerService.instances[context]) {
+      LoggerService.instances[context] = this
+      delete LoggerService.instances[this.context]
+    }
+
     this.logger.setContext(context)
     this.context = context
   }
 
+  getContext(): string {
+    return this.context
+  }
+
   /**
-   * @deprecated Cambiado por el método trace. Ej: this.loggger.trace('message')
+   * @deprecated Cambiado por el método info. Ej: this.loggger.info('message')
    * @param optionalParams
    */
   log(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.TRACE, ...optionalParams)
+    this.print(LOG_LEVEL.INFO, ...optionalParams)
   }
 
   /**
@@ -67,7 +76,11 @@ export class LoggerService extends Logger {
 
       const color = this.getColor(level)
       const time = dayjs().format('DD/MM/YYYY HH:mm:ss')
-      process.stdout.write(`\n${color}[${time} ${this.context}:${level}]\n`)
+      const cTime = `${COLOR.RESET}[${time}]${COLOR.RESET}`
+      const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
+      const cContext = `${COLOR.RESET}(${this.context}):${COLOR.RESET}`
+      process.stdout.write('\n')
+      process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
         try {
           data =
@@ -82,7 +95,7 @@ export class LoggerService extends Logger {
         console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
       })
       process.stdout.write(LOG_COLOR.RESET)
-      process.stdout.write('\n')
+      process.stdout.write('')
     } catch (e) {
       console.error(e)
     }
@@ -93,7 +106,7 @@ export class LoggerService extends Logger {
   }
 
   static instances: { [key: string]: LoggerService } = {}
-  static getInstance(context = LoggerService.name) {
+  static getInstance(context: string) {
     if (LoggerService.instances[context]) {
       return LoggerService.instances[context]
     }
