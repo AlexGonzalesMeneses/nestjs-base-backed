@@ -67,7 +67,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       }*/
 
       const fechaNacimiento = dayjs(
-        (<string>userinfo.fecha_nacimiento).toString(),
+        String(userinfo.fecha_nacimiento),
         'DD/MM/YYYY',
         true
       ).toDate()

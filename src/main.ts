@@ -93,7 +93,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method.toLowerCase() === 'options') return next()
-      logger.trace(`${req.method} ${req.originalUrl}`)
+      logger.trace(`${req.method} ${req.originalUrl.split('?')[0]}`)
       return next()
     })
   }

@@ -1,9 +1,8 @@
-import { LoggerService } from './../../logger/logger.service'
+import { LoggerService } from '../../logger/logger.service'
 import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Inject,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
@@ -25,23 +24,23 @@ export class CasbinGuard implements CanActivate {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!user) {
-      this.logger.error(
-        `${action} ${resource} -> ${false} (Usuario desconocido)`
+      this.logger.warn(
+        `${action} ${resource} -> ${false} - Usuario desconocido`
       )
-      throw new ForbiddenException()
+      return false
     }
 
     for (const rol of user.roles) {
       const isPermitted = await this.enforcer.enforce(rol, resource, action)
       if (isPermitted) {
-        this.logger.info(`${rol} -> ${action} ${resource} -> ${isPermitted}`)
+        this.logger.info(`${action} ${resource} -> ${isPermitted} - ${rol}`)
         return true
       }
     }
 
-    this.logger.error(
-      `${user.roles.toString()} ${action} ${resource} -> ${false}`
+    this.logger.warn(
+      `${action} ${resource} -> ${false} - ${user.roles.toString()}`
     )
-    throw new ForbiddenException()
+    return false
   }
 }

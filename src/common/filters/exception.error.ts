@@ -54,13 +54,12 @@ export class ExceptionError extends Error {
   private static getMensaje(exception: HttpException): string {
     const response = exception.getResponse() as ObjectOrError | string
     if (typeof response === 'string') {
-      return response
+      return ExceptionError.traducirMensaje(response)
     }
 
-    // TODO verificar que contiene response.error
     if (response.message && response.error) {
       if (typeof response.message === 'string') {
-        return response.message
+        return ExceptionError.traducirMensaje(response.message)
       }
 
       const unicoMensajeTipoString =
@@ -69,7 +68,7 @@ export class ExceptionError extends Error {
         typeof response.message[0] === 'string'
 
       if (unicoMensajeTipoString) {
-        return response.message[0]
+        return ExceptionError.traducirMensaje(response.message[0])
       }
     }
 
@@ -87,6 +86,13 @@ export class ExceptionError extends Error {
       default:
         return Messages.EXCEPTION_INTERNAL_SERVER_ERROR
     }
+  }
+
+  private static traducirMensaje(mensaje: string) {
+    if (mensaje === 'Forbidden resource') {
+      return Messages.EXCEPTION_FORBIDDEN
+    }
+    return mensaje
   }
 
   private static getErrores(exception: HttpException): (string | object)[] {

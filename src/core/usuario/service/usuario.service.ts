@@ -1,5 +1,6 @@
 import { BaseService } from './../../../common/base/base-service'
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   PreconditionFailedException,
@@ -22,7 +23,6 @@ import { SegipService } from '../../external-services/iop/segip/segip.service'
 import { ConfigService } from '@nestjs/config'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
-import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { EntityManager, Repository } from 'typeorm'
 import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
@@ -437,7 +437,9 @@ export class UsuarioService extends BaseService {
 
   verificarPermisos(usuarioAuditoria, id) {
     if (usuarioAuditoria === id) {
-      throw new EntityForbiddenException()
+      throw new ForbiddenException(
+        'No tienes permisos para realizar la acción porque se trata de tu propia cuenta'
+      )
     }
   }
 
