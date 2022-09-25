@@ -8,7 +8,7 @@ const logger = LoggerService.getInstance('logger')
 export async function printLogo(app: INestApplication) {
   logger.trace('')
 
-  const serviceInfo = `
+  const logo = `
                                  $@@.
                                   $@@@  @@,
                                    ]@@"g@@@@g
@@ -38,5 +38,7 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
      NestJS Base Backend         ,@@@@@P-   7P
                               ,@@@P-
   `
-  process.stdout.write(`${COLOR.LIGHT_GREY}${serviceInfo}${COLOR.RESET}\n`)
+
+  const toPrint = logo.replace(/\n/g, `\n${COLOR.LIGHT_GREY}`)
+  process.stdout.write(`${COLOR.LIGHT_GREY}${toPrint}${COLOR.RESET}\n`)
 }

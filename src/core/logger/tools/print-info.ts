@@ -20,10 +20,10 @@ export async function printInfo(app: INestApplication) {
   logger.info(`${appName} v${appVersion}`)
 
   const serviceInfo = `
-${COLOR.RESET} - Servicio    : ${COLOR.GREEN}Activo
-${COLOR.RESET} - Entorno     : ${COLOR.GREEN}${nodeEnv}
-${COLOR.RESET} - URL (local) : ${COLOR.GREEN}${appLocalUrl}
-${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}
+ ${COLOR.LIGHT_GREY}-${COLOR.RESET} Servicio    : ${COLOR.GREEN}Activo
+ ${COLOR.LIGHT_GREY}-${COLOR.RESET} Entorno     : ${COLOR.GREEN}${nodeEnv}
+ ${COLOR.LIGHT_GREY}-${COLOR.RESET} URL (local) : ${COLOR.GREEN}${appLocalUrl}
+ ${COLOR.LIGHT_GREY}-${COLOR.RESET} URL (red)   : ${COLOR.GREEN}${appNetworkUrl}
   `
   process.stdout.write(serviceInfo)
   process.stdout.write(`${COLOR.RESET}\n`)
