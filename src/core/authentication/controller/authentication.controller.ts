@@ -33,7 +33,7 @@ export class AuthenticationController extends BaseController {
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Req() req: Request, @Res() res: Response) {
-    if (req.user == undefined) {
+    if (!req.user) {
       throw new BadRequestException(
         `Es necesario que este autenticado para consumir este recurso.`
       )
@@ -85,7 +85,7 @@ export class AuthenticationController extends BaseController {
   @Get('logout')
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
     const jid = req.cookies.jid || ''
-    if (jid != '') {
+    if (jid) {
       await this.refreshTokensService.removeByid(jid)
     }
 

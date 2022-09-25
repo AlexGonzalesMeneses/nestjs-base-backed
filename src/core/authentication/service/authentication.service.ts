@@ -84,7 +84,7 @@ export class AuthenticationService extends BaseService {
       return null
     }
 
-    if (respuesta?.usuarioRol.length == 0) {
+    if (respuesta?.usuarioRol.length === 0) {
       throw new UnauthorizedException(Messages.NO_PERMISSION_USER)
     }
 
