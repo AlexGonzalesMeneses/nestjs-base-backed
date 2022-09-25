@@ -1,5 +1,5 @@
 import * as rTracer from 'cls-rtracer'
-import { Options, ReqId } from 'pino-http'
+import { GenReqId, Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
 import pino, { Level, multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
@@ -106,12 +106,17 @@ export class LoggerConfig {
     }
   }
 
+  static genReqId: GenReqId = (req: Request): ReqId => {
+    const uid = req.user?.id || '-'
+    const rid = String(req.id || rTracer.id())
+    const reqId = `${rid} usuario:${uid}`
+    return reqId
+  }
+
   static getPinoHttpConfig(): Options {
     return {
       name: LoggerConfig.appName,
-      genReqId: (req) => {
-        return (req.id || rTracer.id()) as ReqId
-      },
+      genReqId: LoggerConfig.genReqId,
       serializers: {
         err: () => {
           return
