@@ -30,11 +30,14 @@ export class ModuloService extends BaseService {
     return await this.moduloRepositorio.crear(moduloDto, usuarioAuditoria)
   }
 
-  async actualizar(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.actualizar({
-      ...moduloDto,
-      ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
-    })
+  async actualizar(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
+    return await this.moduloRepositorio.actualizar(
+      {
+        ...moduloDto,
+        ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
+      },
+      usuarioAuditoria
+    )
   }
 
   async eliminar(moduloDto: CrearModuloDto) {
@@ -43,35 +46,39 @@ export class ModuloService extends BaseService {
 
   async activar(idModulo, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
-    if (modulo) {
-      const moduloActualizado = await this.moduloRepositorio.actualizar({
+    if (!modulo) {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    const moduloActualizado = await this.moduloRepositorio.actualizar(
+      {
         id: idModulo,
         estado: Status.ACTIVE,
         usuarioModificacion: usuarioAuditoria,
-      })
-      return {
-        id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
-      }
-    } else {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      },
+      usuarioAuditoria
+    )
+    return {
+      id: moduloActualizado.id,
+      estado: moduloActualizado.estado,
     }
   }
 
   async inactivar(idModulo, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
-    if (modulo) {
-      const moduloActualizado = await this.moduloRepositorio.actualizar({
+    if (!modulo) {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    const moduloActualizado = await this.moduloRepositorio.actualizar(
+      {
         id: idModulo,
         estado: Status.INACTIVE,
         usuarioModificacion: usuarioAuditoria,
-      })
-      return {
-        id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
-      }
-    } else {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      },
+      usuarioAuditoria
+    )
+    return {
+      id: moduloActualizado.id,
+      estado: moduloActualizado.estado,
     }
   }
 }

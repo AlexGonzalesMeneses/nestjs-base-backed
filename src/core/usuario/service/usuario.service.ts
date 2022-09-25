@@ -1,5 +1,5 @@
-import { LoggerService } from './../../logger/logger.service'
-import { BaseService } from './../../../common/base/base-service'
+import { LoggerService } from '../../logger/logger.service'
+import { BaseService } from '../../../common/base/base-service'
 import {
   Inject,
   Injectable,
@@ -550,33 +550,30 @@ export class UsuarioService extends BaseService {
     // 1. verificar que exista el usuario
     const usuario = await this.usuarioRepositorio.buscarPorId(id)
 
-    if (usuario) {
-      const { correoElectronico, roles } = usuarioDto
-      // 2. verificar que el email no este registrado
-      if (
-        correoElectronico &&
-        correoElectronico !== usuario.correoElectronico
-      ) {
-        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-          correoElectronico
-        )
-        if (existe) {
-          throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
-        }
-        await this.usuarioRepositorio.actualizarUsuario(id, {
-          correoElectronico: correoElectronico,
-          usuarioModificacion: usuarioAuditoria,
-        })
-      }
-      if (roles)
-        if (roles.length > 0) {
-          // realizar reglas de roles
-          await this.actualizarRoles(id, roles, usuarioAuditoria)
-        }
-      return { id: usuario.id }
-    } else {
+    if (!usuario) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
+
+    const { correoElectronico, roles } = usuarioDto
+    // 2. verificar que el email no este registrado
+    if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
+      const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+        correoElectronico
+      )
+      if (existe) {
+        throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+      }
+      await this.usuarioRepositorio.actualizarUsuario(id, {
+        correoElectronico: correoElectronico,
+        usuarioModificacion: usuarioAuditoria,
+      })
+    }
+    if (roles)
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        await this.actualizarRoles(id, roles, usuarioAuditoria)
+      }
+    return { id: usuario.id }
   }
 
   private async actualizarRoles(id, roles, usuarioAuditoria) {

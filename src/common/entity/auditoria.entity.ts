@@ -61,7 +61,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
     this.transaccion = this.transaccion || Transacccion.ACTUALIZAR
   }
 
-  constructor(data?: Partial<AuditoriaEntity>) {
+  protected constructor(data?: Partial<AuditoriaEntity>) {
     super()
     if (data) Object.assign(this, data)
   }

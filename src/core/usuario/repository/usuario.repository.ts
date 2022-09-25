@@ -357,10 +357,12 @@ export class UsuarioRepository {
     id: string,
     usuario: Partial<Usuario>
   ): Promise<Usuario> {
-    return await this.dataSource.getRepository(Usuario).save({
-      id: id,
-      ...usuario,
-    })
+    return await this.dataSource.getRepository(Usuario).save(
+      new Usuario({
+        id: id,
+        ...usuario,
+      })
+    )
   }
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {

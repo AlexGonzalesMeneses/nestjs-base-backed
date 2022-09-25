@@ -17,6 +17,12 @@ const resParametro = {
   grupo: 'TD',
 }
 
+const mockRequest = {
+  user: {
+    id: TextService.generateUuid(),
+  },
+}
+
 const resListar = [1, resParametro]
 
 describe('ParametroController', () => {
@@ -81,7 +87,7 @@ describe('ParametroController', () => {
       descripcion: 'Pasaporte',
     }
     const parametroDto = plainToClass(CrearParametroDto, parametro)
-    const result = await controller.crear(parametroDto)
+    const result = await controller.crear(mockRequest, parametroDto)
     expect(result).toBeDefined()
     expect(result).toHaveProperty('finalizado')
     expect(result).toHaveProperty('mensaje')

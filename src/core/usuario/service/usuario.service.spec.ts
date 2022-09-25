@@ -318,7 +318,8 @@ describe('UsuarioService', () => {
     expect(usuario).toHaveProperty('estado')
   })
 
-  it('[crearConCiudadania] Debería crear un nuevo usuario con bandera ciudadania', async () => {
+  it('[crearConCiudadania] Debería crear un nuevo usuario con bandera ciudadanía', async () => {
+    // TODO: Reparar test, despues de cambio en método
     const usuarioDto = new CrearUsuarioCiudadaniaDto()
     usuarioDto.usuario = '7878787'
     usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8']

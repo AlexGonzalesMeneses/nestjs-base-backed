@@ -17,8 +17,8 @@ import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
-import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
-import { LoggerService } from './../../logger/logger.service'
+import { LoggerService } from '../../logger/logger.service'
+import { ParamNumberStringID } from '../../../common/dto/paramNumberStringID'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
@@ -39,7 +39,7 @@ export class ModuloController extends BaseController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async crear(@Body() moduloDto: any, @Req() req) {
+  async crear(@Req() req, @Body() moduloDto: CrearModuloDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.crear(moduloDto, usuarioAuditoria)
     return this.successCreate(result)
@@ -47,8 +47,12 @@ export class ModuloController extends BaseController {
 
   @Patch()
   @UsePipes(ValidationPipe)
-  async upModulo(@Body() moduloDto: CrearModuloDto) {
-    const result = await this.moduloService.actualizar(moduloDto)
+  async updateModulo(@Req() req, @Body() moduloDto: CrearModuloDto) {
+    const usuarioAuditoria = this.getUser(req)
+    const result = await this.moduloService.actualizar(
+      moduloDto,
+      usuarioAuditoria
+    )
     return this.successUpdate(result)
   }
 
@@ -63,7 +67,7 @@ export class ModuloController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamUuidDto) {
+  async activar(@Req() req, @Param() params: ParamNumberStringID) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.activar(idUsuario, usuarioAuditoria)
@@ -73,8 +77,9 @@ export class ModuloController extends BaseController {
   // inactivar modulo
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
-    const { id: idUsuario } = param
+  @UsePipes(ValidationPipe)
+  async inactivar(@Req() req, @Param() params: ParamNumberStringID) {
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.inactivar(
       idUsuario,

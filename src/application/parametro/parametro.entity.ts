@@ -1,4 +1,10 @@
-import { Check, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  BeforeInsert,
+  Check,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import dotenv from 'dotenv'
 import { AuditoriaEntity } from '../../common/entity/auditoria.entity'
 import { Status } from '../../common/constants'
@@ -30,5 +36,10 @@ export class Parametro extends AuditoriaEntity {
 
   constructor(data?: Partial<Parametro>) {
     super(data)
+  }
+
+  @BeforeInsert()
+  insertarEstado() {
+    this.estado = this.estado || Status.ACTIVE
   }
 }

@@ -30,7 +30,8 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { LoggerService } from './../../logger/logger.service'
+import { LoggerService } from '../../logger/logger.service'
+import { ParamNumberStringID } from '../../../common/dto/paramNumberStringID'
 
 @Controller('usuarios')
 export class UsuarioController extends BaseController {
@@ -150,7 +151,7 @@ export class UsuarioController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamUuidDto) {
+  async activar(@Req() req, @Param() params: ParamNumberStringID) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.activar(
@@ -163,8 +164,8 @@ export class UsuarioController extends BaseController {
   // inactivar usuario
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
-    const { id: idUsuario } = param
+  async inactivar(@Req() req, @Param() params: ParamNumberStringID) {
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.inactivar(
       idUsuario,
@@ -193,9 +194,9 @@ export class UsuarioController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(ValidationPipe)
   @Patch('/:id/restauracion')
-  async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
+  async restaurarContrasena(@Req() req, @Param() params: ParamNumberStringID) {
     const usuarioAuditoria = this.getUser(req)
-    const { id: idUsuario } = param
+    const { id: idUsuario } = params
     const result = await this.usuarioService.restaurarContrasena(
       idUsuario,
       usuarioAuditoria
@@ -208,10 +209,10 @@ export class UsuarioController extends BaseController {
   @Patch(':id')
   async actualizarDatos(
     @Req() req,
-    @Param() param: ParamUuidDto,
+    @Param() params: ParamNumberStringID,
     @Body() usuarioDto: ActualizarUsuarioRolDto
   ) {
-    const { id: idUsuario } = param
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.actualizarDatos(
       idUsuario,

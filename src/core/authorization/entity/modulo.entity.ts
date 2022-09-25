@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Check,
   Column,
   Entity,
@@ -59,5 +60,10 @@ export class Modulo extends AuditoriaEntity {
 
   constructor(data?: Partial<Modulo>) {
     super(data)
+  }
+
+  @BeforeInsert()
+  insertarEstado() {
+    this.estado = this.estado || Status.ACTIVE
   }
 }

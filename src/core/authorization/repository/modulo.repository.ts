@@ -115,8 +115,13 @@ export class ModuloRepository {
     return await this.dataSource.getRepository(Modulo).save(modulo)
   }
 
-  async actualizar(moduloDto: Partial<Modulo>) {
-    return await this.dataSource.getRepository(Modulo).save(moduloDto)
+  async actualizar(moduloDto: Partial<Modulo>, usuarioAuditoria: string) {
+    return await this.dataSource.getRepository(Modulo).save(
+      new Modulo({
+        ...moduloDto,
+        ...{ usuarioModificacion: usuarioAuditoria },
+      })
+    )
   }
 
   async eliminar(moduloDto: CrearModuloDto) {
