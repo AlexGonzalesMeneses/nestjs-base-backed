@@ -4,6 +4,8 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
+  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
 
@@ -27,7 +29,7 @@ export class CasbinGuard implements CanActivate {
       this.logger.warn(
         `${action} ${resource} -> ${false} - Usuario desconocido`
       )
-      return false
+      throw new UnauthorizedException()
     }
 
     for (const rol of user.roles) {
@@ -41,6 +43,6 @@ export class CasbinGuard implements CanActivate {
     this.logger.warn(
       `${action} ${resource} -> ${false} - ${user.roles.toString()}`
     )
-    return false
+    throw new ForbiddenException()
   }
 }

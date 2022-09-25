@@ -79,7 +79,6 @@ export class LoggerService extends Logger {
       const cTime = `${COLOR.RESET}[${time}]${COLOR.RESET}`
       const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
       const cContext = `${COLOR.RESET}(${this.context}):${COLOR.RESET}`
-      process.stdout.write('\n')
       process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
         try {
@@ -94,8 +93,7 @@ export class LoggerService extends Logger {
             : String(data)
         console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
       })
-      process.stdout.write(LOG_COLOR.RESET)
-      process.stdout.write('')
+      process.stdout.write(COLOR.RESET)
     } catch (e) {
       console.error(e)
     }

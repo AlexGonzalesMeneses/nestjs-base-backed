@@ -14,6 +14,7 @@ export class ExceptionError extends Error {
   codigo: number
   mensaje: string
   errores: (string | object)[]
+  stack: string | undefined
 
   constructor(original: unknown) {
     super()

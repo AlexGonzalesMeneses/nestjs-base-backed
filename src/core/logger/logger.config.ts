@@ -106,9 +106,9 @@ export class LoggerConfig {
     }
   }
 
-  static genReqId: GenReqId = (req: Request): ReqId => {
+  static genReqId: GenReqId = (req: Request) => {
     const uid = req.user?.id || '-'
-    const rid = String(req.id || rTracer.id())
+    const rid = (req.id || rTracer.id()) as ReqId
     const reqId = `${rid} usuario:${uid}`
     return reqId
   }

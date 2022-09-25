@@ -7,12 +7,10 @@ import passport from 'passport'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { INestApplication } from '@nestjs/common'
-import packageJson from '../package.json'
 import { TypeormStore } from 'connect-typeorm'
 import { Session } from './core/authentication/entity/session.entity'
 import { expressMiddleware } from 'cls-rtracer'
 import dotenv from 'dotenv'
-import ip from 'ip'
 
 import {
   SWAGGER_API_CURRENT_VERSION,
@@ -23,7 +21,7 @@ import {
 import { DataSource } from 'typeorm'
 import { LoggerService } from './core/logger/logger.service'
 import { NextFunction, Request, Response } from 'express'
-import { COLOR } from './core/logger/constants'
+import { printRoutes, printLogo, printInfo } from './core/logger/tools'
 
 dotenv.config()
 
@@ -46,8 +44,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   })
-
-  app.useLogger(logger)
 
   const configService = app.get(ConfigService)
 
@@ -101,52 +97,9 @@ async function bootstrap() {
   const port = configService.get('PORT')
   await app.listen(port)
 
-  logger.trace(`
-
-                                 $@@.
-                                  $@@@  @@,
-                                   ]@@"g@@@@g
-                                   @,@@@@@@@@@
-                ,ggg&@@@@@@BNggg,  P@@@@@@@@@@@
-            ,g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@K
-          g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   ,
-       ,g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@g
- ,g@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"   g@@@@
-$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
-]@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PP'  ,g@@@@@@@@@@@p
-  ]@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@p
-    MB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     * @"          "PB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                       "N@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                          %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                            $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                             %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-               ,ggg           $@@@@@B@@@@@@@@@@@@@@@@@@@@@@P
-              @@@@@        g@Np@@@@@ @@@@@@@@@@@@@@@@@R@@@@
-              @@@@@@    @g@@@@@@@@@  @@@@@@@@@@@@@@@@@ @@@
-              ]@@@@@@@@@@@@@@@@@@P  ]@@@@@@@@@@@@@@@@P $@
-               "B@@@@@@@@@@@@@@P   ,@@@@@@@@@@@@@@@@P  P
-               "PB@@@@@@@@BPP     g@@@@@@@@@@@P]@@@P
-                                ,@@@@B@@@@@@P  @@P
-                               ""  ,g@@@@@P  ,@P'
- NestJS Base Backend             ,@@@@@P-   7P
-                              ,@@@P-
-  `)
-
-  const appName = packageJson.name
-  const appVersion = packageJson.version
-  const nodeEnv = configService.get('NODE_ENV')
-  const appLocalUrl = `http://localhost:${port}`
-  const appNetworkUrl = `http://${ip.address()}:${port}`
-
-  const serviceInfo = `${appName} v${appVersion}
-
-${COLOR.RESET} - Servicio    : ${COLOR.GREEN}Activo
-${COLOR.RESET} - Entorno     : ${COLOR.GREEN}${nodeEnv}
-${COLOR.RESET} - URL (local) : ${COLOR.GREEN}${appLocalUrl}
-${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}${COLOR.RESET}
-  `
-  logger.info(serviceInfo)
+  await printRoutes(app)
+  await printLogo(app)
+  await printInfo(app)
 }
 
 function createSwagger(app: INestApplication) {
