@@ -125,7 +125,7 @@ export class LoggerConfig {
           return {
             id: req.id,
             method: req.method,
-            url: req.url,
+            url: req.url ? req.url.split('?')[0] : undefined,
           }
         },
         res: (res) => {

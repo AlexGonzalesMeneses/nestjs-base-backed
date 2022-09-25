@@ -25,6 +25,6 @@ ${COLOR.RESET} - Entorno     : ${COLOR.GREEN}${nodeEnv}
 ${COLOR.RESET} - URL (local) : ${COLOR.GREEN}${appLocalUrl}
 ${COLOR.RESET} - URL (red)   : ${COLOR.GREEN}${appNetworkUrl}
   `
-  process.stderr.write(serviceInfo)
-  process.stderr.write(`${COLOR.RESET}\n`)
+  process.stdout.write(serviceInfo)
+  process.stdout.write(`${COLOR.RESET}\n`)
 }

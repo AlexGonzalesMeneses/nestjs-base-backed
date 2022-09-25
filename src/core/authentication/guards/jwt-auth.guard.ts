@@ -28,7 +28,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw err
     }
 
-    this.logger.info(`${action} ${resource} -> true`)
+    // this.logger.info(`${action} ${resource} -> true`)
     return true
   }
 }

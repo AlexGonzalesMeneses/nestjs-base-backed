@@ -38,5 +38,5 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
      NestJS Base Backend         ,@@@@@P-   7P
                               ,@@@P-
   `
-  process.stderr.write(`${COLOR.LIGHT_GREY}${serviceInfo}${COLOR.RESET}\n`)
+  process.stdout.write(`${COLOR.LIGHT_GREY}${serviceInfo}${COLOR.RESET}\n`)
 }
