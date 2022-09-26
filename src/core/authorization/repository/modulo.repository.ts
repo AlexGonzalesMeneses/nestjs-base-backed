@@ -18,7 +18,7 @@ export class ModuloRepository {
 
   async listar(paginacionQueryDto: FiltroModuloDto) {
     const { limite, saltar, filtro, seccion } = paginacionQueryDto
-    return await this.dataSource
+    const query = this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
       .leftJoin('modulo.fidModulo', 'fidModulo')
@@ -31,19 +31,20 @@ export class ModuloRepository {
         'modulo.estado',
         'fidModulo.id',
       ])
-      .where(
-        filtro
-          ? '(modulo.label ilike :filtro or modulo.nombre ilike :filtro)'
-          : '1=1',
-        {
-          filtro: `%${filtro?.toLowerCase()}%`,
-        }
-      )
-      .andWhere(seccion ? '(modulo.fidModulo is null)' : '1=1')
       .take(limite)
       .skip(saltar)
       .orderBy('modulo.id', 'ASC')
-      .getManyAndCount()
+
+    if (filtro) {
+      query.andWhere(
+        '(modulo.label ilike :filtro or modulo.nombre ilike :filtro)',
+        { filtro: `%${filtro?.toLowerCase()}%` }
+      )
+    }
+    if (seccion) {
+      query.andWhere('(modulo.fidModulo is null)')
+    }
+    return await query.getManyAndCount()
   }
 
   async listarTodo() {

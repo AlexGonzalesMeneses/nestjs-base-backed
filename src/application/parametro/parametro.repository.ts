@@ -33,7 +33,7 @@ export class ParametroRepository {
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, filtro } = paginacionQueryDto
-    return await this.dataSource
+    const query = this.dataSource
       .getRepository(Parametro)
       .createQueryBuilder('parametro')
       .select([
@@ -44,17 +44,16 @@ export class ParametroRepository {
         'parametro.descripcion',
         'parametro.estado',
       ])
-      .where(
-        filtro
-          ? '(parametro.codigo like :filtro or parametro.nombre ilike :filtro or parametro.descripcion ilike :filtro or parametro.grupo ilike :filtro)'
-          : '1=1',
-        {
-          filtro: `%${filtro}%`,
-        }
-      )
       .take(limite)
       .skip(saltar)
-      .getManyAndCount()
+
+    if (filtro) {
+      query.andWhere(
+        '(parametro.codigo like :filtro or parametro.nombre ilike :filtro or parametro.descripcion ilike :filtro or parametro.grupo ilike :filtro)',
+        { filtro: `%${filtro}%` }
+      )
+    }
+    return await query.getManyAndCount()
   }
 
   async listarPorGrupo(grupo: string) {

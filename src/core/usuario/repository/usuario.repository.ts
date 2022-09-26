@@ -16,7 +16,7 @@ export class UsuarioRepository {
 
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
     const { limite, saltar, filtro, rol } = paginacionQueryDto
-    return await this.dataSource
+    const query = this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.usuarioRol', 'usuarioRol')
@@ -39,21 +39,22 @@ export class UsuarioRepository {
         'persona.tipoDocumento',
       ])
       .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
-      .andWhere(rol ? 'rol.id IN(:...roles)' : '1=1', {
-        roles: rol,
-      })
-      .andWhere(
-        filtro
-          ? '(persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro)'
-          : '1=1',
-        {
-          filtro: `%${filtro}%`,
-        }
-      )
       .take(limite)
       .skip(saltar)
       .orderBy('usuario.id', 'ASC')
-      .getManyAndCount()
+
+    if (rol) {
+      query.andWhere('rol.id IN(:...roles)', {
+        roles: rol,
+      })
+    }
+    if (filtro) {
+      query.andWhere(
+        '(persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro)',
+        { filtro: `%${filtro}%` }
+      )
+    }
+    return await query.getManyAndCount()
   }
 
   async recuperar() {
