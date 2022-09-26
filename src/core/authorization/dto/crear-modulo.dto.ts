@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsString } from 'class-validator'
+import { IsNotEmpty, IsObject, IsString } from '../../../common/validation'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 
 export class PropiedadesDto {

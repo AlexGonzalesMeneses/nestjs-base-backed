@@ -8,8 +8,6 @@ import {
   Query,
   Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { ParametroService } from './parametro.service'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -28,18 +26,12 @@ export class ParametroController extends BaseController {
     super(ParametroController.name)
   }
 
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    })
-  )
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.parametroServicio.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
 
-  @UsePipes(ValidationPipe)
   @Get('/:grupo/listado')
   async listarPorGrupo(@Param() params: ParamGrupoDto) {
     const { grupo } = params
@@ -48,7 +40,6 @@ export class ParametroController extends BaseController {
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
   async crear(@Req() req, @Body() parametroDto: CrearParametroDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.crear(

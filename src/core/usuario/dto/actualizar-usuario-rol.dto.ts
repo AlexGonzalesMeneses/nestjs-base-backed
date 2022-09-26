@@ -3,8 +3,8 @@ import {
   IsArray,
   IsEmail,
   CorreoLista,
+  ValidateIf,
 } from '../../../common/validation'
-import { ValidateIf } from 'class-validator'
 
 export class ActualizarUsuarioRolDto {
   @IsNotEmpty()

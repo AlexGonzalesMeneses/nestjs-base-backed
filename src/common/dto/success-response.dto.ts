@@ -1,4 +1,4 @@
-import { IsOptional } from 'class-validator'
+import { IsOptional } from '../../common/validation'
 
 export class SuccessResponseDto {
   @IsOptional()

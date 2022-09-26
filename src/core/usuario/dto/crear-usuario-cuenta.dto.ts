@@ -1,5 +1,9 @@
-import { CorreoLista, IsEmail, IsNotEmpty } from '../../../common/validation'
-import { IsString } from 'class-validator'
+import {
+  CorreoLista,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+} from '../../../common/validation'
 
 export class CrearUsuarioCuentaDto {
   nombres: string

@@ -9,8 +9,6 @@ import {
   Query,
   Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { BaseController } from '../../../common/base/base-controller'
 import { ModuloService } from '../service/modulo.service'
@@ -27,14 +25,12 @@ export class ModuloController extends BaseController {
   }
 
   @Get()
-  @UsePipes(new ValidationPipe({ transform: true }))
   async listar(@Query() paginacionQueryDto: FiltroModuloDto) {
     const result = await this.moduloService.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
   async crear(@Req() req, @Body() moduloDto: CrearModuloDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.crear(moduloDto, usuarioAuditoria)
@@ -42,7 +38,6 @@ export class ModuloController extends BaseController {
   }
 
   @Patch()
-  @UsePipes(ValidationPipe)
   async updateModulo(@Req() req, @Body() moduloDto: CrearModuloDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.actualizar(
@@ -53,7 +48,6 @@ export class ModuloController extends BaseController {
   }
 
   @Delete()
-  @UsePipes(ValidationPipe)
   async deleteModulo(@Body() moduloDto: CrearModuloDto) {
     const result = await this.moduloService.eliminar(moduloDto)
     return this.successDelete(result)
@@ -62,7 +56,6 @@ export class ModuloController extends BaseController {
   // activar modulo
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
-  @UsePipes(ValidationPipe)
   async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
@@ -73,7 +66,6 @@ export class ModuloController extends BaseController {
   // inactivar modulo
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  @UsePipes(ValidationPipe)
   async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
