@@ -54,7 +54,7 @@ export class usuario1611171041790 implements MigrationInterface {
       },
     ]
 
-    const usuarios = items.map((item) => {
+    for (const item of items) {
       const persona = new Persona({
         fechaNacimiento: dayjs(
           item.persona.fechaNacimiento,
@@ -71,22 +71,21 @@ export class usuario1611171041790 implements MigrationInterface {
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
+      const personaResult = await queryRunner.manager.save(persona)
       const usuario = new Usuario({
         ciudadaniaDigital: false,
         contrasena: pass,
         intentos: 0,
         usuario: item.usuario,
         correoElectronico: item.correoElectonico,
-        persona,
+        idPersona: personaResult.id,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
-      return usuario
-    })
-
-    await queryRunner.manager.save(usuarios)
+      await queryRunner.manager.save(usuario)
+    }
   }
 
   /* eslint-disable */
