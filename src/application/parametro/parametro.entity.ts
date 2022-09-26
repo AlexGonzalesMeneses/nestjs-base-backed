@@ -12,12 +12,12 @@ import { Status } from '../../common/constants'
 
 dotenv.config()
 
-const ParametroStatus = {
+export const ParametroEstado = {
   ACTIVE: Status.ACTIVE,
   INACTIVE: Status.INACTIVE,
 }
 
-@Check(UtilService.buildCheck(ParametroStatus))
+@Check(UtilService.buildStatusCheck(ParametroEstado))
 @Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -41,6 +41,6 @@ export class Parametro extends AuditoriaEntity {
 
   @BeforeInsert()
   insertarEstado() {
-    this.estado = this.estado || ParametroStatus.ACTIVE
+    this.estado = this.estado || ParametroEstado.ACTIVE
   }
 }
