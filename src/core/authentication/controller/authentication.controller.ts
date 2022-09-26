@@ -16,7 +16,6 @@ import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { LoggerService } from './../../logger/logger.service'
 import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 import { ConfigService } from '@nestjs/config'
 
@@ -24,18 +23,17 @@ import { ConfigService } from '@nestjs/config'
 export class AuthenticationController extends BaseController {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     private autenticacionService: AuthenticationService,
     private refreshTokensService: RefreshTokensService,
     @Inject(ConfigService) private configService: ConfigService
   ) {
-    super(logger, AuthenticationController.name)
+    super(AuthenticationController.name)
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Req() req: Request, @Res() res: Response) {
-    if (req.user == undefined) {
+    if (!req.user) {
       throw new BadRequestException(
         `Es necesario que este autenticado para consumir este recurso.`
       )
@@ -87,7 +85,7 @@ export class AuthenticationController extends BaseController {
   @Get('logout')
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
     const jid = req.cookies.jid || ''
-    if (jid != '') {
+    if (jid) {
       await this.refreshTokensService.removeByid(jid)
     }
 

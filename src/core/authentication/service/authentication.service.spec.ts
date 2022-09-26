@@ -1,11 +1,9 @@
-import { LoggerModule } from './../../logger/logger.module'
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
 import { UsuarioService } from '../../usuario/service/usuario.service'
 import { AuthenticationService } from './authentication.service'
 import { RefreshTokensService } from './refreshTokens.service'
-import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception'
 import { Configurations } from '../../../common/params'
 import dayjs from 'dayjs'
 import { TextService } from '../../../common/lib/text.service'
@@ -17,6 +15,7 @@ import { PersonaRepository } from '../../usuario/repository/persona.repository'
 import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { PersonaDto } from '../../usuario/dto/persona.dto'
+import { UnauthorizedException } from '@nestjs/common'
 
 const resSign = 'aaa.bbb.ccc'
 const resBuscarUsuario = {
@@ -50,7 +49,6 @@ describe('AuthenticationService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       providers: [
         PersonaService,
         ConfigService,
@@ -154,7 +152,7 @@ describe('AuthenticationService', () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('1234')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException)
+      expect(error instanceof UnauthorizedException)
       expect(error.status).toEqual(401)
     }
   })
@@ -163,7 +161,7 @@ describe('AuthenticationService', () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('123')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException)
+      expect(error instanceof UnauthorizedException)
       expect(error.status).toEqual(401)
     }
   })
@@ -172,7 +170,7 @@ describe('AuthenticationService', () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('123')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException)
+      expect(error instanceof UnauthorizedException)
       expect(error.status).toEqual(401)
     }
   })
@@ -187,7 +185,7 @@ describe('AuthenticationService', () => {
     try {
       await service.validarUsuario('user', TextService.btoa(encodeURI('1234')))
     } catch (error) {
-      expect(error instanceof EntityUnauthorizedException)
+      expect(error instanceof UnauthorizedException)
       expect(usuarioService.actualizarDatosBloqueo).toBeCalled()
       expect(usuarioService.actualizarContadorBloqueos).toBeCalled()
     }
@@ -205,7 +203,7 @@ describe('AuthenticationService', () => {
       const persona = plainToClass(Persona, resPersona) as PersonaDto
       await service.validarUsuarioOidc(persona)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityUnauthorizedException)
+      expect(error).toBeInstanceOf(UnauthorizedException)
     }
   })
 

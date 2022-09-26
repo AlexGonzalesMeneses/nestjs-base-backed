@@ -1,4 +1,3 @@
-import { LoggerModule } from './../logger/logger.module'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -27,24 +26,19 @@ import { Usuario } from '../usuario/entity/usuario.entity'
 import { RefreshTokens } from './entity/refreshTokens.entity'
 import { UsuarioRol } from '../authorization/entity/usuario-rol.entity'
 import { Rol } from '../authorization/entity/rol.entity'
-import { LoggerService } from '../logger/logger.service'
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
-  useFactory: async (
-    autenticacionService: AuthenticationService,
-    logger: LoggerService
-  ) => {
+  useFactory: async (autenticacionService: AuthenticationService) => {
     const client: BaseClient | undefined = await buildOpenIdClient()
-    if (client) return new OidcStrategy(logger, autenticacionService, client)
+    if (client) return new OidcStrategy(autenticacionService, client)
     else return undefined
   },
-  inject: [AuthenticationService, LoggerService],
+  inject: [AuthenticationService],
 }
 
 @Module({
   imports: [
-    LoggerModule,
     PassportModule.register({ session: true, defaultStrategy: 'oidc' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

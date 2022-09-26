@@ -1,4 +1,3 @@
-import { LoggerModule } from './../../core/logger/logger.module'
 import { Module } from '@nestjs/common'
 import { ParametroController } from './parametro.controller'
 import { ParametroService } from './parametro.service'
@@ -9,6 +8,6 @@ import { Parametro } from './parametro.entity'
 @Module({
   controllers: [ParametroController],
   providers: [ParametroService, ParametroRepository],
-  imports: [TypeOrmModule.forFeature([Parametro]), LoggerModule],
+  imports: [TypeOrmModule.forFeature([Parametro])],
 })
 export class ParametroModule {}

@@ -17,17 +17,13 @@ import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
-import { LoggerService } from '../../logger/logger.service'
 import { ParamIdDto } from '../../../common/dto/params-id.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
 export class ModuloController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private moduloService: ModuloService
-  ) {
-    super(logger, ModuloController.name)
+  constructor(private moduloService: ModuloService) {
+    super(ModuloController.name)
   }
 
   @Get()

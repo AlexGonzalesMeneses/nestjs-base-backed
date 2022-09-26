@@ -1,3 +1,4 @@
+import { LoggerService } from '../../logger/logger.service'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
@@ -5,6 +6,8 @@ import { AuthenticationService } from '../service/authentication.service'
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
+  protected logger = LoggerService.getInstance(LocalStrategy.name)
+
   constructor(private readonly autenticacionService: AuthenticationService) {
     super({
       usernameField: 'usuario',

@@ -19,17 +19,13 @@ import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { BaseController } from '../../common/base/base-controller'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
-import { LoggerService } from '../../core/logger/logger.service'
 import { ParamIdDto } from '../../common/dto/params-id.dto'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private parametroServicio: ParametroService
-  ) {
-    super(logger, ParametroController.name)
+  constructor(private parametroServicio: ParametroService) {
+    super(ParametroController.name)
   }
 
   @UsePipes(

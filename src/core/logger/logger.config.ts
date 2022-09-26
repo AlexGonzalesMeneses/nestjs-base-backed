@@ -1,7 +1,7 @@
 import * as rTracer from 'cls-rtracer'
-import { Options, ReqId } from 'pino-http'
+import { GenReqId, Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
-import pino, { multistream } from 'pino'
+import pino, { Level, multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
 import pretty from 'pino-pretty'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
@@ -9,10 +9,12 @@ import { Request, Response } from 'express'
 import packageJson from '../../../package.json'
 import path from 'path'
 import dotenv from 'dotenv'
+import { LOG_LEVEL } from './constants'
 dotenv.config()
 
 export class LoggerConfig {
   static appName = packageJson.name || 'APP'
+  static logLevelSelected: Level[] = []
 
   static getStream(): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
@@ -27,18 +29,18 @@ export class LoggerConfig {
         options.compress = true
       }
 
-      streamDisk.push({
-        stream: createStream('info.log', options),
-        level: 'info',
-      })
-      streamDisk.push({
-        stream: createStream('error.log', options),
-        level: 'error',
-      })
-      streamDisk.push({
-        stream: createStream('warn.log', options),
-        level: 'warn',
-      })
+      const levelSelected = process.env.LOG_LEVEL || 'info'
+      for (const levelKey of Object.keys(LOG_LEVEL)) {
+        const level = LOG_LEVEL[levelKey]
+        streamDisk.push({
+          stream: createStream(`${level}.log`, options),
+          level,
+        })
+        LoggerConfig.logLevelSelected.push(level)
+        if (level === levelSelected) {
+          break
+        }
+      }
     }
 
     const streamStandar: pretty.PrettyStream[] = []
@@ -104,12 +106,17 @@ export class LoggerConfig {
     }
   }
 
+  static genReqId: GenReqId = (req: Request) => {
+    const uid = req.user?.id || '-'
+    const rid = (req.id || rTracer.id()) as ReqId
+    const reqId = `${rid} usuario:${uid}`
+    return reqId
+  }
+
   static getPinoHttpConfig(): Options {
     return {
       name: LoggerConfig.appName,
-      genReqId: (req) => {
-        return (req.id || rTracer.id()) as ReqId
-      },
+      genReqId: LoggerConfig.genReqId,
       serializers: {
         err: () => {
           return
@@ -118,7 +125,7 @@ export class LoggerConfig {
           return {
             id: req.id,
             method: req.method,
-            url: req.url,
+            url: req.url ? req.url.split('?')[0] : undefined,
           }
         },
         res: (res) => {
@@ -126,7 +133,7 @@ export class LoggerConfig {
         },
       },
       formatters: undefined,
-      level: 'info',
+      level: 'trace',
       timestamp: pino.stdTimeFunctions.isoTime,
       customLogLevel: this.customLogLevel,
       customSuccessMessage: this.customSuccessMessage,

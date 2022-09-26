@@ -1,4 +1,3 @@
-import { LoggerService } from '../../logger/logger.service'
 import { BaseService } from '../../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { ModuloRepository } from '../repository/modulo.repository'
@@ -11,11 +10,10 @@ import { Modulo } from '../entity/modulo.entity'
 @Injectable()
 export class ModuloService extends BaseService {
   constructor(
-    protected logger: LoggerService,
     @Inject(ModuloRepository)
     private moduloRepositorio: ModuloRepository
   ) {
-    super(logger, ModuloService.name)
+    super(ModuloService.name)
   }
 
   async listar(paginacionQueryDto: FiltroModuloDto) {

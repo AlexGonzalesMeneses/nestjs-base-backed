@@ -98,14 +98,11 @@ export class Usuario extends AuditoriaEntity {
   })
   idPersona: string
 
-  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
-    cascade: true,
-  })
+  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
   usuarioRol: UsuarioRol[]
 
   @ManyToOne(() => Persona, (persona) => persona.usuarios, {
     nullable: false,
-    cascade: true,
   })
   @JoinColumn({
     name: 'id_persona',

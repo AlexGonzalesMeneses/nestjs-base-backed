@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request, Response } from 'express'
-import { LoggerService } from './../../logger/logger.service'
 import { CookieService } from '../../../common/lib/cookie.service'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
@@ -20,11 +19,10 @@ import { BaseController } from '../../../common/base/base-controller'
 @Controller()
 export class RefreshTokensController extends BaseController {
   constructor(
-    protected logger: LoggerService,
     private refreshTokensService: RefreshTokensService,
     @Inject(ConfigService) private configService: ConfigService
   ) {
-    super(logger, RefreshTokensController.name)
+    super(RefreshTokensController.name)
   }
 
   @Post('token')

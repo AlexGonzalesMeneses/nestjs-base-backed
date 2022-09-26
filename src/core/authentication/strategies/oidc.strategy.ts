@@ -16,6 +16,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 dayjs.extend(customParseFormat)
 
 export const buildOpenIdClient = async (): Promise<Client | undefined> => {
+  const logger = LoggerService.getInstance(buildOpenIdClient.name)
   try {
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER || '')
     return new issuer.Client({
@@ -23,21 +24,20 @@ export const buildOpenIdClient = async (): Promise<Client | undefined> => {
       client_secret: process.env.OIDC_CLIENT_SECRET,
     })
   } catch (error) {
-    console.error('\n\n////// ERROR DE CONEXIÓN CON CIUDADANIA //////')
-    console.error(error)
-    console.error('----------------------------------------------')
-    console.error(
-      'El servicio se levantará sin esta característica dentro de 5 segundos\n\n'
+    const t = 5
+    logger.error('////// ERROR DE CONEXIÓN CON CIUDADANIA //////', error)
+    logger.error(
+      `El servicio se levantará sin esta característica dentro de ${t} segundos`
     )
-    await new Promise((resolve) => setTimeout(() => resolve(1), 5000))
+    await new Promise((resolve) => setTimeout(() => resolve(1), t * 1000))
   }
 }
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
+  protected logger = LoggerService.getInstance(OidcStrategy.name)
   client: Client
 
   constructor(
-    protected logger: LoggerService,
     private autenticacionService: AuthenticationService,
     client: Client
   ) {
@@ -52,7 +52,6 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     })
 
     this.client = client
-    this.logger.setContext(OidcStrategy.name)
   }
 
   async validate(tokenset: TokenSet): Promise<PassportUser> {
@@ -68,7 +67,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       }*/
 
       const fechaNacimiento = dayjs(
-        (<string>userinfo.fecha_nacimiento).toString(),
+        String(userinfo.fecha_nacimiento),
         'DD/MM/YYYY',
         true
       ).toDate()
@@ -98,6 +97,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         datosUsuario
       )
 
+      if (!usuario.roles || usuario.roles.length === 0) {
+        throw new UnauthorizedException()
+      }
+
       return {
         id: usuario.id,
         roles: usuario.roles || [],
@@ -107,8 +110,9 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
-      this.logger.error(err)
-      throw new UnauthorizedException()
+      // this.logger.error(err)
+      // throw new UnauthorizedException()
+      throw err
     }
   }
 }
