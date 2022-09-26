@@ -1,4 +1,3 @@
-import { BaseRepository } from './../../../common/base/base-repository'
 import { TextService } from '../../../common/lib/text.service'
 import { Rol } from '../../authorization/entity/rol.entity'
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
@@ -9,13 +8,11 @@ import { PersonaDto } from '../dto/persona.dto'
 import { Status } from '../../../common/constants'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { Injectable } from '@nestjs/common'
-import { DataSource } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 
 @Injectable()
-export class UsuarioRepository extends BaseRepository {
-  constructor(private dataSource: DataSource) {
-    super(UsuarioRepository.name, dataSource)
-  }
+export class UsuarioRepository {
+  constructor(private dataSource: DataSource) {}
 
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
     const { limite, saltar, filtro, rol } = paginacionQueryDto
@@ -366,5 +363,9 @@ export class UsuarioRepository extends BaseRepository {
         ...usuario,
       })
     )
+  }
+
+  async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
+    return this.dataSource.manager.transaction<T>(op)
   }
 }
