@@ -20,7 +20,7 @@ import { BaseController } from '../../common/base/base-controller'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { LoggerService } from '../../core/logger/logger.service'
-import { ParamNumberStringID } from '../../common/dto/paramNumberStringID'
+import { ParamIdDto } from '../../common/dto/params-id.dto'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
@@ -64,7 +64,7 @@ export class ParametroController extends BaseController {
 
   @Patch(':id')
   async actualizar(
-    @Param() params: ParamNumberStringID,
+    @Param() params: ParamIdDto,
     @Req() req,
     @Body() parametroDto: ActualizarParametroDto
   ) {
@@ -79,7 +79,7 @@ export class ParametroController extends BaseController {
   }
 
   @Patch('/:id/activacion')
-  async activar(@Req() req, @Param() params: ParamNumberStringID) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.activar(
@@ -90,7 +90,7 @@ export class ParametroController extends BaseController {
   }
 
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() params: ParamNumberStringID) {
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.inactivar(

@@ -1,6 +1,6 @@
 import { IsNumberString } from '../validation'
 
-export class ParamNumberStringID {
+export class ParamIdDto {
   @IsNumberString()
   id: string
 }

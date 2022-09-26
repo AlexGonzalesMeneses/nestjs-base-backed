@@ -18,7 +18,7 @@ import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { LoggerService } from '../../logger/logger.service'
-import { ParamNumberStringID } from '../../../common/dto/paramNumberStringID'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
@@ -67,7 +67,7 @@ export class ModuloController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamNumberStringID) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.activar(idUsuario, usuarioAuditoria)
@@ -78,7 +78,7 @@ export class ModuloController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
   @UsePipes(ValidationPipe)
-  async inactivar(@Req() req, @Param() params: ParamNumberStringID) {
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.inactivar(

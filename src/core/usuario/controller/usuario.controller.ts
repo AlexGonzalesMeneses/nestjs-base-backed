@@ -31,7 +31,7 @@ import {
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
 import { LoggerService } from '../../logger/logger.service'
-import { ParamNumberStringID } from '../../../common/dto/paramNumberStringID'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
 
 @Controller('usuarios')
 export class UsuarioController extends BaseController {
@@ -151,7 +151,7 @@ export class UsuarioController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamNumberStringID) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.activar(
@@ -164,7 +164,7 @@ export class UsuarioController extends BaseController {
   // inactivar usuario
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() params: ParamNumberStringID) {
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.inactivar(
@@ -194,7 +194,7 @@ export class UsuarioController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @UsePipes(ValidationPipe)
   @Patch('/:id/restauracion')
-  async restaurarContrasena(@Req() req, @Param() params: ParamNumberStringID) {
+  async restaurarContrasena(@Req() req, @Param() params: ParamIdDto) {
     const usuarioAuditoria = this.getUser(req)
     const { id: idUsuario } = params
     const result = await this.usuarioService.restaurarContrasena(
@@ -209,7 +209,7 @@ export class UsuarioController extends BaseController {
   @Patch(':id')
   async actualizarDatos(
     @Req() req,
-    @Param() params: ParamNumberStringID,
+    @Param() params: ParamIdDto,
     @Body() usuarioDto: ActualizarUsuarioRolDto
   ) {
     const { id: idUsuario } = params
