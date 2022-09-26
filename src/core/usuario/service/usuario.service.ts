@@ -85,8 +85,12 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(contrastaSegip?.mensaje)
     }
 
+    const contrasena = TextService.generateShortRandomText()
+    const datosCorreo = {
+      correo: usuarioDto.correoElectronico,
+      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+    }
     const op = async (transaction: EntityManager): Promise<Usuario> => {
-      const contrasena = TextService.generateShortRandomText()
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
       usuarioDto.estado = Status.PENDING
       const usuarioResult = await this.usuarioRepositorio.crear(
@@ -94,22 +98,19 @@ export class UsuarioService extends BaseService {
         usuarioAuditoria,
         transaction
       )
-      // enviar correo con credenciales
-      const datosCorreo = {
-        correo: usuarioDto.correoElectronico,
-        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-      }
-      await this.enviarCorreoContrasenia(
-        datosCorreo,
-        usuarioDto.persona.nroDocumento,
-        contrasena
-      )
       return usuarioResult
     }
 
     const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
       op
     )
+
+    await this.enviarCorreoContrasenia(
+      datosCorreo,
+      usuarioDto.persona.nroDocumento,
+      contrasena
+    ).catch((err) => this.logger.error(err))
+
     return crearResult
   }
 
