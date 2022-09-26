@@ -1,3 +1,4 @@
+import { UtilService } from '../../../common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -13,12 +14,12 @@ import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 
 dotenv.config()
 
-@Check(
-  `_estado in (
-    '${Status.ACTIVE}',
-    '${Status.INACTIVE}'
-  )`
-)
+export const PersonaEstado = {
+  ACTIVE: Status.ACTIVE,
+  INACTIVE: Status.INACTIVE,
+}
+
+@Check(UtilService.buildStatusCheck(PersonaEstado))
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -93,6 +94,6 @@ export class Persona extends AuditoriaEntity {
 
   @BeforeInsert()
   insertarEstado() {
-    this.estado = this.estado || Status.ACTIVE
+    this.estado = this.estado || PersonaEstado.ACTIVE
   }
 }

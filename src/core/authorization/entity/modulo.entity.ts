@@ -1,3 +1,4 @@
+import { UtilService } from '../../../common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -21,12 +22,12 @@ export type Propiedades = {
   color_dark?: string
 }
 
-@Check(
-  `_estado in (
-    '${Status.ACTIVE}',
-    '${Status.INACTIVE}'
-  )`
-)
+export const ModuloEstado = {
+  ACTIVE: Status.ACTIVE,
+  INACTIVE: Status.INACTIVE,
+}
+
+@Check(UtilService.buildStatusCheck(ModuloEstado))
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -64,6 +65,6 @@ export class Modulo extends AuditoriaEntity {
 
   @BeforeInsert()
   insertarEstado() {
-    this.estado = this.estado || Status.ACTIVE
+    this.estado = this.estado || ModuloEstado.ACTIVE
   }
 }
