@@ -10,15 +10,15 @@ export class RefreshTokens {
   @Column({ name: 'grant_id' })
   grantId: string
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp without time zone' })
   iat: Date
 
-  @Column({ name: 'expires_at', type: 'timestamp' })
+  @Column({ name: 'expires_at', type: 'timestamp without time zone' })
   expiresAt: Date
 
   @Column({ name: 'is_revoked', type: 'boolean' })
   isRevoked: boolean
 
   @Column({ type: 'jsonb' })
-  data: Record<string, never>
+  data: unknown
 }

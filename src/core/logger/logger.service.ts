@@ -1,91 +1,89 @@
 import { Scope } from '@nestjs/common'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { Logger, Params, PARAMS_PROVIDER_TOKEN, PinoLogger } from 'nestjs-pino'
+import { Logger, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
-import { LOG_COLOR, LOG_LEVEL } from './constants'
+import { COLOR, LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './logger.config'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
-  context: string = LoggerService.name
+  private context: string = LoggerService.name
   private redact: fastRedact.redactFn
 
-  constructor(
-    pinoLogger: PinoLogger,
-
-    @Inject(PARAMS_PROVIDER_TOKEN)
-    params: Params
-  ) {
-    super(pinoLogger, params)
+  constructor(pinoLogger: PinoLogger) {
+    super(pinoLogger, {})
     this.redact = fastRedact(LoggerConfig.redactOptions())
   }
 
   setContext(context: string) {
+    if (!LoggerService.instances[context]) {
+      LoggerService.instances[context] = this
+      delete LoggerService.instances[this.context]
+    }
+
     this.logger.setContext(context)
     this.context = context
   }
+
+  getContext(): string {
+    return this.context
+  }
+
   /**
-   * Mensajes para el modo desarrollo.
-   * Estos mensajes solamente serán visibles en la terminal, no se guardarán en los ficheros de logs.
+   * @deprecated Cambiado por el método info. Ej: this.loggger.info('message')
    * @param optionalParams
    */
   log(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.NOTICE, ...optionalParams)
-  }
-
-  verbose() {
-    // disabled method
-  }
-
-  /**
-   * Estos mensajes se guardarán en los ficheros de logs
-   * @param optionalParams
-   */
-  info(...optionalParams: unknown[]) {
     this.print(LOG_LEVEL.INFO, ...optionalParams)
   }
 
   /**
-   * Estos mensajes se guardarán en los ficheros de logs
+   * @deprecated Cambiado por el método trace. Ej: this.loggger.trace('message')
    * @param optionalParams
    */
-  warn(...optionalParams: unknown[]) {
-    this.print(LOG_LEVEL.WARN, ...optionalParams)
+  verbose(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.TRACE, ...optionalParams)
   }
 
-  /**
-   * Estos mensajes se guardarán en los ficheros de logs
-   * @param optionalParams
-   */
   error(...optionalParams: unknown[]) {
     this.print(LOG_LEVEL.ERROR, ...optionalParams)
   }
 
-  /**
-   * Mensajes para el modo desarrollo.
-   * Estos mensajes solamente serán visibles en la terminal, no se guardarán en los ficheros de logs.
-   * @param optionalParams
-   */
+  warn(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.WARN, ...optionalParams)
+  }
+
+  info(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.INFO, ...optionalParams)
+  }
+
   debug(...optionalParams: unknown[]) {
     this.print(LOG_LEVEL.DEBUG, ...optionalParams)
   }
 
+  trace(...optionalParams: unknown[]) {
+    this.print(LOG_LEVEL.TRACE, ...optionalParams)
+  }
+
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
     try {
-      if ([LOG_LEVEL.INFO, LOG_LEVEL.WARN, LOG_LEVEL.ERROR].includes(level)) {
+      if (LoggerConfig.logLevelSelected.includes(level)) {
         optionalParams.map((param) => this.logger[level](param))
       }
       if (process.env.NODE_ENV === 'production') return
 
       const color = this.getColor(level)
       const time = dayjs().format('DD/MM/YYYY HH:mm:ss')
-      process.stdout.write(`\n${color}[${time} ${this.context}:${level}]\n`)
+      const cTime = `${COLOR.RESET}[${time}]${COLOR.RESET}`
+      const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
+      const cContext = `${COLOR.RESET}(${this.context}):${COLOR.RESET}`
+      process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
         try {
           data =
-            data && typeof data === 'object'
+            data && typeof data === 'object' && !(data instanceof Error)
               ? JSON.parse(this.redact(JSON.parse(JSON.stringify(data))))
               : data
         } catch (err) {}
@@ -95,19 +93,27 @@ export class LoggerService extends Logger {
             : String(data)
         console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
       })
-      process.stdout.write(LOG_COLOR.RESET)
-      process.stdout.write('\n')
+      process.stdout.write(COLOR.RESET)
     } catch (e) {
       console.error(e)
     }
   }
 
   private getColor(level: LOG_LEVEL) {
-    if (level === LOG_LEVEL.INFO) return LOG_COLOR.INFO
-    if (level === LOG_LEVEL.WARN) return LOG_COLOR.WARN
-    if (level === LOG_LEVEL.ERROR) return LOG_COLOR.ERROR
-    if (level === LOG_LEVEL.DEBUG) return LOG_COLOR.DEBUG
-    if (level === LOG_LEVEL.NOTICE) return LOG_COLOR.NOTICE
-    return LOG_COLOR.DEBUG
+    return LOG_COLOR[level]
+  }
+
+  static instances: { [key: string]: LoggerService } = {}
+  static getInstance(context: string) {
+    if (LoggerService.instances[context]) {
+      return LoggerService.instances[context]
+    }
+    const pinoLogger = new PinoLogger({
+      pinoHttp: [LoggerConfig.getPinoHttpConfig(), LoggerConfig.getStream()],
+    })
+    const logger = new LoggerService(pinoLogger)
+    logger.setContext(context)
+    LoggerService.instances[context] = logger
+    return LoggerService.instances[context]
   }
 }

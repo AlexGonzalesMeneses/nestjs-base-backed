@@ -19,11 +19,16 @@ export class ParametroRepository {
 
   async actualizar(
     id: string,
-    parametroDto: ActualizarParametroDto
+    parametroDto: ActualizarParametroDto,
+    usuarioAuditoria: string
   ): Promise<UpdateResult> {
-    return await this.dataSource
-      .getRepository(Parametro)
-      .update(id, parametroDto)
+    return await this.dataSource.getRepository(Parametro).update(
+      id,
+      new Parametro({
+        ...parametroDto,
+        ...{ usuarioModificacion: usuarioAuditoria },
+      })
+    )
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
@@ -63,7 +68,7 @@ export class ParametroRepository {
       .getMany()
   }
 
-  async crear(parametroDto: CrearParametroDto) {
+  async crear(parametroDto: CrearParametroDto, usuarioAuditoria: string) {
     const { codigo, nombre, grupo, descripcion } = parametroDto
 
     const parametro = new Parametro()
@@ -71,6 +76,7 @@ export class ParametroRepository {
     parametro.nombre = nombre
     parametro.grupo = grupo
     parametro.descripcion = descripcion
+    parametro.usuarioCreacion = usuarioAuditoria
 
     return await this.dataSource.getRepository(Parametro).save(parametro)
   }

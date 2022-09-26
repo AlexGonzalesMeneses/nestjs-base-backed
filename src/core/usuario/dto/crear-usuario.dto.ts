@@ -1,6 +1,10 @@
-import { IsEmail, IsNotEmpty, CorreoLista } from '../../../common/validation'
+import {
+  IsEmail,
+  IsNotEmpty,
+  CorreoLista,
+  ValidateNested,
+} from '../../../common/validation'
 import { PersonaDto } from './persona.dto'
-import { ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class CrearUsuarioDto {

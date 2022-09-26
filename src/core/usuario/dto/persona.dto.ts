@@ -1,10 +1,11 @@
-import { IsDateString, ValidateIf } from 'class-validator'
 import { Transform } from 'class-transformer'
 import {
   IsNotEmpty,
   IsString,
   NombreApellido,
   NroDocumento,
+  IsDateString,
+  ValidateIf,
 } from '../../../common/validation'
 
 export class PersonaDto {

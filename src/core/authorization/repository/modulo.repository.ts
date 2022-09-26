@@ -1,10 +1,6 @@
 import { DataSource } from 'typeorm'
-import { Modulo } from '../entity/modulo.entity'
-import {
-  CrearModuloDto,
-  FiltroModuloDto,
-  PropiedadesDto,
-} from '../dto/crear-modulo.dto'
+import { Modulo, Propiedades } from '../entity/modulo.entity'
+import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { Injectable } from '@nestjs/common'
 import { Status } from '../../../common/constants'
 
@@ -93,11 +89,12 @@ export class ModuloRepository {
   }
 
   async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
-    const propiedades = new PropiedadesDto()
-    propiedades.icono = moduloDto.propiedades.icono
-    propiedades.color_dark = moduloDto.propiedades.color_dark
-    propiedades.color_light = moduloDto.propiedades.color_light
-    propiedades.descripcion = moduloDto.propiedades.descripcion
+    const propiedades: Propiedades = {
+      icono: moduloDto.propiedades.icono,
+      color_dark: moduloDto.propiedades.color_dark,
+      color_light: moduloDto.propiedades.color_light,
+      descripcion: moduloDto.propiedades.descripcion,
+    }
 
     //console.log('Datos........ para modulo......................', moduloDto)
     const modulo = new Modulo()
@@ -118,8 +115,13 @@ export class ModuloRepository {
     return await this.dataSource.getRepository(Modulo).save(modulo)
   }
 
-  async actualizar(moduloDto: Partial<Modulo>) {
-    return await this.dataSource.getRepository(Modulo).save(moduloDto)
+  async actualizar(moduloDto: Partial<Modulo>, usuarioAuditoria: string) {
+    return await this.dataSource.getRepository(Modulo).save(
+      new Modulo({
+        ...moduloDto,
+        ...{ usuarioModificacion: usuarioAuditoria },
+      })
+    )
   }
 
   async eliminar(moduloDto: CrearModuloDto) {

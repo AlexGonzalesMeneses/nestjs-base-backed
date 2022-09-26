@@ -1,6 +1,6 @@
-import { LoggerService } from './../../logger/logger.service'
-import { BaseService } from './../../../common/base/base-service'
+import { BaseService } from '../../../common/base/base-service'
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   PreconditionFailedException,
@@ -23,7 +23,6 @@ import { SegipService } from '../../external-services/iop/segip/segip.service'
 import { ConfigService } from '@nestjs/config'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
-import { EntityForbiddenException } from '../../../common/exceptions/entity-forbidden.exception'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { EntityManager, Repository } from 'typeorm'
 import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
@@ -37,7 +36,6 @@ import {
 export class UsuarioService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     @Inject(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
     @Inject(UsuarioRolRepository)
@@ -49,7 +47,7 @@ export class UsuarioService extends BaseService {
     private readonly segipServices: SegipService,
     private configService: ConfigService
   ) {
-    super(logger, UsuarioService.name)
+    super(UsuarioService.name)
   }
 
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
@@ -82,28 +80,38 @@ export class UsuarioService extends BaseService {
     // contrastacion segip
     const { persona } = usuarioDto
     const contrastaSegip = await this.segipServices.contrastar(persona)
-    if (contrastaSegip?.finalizado) {
-      const contrasena = TextService.generateShortRandomText()
-      usuarioDto.contrasena = await TextService.encrypt(contrasena)
-      usuarioDto.estado = Status.ACTIVE
-      const result = await this.usuarioRepositorio.crear(
-        { ...usuarioDto, usuario: persona.nroDocumento },
-        usuarioAuditoria
-      )
-      // enviar correo con credenciales
-      const datosCorreo = {
-        correo: usuarioDto.correoElectronico,
-        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-      }
-      await this.enviarCorreoContrasenia(
-        datosCorreo,
-        usuarioDto.persona.nroDocumento,
-        contrasena
-      )
-      return { id: result.id, estado: result.estado }
-    } else {
+
+    if (!contrastaSegip?.finalizado) {
       throw new PreconditionFailedException(contrastaSegip?.mensaje)
     }
+
+    const contrasena = TextService.generateShortRandomText()
+    const datosCorreo = {
+      correo: usuarioDto.correoElectronico,
+      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+    }
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      usuarioDto.contrasena = await TextService.encrypt(contrasena)
+      usuarioDto.estado = Status.PENDING
+      const usuarioResult = await this.usuarioRepositorio.crear(
+        usuarioDto,
+        usuarioAuditoria,
+        transaction
+      )
+      return usuarioResult
+    }
+
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
+    )
+
+    await this.enviarCorreoContrasenia(
+      datosCorreo,
+      usuarioDto.persona.nroDocumento,
+      contrasena
+    ).catch((err) => this.logger.error(err))
+
+    return crearResult
   }
 
   async crearCuenta(usuarioDto: CrearUsuarioCuentaDto) {
@@ -135,48 +143,58 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    const usuarioNuevo = await this.usuarioRepositorio.crear(
-      {
-        usuario: usuarioDto.correoElectronico,
-        persona: {
-          nombres: usuarioDto.nombres,
-          primerApellido: '',
-          segundoApellido: '',
-          nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
-          fechaNacimiento: new Date(),
-          tipoDocumento: TipoDocumento.OTRO,
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      const usuarioNuevo = await this.usuarioRepositorio.crear(
+        {
+          usuario: usuarioDto.correoElectronico,
+          persona: {
+            nombres: usuarioDto.nombres,
+            primerApellido: '',
+            segundoApellido: '',
+            nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
+            fechaNacimiento: new Date(),
+            tipoDocumento: TipoDocumento.OTRO,
+          },
+          correoElectronico: usuarioDto.correoElectronico,
+          roles: rol?.id ? [rol?.id] : [],
+          estado: Status.PENDING,
+          contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
         },
-        correoElectronico: usuarioDto.correoElectronico,
-        roles: rol?.id ? [rol?.id] : [],
-        estado: Status.PENDING,
-        contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
-      },
-      usuarioAuditoria?.id ?? ''
-    )
+        usuarioAuditoria?.id ?? '',
+        transaction
+      )
 
-    if (usuarioNuevo?.id) {
-      const codigo = TextService.generateUuid()
-      const urlActivacion = `${this.configService.get(
-        'URL_FRONTEND'
-      )}/activacion?q=${codigo}`
+      if (usuarioNuevo?.id) {
+        const codigo = TextService.generateUuid()
+        const urlActivacion = `${this.configService.get(
+          'URL_FRONTEND'
+        )}/activacion?q=${codigo}`
 
-      this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+        this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
 
-      await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
+        await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
 
-      const template =
-        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+        const template =
+          TemplateEmailService.armarPlantillaActivacionCuentaManual(
+            urlActivacion
+          )
 
-      if (usuarioNuevo.correoElectronico) {
-        await this.mensajeriaService.sendEmail(
-          usuarioNuevo.correoElectronico,
-          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-          template
-        )
+        if (usuarioNuevo.correoElectronico) {
+          await this.mensajeriaService.sendEmail(
+            usuarioNuevo.correoElectronico,
+            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+            template
+          )
+        }
       }
+
+      return usuarioNuevo
     }
 
-    return { id: usuarioNuevo.id, estado: usuarioNuevo.estado }
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
+    )
+    return crearResult
   }
 
   async activarCuenta(codigo) {
@@ -197,7 +215,7 @@ export class UsuarioService extends BaseService {
       {
         estado: Status.ACTIVE,
         codigoActivacion: null,
-        usuarioActualizacion: usuarioAuditoria?.id,
+        usuarioModificacion: usuarioAuditoria?.id,
       }
     )
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
@@ -289,20 +307,30 @@ export class UsuarioService extends BaseService {
     usuarioDto: CrearUsuarioCiudadaniaDto,
     usuarioAuditoria: string
   ) {
-    // verificar si el usuario ya fue registrado
-    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI({
-      nroDocumento: usuarioDto.usuario,
-    } as PersonaDto)
-
+    const persona = new PersonaDto()
+    persona.nroDocumento = usuarioDto.usuario
+    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
     if (usuario) {
       throw new PreconditionFailedException(Messages.EXISTING_USER)
     }
 
-    const result = await this.usuarioRepositorio.crear(
-      { ...usuarioDto, ...{ estado: Status.ACTIVE } } as CrearUsuarioDto,
-      usuarioAuditoria
+    usuarioDto.estado = Status.ACTIVE
+
+    const op = async (transaction: EntityManager): Promise<Usuario> => {
+      const result = await this.usuarioRepositorio.crear(
+        usuarioDto as CrearUsuarioDto,
+        usuarioAuditoria,
+        transaction
+      )
+
+      return result
+    }
+
+    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
+      op
     )
-    return { id: result.id, estado: result.estado }
+
+    return crearResult
   }
 
   async crearConPersonaExistente(
@@ -314,27 +342,24 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
       persona.nroDocumento
     )
+    if (!usuario) {
+      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
-    if (usuario) {
-      throw new PreconditionFailedException(Messages.EXISTING_USER)
+      const nuevoUsuario = {
+        estado: Status.ACTIVE,
+        correoElectronico: otrosDatos?.correoElectronico,
+        persona,
+        ciudadaniaDigital: true,
+        roles: [rol],
+      }
+      const result = await this.usuarioRepositorio.crearConPersonaExistente(
+        nuevoUsuario,
+        usuarioAuditoria
+      )
+      const { id, estado } = result
+      return { id, estado: estado }
     }
-
-    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
-
-    const nuevoUsuario = {
-      estado: Status.ACTIVE,
-      correoElectronico: otrosDatos?.correoElectronico,
-      persona,
-      ciudadaniaDigital: true,
-      roles: [rol],
-    }
-
-    const result = await this.usuarioRepositorio.crearConPersonaExistente(
-      nuevoUsuario,
-      usuarioAuditoria
-    )
-
-    return { id: result.id, estado: result.estado }
+    throw new PreconditionFailedException(Messages.EXISTING_USER)
   }
 
   async crearConCiudadaniaV2(
@@ -370,7 +395,8 @@ export class UsuarioService extends BaseService {
       nuevoUsuario,
       usuarioAuditoria
     )
-    return { id: result.id, estado: result.estado }
+    const { id, estado } = result
+    return { id, estado: estado }
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
@@ -385,7 +411,7 @@ export class UsuarioService extends BaseService {
         await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
           contrasena: await TextService.encrypt(contrasena),
           estado: Status.PENDING,
-          usuarioActualizacion: usuarioAuditoria,
+          usuarioModificacion: usuarioAuditoria,
         })
       // si está bien ≥ enviar el mail con la contraseña generada
       const datosCorreo = {
@@ -409,7 +435,7 @@ export class UsuarioService extends BaseService {
     if (usuario) {
       const usuarioActualizado =
         await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-          usuarioActualizacion: usuarioAuditoria,
+          usuarioModificacion: usuarioAuditoria,
           estado: Status.INACTIVE,
         })
       return {
@@ -439,7 +465,9 @@ export class UsuarioService extends BaseService {
 
   verificarPermisos(usuarioAuditoria, id) {
     if (usuarioAuditoria === id) {
-      throw new EntityForbiddenException()
+      throw new ForbiddenException(
+        'No tienes permisos para realizar la acción porque se trata de tu propia cuenta'
+      )
     }
   }
 
@@ -485,7 +513,7 @@ export class UsuarioService extends BaseService {
       await usuarioRepository.update(idUsuario, {
         contrasena: await TextService.encrypt(contrasena),
         estado: Status.PENDING,
-        usuarioActualizacion: usuarioAuditoria,
+        usuarioModificacion: usuarioAuditoria,
       })
 
       const usuarioActualizado = await usuarioRepository.findOne({
@@ -523,33 +551,30 @@ export class UsuarioService extends BaseService {
     // 1. verificar que exista el usuario
     const usuario = await this.usuarioRepositorio.buscarPorId(id)
 
-    if (usuario) {
-      const { correoElectronico, roles } = usuarioDto
-      // 2. verificar que el email no este registrado
-      if (
-        correoElectronico &&
-        correoElectronico !== usuario.correoElectronico
-      ) {
-        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-          correoElectronico
-        )
-        if (existe) {
-          throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
-        }
-        await this.usuarioRepositorio.actualizarUsuario(id, {
-          correoElectronico: correoElectronico,
-          usuarioActualizacion: usuarioAuditoria,
-        })
-      }
-      if (roles)
-        if (roles.length > 0) {
-          // realizar reglas de roles
-          await this.actualizarRoles(id, roles, usuarioAuditoria)
-        }
-      return { id: usuario.id }
-    } else {
+    if (!usuario) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
+
+    const { correoElectronico, roles } = usuarioDto
+    // 2. verificar que el email no este registrado
+    if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
+      const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+        correoElectronico
+      )
+      if (existe) {
+        throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+      }
+      await this.usuarioRepositorio.actualizarUsuario(id, {
+        correoElectronico: correoElectronico,
+        usuarioModificacion: usuarioAuditoria,
+      })
+    }
+    if (roles)
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        await this.actualizarRoles(id, roles, usuarioAuditoria)
+      }
+    return { id: usuario.id }
   }
 
   private async actualizarRoles(id, roles, usuarioAuditoria) {

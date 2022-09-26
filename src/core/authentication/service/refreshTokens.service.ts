@@ -1,4 +1,3 @@
-import { LoggerService } from '../../logger/logger.service'
 import { BaseService } from '../../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
@@ -23,14 +22,13 @@ dotenv.config()
 export class RefreshTokensService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     @Inject(RefreshTokensRepository)
     private refreshTokensRepository: RefreshTokensRepository,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {
-    super(logger, RefreshTokensService.name)
+    super(RefreshTokensService.name)
   }
 
   async findById(id: string): Promise<RefreshTokens | null> {

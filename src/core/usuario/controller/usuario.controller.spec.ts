@@ -10,7 +10,6 @@ import { UsuarioService } from '../service/usuario.service'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { CanActivate } from '@nestjs/common'
 import { CasbinGuard } from '../../authorization/guards/casbin.guard'
-import { LoggerModule } from '../../logger/logger.module'
 
 const resUsuario = {
   id: TextService.generateUuid(),
@@ -43,7 +42,6 @@ describe('UsuarioController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       controllers: [UsuarioController],
       providers: [
         {

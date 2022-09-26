@@ -14,7 +14,6 @@ import { Usuario } from './entity/usuario.entity'
 import { Persona } from './entity/persona.entity'
 import { UsuarioRol } from '../authorization/entity/usuario-rol.entity'
 import { Rol } from '../authorization/entity/rol.entity'
-import { LoggerModule } from '../logger/logger.module'
 
 @Module({
   providers: [
@@ -24,14 +23,13 @@ import { LoggerModule } from '../logger/logger.module'
     UsuarioRolRepository,
     RolRepository,
   ],
-  exports: [UsuarioService, LoggerModule],
+  exports: [UsuarioService],
   imports: [
     TypeOrmModule.forFeature([Usuario, Persona, UsuarioRol, Rol]),
     MensajeriaModule,
     IopModule,
     ConfigModule,
     AuthorizationModule,
-    LoggerModule,
   ],
   controllers: [UsuarioController],
 })

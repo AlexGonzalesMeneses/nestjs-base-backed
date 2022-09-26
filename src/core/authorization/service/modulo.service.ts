@@ -1,4 +1,3 @@
-import { LoggerService } from '../../logger/logger.service'
 import { BaseService } from '../../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { ModuloRepository } from '../repository/modulo.repository'
@@ -11,11 +10,10 @@ import { Modulo } from '../entity/modulo.entity'
 @Injectable()
 export class ModuloService extends BaseService {
   constructor(
-    protected logger: LoggerService,
     @Inject(ModuloRepository)
     private moduloRepositorio: ModuloRepository
   ) {
-    super(logger, ModuloService.name)
+    super(ModuloService.name)
   }
 
   async listar(paginacionQueryDto: FiltroModuloDto) {
@@ -29,47 +27,56 @@ export class ModuloService extends BaseService {
   async crear(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
     return await this.moduloRepositorio.crear(moduloDto, usuarioAuditoria)
   }
-  async actualizar(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.actualizar({
-      ...moduloDto,
-      ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
-    })
+
+  async actualizar(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
+    return await this.moduloRepositorio.actualizar(
+      {
+        ...moduloDto,
+        ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
+      },
+      usuarioAuditoria
+    )
   }
+
   async eliminar(moduloDto: CrearModuloDto) {
     return await this.moduloRepositorio.eliminar(moduloDto)
   }
 
   async activar(idModulo, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
-    if (modulo) {
-      const moduloActualizado = await this.moduloRepositorio.actualizar({
+    if (!modulo) {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    const moduloActualizado = await this.moduloRepositorio.actualizar(
+      {
         id: idModulo,
         estado: Status.ACTIVE,
-        usuarioActualizacion: usuarioAuditoria,
-      })
-      return {
-        id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
-      }
-    } else {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+        usuarioModificacion: usuarioAuditoria,
+      },
+      usuarioAuditoria
+    )
+    return {
+      id: moduloActualizado.id,
+      estado: moduloActualizado.estado,
     }
   }
 
   async inactivar(idModulo, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
-    if (modulo) {
-      const moduloActualizado = await this.moduloRepositorio.actualizar({
+    if (!modulo) {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    const moduloActualizado = await this.moduloRepositorio.actualizar(
+      {
         id: idModulo,
         estado: Status.INACTIVE,
-        usuarioActualizacion: usuarioAuditoria,
-      })
-      return {
-        id: moduloActualizado.id,
-        estado: moduloActualizado.estado,
-      }
-    } else {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+        usuarioModificacion: usuarioAuditoria,
+      },
+      usuarioAuditoria
+    )
+    return {
+      id: moduloActualizado.id,
+      estado: moduloActualizado.estado,
     }
   }
 }

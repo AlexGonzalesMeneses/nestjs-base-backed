@@ -1,9 +1,9 @@
-import { LoggerModule } from '../../core/logger/logger.module'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { ParametroRepository } from './parametro.repository'
 import { ParametroService } from './parametro.service'
+import { TextService } from '../../common/lib/text.service'
 
 const resParametro = {
   id: '1e9215f2-47cd-45e4-a593-4289413503e0',
@@ -16,7 +16,6 @@ describe('ParametroService', () => {
   let service: ParametroService
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       providers: [
         ParametroService,
         {
@@ -54,7 +53,8 @@ describe('ParametroService', () => {
     parametro.grupo = resParametro.grupo
     parametro.descripcion = 'descripcion'
 
-    const result = await service.crear(parametro)
+    const usuarioAuditoria = TextService.generateUuid()
+    const result = await service.crear(parametro, usuarioAuditoria)
     expect(result).toBeDefined()
     expect(result.codigo).toEqual(parametro.codigo)
   })

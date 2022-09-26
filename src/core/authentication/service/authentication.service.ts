@@ -1,13 +1,11 @@
-import { LoggerService } from './../../logger/logger.service'
 import { BaseService } from './../../../common/base/base-service'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { UsuarioService } from '../../usuario/service/usuario.service'
 import { JwtService } from '@nestjs/jwt'
 import { TextService } from '../../../common/lib/text.service'
 import { RefreshTokensService } from './refreshTokens.service'
 import { Status } from '../../../common/constants'
 import { Configurations } from '../../../common/params'
-import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception'
 import { Messages } from '../../../common/constants/response-messages'
 import dayjs from 'dayjs'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
@@ -22,7 +20,6 @@ import { RolRepository } from '../../authorization/repository/rol.repository'
 export class AuthenticationService extends BaseService {
   // eslint-disable-next-line max-params
   constructor(
-    protected logger: LoggerService,
     private readonly personaService: PersonaService,
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
@@ -34,7 +31,7 @@ export class AuthenticationService extends BaseService {
     private rolRepositorio: RolRepository,
     @Inject(ConfigService) private readonly configService: ConfigService
   ) {
-    super(logger, AuthenticationService.name)
+    super(AuthenticationService.name)
   }
 
   private async verificarBloqueo(usuario) {
@@ -87,30 +84,30 @@ export class AuthenticationService extends BaseService {
       return null
     }
 
-    if (respuesta?.usuarioRol.length == 0) {
-      throw new EntityUnauthorizedException(Messages.NO_PERMISSION_USER)
+    if (respuesta?.usuarioRol.length === 0) {
+      throw new UnauthorizedException(Messages.NO_PERMISSION_USER)
     }
 
     if (respuesta?.estado === Status.PENDING) {
-      throw new EntityUnauthorizedException(Messages.PENDING_USER)
+      throw new UnauthorizedException(Messages.PENDING_USER)
     }
 
     if (respuesta?.estado === Status.INACTIVE) {
-      throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
+      throw new UnauthorizedException(Messages.INACTIVE_USER)
     }
 
     // verificar si la cuenta esta bloqueada
     const verificacionBloqueo = await this.verificarBloqueo(respuesta)
 
     if (verificacionBloqueo) {
-      throw new EntityUnauthorizedException(Messages.USER_BLOCKED)
+      throw new UnauthorizedException(Messages.USER_BLOCKED)
     }
 
     const pass = TextService.decodeBase64(contrasena)
 
     if (!(await TextService.compare(pass, respuesta.contrasena))) {
       await this.generarIntentoBloqueo(respuesta)
-      throw new EntityUnauthorizedException(Messages.INVALID_USER_CREDENTIALS)
+      throw new UnauthorizedException(Messages.INVALID_USER_CREDENTIALS)
     }
     // si se logra autenticar con exito => reiniciar contador de intentos a 0
     if (respuesta.intentos > 0) {
@@ -148,7 +145,7 @@ export class AuthenticationService extends BaseService {
     if (respuesta) {
       const { estado, persona: datosPersona } = respuesta
       if (estado === Status.INACTIVE) {
-        throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
+        throw new UnauthorizedException(Messages.INACTIVE_USER)
       }
       // actualizar datos persona
       if (
@@ -182,7 +179,7 @@ export class AuthenticationService extends BaseService {
       // console.log('persona', respuesta);
       const { estado, persona: datosPersona } = respuesta
       if (estado === Status.INACTIVE) {
-        throw new EntityUnauthorizedException(Messages.INACTIVE_USER)
+        throw new UnauthorizedException(Messages.INACTIVE_USER)
       }
 
       if (
@@ -223,7 +220,7 @@ export class AuthenticationService extends BaseService {
       if (respPersona) {
         // Persona existe en base de datos, sólo crear usuario
         if (respPersona.estado === Status.INACTIVE) {
-          throw new EntityUnauthorizedException(Messages.INACTIVE_PERSON)
+          throw new UnauthorizedException(Messages.INACTIVE_PERSON)
         }
         // Actualizar datos persona
         if (

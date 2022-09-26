@@ -6,9 +6,8 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { ParametroService } from './parametro.service'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -17,32 +16,22 @@ import { CasbinGuard } from '../../core/authorization/guards/casbin.guard'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { BaseController } from '../../common/base/base-controller'
 import { ParamGrupoDto } from './dto/grupo.dto'
-import { ParamUuidDto } from '../../common/dto/params-uuid.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
-import { LoggerService } from '../../core/logger/logger.service'
+import { ParamIdDto } from '../../common/dto/params-id.dto'
 
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private parametroServicio: ParametroService
-  ) {
-    super(logger, ParametroController.name)
+  constructor(private parametroServicio: ParametroService) {
+    super(ParametroController.name)
   }
 
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    })
-  )
   @Get()
   async listar(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.parametroServicio.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
 
-  @UsePipes(ValidationPipe)
   @Get('/:grupo/listado')
   async listarPorGrupo(@Param() params: ParamGrupoDto) {
     const { grupo } = params
@@ -51,36 +40,50 @@ export class ParametroController extends BaseController {
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
-  async crear(@Body() parametroDto: CrearParametroDto) {
-    const result = await this.parametroServicio.crear(parametroDto)
+  async crear(@Req() req, @Body() parametroDto: CrearParametroDto) {
+    const usuarioAuditoria = this.getUser(req)
+    const result = await this.parametroServicio.crear(
+      parametroDto,
+      usuarioAuditoria
+    )
     return this.successCreate(result)
   }
 
   @Patch(':id')
   async actualizar(
-    @Param() param: ParamUuidDto,
+    @Param() params: ParamIdDto,
+    @Req() req,
     @Body() parametroDto: ActualizarParametroDto
   ) {
-    const { id: idParametro } = param
+    const { id: idParametro } = params
+    const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.actualizarDatos(
       idParametro,
-      parametroDto
+      parametroDto,
+      usuarioAuditoria
     )
     return this.successUpdate(result)
   }
 
   @Patch('/:id/activacion')
-  async activar(@Param() params: ParamUuidDto) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
-    const result = await this.parametroServicio.activar(idParametro)
+    const usuarioAuditoria = this.getUser(req)
+    const result = await this.parametroServicio.activar(
+      idParametro,
+      usuarioAuditoria
+    )
     return this.successUpdate(result)
   }
 
   @Patch('/:id/inactivacion')
-  async inactivar(@Param() params: ParamUuidDto) {
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
-    const result = await this.parametroServicio.inactivar(idParametro)
+    const usuarioAuditoria = this.getUser(req)
+    const result = await this.parametroServicio.inactivar(
+      idParametro,
+      usuarioAuditoria
+    )
     return this.successUpdate(result)
   }
 }

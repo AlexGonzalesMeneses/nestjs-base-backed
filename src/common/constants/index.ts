@@ -27,3 +27,8 @@ export enum Genero {
   FEMENINO = 'F',
   OTRO = 'OTRO',
 }
+
+export enum Transacccion {
+  CREAR = 'CREAR',
+  ACTUALIZAR = 'ACTUALIZAR',
+}

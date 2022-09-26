@@ -9,51 +9,45 @@ import {
   Query,
   Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { BaseController } from '../../../common/base/base-controller'
 import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
-import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
-import { LoggerService } from './../../logger/logger.service'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
 export class ModuloController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private moduloService: ModuloService
-  ) {
-    super(logger, ModuloController.name)
+  constructor(private moduloService: ModuloService) {
+    super(ModuloController.name)
   }
 
   @Get()
-  @UsePipes(new ValidationPipe({ transform: true }))
   async listar(@Query() paginacionQueryDto: FiltroModuloDto) {
     const result = await this.moduloService.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
-  async crear(@Body() moduloDto: any, @Req() req) {
+  async crear(@Req() req, @Body() moduloDto: CrearModuloDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.crear(moduloDto, usuarioAuditoria)
     return this.successCreate(result)
   }
 
   @Patch()
-  @UsePipes(ValidationPipe)
-  async upModulo(@Body() moduloDto: CrearModuloDto) {
-    const result = await this.moduloService.actualizar(moduloDto)
+  async updateModulo(@Req() req, @Body() moduloDto: CrearModuloDto) {
+    const usuarioAuditoria = this.getUser(req)
+    const result = await this.moduloService.actualizar(
+      moduloDto,
+      usuarioAuditoria
+    )
     return this.successUpdate(result)
   }
 
   @Delete()
-  @UsePipes(ValidationPipe)
   async deleteModulo(@Body() moduloDto: CrearModuloDto) {
     const result = await this.moduloService.eliminar(moduloDto)
     return this.successDelete(result)
@@ -62,8 +56,7 @@ export class ModuloController extends BaseController {
   // activar modulo
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
-  @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamUuidDto) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.activar(idUsuario, usuarioAuditoria)
@@ -73,8 +66,8 @@ export class ModuloController extends BaseController {
   // inactivar modulo
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
-    const { id: idUsuario } = param
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.inactivar(
       idUsuario,

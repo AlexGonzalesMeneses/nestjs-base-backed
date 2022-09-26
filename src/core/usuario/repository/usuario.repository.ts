@@ -139,7 +139,11 @@ export class UsuarioRepository {
       .getOne()
   }
 
-  async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
+  async crear(
+    usuarioDto: CrearUsuarioDto,
+    usuarioAuditoria: string,
+    transaction: any
+  ): Promise<Usuario> {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
       // Rol
       const rol = new Rol()
@@ -155,25 +159,43 @@ export class UsuarioRepository {
 
     // Usuario
 
-    return await this.dataSource.getRepository(Usuario).save({
-      persona: {
+    const personaResult = await transaction.getRepository(Persona).save(
+      new Persona({
         nombres: usuarioDto?.persona?.nombres,
         primerApellido: usuarioDto?.persona?.primerApellido,
         segundoApellido: usuarioDto?.persona?.segundoApellido,
         nroDocumento: usuarioDto?.persona?.nroDocumento,
         fechaNacimiento: usuarioDto?.persona?.fechaNacimiento,
         tipoDocumento: usuarioDto.persona.tipoDocumento,
-      },
-      usuarioRol: usuarioRoles,
-      usuario: usuarioDto.usuario,
-      estado: usuarioDto?.estado ?? Status.CREATE,
-      correoElectronico: usuarioDto?.correoElectronico,
-      contrasena:
-        usuarioDto?.contrasena ??
-        (await TextService.encrypt(TextService.generateUuid())),
-      ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
-      usuarioCreacion: usuarioAuditoria,
-    })
+        usuarioCreacion: usuarioAuditoria,
+      })
+    )
+
+    const usuarioResult = await transaction.getRepository(Usuario).save(
+      new Usuario({
+        idPersona: personaResult.id,
+        usuarioRol: [],
+        usuario: usuarioDto.usuario || usuarioDto?.persona?.nroDocumento, // TODO revisar usuario
+        estado: usuarioDto?.estado ?? Status.CREATE,
+        correoElectronico: usuarioDto?.correoElectronico,
+        contrasena:
+          usuarioDto?.contrasena ??
+          (await TextService.encrypt(TextService.generateUuid())),
+        ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
+        usuarioCreacion: usuarioAuditoria,
+      })
+    )
+
+    usuarioRoles.map((ur) => (ur.idUsuario = usuarioResult.id))
+
+    await transaction
+      .createQueryBuilder()
+      .insert()
+      .into(UsuarioRol)
+      .values(usuarioRoles)
+      .execute()
+
+    return usuarioResult
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
@@ -193,7 +215,7 @@ export class UsuarioRepository {
     persona.nroDocumento =
       usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
     persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null
-    // persona.usuarioCreacion = usuarioAuditoria;
+    persona.usuarioCreacion = usuarioAuditoria
 
     persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null
     persona.telefono = usuarioDto?.persona?.telefono ?? null
@@ -335,13 +357,15 @@ export class UsuarioRepository {
     id: string,
     usuario: Partial<Usuario>
   ): Promise<Usuario> {
-    return await this.dataSource.getRepository(Usuario).save({
-      id: id,
-      ...usuario,
-    })
+    return await this.dataSource.getRepository(Usuario).save(
+      new Usuario({
+        id: id,
+        ...usuario,
+      })
+    )
   }
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
-    return this.dataSource.getRepository(Usuario).manager.transaction(op)
+    return this.dataSource.manager.transaction<T>(op)
   }
 }

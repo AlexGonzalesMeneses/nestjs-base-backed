@@ -7,7 +7,7 @@ export class CookieService {
     const ttl = parseInt(expiresIn, 10)
     return {
       httpOnly: true,
-      secure: configService.get('REFRESH_TOKEN_SECURE') == 'true',
+      secure: configService.get('REFRESH_TOKEN_SECURE') === 'true',
       expires: new Date(Date.now() + ttl),
       path: configService.get('REFRESH_TOKEN_PATH'),
     }

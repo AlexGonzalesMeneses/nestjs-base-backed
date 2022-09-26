@@ -1,4 +1,3 @@
-import { LoggerService } from '../../core/logger/logger.service'
 import { BaseService } from '../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { ParametroRepository } from './parametro.repository'
@@ -13,15 +12,17 @@ import { Status } from '../../common/constants'
 @Injectable()
 export class ParametroService extends BaseService {
   constructor(
-    protected logger: LoggerService,
     @Inject(ParametroRepository)
     private parametroRepositorio: ParametroRepository
   ) {
-    super(logger, ParametroService.name)
+    super(ParametroService.name)
   }
 
-  async crear(parametroDto: CrearParametroDto): Promise<Parametro> {
-    return await this.parametroRepositorio.crear(parametroDto)
+  async crear(
+    parametroDto: CrearParametroDto,
+    usuarioAuditoria: string
+  ): Promise<Parametro> {
+    return await this.parametroRepositorio.crear(parametroDto, usuarioAuditoria)
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
@@ -32,43 +33,56 @@ export class ParametroService extends BaseService {
     return await this.parametroRepositorio.listarPorGrupo(grupo)
   }
 
-  async actualizarDatos(id: string, parametroDto: ActualizarParametroDto) {
+  async actualizarDatos(
+    id: string,
+    parametroDto: ActualizarParametroDto,
+    usuarioAuditoria: string
+  ) {
     const parametro = await this.parametroRepositorio.buscarPorId(id)
-    if (parametro) {
-      await this.parametroRepositorio.actualizar(id, parametroDto)
-      return { id }
-    } else {
+    if (!parametro) {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    await this.parametroRepositorio.actualizar(
+      id,
+      parametroDto,
+      usuarioAuditoria
+    )
+    return { id }
+  }
+
+  async activar(idParametro: string, usuarioAuditoria: string) {
+    const parametro = await this.parametroRepositorio.buscarPorId(idParametro)
+    if (!parametro) {
+      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    }
+    const parametroDto = new ActualizarParametroDto()
+    parametroDto.estado = Status.ACTIVE
+    await this.parametroRepositorio.actualizar(
+      idParametro,
+      parametroDto,
+      usuarioAuditoria
+    )
+    return {
+      id: idParametro,
+      estado: parametroDto.estado,
     }
   }
 
-  async activar(idParametro) {
+  async inactivar(idParametro: string, usuarioAuditoria: string) {
     const parametro = await this.parametroRepositorio.buscarPorId(idParametro)
-    if (parametro) {
-      const parametroDto = new ActualizarParametroDto()
-      parametroDto.estado = Status.ACTIVE
-      await this.parametroRepositorio.actualizar(idParametro, parametroDto)
-      return {
-        id: idParametro,
-        estado: parametroDto.estado,
-      }
-    } else {
+    if (!parametro) {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
     }
-  }
-
-  async inactivar(idParametro) {
-    const parametro = await this.parametroRepositorio.buscarPorId(idParametro)
-    if (parametro) {
-      const parametroDto = new ActualizarParametroDto()
-      parametroDto.estado = Status.INACTIVE
-      await this.parametroRepositorio.actualizar(idParametro, parametroDto)
-      return {
-        id: idParametro,
-        estado: parametroDto.estado,
-      }
-    } else {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+    const parametroDto = new ActualizarParametroDto()
+    parametroDto.estado = Status.INACTIVE
+    await this.parametroRepositorio.actualizar(
+      idParametro,
+      parametroDto,
+      usuarioAuditoria
+    )
+    return {
+      id: idParametro,
+      estado: parametroDto.estado,
     }
   }
 }

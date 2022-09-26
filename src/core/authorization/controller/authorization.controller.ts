@@ -13,16 +13,12 @@ import { BaseController } from '../../../common/base/base-controller'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
-import { LoggerService } from './../../logger/logger.service'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
 export class AuthorizationController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private authorizationService: AuthorizationService
-  ) {
-    super(logger, AuthorizationController.name)
+  constructor(private authorizationService: AuthorizationService) {
+    super(AuthorizationController.name)
   }
 
   @Post('/politicas')

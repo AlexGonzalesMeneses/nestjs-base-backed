@@ -1,32 +1,58 @@
 import { Usuario } from '../../usuario/entity/usuario.entity'
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
+  BeforeInsert,
   Check,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Rol } from './rol.entity'
 import { Status } from '../../../common/constants'
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
 import dotenv from 'dotenv'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { UtilService } from './../../../common/lib/util.service'
+
 dotenv.config()
 
+export const UsuarioRolEstado = {
+  ACTIVE: Status.ACTIVE,
+  INACTIVE: Status.INACTIVE,
+}
+@Check(UtilService.buildStatusCheck(UsuarioRolEstado))
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class UsuarioRol extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
+export class UsuarioRol extends AuditoriaEntity {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
-  @Check(`estado in ('${Status.ACTIVE}', '${Status.INACTIVE}')`)
-  @Column({ length: 15, type: 'varchar', default: Status.ACTIVE })
-  estado: string
+  @Column({
+    name: 'id_rol',
+    type: 'bigint',
+    nullable: false,
+  })
+  idRol: string
+
+  @Column({
+    name: 'id_usuario',
+    type: 'bigint',
+    nullable: false,
+  })
+  idUsuario: string
 
   @ManyToOne(() => Rol, (rol) => rol.usuarioRol)
   @JoinColumn({ name: 'id_rol', referencedColumnName: 'id' })
-  public rol!: Rol
+  rol: Rol
 
   @ManyToOne(() => Usuario, (usuario) => usuario.usuarioRol)
   @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
-  public usuario!: Usuario
+  usuario: Usuario
+
+  constructor(data?: Partial<UsuarioRol>) {
+    super(data)
+  }
+  @BeforeInsert()
+  insertarEstado() {
+    this.estado = this.estado || UsuarioRolEstado.ACTIVE
+  }
 }

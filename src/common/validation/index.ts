@@ -296,6 +296,10 @@ export const IsInstance = makeWithOptions(
   ValidationMessageEnum.IS_INSTANCE
 )
 
+// OTRAS VALIDACIONES
+export const ValidateIf = validator.ValidateIf
+export const ValidateNested = validator.ValidateNested
+
 // OTHER DECORATORS
 
 // CUSTOM VALIDATION

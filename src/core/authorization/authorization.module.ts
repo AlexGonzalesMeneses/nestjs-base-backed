@@ -15,12 +15,10 @@ import { UsuarioRol } from './entity/usuario-rol.entity'
 import { Rol } from './entity/rol.entity'
 import { Modulo } from './entity/modulo.entity'
 import { Usuario } from '../usuario/entity/usuario.entity'
-import { LoggerModule } from '../logger/logger.module'
 @Module({
   imports: [
     TypeOrmModule.forFeature([UsuarioRol, Rol, Modulo, Usuario]),
     ConfigModule,
-    LoggerModule,
   ],
   exports: [AuthorizationService],
   controllers: [AuthorizationController, RolController, ModuloController],

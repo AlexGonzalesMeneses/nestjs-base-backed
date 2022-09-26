@@ -1,5 +1,6 @@
-import { AbstractEntity } from '../../../common/dto/abstract-entity.dto'
+import { UtilService } from './../../../common/lib/util.service'
 import {
+  BeforeInsert,
   Check,
   Column,
   Entity,
@@ -11,14 +12,23 @@ import {
 } from 'typeorm'
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 import { Persona } from './persona.entity'
-import { Status } from '../../../common/constants'
 import dotenv from 'dotenv'
+import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { Status } from '../../../common/constants'
 
 dotenv.config()
 
+export const UsuarioEstado = {
+  ACTIVE: Status.ACTIVE,
+  INACTIVE: Status.INACTIVE,
+  CREATE: Status.CREATE,
+  PENDING: Status.PENDING,
+}
+
+@Check(UtilService.buildStatusCheck(UsuarioEstado))
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
-export class Usuario extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
+export class Usuario extends AuditoriaEntity {
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
 
   @Column({ length: 50, type: 'varchar', unique: true })
@@ -31,18 +41,7 @@ export class Usuario extends AbstractEntity {
   ciudadaniaDigital: boolean
 
   @Column({ name: 'correo_electronico', type: 'varchar', nullable: true })
-  correoElectronico: string | null
-
-  @Check(
-    `estado in (
-      '${Status.CREATE}',
-      '${Status.PENDING}',
-      '${Status.ACTIVE}',
-      '${Status.INACTIVE}'
-    )`
-  )
-  @Column({ length: 15, type: 'varchar', default: Status.CREATE })
-  estado: string
+  correoElectronico?: string | null
 
   @Column({
     type: 'integer',
@@ -57,7 +56,7 @@ export class Usuario extends AbstractEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoDesbloqueo: string | null
+  codigoDesbloqueo?: string | null
 
   @Index()
   @Column({
@@ -66,7 +65,7 @@ export class Usuario extends AbstractEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoRecuperacion: string | null
+  codigoRecuperacion?: string | null
 
   @Index()
   @Column({
@@ -75,7 +74,7 @@ export class Usuario extends AbstractEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoTransaccion: string | null
+  codigoTransaccion?: string | null
 
   @Index()
   @Column({
@@ -84,27 +83,40 @@ export class Usuario extends AbstractEntity {
     nullable: true,
     type: 'varchar',
   })
-  codigoActivacion: string | null
+  codigoActivacion?: string | null
 
   @Column({
     name: 'fecha_bloqueo',
-    type: 'timestamp',
+    type: 'timestamp without time zone',
     nullable: true,
   })
-  fechaBloqueo: Date | null
+  fechaBloqueo?: Date | null
 
-  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario, {
-    cascade: true,
+  @Column({
+    name: 'id_persona',
+    type: 'bigint',
+    nullable: false,
   })
-  public usuarioRol!: UsuarioRol[]
+  idPersona: string
+
+  @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.usuario)
+  usuarioRol: UsuarioRol[]
 
   @ManyToOne(() => Persona, (persona) => persona.usuarios, {
     nullable: false,
-    cascade: true,
   })
   @JoinColumn({
     name: 'id_persona',
     referencedColumnName: 'id',
   })
   persona: Persona
+
+  constructor(data?: Partial<Usuario>) {
+    super(data)
+  }
+
+  @BeforeInsert()
+  insertarEstado() {
+    this.estado = this.estado || UsuarioEstado.ACTIVE
+  }
 }

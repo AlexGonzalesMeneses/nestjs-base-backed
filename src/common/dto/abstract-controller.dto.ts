@@ -39,10 +39,9 @@ export abstract class AbstractController {
   getUser(req) {
     if (req?.user?.id) {
       return req.user.id
-    } else {
-      throw new BadRequestException(
-        `Es necesario que este autenticado para consumir este recurso.`
-      )
     }
+    throw new BadRequestException(
+      `Es necesario que este autenticado para consumir este recurso.`
+    )
   }
 }

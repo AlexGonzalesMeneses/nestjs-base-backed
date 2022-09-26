@@ -9,8 +9,6 @@ import {
   Req,
   Request,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { BaseController } from '../../../common/base/base-controller'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
@@ -30,24 +28,16 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { LoggerService } from './../../logger/logger.service'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
 
 @Controller('usuarios')
 export class UsuarioController extends BaseController {
-  constructor(
-    protected logger: LoggerService,
-    private usuarioService: UsuarioService
-  ) {
-    super(logger, UsuarioController.name)
+  constructor(private usuarioService: UsuarioService) {
+    super(UsuarioController.name)
   }
 
   // GET users
   @UseGuards(JwtAuthGuard, CasbinGuard)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-    })
-  )
   @Get()
   async listar(@Query() paginacionQueryDto: FiltrosUsuarioDto) {
     const result = await this.usuarioService.listar(paginacionQueryDto)
@@ -65,7 +55,6 @@ export class UsuarioController extends BaseController {
   //create user
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Post()
-  @UsePipes(new ValidationPipe({ transform: true }))
   async crear(@Req() req, @Body() usuarioDto: CrearUsuarioDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.crear(usuarioDto, usuarioAuditoria)
@@ -74,8 +63,6 @@ export class UsuarioController extends BaseController {
 
   //create user account
   @Post('crear-cuenta')
-  @UsePipes(ValidationPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async crearUsuario(@Req() req, @Body() usuarioDto: CrearUsuarioCuentaDto) {
     const result = await this.usuarioService.crearCuenta(usuarioDto)
     return this.successCreate(result, Messages.NEW_USER_ACCOUNT)
@@ -83,8 +70,6 @@ export class UsuarioController extends BaseController {
 
   //restore user account
   @Post('recuperar')
-  @UsePipes(ValidationPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async recuperarCuenta(
     @Req() req,
     @Body() recuperarCuentaDto: RecuperarCuentaDto
@@ -95,8 +80,6 @@ export class UsuarioController extends BaseController {
 
   // validate restore user account
   @Post('validar-recuperar')
-  @UsePipes(ValidationPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async validarRecuperarCuenta(
     @Req() req,
     @Body() validarRecuperarCuentaDto: ValidarRecuperarCuentaDto
@@ -109,7 +92,6 @@ export class UsuarioController extends BaseController {
 
   // activar usuario
   @Patch('/cuenta/activacion')
-  @UsePipes(ValidationPipe)
   async activarCuenta(@Req() req, @Body() activarCuentaDto: ActivarCuentaDto) {
     const result = await this.usuarioService.activarCuenta(
       activarCuentaDto.codigo
@@ -119,8 +101,6 @@ export class UsuarioController extends BaseController {
 
   // validate restore user account
   @Patch('/cuenta/nueva-contrasena')
-  @UsePipes(ValidationPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async nuevaContrasena(
     @Req() req,
     @Body() nuevaContrasenaDto: NuevaContrasenaDto
@@ -133,7 +113,6 @@ export class UsuarioController extends BaseController {
 
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Post('/cuenta/ciudadania')
-  @UsePipes(new ValidationPipe({ transform: true }))
   async crearConCiudadania(
     @Req() req,
     @Body() usuarioDto: CrearUsuarioCiudadaniaDto
@@ -149,8 +128,7 @@ export class UsuarioController extends BaseController {
   // activar usuario
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
-  @UsePipes(ValidationPipe)
-  async activar(@Req() req, @Param() params: ParamUuidDto) {
+  async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.activar(
@@ -163,8 +141,8 @@ export class UsuarioController extends BaseController {
   // inactivar usuario
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() param: ParamUuidDto) {
-    const { id: idUsuario } = param
+  async inactivar(@Req() req, @Param() params: ParamIdDto) {
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.inactivar(
       idUsuario,
@@ -174,7 +152,6 @@ export class UsuarioController extends BaseController {
   }
 
   @UseGuards(JwtAuthGuard, CasbinGuard)
-  @UsePipes(ValidationPipe)
   @Patch('/cuenta/contrasena')
   async actualizarContrasena(
     @Req() req,
@@ -191,11 +168,10 @@ export class UsuarioController extends BaseController {
   }
 
   @UseGuards(JwtAuthGuard, CasbinGuard)
-  @UsePipes(ValidationPipe)
   @Patch('/:id/restauracion')
-  async restaurarContrasena(@Req() req, @Param() param: ParamUuidDto) {
+  async restaurarContrasena(@Req() req, @Param() params: ParamIdDto) {
     const usuarioAuditoria = this.getUser(req)
-    const { id: idUsuario } = param
+    const { id: idUsuario } = params
     const result = await this.usuarioService.restaurarContrasena(
       idUsuario,
       usuarioAuditoria
@@ -208,10 +184,10 @@ export class UsuarioController extends BaseController {
   @Patch(':id')
   async actualizarDatos(
     @Req() req,
-    @Param() param: ParamUuidDto,
+    @Param() params: ParamIdDto,
     @Body() usuarioDto: ActualizarUsuarioRolDto
   ) {
-    const { id: idUsuario } = param
+    const { id: idUsuario } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.usuarioService.actualizarDatos(
       idUsuario,
@@ -222,7 +198,6 @@ export class UsuarioController extends BaseController {
   }
 
   @Get('cuenta/desbloqueo')
-  @UsePipes(ValidationPipe)
   async desbloquearCuenta(@Query() query: ParamUuidDto) {
     const { id: idDesbloqueo } = query
     const result = await this.usuarioService.desbloquearCuenta(idDesbloqueo)

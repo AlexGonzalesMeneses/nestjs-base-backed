@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config'
 import { AuthenticationController } from './authentication.controller'
 import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { LoggerModule } from './../../logger/logger.module'
 import { Request } from 'express'
 
 const resAutenticar = {
@@ -18,7 +17,6 @@ describe('AuthenticationController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       controllers: [AuthenticationController],
       providers: [
         {

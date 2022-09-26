@@ -6,6 +6,7 @@ import { Rol } from '../entity/rol.entity'
 @Injectable()
 export class RolRepository {
   constructor(private dataSource: DataSource) {}
+
   async listar() {
     return await this.dataSource
       .getRepository(Rol)

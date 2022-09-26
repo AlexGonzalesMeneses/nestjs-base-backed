@@ -8,13 +8,18 @@ import { TextService } from '../../common/lib/text.service'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { ParametroController } from './parametro.controller'
 import { ParametroService } from './parametro.service'
-import { LoggerModule } from '../../core/logger/logger.module'
 
 const resParametro = {
   id: TextService.generateUuid(),
   codigo: 'TD-CI',
   nombre: 'Cedula de identidad',
   grupo: 'TD',
+}
+
+const mockRequest = {
+  user: {
+    id: TextService.generateUuid(),
+  },
 }
 
 const resListar = [1, resParametro]
@@ -26,7 +31,6 @@ describe('ParametroController', () => {
       canActivate: jest.fn(() => true),
     }
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       controllers: [ParametroController],
       providers: [
         {
@@ -81,7 +85,7 @@ describe('ParametroController', () => {
       descripcion: 'Pasaporte',
     }
     const parametroDto = plainToClass(CrearParametroDto, parametro)
-    const result = await controller.crear(parametroDto)
+    const result = await controller.crear(mockRequest, parametroDto)
     expect(result).toBeDefined()
     expect(result).toHaveProperty('finalizado')
     expect(result).toHaveProperty('mensaje')
