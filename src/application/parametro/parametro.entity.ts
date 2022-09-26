@@ -1,3 +1,4 @@
+import { UtilService } from './../../common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -11,12 +12,12 @@ import { Status } from '../../common/constants'
 
 dotenv.config()
 
-@Check(
-  `_estado in (
-    '${Status.ACTIVE}',
-    '${Status.INACTIVE}'
-  )`
-)
+const ParametroStatus = {
+  ACTIVE: Status.ACTIVE,
+  INACTIVE: Status.INACTIVE,
+}
+
+@Check(UtilService.buildCheck(ParametroStatus))
 @Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
@@ -40,6 +41,6 @@ export class Parametro extends AuditoriaEntity {
 
   @BeforeInsert()
   insertarEstado() {
-    this.estado = this.estado || Status.ACTIVE
+    this.estado = this.estado || ParametroStatus.ACTIVE
   }
 }

@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class UtilService {
-  /**
-   * Metodo para encriptar un password
-   * @param password contraeña
-   */
-  static armarQueryParams(datos) {
+  static armarQueryParams(datos: any) {
     return Object.keys(datos)
       .map((dato) => `"${dato}":"${datos[dato]}"`)
       .join(', ')
+  }
+
+  static buildCheck(items = {}) {
+    const values = Object.keys(items).map((k) => items[k])
+    if (values.length === 0) throw new Error('estado no definido')
+    const result = `_estado in ('${values.join(`','`)}')`
+    return result
   }
 }
