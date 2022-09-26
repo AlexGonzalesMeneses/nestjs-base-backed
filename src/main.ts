@@ -6,7 +6,7 @@ import session from 'express-session'
 import passport from 'passport'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import packageJson from '../package.json'
 import { TypeormStore } from 'connect-typeorm'
 import { Session } from './core/authentication/entity/session.entity'
@@ -97,6 +97,7 @@ async function bootstrap() {
   app.use(helmet.hidePoweredBy())
   app.use(helmet())
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN') || 'api')
+  app.useGlobalPipes(new ValidationPipe({ transform: true }))
 
   if (process.env.NODE_ENV !== 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
