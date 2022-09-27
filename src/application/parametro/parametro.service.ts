@@ -1,7 +1,6 @@
 import { BaseService } from '../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { ParametroRepository } from './parametro.repository'
-import { Parametro } from './parametro.entity'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception'
@@ -18,10 +17,7 @@ export class ParametroService extends BaseService {
     super(ParametroService.name)
   }
 
-  async crear(
-    parametroDto: CrearParametroDto,
-    usuarioAuditoria: string
-  ): Promise<Parametro> {
+  async crear(parametroDto: CrearParametroDto, usuarioAuditoria: string) {
     return await this.parametroRepositorio.crear(parametroDto, usuarioAuditoria)
   }
 
