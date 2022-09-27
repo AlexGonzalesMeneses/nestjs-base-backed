@@ -1,7 +1,6 @@
 import { BaseService } from '../../../common/base/base-service'
 import { Inject, Injectable } from '@nestjs/common'
 import { RolRepository } from '../repository/rol.repository'
-import { Rol } from '../entity/rol.entity'
 
 @Injectable()
 export class RolService extends BaseService {
@@ -12,7 +11,7 @@ export class RolService extends BaseService {
     super(RolService.name)
   }
 
-  async listar(): Promise<Rol[]> {
+  async listar() {
     return await this.rolRepositorio.listar()
   }
 }

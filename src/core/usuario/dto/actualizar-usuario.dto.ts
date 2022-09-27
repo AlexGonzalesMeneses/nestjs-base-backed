@@ -1,4 +1,5 @@
 export class ActualizarUsuarioDto {
+  id?: string
   estado?: string | null
   correoElectronico: string
   contrasena?: string | null

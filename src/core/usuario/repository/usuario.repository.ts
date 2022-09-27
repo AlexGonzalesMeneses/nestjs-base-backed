@@ -9,6 +9,8 @@ import { Status } from '../../../common/constants'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { Injectable } from '@nestjs/common'
 import { DataSource, EntityManager } from 'typeorm'
+import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
+import dayjs from 'dayjs'
 
 @Injectable()
 export class UsuarioRepository {
@@ -77,9 +79,12 @@ export class UsuarioRepository {
       .getOne()
   }
 
-  async buscarPorId(id: string): Promise<Usuario | null> {
-    return await this.dataSource
-      .getRepository(Usuario)
+  async buscarPorId(id: string, transaction?: EntityManager) {
+    const usuarioRepositorio = transaction
+      ? transaction.getRepository(Usuario)
+      : this.dataSource.getRepository(Usuario)
+
+    return usuarioRepositorio
       .createQueryBuilder('usuario')
       .where({ id: id })
       .getOne()
@@ -143,7 +148,7 @@ export class UsuarioRepository {
   async crear(
     usuarioDto: CrearUsuarioDto,
     usuarioAuditoria: string,
-    transaction: any
+    transaction: EntityManager
   ): Promise<Usuario> {
     const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
       // Rol
@@ -197,6 +202,31 @@ export class UsuarioRepository {
       .execute()
 
     return usuarioResult
+  }
+
+  async actualizar(
+    usuarioDto: Partial<ActualizarUsuarioDto>,
+    transaction?: EntityManager
+  ) {
+    const usuarioRepositorio = transaction
+      ? transaction.getRepository(Usuario)
+      : this.dataSource.getRepository(Usuario)
+
+    const usuario = await usuarioRepositorio.save(
+      new Usuario({
+        id: usuarioDto.id,
+        estado: usuarioDto.estado || undefined,
+        correoElectronico: usuarioDto.correoElectronico || undefined,
+        contrasena: usuarioDto.contrasena || undefined,
+        intentos: usuarioDto.intentos || undefined,
+        fechaBloqueo: usuarioDto.fechaBloqueo
+          ? dayjs(usuarioDto.fechaBloqueo).toDate()
+          : undefined,
+        codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
+        usuarioModificacion: usuarioDto.usuarioActualizacion,
+      })
+    )
+    return usuario
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {

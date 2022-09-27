@@ -116,11 +116,20 @@ export class ModuloRepository {
     return await this.dataSource.getRepository(Modulo).save(modulo)
   }
 
-  async actualizar(moduloDto: Partial<Modulo>, usuarioAuditoria: string) {
+  async actualizar(
+    moduloDto: Partial<CrearModuloDto>,
+    usuarioAuditoria: string
+  ) {
     return await this.dataSource.getRepository(Modulo).save(
       new Modulo({
-        ...moduloDto,
-        ...{ usuarioModificacion: usuarioAuditoria },
+        id: moduloDto.id,
+        label: moduloDto.label,
+        url: moduloDto.url,
+        nombre: moduloDto.nombre,
+        propiedades: moduloDto.propiedades,
+        idModulo: moduloDto.fidModulo,
+        estado: moduloDto.estado,
+        usuarioModificacion: usuarioAuditoria,
       })
     )
   }

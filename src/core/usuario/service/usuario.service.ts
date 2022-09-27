@@ -7,7 +7,6 @@ import {
   Query,
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
-import { Usuario } from '../entity/usuario.entity'
 import { Status, TipoDocumento } from '../../../common/constants'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { TextService } from '../../../common/lib/text.service'
@@ -24,7 +23,7 @@ import { ConfigService } from '@nestjs/config'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { RolRepository } from '../../authorization/repository/rol.repository'
-import { EntityManager, Repository } from 'typeorm'
+import { EntityManager } from 'typeorm'
 import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
 import {
   NuevaContrasenaDto,
@@ -54,7 +53,7 @@ export class UsuarioService extends BaseService {
     return await this.usuarioRepositorio.listar(paginacionQueryDto)
   }
 
-  async buscarUsuario(usuario: string): Promise<Usuario | null> {
+  async buscarUsuario(usuario: string) {
     return await this.usuarioRepositorio.buscarUsuario(usuario)
   }
 
@@ -90,7 +89,7 @@ export class UsuarioService extends BaseService {
       correo: usuarioDto.correoElectronico,
       asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
     }
-    const op = async (transaction: EntityManager): Promise<Usuario> => {
+    const op = async (transaction: EntityManager) => {
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
       usuarioDto.estado = Status.PENDING
       const usuarioResult = await this.usuarioRepositorio.crear(
@@ -100,10 +99,7 @@ export class UsuarioService extends BaseService {
       )
       return usuarioResult
     }
-
-    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
-      op
-    )
+    const crearResult = await this.usuarioRepositorio.runTransaction(op)
 
     await this.enviarCorreoContrasenia(
       datosCorreo,
@@ -143,7 +139,7 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    const op = async (transaction: EntityManager): Promise<Usuario> => {
+    const op = async (transaction: EntityManager) => {
       const usuarioNuevo = await this.usuarioRepositorio.crear(
         {
           usuario: usuarioDto.correoElectronico,
@@ -190,10 +186,8 @@ export class UsuarioService extends BaseService {
 
       return usuarioNuevo
     }
+    const crearResult = await this.usuarioRepositorio.runTransaction(op)
 
-    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
-      op
-    )
     return crearResult
   }
 
@@ -316,7 +310,7 @@ export class UsuarioService extends BaseService {
 
     usuarioDto.estado = Status.ACTIVE
 
-    const op = async (transaction: EntityManager): Promise<Usuario> => {
+    const op = async (transaction: EntityManager) => {
       const result = await this.usuarioRepositorio.crear(
         usuarioDto as CrearUsuarioDto,
         usuarioAuditoria,
@@ -325,10 +319,7 @@ export class UsuarioService extends BaseService {
 
       return result
     }
-
-    const crearResult = await this.usuarioRepositorio.runTransaction<Usuario>(
-      op
-    )
+    const crearResult = await this.usuarioRepositorio.runTransaction(op)
 
     return crearResult
   }
@@ -506,19 +497,22 @@ export class UsuarioService extends BaseService {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
-    const op = async (transaction: EntityManager): Promise<Usuario> => {
+    const op = async (transaccion: EntityManager) => {
       const contrasena = TextService.generateShortRandomText()
-      const usuarioRepository: Repository<Usuario> =
-        transaction.getRepository(Usuario)
-      await usuarioRepository.update(idUsuario, {
-        contrasena: await TextService.encrypt(contrasena),
-        estado: Status.PENDING,
-        usuarioModificacion: usuarioAuditoria,
-      })
+      await this.usuarioRepositorio.actualizar(
+        {
+          id: idUsuario,
+          contrasena: await TextService.encrypt(contrasena),
+          estado: Status.PENDING,
+          usuarioActualizacion: usuarioAuditoria,
+        },
+        transaccion
+      )
 
-      const usuarioActualizado = await usuarioRepository.findOne({
-        where: { id: idUsuario },
-      })
+      const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+        idUsuario,
+        transaccion
+      )
 
       if (!usuarioActualizado) {
         throw new EntityNotFoundException(Messages.INVALID_USER)
@@ -537,9 +531,9 @@ export class UsuarioService extends BaseService {
 
       return usuarioActualizado
     }
-    const usuario1 = await this.usuarioRepositorio.runTransaction<Usuario>(op)
+    const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
 
-    return { id: idUsuario, estado: usuario1.estado }
+    return { id: idUsuario, estado: usuarioResult.estado }
   }
 
   async actualizarDatos(
@@ -659,7 +653,7 @@ export class UsuarioService extends BaseService {
     }
   }
 
-  async buscarUsuarioPorCI(persona: PersonaDto): Promise<Usuario | null> {
+  async buscarUsuarioPorCI(persona: PersonaDto) {
     return await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
   }
 

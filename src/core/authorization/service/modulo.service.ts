@@ -5,7 +5,6 @@ import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { Status } from '../../../common/constants'
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../../common/constants/response-messages'
-import { Modulo } from '../entity/modulo.entity'
 
 @Injectable()
 export class ModuloService extends BaseService {
@@ -29,13 +28,7 @@ export class ModuloService extends BaseService {
   }
 
   async actualizar(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
-    return await this.moduloRepositorio.actualizar(
-      {
-        ...moduloDto,
-        ...{ fidModulo: { id: moduloDto.fidModulo } as Modulo },
-      },
-      usuarioAuditoria
-    )
+    return await this.moduloRepositorio.actualizar(moduloDto, usuarioAuditoria)
   }
 
   async eliminar(moduloDto: CrearModuloDto) {
@@ -51,7 +44,6 @@ export class ModuloService extends BaseService {
       {
         id: idModulo,
         estado: Status.ACTIVE,
-        usuarioModificacion: usuarioAuditoria,
       },
       usuarioAuditoria
     )
@@ -70,7 +62,6 @@ export class ModuloService extends BaseService {
       {
         id: idModulo,
         estado: Status.INACTIVE,
-        usuarioModificacion: usuarioAuditoria,
       },
       usuarioAuditoria
     )

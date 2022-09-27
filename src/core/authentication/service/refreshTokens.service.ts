@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 import { ConfigService } from '@nestjs/config'
 
 import { RefreshTokensRepository } from '../repository/refreshTokens.repository'
-import { RefreshTokens } from '../entity/refreshTokens.entity'
 import { UsuarioService } from '../../usuario/service/usuario.service'
 
 import { Cron } from '@nestjs/schedule'
@@ -31,11 +30,11 @@ export class RefreshTokensService extends BaseService {
     super(RefreshTokensService.name)
   }
 
-  async findById(id: string): Promise<RefreshTokens | null> {
+  async findById(id: string) {
     return await this.refreshTokensRepository.findById(id)
   }
 
-  async create(grantId: string): Promise<RefreshTokens> {
+  async create(grantId: string) {
     const ttl = parseInt(
       this.configService.get('REFRESH_TOKEN_EXPIRES_IN') || '3600000',
       10
@@ -80,25 +79,30 @@ export class RefreshTokensService extends BaseService {
       })
     }
 
-    let newRefreshToken: RefreshTokens | undefined | null = null
-    const rft = parseInt(
-      this.configService.get('REFRESH_TOKEN_ROTATE_IN') || '0',
-      10
-    )
-
-    // crear rotacion de refresh token
-    if (dayjs(refreshToken.expiresAt).diff(dayjs()) < rft) {
-      newRefreshToken = await this.create(refreshToken.grantId)
-    }
     const payload = { id: usuario.id, roles }
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
     }
 
+    const rft = parseInt(
+      this.configService.get('REFRESH_TOKEN_ROTATE_IN') || '0',
+      10
+    )
+
+    // crear rotacion de refresh token
+    const sigueVigente = dayjs(refreshToken.expiresAt).diff(dayjs()) < rft
+    if (!sigueVigente) {
+      return {
+        data,
+        refresh_token: null,
+      }
+    }
+
+    const newRefreshToken = await this.create(refreshToken.grantId)
     return {
       data,
-      refresh_token: newRefreshToken ? { id: newRefreshToken.id } : null,
+      refresh_token: newRefreshToken.id,
     }
   }
 
