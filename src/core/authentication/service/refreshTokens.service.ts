@@ -102,7 +102,7 @@ export class RefreshTokensService extends BaseService {
     const newRefreshToken = await this.create(refreshToken.grantId)
     return {
       data,
-      refresh_token: newRefreshToken.id,
+      refresh_token: { id: newRefreshToken.id },
     }
   }
 
