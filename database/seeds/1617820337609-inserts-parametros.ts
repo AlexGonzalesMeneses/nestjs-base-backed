@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { Parametro } from './../../src/application/parametro/parametro.entity'
+import { Parametro } from '../../src/application/parametro/parametro.entity'
 
 export class insertsParametros1617820337609 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -102,7 +102,7 @@ export class insertsParametros1617820337609 implements MigrationInterface {
       },
     ]
     const parametros = items.map((item) => {
-      const param = new Parametro({
+      return new Parametro({
         codigo: item.codigo,
         nombre: item.nombre,
         grupo: item.grupo,
@@ -112,7 +112,6 @@ export class insertsParametros1617820337609 implements MigrationInterface {
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
-      return param
     })
     await queryRunner.manager.save(parametros)
   }

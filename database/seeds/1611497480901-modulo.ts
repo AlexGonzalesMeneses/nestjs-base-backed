@@ -118,7 +118,7 @@ export class modulo1611497480901 implements MigrationInterface {
         icono: item.propiedades.icono,
         descripcion: item.propiedades.descripcion,
       }
-      const modulo = new Modulo({
+      return new Modulo({
         nombre: item.nombre,
         url: item.url,
         label: item.label,
@@ -129,7 +129,6 @@ export class modulo1611497480901 implements MigrationInterface {
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
-      return modulo
     })
     await queryRunner.manager.save(modulos)
   }

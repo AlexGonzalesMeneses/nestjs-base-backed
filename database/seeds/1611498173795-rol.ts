@@ -22,7 +22,7 @@ export class rol1611498173795 implements MigrationInterface {
       },
     ]
     const roles = items.map((item) => {
-      const rol = new Rol({
+      return new Rol({
         rol: item.rol,
         nombre: item.nombre,
         estado: 'ACTIVO',
@@ -30,7 +30,6 @@ export class rol1611498173795 implements MigrationInterface {
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
-      return rol
     })
     await queryRunner.manager.save(roles)
   }

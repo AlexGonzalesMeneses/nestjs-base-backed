@@ -1,4 +1,4 @@
-import { BaseService } from './../../../common/base/base-service'
+import { BaseService } from '../../../common/base/base-service'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { UsuarioService } from '../../usuario/service/usuario.service'
 import { JwtService } from '@nestjs/jwt'

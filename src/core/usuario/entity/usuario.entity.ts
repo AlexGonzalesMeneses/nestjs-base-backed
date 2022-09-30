@@ -1,4 +1,4 @@
-import { UtilService } from './../../../common/lib/util.service'
+import { UtilService } from '../../../common/lib/util.service'
 import {
   BeforeInsert,
   Check,

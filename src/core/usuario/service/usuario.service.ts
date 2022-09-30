@@ -92,12 +92,11 @@ export class UsuarioService extends BaseService {
     const op = async (transaction: EntityManager) => {
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
       usuarioDto.estado = Status.PENDING
-      const usuarioResult = await this.usuarioRepositorio.crear(
+      return await this.usuarioRepositorio.crear(
         usuarioDto,
         usuarioAuditoria,
         transaction
       )
-      return usuarioResult
     }
     const crearResult = await this.usuarioRepositorio.runTransaction(op)
 
@@ -186,9 +185,7 @@ export class UsuarioService extends BaseService {
 
       return usuarioNuevo
     }
-    const crearResult = await this.usuarioRepositorio.runTransaction(op)
-
-    return crearResult
+    return await this.usuarioRepositorio.runTransaction(op)
   }
 
   async activarCuenta(codigo) {
@@ -244,7 +241,7 @@ export class UsuarioService extends BaseService {
         template
       )
     }
-    return 'Busqueda terminada'
+    return 'Búsqueda terminada'
   }
 
   async validarRecuperar(validarRecuperarCuentaDto: ValidarRecuperarCuentaDto) {
@@ -311,17 +308,13 @@ export class UsuarioService extends BaseService {
     usuarioDto.estado = Status.ACTIVE
 
     const op = async (transaction: EntityManager) => {
-      const result = await this.usuarioRepositorio.crear(
+      return await this.usuarioRepositorio.crear(
         usuarioDto as CrearUsuarioDto,
         usuarioAuditoria,
         transaction
       )
-
-      return result
     }
-    const crearResult = await this.usuarioRepositorio.runTransaction(op)
-
-    return crearResult
+    return await this.usuarioRepositorio.runTransaction(op)
   }
 
   async crearConPersonaExistente(
@@ -333,24 +326,25 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
       persona.nroDocumento
     )
-    if (!usuario) {
-      const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
-      const nuevoUsuario = {
-        estado: Status.ACTIVE,
-        correoElectronico: otrosDatos?.correoElectronico,
-        persona,
-        ciudadaniaDigital: true,
-        roles: [rol],
-      }
-      const result = await this.usuarioRepositorio.crearConPersonaExistente(
-        nuevoUsuario,
-        usuarioAuditoria
-      )
-      const { id, estado } = result
-      return { id, estado: estado }
+    if (usuario) {
+      throw new PreconditionFailedException(Messages.EXISTING_USER)
     }
-    throw new PreconditionFailedException(Messages.EXISTING_USER)
+
+    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
+
+    const nuevoUsuario = {
+      estado: Status.ACTIVE,
+      correoElectronico: otrosDatos?.correoElectronico,
+      persona,
+      ciudadaniaDigital: true,
+      roles: [rol],
+    }
+    const result = await this.usuarioRepositorio.crearConPersonaExistente(
+      nuevoUsuario,
+      usuarioAuditoria
+    )
+    return { id: result.id, estado: result.estado }
   }
 
   async crearConCiudadaniaV2(
@@ -382,59 +376,62 @@ export class UsuarioService extends BaseService {
       ciudadaniaDigital: true,
       roles: [rol],
     }
+
     const result = await this.usuarioRepositorio.crearConCiudadania(
       nuevoUsuario,
       usuarioAuditoria
     )
-    const { id, estado } = result
-    return { id, estado: estado }
+
+    return { id: result.id, estado: result.estado }
   }
 
   async activar(idUsuario, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING]
-    if (usuario && statusValid.includes(usuario.estado as Status)) {
-      // cambiar estado al usuario y generar una nueva contrasena
-      const contrasena = TextService.generateShortRandomText()
 
-      const usuarioActualizado =
-        await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-          contrasena: await TextService.encrypt(contrasena),
-          estado: Status.PENDING,
-          usuarioModificacion: usuarioAuditoria,
-        })
-      // si está bien ≥ enviar el mail con la contraseña generada
-      const datosCorreo = {
-        correo: usuario.correoElectronico,
-        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
-      }
-      await this.enviarCorreoContrasenia(
-        datosCorreo,
-        usuario.usuario,
-        contrasena
-      )
-      return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
-    } else {
+    if (!(usuario && statusValid.includes(usuario.estado as Status))) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
+
+    // cambiar estado al usuario y generar una nueva contrasena
+    const contrasena = TextService.generateShortRandomText()
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        contrasena: await TextService.encrypt(contrasena),
+        estado: Status.PENDING,
+        usuarioModificacion: usuarioAuditoria,
+      }
+    )
+    // si está bien ≥ enviar el mail con la contraseña generada
+    const datosCorreo = {
+      correo: usuario.correoElectronico,
+      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+    }
+    await this.enviarCorreoContrasenia(datosCorreo, usuario.usuario, contrasena)
+    return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
   async inactivar(idUsuario: string, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
-    if (usuario) {
-      const usuarioActualizado =
-        await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-          usuarioModificacion: usuarioAuditoria,
-          estado: Status.INACTIVE,
-        })
-      return {
-        id: usuarioActualizado.id,
-        estado: usuarioActualizado.estado,
-      }
-    } else {
+
+    if (!usuario) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
+    }
+
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        usuarioModificacion: usuarioAuditoria,
+        estado: Status.INACTIVE,
+      }
+    )
+    return {
+      id: usuarioActualizado.id,
+      estado: usuarioActualizado.estado,
     }
   }
 
@@ -467,25 +464,29 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
       idUsuario
     )
-    if (usuario && (await TextService.compare(hash, usuario.contrasena))) {
-      // validar que la contrasena nueva cumpla nivel de seguridad
-      const contrasena = TextService.decodeBase64(contrasenaNueva)
-      if (TextService.validateLevelPassword(contrasena)) {
-        // guardar en bd
-        const usuarioActualizado =
-          await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-            contrasena: await TextService.encrypt(contrasena),
-            estado: Status.ACTIVE,
-          })
-        return {
-          id: usuarioActualizado.id,
-          estado: usuarioActualizado.estado,
-        }
-      } else {
-        throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
-      }
-    } else {
+
+    if (!(usuario && (await TextService.compare(hash, usuario.contrasena)))) {
       throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS)
+    }
+    // validar que la contrasena nueva cumpla nivel de seguridad
+    const contrasena = TextService.decodeBase64(contrasenaNueva)
+
+    if (!TextService.validateLevelPassword(contrasena)) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+    }
+
+    // guardar en bd
+    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        contrasena: await TextService.encrypt(contrasena),
+        estado: Status.ACTIVE,
+      }
+    )
+
+    return {
+      id: usuarioActualizado.id,
+      estado: usuarioActualizado.estado,
     }
   }
 
@@ -493,6 +494,7 @@ export class UsuarioService extends BaseService {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
     const statusValid = [Status.ACTIVE, Status.PENDING]
+
     if (!(usuario && statusValid.includes(usuario.estado as Status))) {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
@@ -531,6 +533,7 @@ export class UsuarioService extends BaseService {
 
       return usuarioActualizado
     }
+
     const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
 
     return { id: idUsuario, estado: usuarioResult.estado }
@@ -551,6 +554,7 @@ export class UsuarioService extends BaseService {
 
     const { correoElectronico, roles } = usuarioDto
     // 2. verificar que el email no este registrado
+
     if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
       const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
         correoElectronico
@@ -571,13 +575,15 @@ export class UsuarioService extends BaseService {
     return { id: usuario.id }
   }
 
-  private async actualizarRoles(id, roles, usuarioAuditoria) {
+  async actualizarRoles(id, roles, usuarioAuditoria) {
     const usuarioRoles =
       await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id)
+
     const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
       usuarioRoles,
       roles
     )
+
     // ACTIVAR roles inactivos
     if (inactivos.length > 0) {
       await this.usuarioRolRepositorio.activar(id, inactivos, usuarioAuditoria)
@@ -592,7 +598,7 @@ export class UsuarioService extends BaseService {
     }
   }
 
-  private verificarUsuarioRoles(usuarioRoles, roles) {
+  verificarUsuarioRoles(usuarioRoles, roles) {
     const inactivos = roles.filter((rol) =>
       usuarioRoles.some(
         (usuarioRol) =>

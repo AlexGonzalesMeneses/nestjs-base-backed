@@ -49,7 +49,6 @@ export class UtilService {
     if (values.length === 0) {
       throw new Error('[buildCheck] Debe especificarse al menos un item')
     }
-    const result = `${field} IN ('${values.join(`','`)}')`
-    return result
+    return `${field} IN ('${values.join(`','`)}')`
   }
 }

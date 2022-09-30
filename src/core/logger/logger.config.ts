@@ -10,6 +10,7 @@ import packageJson from '../../../package.json'
 import path from 'path'
 import dotenv from 'dotenv'
 import { LOG_LEVEL } from './constants'
+
 dotenv.config()
 
 export class LoggerConfig {
@@ -109,8 +110,7 @@ export class LoggerConfig {
   static genReqId: GenReqId = (req: Request) => {
     const uid = req.user?.id || '-'
     const rid = (req.id || rTracer.id()) as ReqId
-    const reqId = `${rid} usuario:${uid}`
-    return reqId
+    return `${rid} usuario:${uid}`
   }
 
   static getPinoHttpConfig(): Options {

@@ -212,7 +212,7 @@ export class UsuarioRepository {
       ? transaction.getRepository(Usuario)
       : this.dataSource.getRepository(Usuario)
 
-    const usuario = await usuarioRepositorio.save(
+    return await usuarioRepositorio.save(
       new Usuario({
         id: usuarioDto.id,
         estado: usuarioDto.estado || undefined,
@@ -226,7 +226,6 @@ export class UsuarioRepository {
         usuarioModificacion: usuarioDto.usuarioActualizacion,
       })
     )
-    return usuario
   }
 
   async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {

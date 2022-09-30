@@ -1,6 +1,4 @@
 import { UsuarioRol } from '../../src/core/authorization/entity/usuario-rol.entity'
-import { Usuario } from '../../src/core/usuario/entity/usuario.entity'
-import { Rol } from '../../src/core/authorization/entity/rol.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class usuarioRol1611516017924 implements MigrationInterface {
@@ -28,7 +26,7 @@ export class usuarioRol1611516017924 implements MigrationInterface {
       },
     ]
     const usuariosRoles = items.map((item) => {
-      const usuarioRol = new UsuarioRol({
+      return new UsuarioRol({
         idRol: item.rol,
         idUsuario: item.usuario,
         estado: 'ACTIVO',
@@ -36,7 +34,6 @@ export class usuarioRol1611516017924 implements MigrationInterface {
         usuarioCreacion: '1',
         fechaCreacion: new Date(),
       })
-      return usuarioRol
     })
     await queryRunner.manager.save(usuariosRoles)
   }

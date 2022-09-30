@@ -1,5 +1,4 @@
-import { Scope } from '@nestjs/common'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Scope } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { Logger, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
@@ -10,7 +9,7 @@ import { LoggerConfig } from './logger.config'
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
   private context: string = LoggerService.name
-  private redact: fastRedact.redactFn
+  private readonly redact: fastRedact.redactFn
 
   constructor(pinoLogger: PinoLogger) {
     super(pinoLogger, {})
@@ -104,6 +103,7 @@ export class LoggerService extends Logger {
   }
 
   static instances: { [key: string]: LoggerService } = {}
+
   static getInstance(context: string) {
     if (LoggerService.instances[context]) {
       return LoggerService.instances[context]

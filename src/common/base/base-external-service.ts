@@ -1,6 +1,6 @@
-import { LoggerConfig } from './../../core/logger/logger.config'
+import { LoggerConfig } from '../../core/logger/logger.config'
 import { HttpService } from '@nestjs/axios'
-import { AxiosRequestConfig, AxiosError } from 'axios'
+import { AxiosError, AxiosRequestConfig } from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { BaseService } from './base-service'
 
