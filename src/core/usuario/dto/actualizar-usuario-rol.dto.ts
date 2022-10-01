@@ -1,8 +1,8 @@
 import {
-  IsNotEmpty,
+  CorreoLista,
   IsArray,
   IsEmail,
-  CorreoLista,
+  IsNotEmpty,
   ValidateIf,
 } from '../../../common/validation'
 
@@ -16,5 +16,5 @@ export class ActualizarUsuarioRolDto {
   @IsNotEmpty()
   @IsArray()
   @ValidateIf((o) => !o.correoElectronico)
-  roles?: Array<string>
+  roles: Array<string>
 }

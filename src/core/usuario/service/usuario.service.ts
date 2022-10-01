@@ -89,6 +89,7 @@ export class UsuarioService extends BaseService {
       correo: usuarioDto.correoElectronico,
       asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
     }
+
     const op = async (transaction: EntityManager) => {
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
       usuarioDto.estado = Status.PENDING
@@ -235,11 +236,13 @@ export class UsuarioService extends BaseService {
       TemplateEmailService.armarPlantillaRecuperacionCuenta(urlRecuperacion)
 
     if (usuario.correoElectronico) {
-      await this.mensajeriaService.sendEmail(
-        usuario.correoElectronico,
-        Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-        template
-      )
+      await this.mensajeriaService
+        .sendEmail(
+          usuario.correoElectronico,
+          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+          template
+        )
+        .catch((err) => this.logger.error(err))
     }
     return 'Búsqueda terminada'
   }
@@ -368,19 +371,23 @@ export class UsuarioService extends BaseService {
 
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
-    const nuevoUsuario = {
+    const nuevoUsuario: CrearUsuarioDto = {
       usuario: personaCiudadania.nroDocumento,
       estado: Status.ACTIVE,
       correoElectronico: otrosDatos?.correoElectronico,
       persona,
       ciudadaniaDigital: true,
-      roles: [rol],
+      roles: rol?.id ? [rol?.id] : [],
     }
 
-    const result = await this.usuarioRepositorio.crearConCiudadania(
-      nuevoUsuario,
-      usuarioAuditoria
-    )
+    const op = async (transaction: EntityManager) => {
+      return await this.usuarioRepositorio.crear(
+        nuevoUsuario,
+        usuarioAuditoria,
+        transaction
+      )
+    }
+    const result = await this.usuarioRepositorio.runTransaction(op)
 
     return { id: result.id, estado: result.estado }
   }
@@ -410,7 +417,11 @@ export class UsuarioService extends BaseService {
       correo: usuario.correoElectronico,
       asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
     }
-    await this.enviarCorreoContrasenia(datosCorreo, usuario.usuario, contrasena)
+    await this.enviarCorreoContrasenia(
+      datosCorreo,
+      usuario.usuario,
+      contrasena
+    ).catch((err) => this.logger.error(err))
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
@@ -435,7 +446,7 @@ export class UsuarioService extends BaseService {
     }
   }
 
-  private async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
+  async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
     const url = this.configService.get('URL_FRONTEND')
     const template = TemplateEmailService.armarPlantillaActivacionCuenta(
       url,
@@ -529,7 +540,7 @@ export class UsuarioService extends BaseService {
         datosCorreo,
         usuarioActualizado.usuario,
         usuarioActualizado.contrasena
-      )
+      ).catch((err) => this.logger.error(err))
 
       return usuarioActualizado
     }
@@ -567,11 +578,11 @@ export class UsuarioService extends BaseService {
         usuarioModificacion: usuarioAuditoria,
       })
     }
-    if (roles)
-      if (roles.length > 0) {
-        // realizar reglas de roles
-        await this.actualizarRoles(id, roles, usuarioAuditoria)
-      }
+
+    if (roles.length > 0) {
+      // realizar reglas de roles
+      await this.actualizarRoles(id, roles, usuarioAuditoria)
+    }
     return { id: usuario.id }
   }
 

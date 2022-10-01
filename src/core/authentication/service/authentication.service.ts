@@ -11,10 +11,10 @@ import dayjs from 'dayjs'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
 import { PersonaDto } from '../../usuario/dto/persona.dto'
 import { ConfigService } from '@nestjs/config'
-import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository'
 import { PersonaService } from '../../usuario/service/persona.service'
 import { RolRepository } from '../../authorization/repository/rol.repository'
+import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 
 @Injectable()
 export class AuthenticationService extends BaseService {
@@ -35,38 +35,42 @@ export class AuthenticationService extends BaseService {
   }
 
   private async verificarBloqueo(usuario) {
-    if (usuario.intentos >= Configurations.WRONG_LOGIN_LIMIT) {
-      if (!usuario.fechaBloqueo) {
-        // generar codigo y fecha de desbloqueo
-        const codigo = TextService.generateUuid()
-        const fechaBloqueo = dayjs().add(
-          Configurations.MINUTES_LOGIN_LOCK,
-          'minute'
-        )
-        await this.usuarioService.actualizarDatosBloqueo(
-          usuario.id,
-          codigo,
-          fechaBloqueo
-        )
-        // enviar codigo por email
-        const urlDesbloqueo = `${this.configService.get(
-          'URL_FRONTEND'
-        )}/desbloqueo?q=${codigo}`
-        const template =
-          TemplateEmailService.armarPlantillaBloqueoCuenta(urlDesbloqueo)
-        await this.mensajeriaService.sendEmail(
-          usuario.correoElectronico,
-          Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-          template
-        )
-        return true
-      } else
-        return !(usuario.fechaBloqueo && dayjs().isAfter(usuario.fechaBloqueo))
+    if (usuario.intentos < Configurations.WRONG_LOGIN_LIMIT) {
+      return false
     }
-    return false
+
+    if (usuario.fechaBloqueo) {
+      return !(usuario.fechaBloqueo && dayjs().isAfter(usuario.fechaBloqueo))
+    }
+
+    // generar código y fecha de desbloqueo
+    const codigo = TextService.generateUuid()
+    const fechaBloqueo = dayjs().add(
+      Configurations.MINUTES_LOGIN_LOCK,
+      'minute'
+    )
+    await this.usuarioService.actualizarDatosBloqueo(
+      usuario.id,
+      codigo,
+      fechaBloqueo
+    )
+    // enviar código por email
+    const urlDesbloqueo = `${this.configService.get(
+      'URL_FRONTEND'
+    )}/desbloqueo?q=${codigo}`
+
+    const template =
+      TemplateEmailService.armarPlantillaBloqueoCuenta(urlDesbloqueo)
+
+    await this.mensajeriaService.sendEmail(
+      usuario.correoElectronico,
+      Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+      template
+    )
+    return true
   }
 
-  private async generarIntentoBloqueo(usuario) {
+  async generarIntentoBloqueo(usuario) {
     if (dayjs().isAfter(usuario.fechaBloqueo)) {
       // restaurar datos bloqueo
       await this.usuarioService.actualizarDatosBloqueo(usuario.id, null, null)
@@ -142,33 +146,32 @@ export class AuthenticationService extends BaseService {
 
   async validarUsuarioOidc(persona: PersonaDto): Promise<any> {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
-    if (respuesta) {
-      const { estado, persona: datosPersona } = respuesta
-      if (estado === Status.INACTIVE) {
-        throw new UnauthorizedException(Messages.INACTIVE_USER)
-      }
-      // actualizar datos persona
-      if (
-        datosPersona.nombres !== persona.nombres &&
-        datosPersona.primerApellido !== persona.primerApellido &&
-        datosPersona.segundoApellido !== persona.segundoApellido &&
-        datosPersona.fechaNacimiento !== persona.fechaNacimiento
-      ) {
-        await this.usuarioService.actualizarDatosPersona(persona)
-      }
-      let roles: Array<string | null> = []
-      if (respuesta.usuarioRol.length) {
-        roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
-        return { id: respuesta.id, roles }
-      } else {
-        return null
-      }
-    } else {
+    if (!respuesta) {
       return null
     }
+
+    const { estado, persona: datosPersona } = respuesta
+    if (estado === Status.INACTIVE) {
+      throw new UnauthorizedException(Messages.INACTIVE_USER)
+    }
+    // actualizar datos persona
+    if (
+      datosPersona.nombres !== persona.nombres &&
+      datosPersona.primerApellido !== persona.primerApellido &&
+      datosPersona.segundoApellido !== persona.segundoApellido &&
+      datosPersona.fechaNacimiento !== persona.fechaNacimiento
+    ) {
+      await this.usuarioService.actualizarDatosPersona(persona)
+    }
+
+    if (!respuesta.usuarioRol.length) {
+      return null
+    }
+
+    const roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
+    return { id: respuesta.id, roles }
   }
 
-  // eslint-disable-next-line max-lines-per-function
   async validarOCrearUsuarioOidc(
     persona: PersonaDto,
     datosUsuario
@@ -211,8 +214,7 @@ export class AuthenticationService extends BaseService {
       return { id: respuesta.id, roles }
     } else {
       // No existe persona, o no cuenta con un usuario - registrar
-      let nuevoUsuario: { estado: string | null; id: string | null }
-      nuevoUsuario = {
+      let nuevoUsuario: { estado: string | null; id: string | null } = {
         id: null,
         estado: null,
       }
@@ -245,21 +247,22 @@ export class AuthenticationService extends BaseService {
           '1'
         )
       }
-      if (nuevoUsuario && nuevoUsuario.id) {
-        // console.log('nuevoUsuario', nuevoUsuario);
-        const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
-        if (respuesta) {
-          return {
-            id: respuesta.id,
-            roles: respuesta.usuarioRol
-              ? respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
-              : [],
-          }
-        } else {
-          return null
-        }
-      } else {
+
+      if (!(nuevoUsuario && nuevoUsuario.id)) {
         return null
+      }
+
+      const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
+
+      if (!respuesta) {
+        return null
+      }
+
+      return {
+        id: respuesta.id,
+        roles: respuesta.usuarioRol
+          ? respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
+          : [],
       }
     }
   }

@@ -150,19 +150,6 @@ export class UsuarioRepository {
     usuarioAuditoria: string,
     transaction: EntityManager
   ): Promise<Usuario> {
-    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
-      // Rol
-      const rol = new Rol()
-      rol.id = idRol
-
-      // UsuarioRol
-      const usuarioRol = new UsuarioRol()
-      usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
-
-      return usuarioRol
-    })
-
     // Usuario
 
     const personaResult = await transaction.getRepository(Persona).save(
@@ -192,7 +179,19 @@ export class UsuarioRepository {
       })
     )
 
-    usuarioRoles.map((ur) => (ur.idUsuario = usuarioResult.id))
+    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
+      // Rol
+      const rol = new Rol()
+      rol.id = idRol
+
+      // UsuarioRol
+      const usuarioRol = new UsuarioRol()
+      usuarioRol.rol = rol
+      usuarioRol.usuarioCreacion = usuarioAuditoria
+      usuarioRol.idUsuario = usuarioResult.id
+
+      return usuarioRol
+    })
 
     await transaction
       .createQueryBuilder()
@@ -226,45 +225,6 @@ export class UsuarioRepository {
         usuarioModificacion: usuarioDto.usuarioActualizacion,
       })
     )
-  }
-
-  async crearConCiudadania(usuarioDto, usuarioAuditoria: string) {
-    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((rol) => {
-      const usuarioRol = new UsuarioRol()
-      usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
-
-      return usuarioRol
-    })
-
-    // Persona
-    const persona = new Persona()
-    persona.nombres = usuarioDto?.persona?.nombres ?? null
-    persona.primerApellido = usuarioDto?.persona?.primerApellido ?? null
-    persona.segundoApellido = usuarioDto?.persona?.segundoApellido ?? null
-    persona.nroDocumento =
-      usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
-    persona.fechaNacimiento = usuarioDto?.persona?.fechaNacimiento ?? null
-    persona.usuarioCreacion = usuarioAuditoria
-
-    persona.tipoDocumento = usuarioDto.persona.tipoDocumento ?? null
-    persona.telefono = usuarioDto?.persona?.telefono ?? null
-
-    // Usuario
-    const usuario = new Usuario()
-    usuario.persona = persona
-    usuario.usuarioRol = usuarioRoles
-
-    usuario.usuario = usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario
-    usuario.estado = usuarioDto?.estado ?? Status.CREATE
-    usuario.correoElectronico = usuarioDto?.correoElectronico
-    usuario.contrasena =
-      usuarioDto?.contrasena ??
-      (await TextService.encrypt(TextService.generateUuid()))
-    usuario.ciudadaniaDigital = usuarioDto?.ciudadaniaDigital ?? false
-    usuario.usuarioCreacion = usuarioAuditoria
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
   async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
