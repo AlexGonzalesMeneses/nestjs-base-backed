@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.0...v1.6.1) (2022-10-01)
+
+
+### Features
+
+* añadido servicio que reenvia el correo de activación para usuarios con cuenta sin verificación para rol administrador ([bd584a3](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/bd584a3b78e3334b4f3882e2421eb3e8ea1f7899))
+* se agregó el validador de tipos enumerados buildCheck ([6e2a1c4](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/6e2a1c4f3f66c87139888579e96d3758c89c9c52))
+
+
+### Bug Fixes
+
+* corregido método que crea usuarios con Ciudadanía Digital con rol usuario por defecto, logs de correos fallidos, refactor de validarOCrearUsuarioOidc ([2fb1ac1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2fb1ac122ef2a53c5eb510aedae3a29533ea4fae))
+* corregidos repositorios de actualización de datos de activación y recuperación de cuenta ([3a8db8c](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/3a8db8c617e4c11a271c01edd6f93bf7487afbab))
+* modificadas funciones de repositorio de usuario para usar update en lugar de save, dado que TypeOrm soporta ambas ([2fd90cc](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2fd90cc5124b9eb6f5c87e32ab02410ddd79429c))
+* modificados métodos de usuario.service que usaban if's anidados, varias optimizaciones de código ([1a7070c](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/1a7070c1ff8786f4ce48f60b72b2dfb7e4ce85a9))
+* respuesta del refresh token ([6eb6eaf](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/6eb6eaf5938885388745ebdf947ae490e694aff1))
+
 ## [1.6.0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.5.0...v1.6.0) (2022-09-26)
 
 
