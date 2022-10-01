@@ -11,18 +11,19 @@
 
 ## Recomendaciones
 
-- Este proyecto en rama `Develop` usa TypeOrm `v0.3.7`, para usar la versión anterior `v0.2.x` clonar el tag `v1.1.0`
-- Se sugiere crear un Fork, dado que se harán mejoras continuas
-- Para añadir este proyecto como otro origen, ejecutar dentro el proyecto Fork:
+Para usar este proyecto como base de un nuevo proyecto, debe seguir los siguientes pasos:
+
+- Crear nuevo proyecto en [Gitlab](https://gitlab.agetic.gob.bo/projects/new) y clonarlo en local
+- Añadir este proyecto como otro origen, ejecutar dentro del nuevo proyecto:
 
 ```
 git remote add origin2 git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
 ```
 
-- Para descargar los commits desde el 2.º origen, ejecutar
+- Descargar los commits desde el 2.º origen, ejecutar
 
 ```
-git pull origin2 master
+git pull origin2 master --allow-unrelated-histories
 ```
 
 ## Tecnologías
@@ -39,8 +40,6 @@ git pull origin2 master
 
 ## Funcionalidades
 
-El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
-
 - Autenticación JWT
 - Autenticación con Ciudadanía Digital
 - Refresh Token
@@ -49,9 +48,9 @@ El proyecto Base backend cuenta con las siguientes funcionalidades y módulos:
 - Clientes para Interoperabilidad (SEGIP, SIN)
 - Cliente para Mensajería Electrónica
 - Proveedores de:
-  - Logger
-  - Reportes
-  - Manejo de errores
+    - Logger
+    - Reportes
+    - Manejo de errores
 
 ## Documentación
 
@@ -65,7 +64,8 @@ Documentación relacionada con el proyecto:
 ## Comandos útiles
 
 1. Ejecución de contenedor con instancia postgres
-   Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos de conexión a la base de datos de la cual se quiere generar el diagrama:
+   Para ejecutar este comando se debe tener instalado docker y configurar en el archivo `scripts/database.sh` los datos
+   de conexión a la base de datos de la cual se quiere generar el diagrama:
 
    > Para instalar docker: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
 
@@ -94,7 +94,7 @@ Documentación relacionada con el proyecto:
    > Cambiar el número de versión en archivo `package.json`
 
 2. Generar tag y archivo CHANGELOG
-    
+
     ```bash
     npm run release
     ```

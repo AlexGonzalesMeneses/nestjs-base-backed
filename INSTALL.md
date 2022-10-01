@@ -110,7 +110,7 @@ npm run seeds:run
 **Datos de despliegue**
 
 | Variable   | Valor por defecto | Descripción                                  |
-| ---------- | ----------------- | -------------------------------------------- |
+|------------|-------------------|----------------------------------------------|
 | `NODE_ENV` | `development`     | Ambiente de despliegue.                      |
 | `PORT`     | `3000`            | Puerto en el que se levantará la aplicación. |
 
@@ -119,7 +119,7 @@ npm run seeds:run
 **Configuración de la base de datos**
 
 | Variable                 | Valor por defecto | Descripción                                                                                       |
-| ------------------------ | ----------------- | ------------------------------------------------------------------------------------------------- |
+|--------------------------|-------------------|---------------------------------------------------------------------------------------------------|
 | `DB_HOST`                | `localhost`       | Host de la base de datos.                                                                         |
 | `DB_USERNAME`            | `postgres`        | nombre de usuario de la base de datos.                                                            |
 | `DB_PASSWORD`            | `postgres`        | contraseña de la base de datos.                                                                   |
@@ -132,13 +132,13 @@ npm run seeds:run
 **Configuración general de la aplicación**
 
 | Variable         | Valor por defecto | Descripción                                                                  |
-| ---------------- | ----------------- | ---------------------------------------------------------------------------- |
+|------------------|-------------------|------------------------------------------------------------------------------|
 | `PATH_SUBDOMAIN` | `api`             | Prefijo para todas las rutas de los servicios (Se debe mantener este valor). |
 
 **Configuración para módulo de autenticación**
 
 | Variable                   | Valor por defecto | Descripción                                                                             |
-| -------------------------- | ----------------- | --------------------------------------------------------------------------------------- |
+|----------------------------|-------------------|-----------------------------------------------------------------------------------------|
 | `JWT_SECRET`               |                   | Llave para generar los tokens de autorización. Genera una llave fuerte para producción. |
 | `JWT_EXPIRES_IN`           |                   | Tiempo de expiración del token de autorización en milisegundos.                         |
 | `REFRESH_TOKEN_NAME`       | `jid`             |                                                                                         |
@@ -152,28 +152,28 @@ npm run seeds:run
 **Configuración para el servicio de Mensajería Electrónica (Alertín), si se utiliza en el sistema**
 
 | Variable    | Valor por defecto | Descripción                                                       |
-| ----------- | ----------------- | ----------------------------------------------------------------- |
+|-------------|-------------------|-------------------------------------------------------------------|
 | `MSJ_URL`   |                   | URL de consumo al servicio de Mensajería Electrónico (Alertín).   |
 | `MSJ_TOKEN` |                   | TOKEN de consumo al servicio de Mensajería Electrónico (Alertín). |
 
 **Configuración para el servicio SEGIP de IOP, si corresponde**
 
 | Variable          | Valor por defecto | Descripción                                              |
-| ----------------- | ----------------- | -------------------------------------------------------- |
+|-------------------|-------------------|----------------------------------------------------------|
 | `IOP_SEGIP_URL`   |                   | URL de consumo al servicio interoperabilidad de SEGIP.   |
 | `IOP_SEGIP_TOKEN` |                   | Token de consumo al servicio interoperabilidad de SEGIP. |
 
 **Configuración para el servicio SIN de IOP, si corresponde**
 
 | Variable        | Valor por defecto | Descripción                                           |
-| --------------- | ----------------- | ----------------------------------------------------- |
+|-----------------|-------------------|-------------------------------------------------------|
 | `IOP_SIN_URL`   |                   | URL de consumo al Servicio de Impuestos Nacionales.   |
 | `IOP_SIN_TOKEN` |                   | Token de consumo al Servicio de Impuestos Nacionales. |
 
 **Configuración para la integracion de autenticación con Ciudadanía Digital**
 
 | Variable                        | Valor por defecto | Descripción |
-| ------------------------------- | ----------------- | ----------- |
+|---------------------------------|-------------------|-------------|
 | `OIDC_ISSUER`                   |                   |             |
 | `OIDC_CLIENT_ID`                |                   |             |
 | `OIDC_CLIENT_SECRET`            |                   |             |
@@ -185,19 +185,19 @@ npm run seeds:run
 **Configurar la URL del frontend, según el ambiente de despliegue**
 
 | Variable       | Valor por defecto | Descripción                                                           |
-| -------------- | ----------------- | --------------------------------------------------------------------- |
+|----------------|-------------------|-----------------------------------------------------------------------|
 | `URL_FRONTEND` |                   | dominio en el que se encuentra levantado el frontend, si corresponde. |
 
 **Configuración para almacenamiento de archivos**
 
 | Variable           | Valor por defecto | Descripción                                                 |
-| ------------------ | ----------------- | ----------------------------------------------------------- |
+|--------------------|-------------------|-------------------------------------------------------------|
 | `STORAGE_NFS_PATH` |                   | ruta en el que se almacenarán los archivos, si corresponde. |
 
 **Configuración de Logs, según el ambiente**
 
 | Variable        | Valor por defecto                        | Descripción                                                                    |
-| --------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+|-----------------|------------------------------------------|--------------------------------------------------------------------------------|
 | `LOG_LEVEL`     | `info`                                   | Indica el nivel de logs de los ficheros. error, warn, info, debug o trace      |
 | `LOG_PATH`      |                                          | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_STD_OUT`   | `false`                                  | Para la consola muestra los logs tal y como se guardan en los archivos.        |
@@ -213,31 +213,34 @@ npm run seeds:run
 
 - Para deshabilitar la generación de logs en ficheros `LOG_PATH` debe ser una cadena vacía.
 
-- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name` del archivo `package.json`) y dentro de esta última se crearán los archivos de logs según el parámetro definido en `LOG_LEVEL`.
+- `LOG_PATH` dentro de esta carpeta automáticamente se creará otra carpeta con el nombre del proyecto (propiedad `name`
+  del archivo `package.json`) y dentro de esta última se crearán los archivos de logs según el parámetro definido
+  en `LOG_LEVEL`.
 
   Por ejemplo:
 
-  - Si `LOG_LEVEL=error` se creará el archivo `error.log`
-  - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
-  - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
+    - Si `LOG_LEVEL=error` se creará el archivo `error.log`
+    - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
+    - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
 
   Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
 - `LOG_SIZE` acepta los siguientes valores:
 
-  - `G`: Tamaño en GigaBytes. Ej.: `1G`
-  - `M`: Tamaño en MegaBytes. Ej.: `1M`
-  - `K`: Tamaño en KiloBytes. Ej.: `1K`
-  - `B`: Tamaño en Bytes. Ej.: `1B`
+    - `G`: Tamaño en GigaBytes. Ej.: `1G`
+    - `M`: Tamaño en MegaBytes. Ej.: `1M`
+    - `K`: Tamaño en KiloBytes. Ej.: `1K`
+    - `B`: Tamaño en Bytes. Ej.: `1B`
 
 - `LOG_INTERVAL` acepta los siguientes valores:
 
-  - `M`: Se genera un nuevo fichero de logs cada mes. Ej.: `1M`
-  - `d`: Se genera un nuevo fichero de logs cada día. Ej.: `1d`
-  - `h`: Se genera un nuevo fichero de logs cada hora. Ej.: `1h`
-  - `m`: Se genera un nuevo fichero de logs cada minuto. Ej.: `1m`
-  - `s`: Se genera un nuevo fichero de logs cada segundo. Ej.: `1s`
+    - `M`: Se genera un nuevo fichero de logs cada mes. Ej.: `1M`
+    - `d`: Se genera un nuevo fichero de logs cada día. Ej.: `1d`
+    - `h`: Se genera un nuevo fichero de logs cada hora. Ej.: `1h`
+    - `m`: Se genera un nuevo fichero de logs cada minuto. Ej.: `1m`
+    - `s`: Se genera un nuevo fichero de logs cada segundo. Ej.: `1s`
 
-- `LOG_HIDE` utiliza la librería [fast-redact](https://github.com/davidmarkclements/fast-redact#fast-redact) algunos ejemplos:
-  - `errorRequest.headers.authorization`
-  - `some.list[*].itemProperty.toHide`
+- `LOG_HIDE` utiliza la librería [fast-redact](https://github.com/davidmarkclements/fast-redact#fast-redact) algunos
+  ejemplos:
+    - `errorRequest.headers.authorization`
+    - `some.list[*].itemProperty.toHide`
