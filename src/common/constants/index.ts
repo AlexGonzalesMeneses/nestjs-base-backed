@@ -32,3 +32,6 @@ export enum Transacccion {
   CREAR = 'CREAR',
   ACTUALIZAR = 'ACTUALIZAR',
 }
+
+export const USUARIO_SISTEMA = '1'
+export const USUARIO_NORMAL = '0'

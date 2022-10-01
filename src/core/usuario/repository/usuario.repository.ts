@@ -255,45 +255,70 @@ export class UsuarioRepository {
     return await this.dataSource.getRepository(Usuario).save(usuario)
   }
 
-  async actualizarContadorBloqueos(idUsuario, intento) {
-    const usuario = new Usuario()
-    usuario.id = idUsuario
-    usuario.intentos = intento
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
+  async actualizarContadorBloqueos(idUsuario: string, intento: number) {
+    return await this.dataSource
+      .createQueryBuilder()
+      .update(Usuario)
+      .set({
+        intentos: intento,
+      })
+      .where({ id: idUsuario })
+      .execute()
   }
 
-  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
-    const usuario = new Usuario()
-    usuario.id = idUsuario
-    usuario.codigoDesbloqueo = codigo
-    usuario.fechaBloqueo = fechaBloqueo
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
+  async actualizarDatosBloqueo(
+    idUsuario: string,
+    codigo: string,
+    fechaBloqueo: Date
+  ) {
+    return await this.dataSource
+      .createQueryBuilder()
+      .update(Usuario)
+      .set(
+        new Usuario({
+          codigoDesbloqueo: codigo,
+          fechaBloqueo: fechaBloqueo,
+        })
+      )
+      .where({ id: idUsuario })
+      .execute()
   }
 
-  async actualizarDatosRecuperacion(idUsuario, codigo) {
-    const usuario = new Usuario()
-    usuario.id = idUsuario
-    usuario.codigoRecuperacion = codigo
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
+  async actualizarDatosRecuperacion(idUsuario: string, codigo: string) {
+    return await this.dataSource
+      .createQueryBuilder()
+      .update(Usuario)
+      .set(
+        new Usuario({
+          codigoRecuperacion: codigo,
+        })
+      )
+      .where({ id: idUsuario })
+      .execute()
   }
 
-  async actualizarDatosActivacion(idUsuario, codigo) {
-    const usuario = new Usuario()
-    usuario.id = idUsuario
-    usuario.codigoActivacion = codigo
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
+  async actualizarDatosActivacion(
+    idUsuario: string,
+    codigo: string,
+    transaction: EntityManager
+  ) {
+    return await transaction
+      .createQueryBuilder()
+      .update(Usuario)
+      .set(new Usuario({ codigoActivacion: codigo }))
+      .where({ id: idUsuario })
+      .execute()
   }
 
-  async actualizarDatosTransaccion(idUsuario, codigo) {
-    const usuario = new Usuario()
-    usuario.id = idUsuario
-    usuario.codigoTransaccion = codigo
-
-    return await this.dataSource.getRepository(Usuario).save(usuario)
+  async actualizarDatosTransaccion(idUsuario: string, codigo: string) {
+    return await this.dataSource
+      .createQueryBuilder()
+      .update(Usuario)
+      .set({
+        codigoTransaccion: codigo,
+      })
+      .where({ id: idUsuario })
+      .execute()
   }
 
   async buscarPorCodigoDesbloqueo(codigo: string) {

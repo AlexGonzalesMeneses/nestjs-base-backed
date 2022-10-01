@@ -7,7 +7,11 @@ import {
   Query,
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
-import { Status, TipoDocumento } from '../../../common/constants'
+import {
+  Status,
+  TipoDocumento,
+  USUARIO_NORMAL,
+} from '../../../common/constants'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { TextService } from '../../../common/lib/text.service'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
@@ -129,10 +133,6 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
     }
 
-    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
-      'USUARIO'
-    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
-
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
     if (!TextService.validateLevelPassword(usuarioDto.contrasenaNueva)) {
@@ -156,7 +156,7 @@ export class UsuarioService extends BaseService {
           estado: Status.PENDING,
           contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
         },
-        usuarioAuditoria?.id ?? '',
+        USUARIO_NORMAL,
         transaction
       )
 
@@ -168,7 +168,11 @@ export class UsuarioService extends BaseService {
 
         this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
 
-        await this.actualizarDatosActivacion(usuarioNuevo.id, codigo)
+        await this.actualizarDatosActivacion(
+          usuarioNuevo.id,
+          codigo,
+          transaction
+        )
 
         const template =
           TemplateEmailService.armarPlantillaActivacionCuentaManual(
@@ -176,11 +180,13 @@ export class UsuarioService extends BaseService {
           )
 
         if (usuarioNuevo.correoElectronico) {
-          await this.mensajeriaService.sendEmail(
-            usuarioNuevo.correoElectronico,
-            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
-            template
-          )
+          await this.mensajeriaService
+            .sendEmail(
+              usuarioNuevo.correoElectronico,
+              Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+              template
+            )
+            .catch((err) => this.logger.error(err))
         }
       }
 
@@ -198,16 +204,12 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    const usuarioAuditoria = await this.usuarioRepositorio.buscarUsuario(
-      'USUARIO'
-    ) // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
-
     const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
       usuario?.id,
       {
         estado: Status.ACTIVE,
         codigoActivacion: null,
-        usuarioModificacion: usuarioAuditoria?.id,
+        usuarioModificacion: USUARIO_NORMAL,
       }
     )
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
@@ -258,8 +260,15 @@ export class UsuarioService extends BaseService {
 
     const codigo = TextService.generateUuid()
 
-    const usuarioActualizado =
-      await this.actualizarDatosTransaccionRecuperacion(usuario.id, codigo)
+    await this.actualizarDatosTransaccionRecuperacion(usuario.id, codigo)
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
+    )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
 
     return { code: usuarioActualizado.codigoTransaccion }
   }
@@ -696,14 +705,22 @@ export class UsuarioService extends BaseService {
     )
   }
 
-  async actualizarDatosActivacion(idUsuario, codigo) {
+  async actualizarDatosActivacion(
+    idUsuario: string,
+    codigo: string,
+    transaction: EntityManager
+  ) {
     return await this.usuarioRepositorio.actualizarDatosActivacion(
       idUsuario,
-      codigo
+      codigo,
+      transaction
     )
   }
 
-  async actualizarDatosTransaccionRecuperacion(idUsuario, codigo) {
+  async actualizarDatosTransaccionRecuperacion(
+    idUsuario: string,
+    codigo: string
+  ) {
     return await this.usuarioRepositorio.actualizarDatosTransaccion(
       idUsuario,
       codigo

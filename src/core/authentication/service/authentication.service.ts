@@ -4,7 +4,11 @@ import { UsuarioService } from '../../usuario/service/usuario.service'
 import { JwtService } from '@nestjs/jwt'
 import { TextService } from '../../../common/lib/text.service'
 import { RefreshTokensService } from './refreshTokens.service'
-import { Status } from '../../../common/constants'
+import {
+  Status,
+  USUARIO_NORMAL,
+  USUARIO_SISTEMA,
+} from '../../../common/constants'
 import { Configurations } from '../../../common/params'
 import { Messages } from '../../../common/constants/response-messages'
 import dayjs from 'dayjs'
@@ -203,7 +207,7 @@ export class AuthenticationService extends BaseService {
             correoElectronico: respuesta.correoElectronico,
             roles: respuesta.usuarioRol.map((value) => value.id),
           },
-          '1'
+          USUARIO_SISTEMA
         )
       }
       let roles: Array<string | null> = []
@@ -237,14 +241,14 @@ export class AuthenticationService extends BaseService {
         nuevoUsuario = await this.usuarioService.crearConPersonaExistente(
           respPersona,
           datosUsuario,
-          '1' // TODO: verificar que usuario debería ser el usuario de auditoría de las cuentas externas
+          USUARIO_NORMAL
         )
       } else {
         // No existe la persona en base de datos, crear registro completo de persona
         nuevoUsuario = await this.usuarioService.crearConCiudadaniaV2(
           persona,
           datosUsuario,
-          '1'
+          USUARIO_NORMAL
         )
       }
 

@@ -1,7 +1,7 @@
 import { Usuario } from '../../src/core/usuario/entity/usuario.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { TextService } from '../../src/common/lib/text.service'
-import { Genero, Status, TipoDocumento } from '../../src/common/constants'
+import { Genero, TipoDocumento } from '../../src/common/constants'
 import dayjs from 'dayjs'
 import { Persona } from '../../src/core/usuario/entity/persona.entity'
 
