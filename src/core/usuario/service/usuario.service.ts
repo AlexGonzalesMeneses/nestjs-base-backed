@@ -96,7 +96,7 @@ export class UsuarioService extends BaseService {
 
     const op = async (transaction: EntityManager) => {
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
-      usuarioDto.estado = Status.PENDING
+      usuarioDto.estado = Status.ACTIVE
       return await this.usuarioRepositorio.crear(
         usuarioDto,
         usuarioAuditoria,
@@ -171,6 +171,7 @@ export class UsuarioService extends BaseService {
         await this.actualizarDatosActivacion(
           usuarioNuevo.id,
           codigo,
+          USUARIO_NORMAL,
           transaction
         )
 
@@ -204,14 +205,20 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
-      usuario?.id,
-      {
-        estado: Status.ACTIVE,
-        codigoActivacion: null,
-        usuarioModificacion: USUARIO_NORMAL,
-      }
+    await this.usuarioRepositorio.actualizarUsuario(usuario?.id, {
+      estado: Status.ACTIVE,
+      codigoActivacion: null,
+      usuarioModificacion: USUARIO_NORMAL,
+    })
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
     )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
@@ -222,7 +229,7 @@ export class UsuarioService extends BaseService {
 
     if (!usuario) {
       this.logger.info(`Usuario no encontrado`)
-      return 'Busqueda terminada'
+      return 'Búsqueda terminada'
     }
 
     const codigo = TextService.generateUuid()
@@ -288,20 +295,25 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
-      usuario.id,
-      {
-        fechaBloqueo: null,
-        intentos: 0,
-        codigoDesbloqueo: null,
-        codigoTransaccion: null,
-        codigoRecuperacion: null,
-        contrasena: await TextService.encrypt(
-          TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
-        ),
-        estado: Status.ACTIVE,
-      }
+    await this.usuarioRepositorio.actualizarUsuario(usuario.id, {
+      fechaBloqueo: null,
+      intentos: 0,
+      codigoDesbloqueo: null,
+      codigoTransaccion: null,
+      codigoRecuperacion: null,
+      contrasena: await TextService.encrypt(
+        TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
+      ),
+      estado: Status.ACTIVE,
+    })
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
     )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
 
     return { id: usuarioActualizado.id }
   }
@@ -413,14 +425,20 @@ export class UsuarioService extends BaseService {
     // cambiar estado al usuario y generar una nueva contrasena
     const contrasena = TextService.generateShortRandomText()
 
-    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
-      idUsuario,
-      {
-        contrasena: await TextService.encrypt(contrasena),
-        estado: Status.PENDING,
-        usuarioModificacion: usuarioAuditoria,
-      }
+    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+      contrasena: await TextService.encrypt(contrasena),
+      estado: Status.PENDING,
+      usuarioModificacion: usuarioAuditoria,
+    })
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
     )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
     // si está bien ≥ enviar el mail con la contraseña generada
     const datosCorreo = {
       correo: usuario.correoElectronico,
@@ -442,13 +460,19 @@ export class UsuarioService extends BaseService {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
-    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
-      idUsuario,
-      {
-        usuarioModificacion: usuarioAuditoria,
-        estado: Status.INACTIVE,
-      }
+    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+      usuarioModificacion: usuarioAuditoria,
+      estado: Status.INACTIVE,
+    })
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
     )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
+
     return {
       id: usuarioActualizado.id,
       estado: usuarioActualizado.estado,
@@ -496,13 +520,18 @@ export class UsuarioService extends BaseService {
     }
 
     // guardar en bd
-    const usuarioActualizado = await this.usuarioRepositorio.actualizarUsuario(
-      idUsuario,
-      {
-        contrasena: await TextService.encrypt(contrasena),
-        estado: Status.ACTIVE,
-      }
+    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
+      contrasena: await TextService.encrypt(contrasena),
+      estado: Status.ACTIVE,
+    })
+
+    const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+      usuario.id
     )
+
+    if (!usuarioActualizado) {
+      throw new PreconditionFailedException(Messages.INVALID_USER)
+    }
 
     return {
       id: usuarioActualizado.id,
@@ -522,10 +551,9 @@ export class UsuarioService extends BaseService {
     const op = async (transaccion: EntityManager) => {
       const contrasena = TextService.generateShortRandomText()
       await this.usuarioRepositorio.actualizar(
+        idUsuario,
         {
-          id: idUsuario,
           contrasena: await TextService.encrypt(contrasena),
-          estado: Status.PENDING,
           usuarioActualizacion: usuarioAuditoria,
         },
         transaccion
@@ -550,6 +578,59 @@ export class UsuarioService extends BaseService {
         usuarioActualizado.usuario,
         usuarioActualizado.contrasena
       ).catch((err) => this.logger.error(err))
+
+      return usuarioActualizado
+    }
+
+    const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
+
+    return { id: idUsuario, estado: usuarioResult.estado }
+  }
+
+  async reenviarCorreoActivacion(idUsuario: string, usuarioAuditoria: string) {
+    const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
+    const statusValid = [Status.PENDING]
+
+    if (!(usuario && statusValid.includes(usuario.estado as Status))) {
+      throw new EntityNotFoundException(Messages.INVALID_USER)
+    }
+
+    const op = async (transaction: EntityManager) => {
+      const codigo = TextService.generateUuid()
+      const urlActivacion = `${this.configService.get(
+        'URL_FRONTEND'
+      )}/activacion?q=${codigo}`
+
+      this.logger.info(`📩 urlActivacion nuevo: ${urlActivacion}`)
+
+      await this.actualizarDatosActivacion(
+        usuario.id,
+        codigo,
+        usuarioAuditoria,
+        transaction
+      )
+
+      const template =
+        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+
+      if (usuario.correoElectronico) {
+        await this.mensajeriaService
+          .sendEmail(
+            usuario.correoElectronico,
+            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+            template
+          )
+          .catch((err) => this.logger.error(err))
+      }
+
+      const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
+        idUsuario,
+        transaction
+      )
+
+      if (!usuarioActualizado) {
+        throw new EntityNotFoundException(Messages.INVALID_USER)
+      }
 
       return usuarioActualizado
     }
@@ -708,11 +789,13 @@ export class UsuarioService extends BaseService {
   async actualizarDatosActivacion(
     idUsuario: string,
     codigo: string,
+    usuarioAuditoria: string,
     transaction: EntityManager
   ) {
     return await this.usuarioRepositorio.actualizarDatosActivacion(
       idUsuario,
       codigo,
+      usuarioAuditoria,
       transaction
     )
   }

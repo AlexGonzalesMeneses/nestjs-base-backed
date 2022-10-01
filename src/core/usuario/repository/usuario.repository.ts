@@ -80,11 +80,10 @@ export class UsuarioRepository {
   }
 
   async buscarPorId(id: string, transaction?: EntityManager) {
-    const usuarioRepositorio = transaction
-      ? transaction.getRepository(Usuario)
-      : this.dataSource.getRepository(Usuario)
-
-    return usuarioRepositorio
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    )
       .createQueryBuilder('usuario')
       .where({ id: id })
       .getOne()
@@ -204,16 +203,16 @@ export class UsuarioRepository {
   }
 
   async actualizar(
+    idUsuario: string,
     usuarioDto: Partial<ActualizarUsuarioDto>,
     transaction?: EntityManager
   ) {
-    const usuarioRepositorio = transaction
-      ? transaction.getRepository(Usuario)
-      : this.dataSource.getRepository(Usuario)
-
-    return await usuarioRepositorio.save(
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    ).update(
+      idUsuario,
       new Usuario({
-        id: usuarioDto.id,
         estado: usuarioDto.estado || undefined,
         correoElectronico: usuarioDto.correoElectronico || undefined,
         contrasena: usuarioDto.contrasena || undefined,
@@ -300,12 +299,18 @@ export class UsuarioRepository {
   async actualizarDatosActivacion(
     idUsuario: string,
     codigo: string,
+    usuarioAuditoria: string,
     transaction: EntityManager
   ) {
     return await transaction
       .createQueryBuilder()
       .update(Usuario)
-      .set(new Usuario({ codigoActivacion: codigo }))
+      .set(
+        new Usuario({
+          codigoActivacion: codigo,
+          usuarioModificacion: usuarioAuditoria,
+        })
+      )
       .where({ id: idUsuario })
       .execute()
   }
@@ -370,14 +375,18 @@ export class UsuarioRepository {
 
   async actualizarUsuario(
     id: string,
-    usuario: Partial<Usuario>
-  ): Promise<Usuario> {
-    return await this.dataSource.getRepository(Usuario).save(
-      new Usuario({
-        id: id,
-        ...usuario,
-      })
+    usuario: Partial<Usuario>,
+    transaction?: EntityManager
+  ) {
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
     )
+      .createQueryBuilder()
+      .update(Usuario)
+      .set(usuario)
+      .where({ id: id })
+      .execute()
   }
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
