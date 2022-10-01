@@ -179,6 +179,18 @@ export class UsuarioController extends BaseController {
     return this.successUpdate(result, Messages.SUCCESS_RESTART_PASSWORD)
   }
 
+  @UseGuards(JwtAuthGuard, CasbinGuard)
+  @Patch('/:id/reenviar')
+  async reenviarCorreoActivacion(@Req() req, @Param() params: ParamIdDto) {
+    const usuarioAuditoria = this.getUser(req)
+    const { id: idUsuario } = params
+    const result = await this.usuarioService.reenviarCorreoActivacion(
+      idUsuario,
+      usuarioAuditoria
+    )
+    return this.successUpdate(result, Messages.SUCCESS_RESEND_MAIL_ACTIVATION)
+  }
+
   //update user
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch(':id')

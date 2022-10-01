@@ -20,7 +20,8 @@ export enum Messages {
   SUCCESS_DELETE = 'Registro eliminado con exito!',
 
   // business logic messages
-  SUCCESS_RESTART_PASSWORD = 'Restauración de contraseña exitosa!!!',
+  SUCCESS_RESTART_PASSWORD = 'La nueva contraseña ha sido enviada por correo',
+  SUCCESS_RESEND_MAIL_ACTIVATION = 'Un nuevo correo de activación ha sido enviado',
   SUCCESS_ACCOUNT_UNLOCK = 'Cuenta desbloqueada exitosamente.',
   INVALID_USER_CREDENTIALS = 'Usuario o contraseña invalidos.',
   NO_PERMISSION_USER = 'El usuario no tiene roles asignados',
