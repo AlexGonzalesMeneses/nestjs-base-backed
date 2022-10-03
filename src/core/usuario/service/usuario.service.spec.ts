@@ -137,7 +137,16 @@ describe('UsuarioService', () => {
           provide: UsuarioRepository,
           useValue: {
             listar: jest.fn(() => [[resUsuarioList], 1]),
-            buscarPorId: jest.fn().mockReturnValueOnce(resUsuarioPerfil),
+            buscarPorId: jest
+              .fn()
+              .mockReturnValueOnce(resUsuarioPerfil)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(resUsuarioPerfil)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(resUsuarioPerfil)
+              .mockReturnValueOnce(undefined)
+              .mockReturnValueOnce(resUsuarioPerfil),
             actualizarUsuario: jest.fn().mockReturnValueOnce(resUsuarioPerfil),
             buscarUsuarioRolPorId: jest
               .fn()

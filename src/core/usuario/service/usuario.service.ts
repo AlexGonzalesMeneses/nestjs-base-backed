@@ -312,7 +312,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuarioActualizado) {
-      throw new PreconditionFailedException(Messages.INVALID_USER)
+      throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
     return { id: usuarioActualizado.id }
@@ -470,7 +470,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuarioActualizado) {
-      throw new PreconditionFailedException(Messages.INVALID_USER)
+      throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
     return {
