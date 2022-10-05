@@ -97,6 +97,7 @@
     "rimraf": "3.0.2",
     "rotating-file-stream": "3.0.4",
     "rxjs": "7.5.7",
+    "sql-formatter": "11.0.2",
     "swagger-ui-express": "4.5.0",
     "typeorm": "0.3.10",
     "typeorm-adapter": "1.5.2",

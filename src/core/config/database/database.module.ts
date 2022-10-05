@@ -1,3 +1,4 @@
+import { SqlLogger } from '../../logger/tools/print-sql'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -17,10 +18,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
         entities: [__dirname + '../../../../**/*.entity{.ts,.js}'],
         keepConnectionAlive: true,
         synchronize: false,
-        logging:
+        logger: new SqlLogger(
           configService.get('FORCE_SQL_LOG') === 'true' ||
-          (configService.get('NODE_ENV') === 'development' &&
-            configService.get('LOG_SQL') === 'true'),
+            (configService.get('NODE_ENV') === 'development' &&
+              configService.get('LOG_SQL') === 'true')
+        ),
       }),
     }),
   ],
