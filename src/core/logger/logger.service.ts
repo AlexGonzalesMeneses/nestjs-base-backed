@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { Injectable, Scope } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { Logger, PinoLogger } from 'nestjs-pino'
@@ -68,6 +69,17 @@ export class LoggerService extends Logger {
 
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
     try {
+      // CLEAN PARAMS
+      optionalParams.map((data: any) => {
+        if (data && typeof data === 'object' && data.response) {
+          try {
+            JSON.stringify(data.response)
+          } catch (e) {
+            delete data.response.request
+          }
+        }
+      })
+
       if (LoggerConfig.logLevelSelected.includes(level)) {
         optionalParams.map((param) => this.logger[level](param))
       }
@@ -78,9 +90,13 @@ export class LoggerService extends Logger {
       const cTime = `${COLOR.RESET}[${time}]${COLOR.RESET}`
       const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
       const cContext = `${COLOR.RESET}(${this.context}):${COLOR.RESET}`
+      process.stdout.write('\n')
       process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
         try {
+          if (data && data instanceof AxiosError) {
+            data = data.toJSON()
+          }
           data =
             data && typeof data === 'object' && !(data instanceof Error)
               ? JSON.parse(this.redact(JSON.parse(JSON.stringify(data))))

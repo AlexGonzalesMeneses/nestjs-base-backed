@@ -1,14 +1,20 @@
-import { HttpException, HttpStatus } from '@nestjs/common'
+export class ExternalServiceException extends Error {
+  mensaje: string
+  errores: (string | object)[]
+  stack: string | undefined
 
-export class ExternalServiceException extends HttpException {
-  constructor(service: string, err: unknown) {
-    super(
-      {
-        message: `Error con el Servicio Web ${service}`,
-        error: err,
-        errorStack: err instanceof Error ? err.stack : undefined,
-      },
-      HttpStatus.PRECONDITION_FAILED
-    )
+  constructor(name: string, error?: Error | unknown, message?: string) {
+    super()
+
+    const msg = message ? ` - ${message}` : ''
+    this.mensaje = `Error con el Servicio Web ${name}${msg}`
+    this.errores = error ? [error] : []
+    this.stack = error instanceof Error ? error.stack : undefined
+
+    if (error instanceof ExternalServiceException) {
+      this.mensaje = error.mensaje
+      this.errores = error.errores
+      this.stack = error.stack
+    }
   }
 }

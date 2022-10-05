@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common'
 import { Messages } from '../constants/response-messages'
 import { AxiosError } from 'axios'
+import { ExternalServiceException } from '../exceptions/external-service.exception'
+import { toJSON } from 'flatted'
 
 export class ExceptionError extends Error {
   codigo: number
@@ -30,7 +32,23 @@ export class ExceptionError extends Error {
     if (original instanceof AxiosError) {
       this.codigo = HttpStatus.INTERNAL_SERVER_ERROR
       this.mensaje = Messages.EXCEPTION_INTERNAL_SERVER_ERROR
-      this.errores = [{ axiosError: original }]
+      this.errores = [{ axiosError: original.toJSON() }]
+      this.stack = original.stack
+      return
+    }
+
+    if (original instanceof ExternalServiceException) {
+      this.codigo = HttpStatus.BAD_REQUEST
+      this.mensaje = original.mensaje
+      this.errores = this.cleanError(original.errores)
+      this.stack = original.stack
+      return
+    }
+
+    if (original instanceof ExceptionError) {
+      this.codigo = original.codigo
+      this.mensaje = original.mensaje
+      this.errores = original.errores
       this.stack = original.stack
       return
     }
@@ -123,6 +141,19 @@ export class ExceptionError extends Error {
     }
 
     return response.message
+  }
+
+  private cleanError(obj: any) {
+    try {
+      JSON.stringify(obj)
+      return obj
+    } catch (error) {
+      try {
+        return toJSON(obj)
+      } catch (e) {
+        return [e.toString()]
+      }
+    }
   }
 }
 

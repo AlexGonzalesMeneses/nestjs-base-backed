@@ -4,3 +4,8 @@ export type LoginResponse = {
   Autenticado: boolean
   Administrador: boolean
 }
+
+export type LoginResult = {
+  finalizado: boolean
+  mensaje: string
+}
