@@ -51,8 +51,13 @@ export class SqlLogger extends AdvancedConsoleLogger {
     }
     if (typeof val === 'number') return `${Number(val)}`
     if (typeof val === 'boolean') return `${Boolean(val)}`
-    if (val instanceof Date) return `'${String(val)}'`
-    if (Array.isArray(val)) throw new Error('array not support')
+    if (val instanceof Date) return `'${String(val.toISOString())}'`
+    if (Array.isArray(val)) {
+      throw new Error('array not support, possible JSON value')
+    }
+    if (typeof val === 'object' && val !== null) {
+      throw new Error('object not support, possible JSON value')
+    }
     return String(val)
   }
 
@@ -90,8 +95,10 @@ export class SqlLogger extends AdvancedConsoleLogger {
       }
 
       return queryParsed
-    } catch (err) {
-      return queryParsed
+    } catch (err: any) {
+      return parameters
+        ? `${query} -- PARAMETERS: ${this.stringifyParams(parameters)}`
+        : query
     }
   }
 }
