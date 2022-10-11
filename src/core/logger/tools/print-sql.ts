@@ -39,8 +39,15 @@ export class SqlLogger extends AdvancedConsoleLogger {
     }
 
     const sql = this.buildSql(query, parameters, true)
-    process.stdout.write(`\n${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
+    process.stdout.write(
+      `${COLOR.LIGHT_RED}//////////////////// QUERY FAILED ////////////////////${COLOR.RESET}`
+    )
+    process.stdout.write(`${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
+    process.stdout.write(
+      `${COLOR.LIGHT_RED}//////////////////// QUERY ERROR ////////////////////\n${COLOR.RESET}`
+    )
     console.log(error)
+    process.stdout.write('\n')
   }
 
   private getValueToPrintSql(val: unknown): string {
@@ -62,9 +69,10 @@ export class SqlLogger extends AdvancedConsoleLogger {
   }
 
   private buildSql(query: string, parameters?: Array<any>, pretty?: boolean) {
-    let queryParsed = parameters
-      ? `${query} -- PARAMETERS: ${this.stringifyParams(parameters)}`
-      : query
+    let queryParsed =
+      parameters && parameters.length > 0
+        ? `${query} -- PARAMETERS: ${this.stringifyParams(parameters)}`
+        : query
 
     try {
       if (!parameters || parameters.length === 0) {
@@ -96,7 +104,7 @@ export class SqlLogger extends AdvancedConsoleLogger {
 
       return queryParsed
     } catch (err: any) {
-      return parameters
+      return parameters && parameters.length > 0
         ? `${query} -- PARAMETERS: ${this.stringifyParams(parameters)}`
         : query
     }

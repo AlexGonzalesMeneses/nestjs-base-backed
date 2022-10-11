@@ -46,12 +46,12 @@ export class LoggerConfig {
 
     const streamStandar: pretty.PrettyStream[] = []
     if (process.env.LOG_STD_OUT && process.env.LOG_STD_OUT === 'true') {
-      streamStandar.push(
+      /*streamStandar.push(
         pretty({
           colorize: true,
           sync: false,
         })
-      )
+      )*/
     }
 
     const streamHttp: any[] = []
