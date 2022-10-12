@@ -8,6 +8,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
+import { Request } from 'express'
 
 @Injectable()
 export class CasbinGuard implements CanActivate {
@@ -22,12 +23,12 @@ export class CasbinGuard implements CanActivate {
       query,
       route,
       method: action,
-    } = context.switchToHttp().getRequest()
+    } = context.switchToHttp().getRequest() as Request
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!user) {
       this.logger.warn(
-        `${action} ${resource} -> ${false} - Usuario desconocido`
+        `${action} ${resource} -> false - Rol: desconocido (Valor requerido: req.user)`
       )
       throw new UnauthorizedException()
     }
@@ -35,13 +36,16 @@ export class CasbinGuard implements CanActivate {
     for (const rol of user.roles) {
       const isPermitted = await this.enforcer.enforce(rol, resource, action)
       if (isPermitted) {
-        this.logger.info(`${action} ${resource} -> ${isPermitted} - ${rol}`)
+        this.logger.info(
+          `${action} ${resource} -> true - Rol: ${rol} (usuario: ${user.id})`
+        )
         return true
       }
     }
 
+    const rolesDelToken = user.roles
     this.logger.warn(
-      `${action} ${resource} -> ${false} - ${user.roles.toString()}`
+      `${action} ${resource} -> false - Rol: desconocido (Roles permitidos: ${rolesDelToken.toString()})`
     )
     throw new ForbiddenException()
   }

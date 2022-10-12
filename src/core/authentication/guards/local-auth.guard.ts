@@ -23,12 +23,12 @@ export class LocalAuthGuard extends AuthGuard('local') {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new UnauthorizedException()
     } catch (err) {
-      const errMsg = `${action} ${resource} -> ${false} (Error con usuario y contraseña)`
-      this.logger.warn(errMsg)
+      const errMsg = `${action} ${resource} -> false - LOGIN BÁSICO (Error con usuario y contraseña)`
+      this.logger.warn(errMsg, err)
       throw err
     }
 
-    this.logger.info(`${action} ${resource} -> true`)
+    this.logger.info(`${action} ${resource} -> true - LOGIN BÁSICO`)
     return true
   }
 }
