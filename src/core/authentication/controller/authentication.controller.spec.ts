@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config'
 import { AuthenticationController } from './authentication.controller'
 import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { Request } from 'express'
 
 const resAutenticar = {
   refresh_token: '123',

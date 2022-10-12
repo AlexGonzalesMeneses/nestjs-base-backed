@@ -1,6 +1,6 @@
 import { AdvancedConsoleLogger, LoggerOptions } from 'typeorm'
 import { format } from 'sql-formatter'
-import { COLOR } from '../constants/index'
+import { COLOR } from '../constants'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
 import dotenv from 'dotenv'
 
