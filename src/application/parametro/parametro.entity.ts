@@ -18,7 +18,7 @@ export const ParametroEstado = {
 }
 
 @Check(UtilService.buildStatusCheck(ParametroEstado))
-@Entity({ schema: process.env.DB_SCHEMA_PARAMETRICAS })
+@Entity({ name: 'parametros', schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

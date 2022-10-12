@@ -26,7 +26,7 @@ export const UsuarioEstado = {
 }
 
 @Check(UtilService.buildStatusCheck(UsuarioEstado))
-@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
+@Entity({ name: 'usuarios', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Usuario extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

@@ -20,7 +20,7 @@ export const RolEstado = {
 }
 
 @Check(UtilService.buildStatusCheck(RolEstado))
-@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
+@Entity({ name: 'roles', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Rol extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

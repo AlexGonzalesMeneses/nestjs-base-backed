@@ -20,7 +20,7 @@ export const PersonaEstado = {
 }
 
 @Check(UtilService.buildStatusCheck(PersonaEstado))
-@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
+@Entity({ name: 'personas', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string

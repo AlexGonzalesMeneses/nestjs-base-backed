@@ -28,7 +28,7 @@ export const ModuloEstado = {
 }
 
 @Check(UtilService.buildStatusCheck(ModuloEstado))
-@Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
+@Entity({ name: 'modulos', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AuditoriaEntity {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string
