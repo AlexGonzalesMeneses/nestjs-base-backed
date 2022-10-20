@@ -24,7 +24,7 @@ export const buildOpenIdClient = async (): Promise<Client | undefined> => {
       client_secret: process.env.OIDC_CLIENT_SECRET,
     })
   } catch (error) {
-    const t = 5
+    const t = 0
     logger.error('////// ERROR DE CONEXIÓN CON CIUDADANIA //////', error)
     logger.error(
       `El servicio se levantará sin esta característica dentro de ${t} segundos`
@@ -97,7 +97,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         datosUsuario
       )
 
-      if (!usuario.roles || usuario.roles.length === 0) {
+      if (!usuario || !usuario.roles || usuario.roles.length === 0) {
         throw new UnauthorizedException()
       }
 
@@ -110,8 +110,6 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
-      // this.logger.error(err)
-      // throw new UnauthorizedException()
       throw err
     }
   }
