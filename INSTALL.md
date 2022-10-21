@@ -68,7 +68,7 @@ npm run start
 npm run start:dev
 
 # Ejecución en modo desarrollo (muestra logs de las consultas SQL)
-npm run start:devsql
+npm run start:dev:sql
 
 # Ejecución en modo PRODUCCIÓN
 npm run build
@@ -145,7 +145,7 @@ npm run seeds:run
 | `REFRESH_TOKEN_EXPIRES_IN` |                   | tiempo en milisegundos                                                                  |
 | `REFRESH_TOKEN_ROTATE_IN`  |                   | tiempo en milisegundos                                                                  |
 | `REFRESH_TOKEN_SECURE`     | `false`           |                                                                                         |
-| `REFRESH_TOKEN_DOMAIN`     |                   | dominio de despligue                                                                    |
+| `REFRESH_TOKEN_DOMAIN`     |                   | dominio de despliegue                                                                   |
 | `REFRESH_TOKEN_PATH`       | `/`               |                                                                                         |
 | `REFRESH_TOKEN_REVISIONS`  | `*/5 * * * *`     |                                                                                         |
 
