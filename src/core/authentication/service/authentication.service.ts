@@ -205,7 +205,7 @@ export class AuthenticationService extends BaseService {
           String(respuesta.id),
           {
             correoElectronico: respuesta.correoElectronico,
-            roles: respuesta.usuarioRol.map((value) => value.id),
+            roles: respuesta.usuarioRol.map((value) => value.rol.id),
           },
           USUARIO_SISTEMA
         )
