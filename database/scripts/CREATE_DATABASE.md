@@ -25,8 +25,11 @@ Ejemplo si la base de datos es `database_db`.
 Desde la carpeta: `~/agetic-nestjs-base-backend/database/scripts` ejecuta el siguiente comando:
 
 ```bash
-# Ejemplo: bash create-database.sh <dockerContainer> <dbname>
+# Ejemplo 1: bash create-database.sh <dockerContainer> <dbname>
 bash create-database.sh pg14 database_db
+
+# Ejemplo 2: bash create-database.sh <dockerContainer> <dbname> <host> <port> <user> <pass>
+bash create-database.sh pg14 database_db localhost 5432 postgres postgres
 ```
 
 ## Creando base de datos (manualmente)
