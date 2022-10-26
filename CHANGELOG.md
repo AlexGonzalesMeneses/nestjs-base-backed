@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.1...v1.6.2) (2022-10-26)
+
+
+### Features
+
+* cambiando a plural los nombres de las tablas ([15898b3](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/15898b3cb775cfa2fb861b0b03fc33c39c954d0c))
+* cambiando por defecto SQL_LOG a true ([f5e7308](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/f5e7308a69a0d43976f39a52cab2299170ca3c43))
+* cambios en el comando de ejecución (npm run start:dev:sql) ([c98cf24](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/c98cf248a7b05b21542bf0f24b67db7198e88e5d))
+* cambios en los logs para las consultas sql ([960a6d0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/960a6d05c861a302a4e14179e7aab3006d53fd5b))
+* mejoras en el mensaje de error de SQL ([adc6908](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/adc690818db5d4d9d14c728643cf09ddf6fa7e8c))
+* mensajes de casbin guards actualizados ([f863b64](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/f863b64135b2fa4f145562081516a6c615eaf79d))
+* se adicionó el alias dev para ejecutar el comando "npm run start:dev:sql" ([422b4e4](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/422b4e4d12ab21be314d5dcc88eca9cbc35da733))
+* se completan los test faltantes para buscarPorId en usuarioService ([979baf2](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/979baf267d8164fe2ea4d0e5b9924da23003222a))
+
+
+### Bug Fixes
+
+* agregado nuevo ClientId y ClientSecret en nuevo entorno de AGCS ([54776dd](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/54776dd70a345c21cd83a9b2e7aff6db7cda8ee4))
+* controlando respuesta datos.errores y cambios en base-external-service ([c14d0eb](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/c14d0eb2ae2be38e0ea141ec37c863ac5df66588))
+* corrección en actualización de datos al crear o validar usuario OIDC ([05c8afd](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/05c8afdd65605907790b67a9cca480f8da80ca2d))
+* corrección en envio de correos de restablecimiento de contraseña ([47bdb98](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/47bdb989eb175e350b61061e3e8641776e7fba75))
+* mejoras en la validación OIDC y correcciones cuando se utiliza logger en las migraciones ([dff2a49](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/dff2a491bc48ea3537b3bfc7ac06185510628b5f))
+* modificada documentación mencionando que sacar un fork ya no es necesario 🤦‍♂️ ([5d54f82](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/5d54f82c9a32e401d571dd38deb981a03f389853))
+* parse fecha con formato ISO para los logs de las consultas ([fd79986](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/fd79986ccc9078fe546d56f38df0bc4c7341d802))
+
 ### [1.6.1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.0...v1.6.1) (2022-10-01)
 
 
