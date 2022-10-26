@@ -1,3 +1,4 @@
+import { LoggerService } from '../../core/logger/logger.service'
 import {
   BadRequestException,
   ForbiddenException,
@@ -10,7 +11,6 @@ import {
 import { Messages } from '../constants/response-messages'
 import { AxiosError } from 'axios'
 import { ExternalServiceException } from '../exceptions/external-service.exception'
-import { toJSON } from 'flatted'
 
 export class ExceptionError extends Error {
   codigo: number
@@ -40,7 +40,7 @@ export class ExceptionError extends Error {
     if (original instanceof ExternalServiceException) {
       this.codigo = HttpStatus.BAD_REQUEST
       this.mensaje = original.mensaje
-      this.errores = this.cleanError(original.errores)
+      this.errores = LoggerService.cleanAxiosResponse(original.errores)
       this.stack = original.stack
       return
     }
@@ -141,19 +141,6 @@ export class ExceptionError extends Error {
     }
 
     return response.message
-  }
-
-  private cleanError(obj: any) {
-    try {
-      JSON.stringify(obj)
-      return obj
-    } catch (error) {
-      try {
-        return toJSON(obj)
-      } catch (e) {
-        return [e.toString()]
-      }
-    }
   }
 }
 

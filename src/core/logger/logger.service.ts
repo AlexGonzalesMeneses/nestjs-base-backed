@@ -6,6 +6,7 @@ import { inspect } from 'util'
 import { COLOR, LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './logger.config'
+import { toJSON } from 'flatted'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
@@ -67,18 +68,61 @@ export class LoggerService extends Logger {
     this.print(LOG_LEVEL.TRACE, ...optionalParams)
   }
 
+  static cleanAxiosResponse(value: any, deep = 0) {
+    // Para evitar recursividad infinita
+    if (deep > 5) return String(value)
+
+    try {
+      JSON.stringify(value)
+      return value
+    } catch (error) {
+      if (Array.isArray(value)) {
+        return value.map((item) =>
+          LoggerService.cleanAxiosResponse(item, deep + 1)
+        )
+      }
+      if (LoggerService.isAxiosResponse(value)) {
+        return {
+          data: value.response.data,
+          status: value.response.status,
+          statusText: value.response.statusText,
+          headers: value.response.headers,
+          config: value.response.config,
+        }
+      }
+      if (typeof value === 'object') {
+        const newObj = Object.keys(value).reduce((prev, curr) => {
+          prev[curr] = LoggerService.cleanAxiosResponse(value[curr], deep + 1)
+          return prev
+        }, {} as any)
+        return newObj
+      }
+      try {
+        return toJSON(value)
+      } catch (e) {
+        return [e.toString()]
+      }
+    }
+  }
+
+  private static isAxiosResponse(data: any) {
+    return Boolean(
+      typeof data === 'object' &&
+        data.response &&
+        typeof data.response.data !== 'undefined' &&
+        typeof data.response.status !== 'undefined' &&
+        typeof data.response.statusText !== 'undefined' &&
+        typeof data.response.headers !== 'undefined' &&
+        typeof data.response.config !== 'undefined'
+    )
+  }
+
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
     try {
       // CLEAN PARAMS
-      optionalParams.map((data: any) => {
-        if (data && typeof data === 'object' && data.response) {
-          try {
-            JSON.stringify(data.response)
-          } catch (e) {
-            delete data.response.request
-          }
-        }
-      })
+      optionalParams = optionalParams.map((data: any) =>
+        LoggerService.cleanAxiosResponse(data)
+      )
 
       if (LoggerConfig.logLevelSelected.includes(level)) {
         optionalParams.map((param) => this.logger[level](param))
