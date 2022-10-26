@@ -573,10 +573,11 @@ export class UsuarioService extends BaseService {
         correo: usuario.correoElectronico,
         asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
       }
+
       await this.enviarCorreoContrasenia(
         datosCorreo,
         usuarioActualizado.usuario,
-        usuarioActualizado.contrasena
+        contrasena
       ).catch((err) => this.logger.error(err))
 
       return usuarioActualizado
