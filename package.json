@@ -170,7 +170,7 @@
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "engines": {
-    "node": "^16",
+    "node": "^18",
     "npm": "^8"
   }
 }
