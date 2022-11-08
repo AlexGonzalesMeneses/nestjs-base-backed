@@ -16,7 +16,7 @@ Obtener versión:
       - version.txt
 
 Build:
-  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:16
+  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:18
   stage: build
   only:
     - /test.*/
@@ -58,7 +58,7 @@ Verificar paquetes:
   when: manual
 
 Ejecutar tests de integración:
-  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: test
   only:
     - /test.*/
@@ -75,7 +75,7 @@ Ejecutar tests de integración:
   when: manual
 
 Ejecutar tests de covertura:
-  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: test
   only:
     - /test.*/
