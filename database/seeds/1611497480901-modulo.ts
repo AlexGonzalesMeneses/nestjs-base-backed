@@ -122,7 +122,7 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: item.nombre,
         url: item.url,
         label: item.label,
-        idModulo: item.fidModulo,
+        idModuloPadre: item.fidModulo,
         propiedades: propiedades,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',

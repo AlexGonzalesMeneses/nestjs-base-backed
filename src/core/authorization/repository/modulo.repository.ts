@@ -21,7 +21,7 @@ export class ModuloRepository {
     const query = this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
-      .leftJoin('modulo.fidModulo', 'fidModulo')
+      .leftJoin('modulo.moduloPadre', 'moduloPadre')
       .select([
         'modulo.id',
         'modulo.label',
@@ -29,7 +29,7 @@ export class ModuloRepository {
         'modulo.nombre',
         'modulo.propiedades',
         'modulo.estado',
-        'fidModulo.id',
+        'moduloPadre.id',
       ])
       .take(limite)
       .skip(saltar)
@@ -42,7 +42,7 @@ export class ModuloRepository {
       )
     }
     if (seccion) {
-      query.andWhere('(modulo.fidModulo is null)')
+      query.andWhere('(modulo.moduloPadre is null)')
     }
     return await query.getManyAndCount()
   }
@@ -108,7 +108,7 @@ export class ModuloRepository {
     if (moduloDto.fidModulo) {
       const em = new Modulo()
       em.id = moduloDto.fidModulo
-      modulo.fidModulo = em
+      modulo.moduloPadre = em
     }
 
     //console.log('Datos........ para guardar modulo......................', modulo)
@@ -127,7 +127,7 @@ export class ModuloRepository {
         url: moduloDto.url,
         nombre: moduloDto.nombre,
         propiedades: moduloDto.propiedades,
-        idModulo: moduloDto.fidModulo,
+        idModuloPadre: moduloDto.fidModulo,
         estado: moduloDto.estado,
         usuarioModificacion: usuarioAuditoria,
       })
