@@ -113,7 +113,7 @@ export class modulo1611497480901 implements MigrationInterface {
       {
         // id: '8',
         nombre: 'rol',
-        url: '/admin/rol',
+        url: '/admin/roles',
         label: 'Roles',
         propiedades: {
           icono: 'admin_panel_settings',
