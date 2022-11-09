@@ -20,8 +20,8 @@ export class RolService extends BaseService {
     return await this.rolRepositorio.listar()
   }
 
-  async listarTable(paginacionQueryDto: PaginacionQueryDto) {
-    return await this.rolRepositorio.listarTable(paginacionQueryDto)
+  async listarTodos(paginacionQueryDto: PaginacionQueryDto) {
+    return await this.rolRepositorio.listarTodos(paginacionQueryDto)
   }
 
   async crear(rolDto: CrearRolDto, usuarioAuditoria: string) {

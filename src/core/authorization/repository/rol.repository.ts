@@ -18,7 +18,7 @@ export class RolRepository {
       .getMany()
   }
 
-  async listarTable(paginacionQueryDto: PaginacionQueryDto) {
+  async listarTodos(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, filtro } = paginacionQueryDto
     const query = await this.dataSource
       .getRepository(Rol)

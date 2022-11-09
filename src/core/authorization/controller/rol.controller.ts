@@ -30,9 +30,9 @@ export class RolController extends BaseController {
     return this.successList(result)
   }
 
-  @Get('table')
-  async listarTable(@Query() paginacionQueryDto: PaginacionQueryDto) {
-    const result = await this.rolService.listarTable(paginacionQueryDto)
+  @Get('todos')
+  async listarTodos(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    const result = await this.rolService.listarTodos(paginacionQueryDto)
     return this.successListRows(result)
   }
 
