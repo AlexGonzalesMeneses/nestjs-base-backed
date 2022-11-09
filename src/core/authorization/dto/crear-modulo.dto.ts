@@ -32,7 +32,7 @@ export class CrearModuloDto {
   @IsObject()
   propiedades: PropiedadesDto
 
-  fidModulo?: string
+  idModulo?: string
   estado?: string
 }
 

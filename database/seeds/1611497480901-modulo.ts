@@ -30,7 +30,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
-        fidModulo: '1',
+        idModulo: '1',
       },
       {
         // id: '3',
@@ -43,7 +43,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#6E7888',
           color_dark: '#A2ACBD',
         },
-        fidModulo: '1',
+        idModulo: '1',
       },
 
       // MENU SECCION CONFIGURACIONES
@@ -69,7 +69,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#3F1929',
           color_dark: '#AE6DAB',
         },
-        fidModulo: '4',
+        idModulo: '4',
       },
       {
         // id: '6',
@@ -82,7 +82,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#312403',
           color_dark: '#B77346',
         },
-        fidModulo: '4',
+        idModulo: '4',
       },
       {
         // id: '7',
@@ -95,7 +95,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#312403',
           color_dark: '#B77346',
         },
-        fidModulo: '4',
+        idModulo: '4',
       },
       {
         // id: '8',
@@ -108,7 +108,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
-        fidModulo: '4',
+        idModulo: '4',
       },
       {
         // id: '8',
@@ -135,7 +135,7 @@ export class modulo1611497480901 implements MigrationInterface {
         nombre: item.nombre,
         url: item.url,
         label: item.label,
-        idModulo: item.fidModulo,
+        idModulo: item.idModulo,
         propiedades: propiedades,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',

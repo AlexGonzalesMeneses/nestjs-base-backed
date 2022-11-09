@@ -46,18 +46,18 @@ export class Modulo extends AuditoriaEntity {
   propiedades: Propiedades
 
   @Column({
-    name: 'fid_modulo',
+    name: 'id_modulo',
     type: 'bigint',
     nullable: true,
   })
   idModulo?: string | null
 
-  @OneToMany(() => Modulo, (modulo) => modulo.fidModulo)
+  @OneToMany(() => Modulo, (modulo) => modulo.moduloPadre)
   subModulo: Modulo[]
 
   @ManyToOne(() => Modulo, (modulo) => modulo.subModulo)
-  @JoinColumn({ name: 'fid_modulo', referencedColumnName: 'id' })
-  fidModulo: Modulo
+  @JoinColumn({ name: 'id_modulo', referencedColumnName: 'id' })
+  moduloPadre: Modulo
 
   constructor(data?: Partial<Modulo>) {
     super(data)
