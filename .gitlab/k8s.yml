@@ -309,7 +309,7 @@ Desplegar la aplicación:
     - npm run seeds:run
 
 .configure_setup:
-  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:16.16-stretch-slim
+  image: hub.agcs.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: setup
   only:
     - /test.*/
@@ -318,17 +318,17 @@ Desplegar la aplicación:
   tags:
     - kubernetes-runner
   before_script:
+    - cp src/common/params/index.ts.sample src/common/params/index.ts
     - echo $CONFIGURE_NAMESPACES | base64 -d > ./configure-namespaces.sh
     - chmod +x ./configure-namespaces.sh
     - . ./configure-namespaces.sh
-    - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch main contrib > /etc/apt/sources.list
-    - echo deb http://repositorio.agetic.gob.bo/os/ftp.debian.org/debian stretch-updates main contrib >> /etc/apt/sources.list
-    - echo deb http://repositorio.agetic.gob.bo/os/security.debian.org/debian-security/ stretch/updates main contrib >> /etc/apt/sources.list
     - npm set registry https://registry.agcs.agetic.gob.bo
     - npm set strict-ssl false
-    - apt-get update && apt-get install -y curl jq
+    - apk update
+    - apk add curl jq
     - npm install -g convert-json-env
-    - 'curl $(echo $VAULT_DOMAIN)/v1/$VAULT_ROOT_PATH/$(echo $CI_COMMIT_REF_NAME)/$(echo $CI_PROJECT_NAME)/app --header "X-Vault-Token: $(echo $VAULT_TOKEN)" > secrets.json'
+    - 'curl $(echo $VAULT_DOMAIN)/v1/$VAULT_ROOT_PATH/$(echo $NAMESPACE)/$PATH_FOLDER/$(echo $CI_PROJECT_NAME)/k8s --header "X-Vault-Token: $(echo $VAULT_TOKEN)" > secrets.json'
+    - cat ./secrets.json
     - echo $(jq ".data" secrets.json) > values.json
     - convert-json-env values.json --out=.env
   when: manual
