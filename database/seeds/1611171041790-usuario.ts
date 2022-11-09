@@ -1,7 +1,11 @@
 import { Usuario } from '../../src/core/usuario/entity/usuario.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { TextService } from '../../src/common/lib/text.service'
-import { Genero, TipoDocumento } from '../../src/common/constants'
+import {
+  Genero,
+  TipoDocumento,
+  USUARIO_SISTEMA,
+} from '../../src/common/constants'
 import dayjs from 'dayjs'
 import { Persona } from '../../src/core/usuario/entity/persona.entity'
 
@@ -68,8 +72,7 @@ export class usuario1611171041790 implements MigrationInterface {
         tipoDocumento: item.persona.tipoDocumento,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
-        usuarioCreacion: '1',
-        fechaCreacion: new Date(),
+        usuarioCreacion: USUARIO_SISTEMA,
       })
       const personaResult = await queryRunner.manager.save(persona)
       const usuario = new Usuario({
@@ -81,8 +84,7 @@ export class usuario1611171041790 implements MigrationInterface {
         idPersona: personaResult.id,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
-        usuarioCreacion: '1',
-        fechaCreacion: new Date(),
+        usuarioCreacion: USUARIO_SISTEMA,
       })
       await queryRunner.manager.save(usuario)
     }

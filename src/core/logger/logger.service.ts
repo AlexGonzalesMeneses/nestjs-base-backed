@@ -91,11 +91,10 @@ export class LoggerService extends Logger {
         }
       }
       if (typeof value === 'object') {
-        const newObj = Object.keys(value).reduce((prev, curr) => {
+        return Object.keys(value).reduce((prev, curr) => {
           prev[curr] = LoggerService.cleanAxiosResponse(value[curr], deep + 1)
           return prev
         }, {} as any)
-        return newObj
       }
       try {
         return toJSON(value)

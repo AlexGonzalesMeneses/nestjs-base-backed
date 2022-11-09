@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export class PrintSQL extends AdvancedConsoleLogger {
-  private loggerOptions?: LoggerOptions
+  private readonly loggerOptions?: LoggerOptions
 
   constructor(options?: LoggerOptions) {
     super(options)

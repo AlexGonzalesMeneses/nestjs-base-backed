@@ -1,6 +1,7 @@
 import { RolEnum } from 'src/core/authorization/rol.enum'
 import { Rol } from '../../src/core/authorization/entity/rol.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
+import { USUARIO_SISTEMA } from '../../src/common/constants'
 
 export class rol1611498173795 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -27,8 +28,7 @@ export class rol1611498173795 implements MigrationInterface {
         nombre: item.nombre,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
-        usuarioCreacion: '1',
-        fechaCreacion: new Date(),
+        usuarioCreacion: USUARIO_SISTEMA,
       })
     })
     await queryRunner.manager.save(roles)
