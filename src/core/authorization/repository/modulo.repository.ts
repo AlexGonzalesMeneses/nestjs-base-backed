@@ -104,7 +104,7 @@ export class ModuloRepository {
     modulo.nombre = moduloDto.nombre
     modulo.propiedades = propiedades
     modulo.usuarioCreacion = usuarioAuditoria
-    modulo.fechaCreacion = new Date()
+
     if (moduloDto.idModulo) {
       const em = new Modulo()
       em.id = moduloDto.idModulo

@@ -3,6 +3,7 @@ import {
   Propiedades,
 } from '../../src/core/authorization/entity/modulo.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
+import { USUARIO_SISTEMA } from '../../src/common/constants'
 
 export class modulo1611497480901 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -139,8 +140,7 @@ export class modulo1611497480901 implements MigrationInterface {
         propiedades: propiedades,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
-        usuarioCreacion: '1',
-        fechaCreacion: new Date(),
+        usuarioCreacion: USUARIO_SISTEMA,
       })
     })
     await queryRunner.manager.save(modulos)

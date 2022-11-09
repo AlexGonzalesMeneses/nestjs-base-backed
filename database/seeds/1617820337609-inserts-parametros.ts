@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { Parametro } from '../../src/application/parametro/parametro.entity'
+import { USUARIO_SISTEMA } from '../../src/common/constants'
 
 export class insertsParametros1617820337609 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -109,8 +110,7 @@ export class insertsParametros1617820337609 implements MigrationInterface {
         descripcion: item.descripcion,
         estado: 'ACTIVO',
         transaccion: 'SEEDS',
-        usuarioCreacion: '1',
-        fechaCreacion: new Date(),
+        usuarioCreacion: USUARIO_SISTEMA,
       })
     })
     await queryRunner.manager.save(parametros)
