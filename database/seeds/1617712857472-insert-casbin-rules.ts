@@ -117,7 +117,7 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       },
       {
         v0: RolEnum.ADMINISTRADOR,
-        v1: '/api/autorizacion/roles/table',
+        v1: '/api/autorizacion/roles/todos',
         v2: 'GET|POST',
         v3: 'backend',
       },
