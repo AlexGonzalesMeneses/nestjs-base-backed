@@ -43,6 +43,12 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         v3: 'frontend',
       },
       {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/admin/roles',
+        v2: 'read|create|update|delete',
+        v3: 'frontend',
+      },
+      {
         v0: RolEnum.TECNICO,
         v1: '/admin/usuarios',
         v2: 'read',
@@ -106,7 +112,31 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
       {
         v0: RolEnum.ADMINISTRADOR,
         v1: '/api/autorizacion/roles',
-        v2: 'GET',
+        v2: 'GET|POST',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/roles/todos',
+        v2: 'GET|POST',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/roles/:id',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/roles/:id/activacion',
+        v2: 'PATCH',
+        v3: 'backend',
+      },
+      {
+        v0: RolEnum.ADMINISTRADOR,
+        v1: '/api/autorizacion/roles/:id/inactivacion',
+        v2: 'PATCH',
         v3: 'backend',
       },
       {

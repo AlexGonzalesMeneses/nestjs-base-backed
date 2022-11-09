@@ -110,6 +110,19 @@ export class modulo1611497480901 implements MigrationInterface {
         },
         fidModulo: '4',
       },
+      {
+        // id: '8',
+        nombre: 'rol',
+        url: '/admin/roles',
+        label: 'Roles',
+        propiedades: {
+          icono: 'admin_panel_settings',
+          descripcion: 'Control de roles para los usuarios',
+          color_light: '#B4AA99',
+          color_dark: '#B4AA99',
+        },
+        fidModulo: '4',
+      },
     ]
     const modulos = items.map((item) => {
       const propiedades: Propiedades = {
