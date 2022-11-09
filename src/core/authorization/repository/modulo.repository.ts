@@ -81,7 +81,7 @@ export class ModuloRepository {
         'subModulo.propiedades',
         'subModulo.estado',
       ])
-      .where('modulo.fid_modulo is NULL')
+      .where('modulo.id_modulo is NULL')
       .andWhere('modulo.estado = :estado', {
         estado: Status.ACTIVE,
       })
@@ -105,9 +105,9 @@ export class ModuloRepository {
     modulo.propiedades = propiedades
     modulo.usuarioCreacion = usuarioAuditoria
     modulo.fechaCreacion = new Date()
-    if (moduloDto.fidModulo) {
+    if (moduloDto.idModulo) {
       const em = new Modulo()
-      em.id = moduloDto.fidModulo
+      em.id = moduloDto.idModulo
       modulo.moduloPadre = em
     }
 
@@ -127,7 +127,7 @@ export class ModuloRepository {
         url: moduloDto.url,
         nombre: moduloDto.nombre,
         propiedades: moduloDto.propiedades,
-        idModuloPadre: moduloDto.fidModulo,
+        idModulo: moduloDto.idModulo,
         estado: moduloDto.estado,
         usuarioModificacion: usuarioAuditoria,
       })
