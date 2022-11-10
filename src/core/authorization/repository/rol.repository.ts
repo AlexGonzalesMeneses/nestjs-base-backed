@@ -3,7 +3,7 @@ import { Status } from '../../../common/constants'
 import { Injectable } from '@nestjs/common'
 import { Rol } from '../entity/rol.entity'
 import { CrearRolDto } from '../dto/crear-rol.dto'
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto'
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 
 @Injectable()
 export class RolRepository {
