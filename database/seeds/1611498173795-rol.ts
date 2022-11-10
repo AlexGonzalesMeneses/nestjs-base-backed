@@ -1,4 +1,4 @@
-import { RolEnum } from 'src/core/authorization/rol.enum'
+import { RolEnum } from '../../src/core/authorization/rol.enum'
 import { Rol } from '../../src/core/authorization/entity/rol.entity'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { USUARIO_SISTEMA } from '../../src/common/constants'

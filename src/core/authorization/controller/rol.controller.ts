@@ -14,8 +14,8 @@ import { BaseController } from '../../../common/base/base-controller'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearRolDto } from '../dto/crear-rol.dto'
-import { ParamIdDto } from 'src/common/dto/params-id.dto'
-import { PaginacionQueryDto } from 'src/common/dto/paginacion-query.dto'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/roles')
