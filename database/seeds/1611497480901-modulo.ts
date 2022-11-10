@@ -122,7 +122,7 @@ export class modulo1611497480901 implements MigrationInterface {
           color_light: '#B4AA99',
           color_dark: '#B4AA99',
         },
-        fidModulo: '4',
+        idModulo: '4',
       },
     ]
     const modulos = items.map((item) => {
