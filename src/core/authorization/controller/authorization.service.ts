@@ -27,11 +27,17 @@ export class AuthorizationService extends BaseService {
 
     if (filtro) {
       result = result.filter(
-        (r) => r.sujeto.search(filtro) > 0 || r.objeto.search(filtro) > 0
+        (r) =>
+          r.sujeto.toLowerCase().includes(filtro.toLowerCase()) ||
+          r.objeto.toLowerCase().includes(filtro.toLowerCase()) ||
+          r.accion.toLowerCase().includes(filtro.toLowerCase()) ||
+          r.app.toLowerCase().includes(filtro.toLowerCase())
       )
     }
     if (aplicacion) {
-      result = result.filter((r) => r.app === aplicacion)
+      result = result.filter((r) =>
+        r.app.toLowerCase().includes(aplicacion.toLowerCase())
+      )
     }
 
     if (!limite || !pagina) {
