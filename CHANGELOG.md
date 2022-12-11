@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.4](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.2...v1.6.4) (2022-12-11)
+
+
+### Features
+
+* ajustes node 18, ahora que es LTS ([6a34980](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/6a34980d0185baeebfd2bc25177cde9b4ff6f73d))
+* crud de roles ([902f7f5](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/902f7f535f36933c91389d48d12240fbc8367e7c))
+* **fix:** se arreglo el comando setup en CI ([72e8616](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/72e8616f1b1d5458706a63008c7474d19a302ce0))
+
+
+### Bug Fixes
+
+* actualización de dependencias, corrección en mensajes de correo y estado de activación de cuenta ([49f87d8](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/49f87d8e72d2395bb4d996a6727f80ef068c02c6))
+* ajuste en seeder para creación de registros con fecha por defecto y usuario sistema ([9b4e1e1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/9b4e1e121bad106c641fc75294b2adf332f7028a))
+* ajustes en loggerService para evitar logs gigantescos causados por axios ([8ef145d](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/8ef145dc513ca9becf6f299570af691134a88b73))
+* cambio de nombre de api de roles-table a roles-todos ([f830318](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/f830318ab5ca90a7621374218cbcd16bfaa671c8))
+* cambio de nombre de meotodos de roles-table a roles-todos ([c96fcbd](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/c96fcbde574da9581e5a067cb150f85e8f901ff0))
+* cambio de ruta rol a roles ([d5726e1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/d5726e15ee5801ef3c60e9d2f4126bcffabee1d7))
+* cambios de fid_modulo a id_modulo y removiendo el término módulo padre ([a934fde](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/a934fde5576b2afd392e8a105ab3fb11485dc32f))
+* corrección en busqueda de políticas, que ocasionaba que los filtros no funcionaran ([73b81f0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/73b81f0e7f31b5f35218b1e9c8fdca0978e92268))
+* corrección identificador de módulo para seeders ([005f274](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/005f27479f7592b460ce1da690b640bf94e2a939))
+
 ### [1.6.3](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.2...v1.6.3) (2022-11-09)
 
 
