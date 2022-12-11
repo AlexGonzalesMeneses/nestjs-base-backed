@@ -184,7 +184,7 @@ export class UsuarioService extends BaseService {
           await this.mensajeriaService
             .sendEmail(
               usuarioNuevo.correoElectronico,
-              Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+              Messages.NEW_USER_ACCOUNT_VERIFY,
               template
             )
             .catch((err) => this.logger.error(err))
@@ -427,7 +427,7 @@ export class UsuarioService extends BaseService {
 
     await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
       contrasena: await TextService.encrypt(contrasena),
-      estado: Status.PENDING,
+      estado: Status.ACTIVE,
       usuarioModificacion: usuarioAuditoria,
     })
 
@@ -439,7 +439,7 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    // si está bien ≥ enviar el mail con la contraseña generada
+    // sí está bien ≥ enviar el mail con la contraseña generada
     const datosCorreo = {
       correo: usuario.correoElectronico,
       asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
@@ -568,7 +568,7 @@ export class UsuarioService extends BaseService {
         throw new EntityNotFoundException(Messages.INVALID_USER)
       }
 
-      // si está bien ≥ enviar el mail con la contraseña generada
+      // sí está bien ≥ enviar el mail con la contraseña generada
       const datosCorreo = {
         correo: usuario.correoElectronico,
         asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
@@ -618,7 +618,7 @@ export class UsuarioService extends BaseService {
         await this.mensajeriaService
           .sendEmail(
             usuario.correoElectronico,
-            Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
+            Messages.NEW_USER_ACCOUNT_VERIFY,
             template
           )
           .catch((err) => this.logger.error(err))

@@ -1,6 +1,6 @@
 import TypeORMAdapter from 'typeorm-adapter'
 import { Module } from '@nestjs/common'
-import { AuthZModule, AUTHZ_ENFORCER } from 'nest-authz'
+import { AUTHZ_ENFORCER, AuthZModule } from 'nest-authz'
 import { join } from 'path'
 import { newEnforcer } from 'casbin'
 import { ConfigModule, ConfigService } from '@nestjs/config'
