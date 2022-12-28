@@ -1,3 +1,4 @@
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { TextService } from '../../../common/lib/text.service'
 import { Rol } from '../../authorization/entity/rol.entity'
 import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
@@ -178,19 +179,20 @@ export class UsuarioRepository {
       })
     )
 
-    const usuarioRoles: UsuarioRol[] = usuarioDto.roles.map((idRol) => {
-      // Rol
-      const rol = new Rol()
-      rol.id = idRol
+    const usuarioRoles: QueryDeepPartialEntity<UsuarioRol>[] =
+      usuarioDto.roles.map((idRol) => {
+        // Rol
+        const rol = new Rol()
+        rol.id = idRol
 
-      // UsuarioRol
-      const usuarioRol = new UsuarioRol()
-      usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
-      usuarioRol.idUsuario = usuarioResult.id
+        // UsuarioRol
+        const usuarioRol = new UsuarioRol()
+        usuarioRol.rol = rol
+        usuarioRol.usuarioCreacion = usuarioAuditoria
+        usuarioRol.idUsuario = usuarioResult.id
 
-      return usuarioRol
-    })
+        return usuarioRol
+      })
 
     await transaction
       .createQueryBuilder()
@@ -207,23 +209,22 @@ export class UsuarioRepository {
     usuarioDto: Partial<ActualizarUsuarioDto>,
     transaction?: EntityManager
   ) {
-    return await (
-      transaction?.getRepository(Usuario) ??
-      this.dataSource.getRepository(Usuario)
-    ).update(
-      idUsuario,
-      new Usuario({
-        estado: usuarioDto.estado || undefined,
-        correoElectronico: usuarioDto.correoElectronico || undefined,
-        contrasena: usuarioDto.contrasena || undefined,
-        intentos: usuarioDto.intentos || undefined,
-        fechaBloqueo: usuarioDto.fechaBloqueo
-          ? dayjs(usuarioDto.fechaBloqueo).toDate()
-          : undefined,
-        codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
-        usuarioModificacion: usuarioDto.usuarioActualizacion,
-      })
-    )
+    const repo = transaction
+      ? transaction.getRepository(Usuario)
+      : this.dataSource.getRepository(Usuario)
+
+    const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
+      estado: usuarioDto.estado || undefined,
+      correoElectronico: usuarioDto.correoElectronico || undefined,
+      contrasena: usuarioDto.contrasena || undefined,
+      intentos: usuarioDto.intentos || undefined,
+      fechaBloqueo: usuarioDto.fechaBloqueo
+        ? dayjs(usuarioDto.fechaBloqueo).toDate()
+        : undefined,
+      codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
+      usuarioModificacion: usuarioDto.usuarioActualizacion,
+    })
+    return await repo.update(idUsuario, datosActualizar)
   }
 
   async crearConPersonaExistente(usuarioDto, usuarioAuditoria: string) {
@@ -270,28 +271,26 @@ export class UsuarioRepository {
     codigo: string,
     fechaBloqueo: Date
   ) {
+    const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
+      codigoDesbloqueo: codigo,
+      fechaBloqueo: fechaBloqueo,
+    })
     return await this.dataSource
       .createQueryBuilder()
       .update(Usuario)
-      .set(
-        new Usuario({
-          codigoDesbloqueo: codigo,
-          fechaBloqueo: fechaBloqueo,
-        })
-      )
+      .set(datosActualizar)
       .where({ id: idUsuario })
       .execute()
   }
 
   async actualizarDatosRecuperacion(idUsuario: string, codigo: string) {
+    const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
+      codigoRecuperacion: codigo,
+    })
     return await this.dataSource
       .createQueryBuilder()
       .update(Usuario)
-      .set(
-        new Usuario({
-          codigoRecuperacion: codigo,
-        })
-      )
+      .set(datosActualizar)
       .where({ id: idUsuario })
       .execute()
   }
@@ -302,15 +301,14 @@ export class UsuarioRepository {
     usuarioAuditoria: string,
     transaction: EntityManager
   ) {
+    const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
+      codigoActivacion: codigo,
+      usuarioModificacion: usuarioAuditoria,
+    })
     return await transaction
       .createQueryBuilder()
       .update(Usuario)
-      .set(
-        new Usuario({
-          codigoActivacion: codigo,
-          usuarioModificacion: usuarioAuditoria,
-        })
-      )
+      .set(datosActualizar)
       .where({ id: idUsuario })
       .execute()
   }
@@ -363,10 +361,13 @@ export class UsuarioRepository {
   }
 
   async actualizarDatosPersona(persona: PersonaDto) {
+    const datosActualizar: QueryDeepPartialEntity<Persona> = new Persona({
+      ...persona,
+    })
     return await this.dataSource
       .createQueryBuilder()
       .update(Persona)
-      .set(persona)
+      .set(datosActualizar)
       .where('nroDocumento = :nroDocumento', {
         nroDocumento: persona.nroDocumento,
       })
@@ -378,13 +379,17 @@ export class UsuarioRepository {
     usuario: Partial<Usuario>,
     transaction?: EntityManager
   ) {
-    return await (
-      transaction?.getRepository(Usuario) ??
-      this.dataSource.getRepository(Usuario)
-    )
+    const repo = transaction
+      ? transaction.getRepository(Usuario)
+      : this.dataSource.getRepository(Usuario)
+
+    const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
+      ...usuario,
+    })
+    return await repo
       .createQueryBuilder()
       .update(Usuario)
-      .set(usuario)
+      .set(datosActualizar)
       .where({ id: id })
       .execute()
   }

@@ -1,3 +1,4 @@
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { DataSource, UpdateResult } from 'typeorm'
 import { Status } from '../../../common/constants'
 import { Injectable } from '@nestjs/common'
@@ -77,12 +78,10 @@ export class RolRepository {
     rolDto: CrearRolDto,
     usuarioAuditoria: string
   ): Promise<UpdateResult> {
-    return await this.dataSource.getRepository(Rol).update(
-      id,
-      new Rol({
-        ...rolDto,
-        ...{ usuarioModificacion: usuarioAuditoria },
-      })
-    )
+    const datosActualizar: QueryDeepPartialEntity<Rol> = new Rol({
+      ...rolDto,
+      usuarioModificacion: usuarioAuditoria,
+    })
+    return await this.dataSource.getRepository(Rol).update(id, datosActualizar)
   }
 }
