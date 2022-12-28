@@ -144,7 +144,9 @@ export class LoggerService extends Logger {
             data && typeof data === 'object' && !(data instanceof Error)
               ? JSON.parse(this.redact(JSON.parse(JSON.stringify(data))))
               : data
-        } catch (err) {}
+        } catch (err) {
+          //
+        }
         const toPrint =
           typeof data === 'object'
             ? inspect(data, false, null, false)

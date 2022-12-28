@@ -110,6 +110,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
+      process.stdout.write('')
       throw err
     }
   }
