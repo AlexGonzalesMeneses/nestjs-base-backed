@@ -1,3 +1,4 @@
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { DataSource, UpdateResult } from 'typeorm'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -22,13 +23,13 @@ export class ParametroRepository {
     parametroDto: ActualizarParametroDto,
     usuarioAuditoria: string
   ): Promise<UpdateResult> {
-    return await this.dataSource.getRepository(Parametro).update(
-      id,
-      new Parametro({
-        ...parametroDto,
-        ...{ usuarioModificacion: usuarioAuditoria },
-      })
-    )
+    const datosActualizar: QueryDeepPartialEntity<Parametro> = new Parametro({
+      ...parametroDto,
+      usuarioModificacion: usuarioAuditoria,
+    })
+    return await this.dataSource
+      .getRepository(Parametro)
+      .update(id, datosActualizar)
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
