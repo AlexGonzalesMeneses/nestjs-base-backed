@@ -16,6 +16,7 @@ import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { ParamIdDto } from '../../../common/dto/params-id.dto'
+import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')
@@ -26,6 +27,7 @@ export class ModuloController extends BaseController {
 
   @Get()
   async listar(@Query() paginacionQueryDto: FiltroModuloDto) {
+    console.log(`paginacionQueryDto: `, paginacionQueryDto)
     const result = await this.moduloService.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
@@ -37,10 +39,16 @@ export class ModuloController extends BaseController {
     return this.successCreate(result)
   }
 
-  @Patch()
-  async updateModulo(@Req() req, @Body() moduloDto: CrearModuloDto) {
+  @Patch(':id')
+  async actualizar(
+    @Param() params: ParamIdDto,
+    @Req() req,
+    @Body() moduloDto: ActualizarModuloDto
+  ) {
+    const { id: idModulo } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.actualizar(
+      idModulo,
       moduloDto,
       usuarioAuditoria
     )
@@ -48,8 +56,8 @@ export class ModuloController extends BaseController {
   }
 
   @Delete()
-  async deleteModulo(@Body() moduloDto: CrearModuloDto) {
-    const result = await this.moduloService.eliminar(moduloDto)
+  async eliminar(@Param('id') id: string) {
+    const result = await this.moduloService.eliminar(id)
     return this.successDelete(result)
   }
 
@@ -57,9 +65,9 @@ export class ModuloController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
   async activar(@Req() req, @Param() params: ParamIdDto) {
-    const { id: idUsuario } = params
+    const { id: idModulo } = params
     const usuarioAuditoria = this.getUser(req)
-    const result = await this.moduloService.activar(idUsuario, usuarioAuditoria)
+    const result = await this.moduloService.activar(idModulo, usuarioAuditoria)
     return this.successUpdate(result)
   }
 
@@ -67,10 +75,10 @@ export class ModuloController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
   async inactivar(@Req() req, @Param() params: ParamIdDto) {
-    const { id: idUsuario } = params
+    const { id: idModulo } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.inactivar(
-      idUsuario,
+      idModulo,
       usuarioAuditoria
     )
     return this.successUpdate(result)

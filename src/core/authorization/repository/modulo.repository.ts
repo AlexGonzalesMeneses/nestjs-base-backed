@@ -3,6 +3,8 @@ import { Modulo, Propiedades } from '../entity/modulo.entity'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { Injectable } from '@nestjs/common'
 import { Status } from '../../../common/constants'
+import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
 @Injectable()
 export class ModuloRepository {
@@ -45,13 +47,6 @@ export class ModuloRepository {
       query.andWhere('(modulo.modulo is null)')
     }
     return await query.getManyAndCount()
-  }
-
-  async listarTodo() {
-    return await this.dataSource
-      .getRepository(Modulo)
-      .createQueryBuilder('modulo')
-      .getMany()
   }
 
   async obtenerModulosSubmodulos() {
@@ -97,7 +92,6 @@ export class ModuloRepository {
       descripcion: moduloDto.propiedades.descripcion,
     }
 
-    //console.log('Datos........ para modulo......................', moduloDto)
     const modulo = new Modulo()
     modulo.label = moduloDto.label
     modulo.url = moduloDto.url
@@ -111,30 +105,25 @@ export class ModuloRepository {
       modulo.modulo = em
     }
 
-    //console.log('Datos........ para guardar modulo......................', modulo)
-
     return await this.dataSource.getRepository(Modulo).save(modulo)
   }
 
   async actualizar(
-    moduloDto: Partial<CrearModuloDto>,
+    id: string,
+    moduloDto: ActualizarModuloDto,
     usuarioAuditoria: string
   ) {
-    return await this.dataSource.getRepository(Modulo).save(
-      new Modulo({
-        id: moduloDto.id,
-        label: moduloDto.label,
-        url: moduloDto.url,
-        nombre: moduloDto.nombre,
-        propiedades: moduloDto.propiedades,
-        idModulo: moduloDto.idModulo,
-        estado: moduloDto.estado,
-        usuarioModificacion: usuarioAuditoria,
-      })
-    )
+    const datosActualizar: QueryDeepPartialEntity<Modulo> = new Modulo({
+      ...moduloDto,
+      usuarioModificacion: usuarioAuditoria,
+    })
+
+    return await this.dataSource
+      .getRepository(Modulo)
+      .update(id, datosActualizar)
   }
 
-  async eliminar(moduloDto: CrearModuloDto) {
-    return await this.dataSource.getRepository(Modulo).delete(moduloDto.id)
+  async eliminar(id: string) {
+    return await this.dataSource.getRepository(Modulo).delete(id)
   }
 }

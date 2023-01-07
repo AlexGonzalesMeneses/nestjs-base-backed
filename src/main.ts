@@ -21,7 +21,7 @@ import {
 import { DataSource } from 'typeorm'
 import { LoggerService } from './core/logger/logger.service'
 import { NextFunction, Request, Response } from 'express'
-import { printRoutes, printLogo, printInfo } from './core/logger/tools'
+import { printInfo, printLogo, printRoutes } from './core/logger/tools'
 
 dotenv.config()
 

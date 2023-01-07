@@ -5,6 +5,7 @@ import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { Status } from '../../../common/constants'
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../../common/constants/response-messages'
+import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
 
 @Injectable()
 export class ModuloService extends BaseService {
@@ -27,47 +28,59 @@ export class ModuloService extends BaseService {
     return await this.moduloRepositorio.crear(moduloDto, usuarioAuditoria)
   }
 
-  async actualizar(moduloDto: CrearModuloDto, usuarioAuditoria: string) {
-    return await this.moduloRepositorio.actualizar(moduloDto, usuarioAuditoria)
+  async actualizar(
+    id: string,
+    moduloDto: ActualizarModuloDto,
+    usuarioAuditoria: string
+  ) {
+    return await this.moduloRepositorio.actualizar(
+      id,
+      moduloDto,
+      usuarioAuditoria
+    )
   }
 
-  async eliminar(moduloDto: CrearModuloDto) {
-    return await this.moduloRepositorio.eliminar(moduloDto)
+  async eliminar(id: string) {
+    return await this.moduloRepositorio.eliminar(id)
   }
 
-  async activar(idModulo, usuarioAuditoria: string) {
-    const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
+  async activar(id: string, usuarioAuditoria: string) {
+    const modulo = await this.moduloRepositorio.buscarPorId(id)
     if (!modulo) {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
     }
-    const moduloActualizado = await this.moduloRepositorio.actualizar(
-      {
-        id: idModulo,
-        estado: Status.ACTIVE,
-      },
+
+    const actualizarModuloDto = new ActualizarModuloDto()
+    actualizarModuloDto.estado = Status.ACTIVE
+
+    await this.moduloRepositorio.actualizar(
+      id,
+      actualizarModuloDto,
       usuarioAuditoria
     )
+
     return {
-      id: moduloActualizado.id,
-      estado: moduloActualizado.estado,
+      id,
     }
   }
 
-  async inactivar(idModulo, usuarioAuditoria: string) {
-    const modulo = await this.moduloRepositorio.buscarPorId(idModulo)
+  async inactivar(id: string, usuarioAuditoria: string) {
+    const modulo = await this.moduloRepositorio.buscarPorId(id)
     if (!modulo) {
       throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
     }
-    const moduloActualizado = await this.moduloRepositorio.actualizar(
-      {
-        id: idModulo,
-        estado: Status.INACTIVE,
-      },
+
+    const actualizarModuloDto = new ActualizarModuloDto()
+    actualizarModuloDto.estado = Status.INACTIVE
+
+    await this.moduloRepositorio.actualizar(
+      id,
+      actualizarModuloDto,
       usuarioAuditoria
     )
+
     return {
-      id: moduloActualizado.id,
-      estado: moduloActualizado.estado,
+      id,
     }
   }
 }

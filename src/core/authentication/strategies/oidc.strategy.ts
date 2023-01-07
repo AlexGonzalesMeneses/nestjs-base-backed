@@ -25,7 +25,7 @@ export const buildOpenIdClient = async (): Promise<Client | undefined> => {
     })
   } catch (error) {
     const t = 0
-    logger.error('////// ERROR DE CONEXIÓN CON CIUDADANIA //////', error)
+    logger.error('////// ERROR DE CONEXIÓN CON CIUDADANÍA //////', error)
     logger.error(
       `El servicio se levantará sin esta característica dentro de ${t} segundos`
     )

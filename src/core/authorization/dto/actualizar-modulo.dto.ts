@@ -4,25 +4,10 @@ import {
   IsObject,
   IsString,
 } from '../../../common/validation'
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
+import { PropiedadesDto } from './crear-modulo.dto'
 import { IsOptional } from 'class-validator'
 
-export class PropiedadesDto {
-  @IsString()
-  icono?: string
-
-  @IsString()
-  descripcion?: string
-
-  @IsString()
-  color_light?: string
-
-  @IsString()
-  color_dark?: string
-}
-
-export class CrearModuloDto {
-  id: string
+export class ActualizarModuloDto {
   @IsNotEmpty()
   @IsString()
   label: string
@@ -45,8 +30,4 @@ export class CrearModuloDto {
   @IsOptional()
   @IsString()
   estado?: string
-}
-
-export class FiltroModuloDto extends PaginacionQueryDto {
-  readonly seccion?: boolean
 }

@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearRolDto } from '../dto/crear-rol.dto'
 import { ParamIdDto } from '../../../common/dto/params-id.dto'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
+import { ActualizarRolDto } from '../dto/actualizar-rol.dto'
 
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/roles')
@@ -47,7 +48,7 @@ export class RolController extends BaseController {
   async actualizar(
     @Param() params: ParamIdDto,
     @Req() req,
-    @Body() rolDto: CrearRolDto
+    @Body() rolDto: ActualizarRolDto
   ) {
     const { id: idRol } = params
     const usuarioAuditoria = this.getUser(req)
