@@ -207,6 +207,7 @@ export class UsuarioRepository {
   async actualizar(
     idUsuario: string,
     usuarioDto: Partial<ActualizarUsuarioDto>,
+    usuarioAuditoria: string,
     transaction?: EntityManager
   ) {
     const repo = transaction
@@ -222,7 +223,7 @@ export class UsuarioRepository {
         ? dayjs(usuarioDto.fechaBloqueo).toDate()
         : undefined,
       codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
-      usuarioModificacion: usuarioDto.usuarioActualizacion,
+      usuarioModificacion: usuarioAuditoria,
     })
     return await repo.update(idUsuario, datosActualizar)
   }
@@ -377,6 +378,7 @@ export class UsuarioRepository {
   async actualizarUsuario(
     id: string,
     usuario: Partial<Usuario>,
+    usuarioAuditoria: string,
     transaction?: EntityManager
   ) {
     const repo = transaction
@@ -385,6 +387,7 @@ export class UsuarioRepository {
 
     const datosActualizar: QueryDeepPartialEntity<Usuario> = new Usuario({
       ...usuario,
+      usuarioModificacion: usuarioAuditoria,
     })
     return await repo
       .createQueryBuilder()

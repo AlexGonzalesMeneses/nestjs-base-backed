@@ -135,6 +135,10 @@ export class UsuarioService extends BaseService {
 
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
+    if (!rol) {
+      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+    }
+
     if (!TextService.validateLevelPassword(usuarioDto.contrasenaNueva)) {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
@@ -205,11 +209,14 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(usuario?.id, {
-      estado: Status.ACTIVE,
-      codigoActivacion: null,
-      usuarioModificacion: USUARIO_NORMAL,
-    })
+    await this.usuarioRepositorio.actualizarUsuario(
+      usuario?.id,
+      {
+        estado: Status.ACTIVE,
+        codigoActivacion: null,
+      },
+      usuario?.id
+    )
 
     const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
       usuario.id
@@ -295,17 +302,21 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(usuario.id, {
-      fechaBloqueo: null,
-      intentos: 0,
-      codigoDesbloqueo: null,
-      codigoTransaccion: null,
-      codigoRecuperacion: null,
-      contrasena: await TextService.encrypt(
-        TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
-      ),
-      estado: Status.ACTIVE,
-    })
+    await this.usuarioRepositorio.actualizarUsuario(
+      usuario.id,
+      {
+        fechaBloqueo: null,
+        intentos: 0,
+        codigoDesbloqueo: null,
+        codigoTransaccion: null,
+        codigoRecuperacion: null,
+        contrasena: await TextService.encrypt(
+          TextService.decodeBase64(nuevaContrasenaDto.contrasenaNueva)
+        ),
+        estado: Status.ACTIVE,
+      },
+      usuario.id
+    )
 
     const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
       usuario.id
@@ -425,11 +436,14 @@ export class UsuarioService extends BaseService {
     // cambiar estado al usuario y generar una nueva contrasena
     const contrasena = TextService.generateShortRandomText()
 
-    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-      contrasena: await TextService.encrypt(contrasena),
-      estado: Status.ACTIVE,
-      usuarioModificacion: usuarioAuditoria,
-    })
+    await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        contrasena: await TextService.encrypt(contrasena),
+        estado: Status.ACTIVE,
+      },
+      usuarioAuditoria
+    )
 
     const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
       usuario.id
@@ -460,10 +474,14 @@ export class UsuarioService extends BaseService {
       throw new EntityNotFoundException(Messages.INVALID_USER)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-      usuarioModificacion: usuarioAuditoria,
-      estado: Status.INACTIVE,
-    })
+    await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        estado: Status.INACTIVE,
+      },
+
+      usuarioAuditoria
+    )
 
     const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
       usuario.id
@@ -520,10 +538,14 @@ export class UsuarioService extends BaseService {
     }
 
     // guardar en bd
-    await this.usuarioRepositorio.actualizarUsuario(idUsuario, {
-      contrasena: await TextService.encrypt(contrasena),
-      estado: Status.ACTIVE,
-    })
+    await this.usuarioRepositorio.actualizarUsuario(
+      idUsuario,
+      {
+        contrasena: await TextService.encrypt(contrasena),
+        estado: Status.ACTIVE,
+      },
+      idUsuario
+    )
 
     const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
       usuario.id
@@ -554,8 +576,8 @@ export class UsuarioService extends BaseService {
         idUsuario,
         {
           contrasena: await TextService.encrypt(contrasena),
-          usuarioActualizacion: usuarioAuditoria,
         },
+        usuarioAuditoria,
         transaccion
       )
 
@@ -664,10 +686,13 @@ export class UsuarioService extends BaseService {
       if (existe) {
         throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
       }
-      await this.usuarioRepositorio.actualizarUsuario(id, {
-        correoElectronico: correoElectronico,
-        usuarioModificacion: usuarioAuditoria,
-      })
+      await this.usuarioRepositorio.actualizarUsuario(
+        id,
+        {
+          correoElectronico: correoElectronico,
+        },
+        usuarioAuditoria
+      )
     }
 
     if (roles.length > 0) {
@@ -816,11 +841,15 @@ export class UsuarioService extends BaseService {
       codigo
     )
     if (usuario?.fechaBloqueo) {
-      await this.usuarioRepositorio.actualizarUsuario(usuario.id, {
-        fechaBloqueo: null,
-        intentos: 0,
-        codigoDesbloqueo: null,
-      })
+      await this.usuarioRepositorio.actualizarUsuario(
+        usuario.id,
+        {
+          fechaBloqueo: null,
+          intentos: 0,
+          codigoDesbloqueo: null,
+        },
+        USUARIO_NORMAL
+      )
     }
     return { codigo }
   }
