@@ -97,7 +97,7 @@
     "rimraf": "3.0.2",
     "rotating-file-stream": "3.0.4",
     "rxjs": "7.8.0",
-    "sql-formatter": "12.0.4",
+    "sql-formatter": "12.0.5",
     "swagger-ui-express": "4.6.0",
     "typeorm": "0.3.11",
     "typeorm-adapter": "1.5.2",
@@ -105,7 +105,7 @@
     "zxcvbn-typescript": "5.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.4.0",
+    "@commitlint/cli": "17.4.1",
     "@commitlint/config-conventional": "17.4.0",
     "@compodoc/compodoc": "1.1.19",
     "@nestjs/cli": "9.1.8",
@@ -124,8 +124,8 @@
     "@types/supertest": "2.0.12",
     "@types/uuid": "9.0.0",
     "@types/zxcvbn": "4.4.1",
-    "@typescript-eslint/eslint-plugin": "5.48.0",
-    "@typescript-eslint/parser": "5.48.0",
+    "@typescript-eslint/eslint-plugin": "5.48.1",
+    "@typescript-eslint/parser": "5.48.1",
     "eslint": "8.31.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-prettier": "4.2.1",
