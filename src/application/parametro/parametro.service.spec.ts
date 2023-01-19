@@ -24,6 +24,7 @@ describe('ParametroService', () => {
             listar: jest.fn(() => [[resParametro], 1]),
             listarPorGrupo: jest.fn(() => [resParametro]),
             crear: jest.fn(() => resParametro),
+            buscarCodigo: jest.fn(() => null),
           },
         },
       ],

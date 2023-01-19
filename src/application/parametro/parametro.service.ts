@@ -18,6 +18,14 @@ export class ParametroService extends BaseService {
   }
 
   async crear(parametroDto: CrearParametroDto, usuarioAuditoria: string) {
+    const parametroRepetido = await this.parametroRepositorio.buscarCodigo(
+      parametroDto.codigo
+    )
+
+    if (parametroRepetido) {
+      throw new EntityNotFoundException(Messages.REPEATED_PARAMETER)
+    }
+
     return await this.parametroRepositorio.crear(parametroDto, usuarioAuditoria)
   }
 

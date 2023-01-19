@@ -68,6 +68,12 @@ export class ParametroRepository {
       .getMany()
   }
 
+  async buscarCodigo(codigo: string) {
+    return this.dataSource
+      .getRepository(Parametro)
+      .findOne({ where: { codigo: codigo } })
+  }
+
   async crear(parametroDto: CrearParametroDto, usuarioAuditoria: string) {
     const { codigo, nombre, grupo, descripcion } = parametroDto
 

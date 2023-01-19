@@ -41,4 +41,7 @@ export enum Messages {
   NEW_USER_ACCOUNT = 'Usuario creado exitosamente!',
   NEW_USER_ACCOUNT_VERIFY = 'Activación de cuenta',
   ACCOUNT_ACTIVED_SUCCESSFULLY = 'Activación de cuenta exitosa!',
+
+  // Parámetros
+  REPEATED_PARAMETER = 'Parámetro repetido',
 }
