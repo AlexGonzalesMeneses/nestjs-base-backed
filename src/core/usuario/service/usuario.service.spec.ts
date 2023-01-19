@@ -187,7 +187,7 @@ describe('UsuarioService', () => {
                 correoElectronico: 'fake@mail.com',
               }),
             update: jest.fn(() => ({})),
-            runTransaction: jest.fn(),
+            runTransaction: jest.fn(() => resUsuarioCrear),
           },
         },
         {
@@ -321,14 +321,12 @@ describe('UsuarioService', () => {
     const usuarioAuditoria = TextService.generateUuid()
     const usuario = await service.crear(usuarioDto, usuarioAuditoria)
 
-    // TODO actualizar el test
-    // expect(usuario).toBeDefined()
-    // expect(usuario).toHaveProperty('id')
-    // expect(usuario).toHaveProperty('estado')
+    expect(usuario).toBeDefined()
+    expect(usuario).toHaveProperty('id')
+    expect(usuario).toHaveProperty('estado')
   })
 
   it('[crearConCiudadania] Debería crear un nuevo usuario con bandera ciudadanía', async () => {
-    // TODO: Reparar test, despues de cambio en método
     const usuarioDto = new CrearUsuarioCiudadaniaDto()
     usuarioDto.usuario = '7878787'
     usuarioDto.roles = ['d5de12df-3cc3-5a58-a742-be24030482d8']
@@ -340,10 +338,9 @@ describe('UsuarioService', () => {
       usuarioAuditoria
     )
 
-    // TODO actualizar el test
-    // expect(usuario).toBeDefined()
-    // expect(usuario).toHaveProperty('id')
-    // expect(usuario).toHaveProperty('estado')
+    expect(usuario).toBeDefined()
+    expect(usuario).toHaveProperty('id')
+    expect(usuario).toHaveProperty('estado')
   })
 
   it('[crearConCiudadania] Debería retornar una excepcion al tratar de crear un usuario con ciudadania ya existente', async () => {

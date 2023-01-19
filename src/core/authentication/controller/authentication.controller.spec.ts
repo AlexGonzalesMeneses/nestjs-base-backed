@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import { AuthenticationController } from './authentication.controller'
 import { AuthenticationService } from '../service/authentication.service'
@@ -12,10 +12,8 @@ const resValidarUsuario = { id: '111111', usuario: 'usuario' }
 const refreshToken = { resfresh_token: '1' }
 
 describe('AuthenticationController', () => {
-  let controller: AuthenticationController
-
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    await Test.createTestingModule({
       controllers: [AuthenticationController],
       providers: [
         {

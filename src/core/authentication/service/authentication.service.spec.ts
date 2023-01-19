@@ -133,6 +133,7 @@ describe('AuthenticationService', () => {
     const user = {
       usuario: 'user',
       id: '11111',
+      roles: [],
     }
     const credenciales = await service.autenticarOidc(user)
     // expect(credenciales).toHaveProperty('access_token');
