@@ -85,7 +85,7 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  async validarUsuario(usuario: string, contrasena: string): Promise<any> {
+  async validarUsuario(usuario: string, contrasena: string) {
     const respuesta = await this.usuarioService.buscarUsuario(usuario)
 
     if (!respuesta) {
@@ -121,7 +121,7 @@ export class AuthenticationService extends BaseService {
     if (respuesta.intentos > 0) {
       await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0)
     }
-    let roles: Array<string | null> = []
+    let roles: Array<string> = []
     if (respuesta.usuarioRol.length) {
       roles = respuesta.usuarioRol
         .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
@@ -148,7 +148,7 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  async validarUsuarioOidc(persona: PersonaDto): Promise<any> {
+  async validarUsuarioOidc(persona: PersonaDto) {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
     if (!respuesta) {
       return null
@@ -176,10 +176,7 @@ export class AuthenticationService extends BaseService {
     return { id: respuesta.id, roles }
   }
 
-  async validarOCrearUsuarioOidc(
-    persona: PersonaDto,
-    datosUsuario
-  ): Promise<any> {
+  async validarOCrearUsuarioOidc(persona: PersonaDto, datosUsuario) {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
     if (respuesta) {
       // Persona y usuario existen en BD
@@ -210,7 +207,7 @@ export class AuthenticationService extends BaseService {
           USUARIO_SISTEMA
         )
       }
-      let roles: Array<string | null> = []
+      let roles: Array<string> = []
 
       if (respuesta.usuarioRol.length) {
         roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
@@ -271,7 +268,7 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  async autenticarOidc(user: any) {
+  async autenticarOidc(user: PassportUser) {
     const payload = { id: user.id, roles: user.roles }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)

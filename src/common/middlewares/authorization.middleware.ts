@@ -14,7 +14,7 @@ export class AuthorizationMiddleware implements NestMiddleware {
     const isValid = await this.rbacSrv.hasPolicy(rol, resource, action, app)
     if (!isValid) {
       return res.status(403).json({
-        mensaje: 'No authorizado',
+        mensaje: 'No autorizado',
       })
     }
     next()
