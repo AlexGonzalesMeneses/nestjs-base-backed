@@ -8,8 +8,11 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "target": "ES2022",
-    "typeRoots": ["./src/types/index.d.ts", "./node_modules/@types"],
+    "target": "ES2021",
+    "typeRoots": [
+      "./src/types/index.d.ts",
+      "./node_modules/@types"
+    ],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
