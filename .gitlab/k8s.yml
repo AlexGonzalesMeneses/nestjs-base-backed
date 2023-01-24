@@ -22,7 +22,7 @@ Obtener versión:
     expire_in: 20min
 
 Build:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: build
   rules:
     - if: $CI_COMMIT_BRANCH =~ /develop.*/
@@ -71,7 +71,7 @@ Verificar paquetes:
   when: manual
 
 Ejecutar tests de integración:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: test
   rules:
   - if: $TIPO_EJECUCION == 'ejecutar-pruebas'
@@ -94,7 +94,7 @@ Ejecutar tests de integración:
   when: manual
 
 Ejecutar tests de covertura:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: test
   rules:
   - if: $TIPO_EJECUCION == 'ejecutar-pruebas'
@@ -151,7 +151,7 @@ Generando reporte de calidad sonarqube:
   when: manual
 
 RetireJS:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: sast
   rules:
   - if: $TIPO_EJECUCION == 'ejecutar-pruebas'
@@ -188,7 +188,7 @@ RetireJS:
   when: manual
 
 Snyk:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: sast
   rules:
   - if: $TIPO_EJECUCION == 'ejecutar-pruebas'
@@ -389,7 +389,7 @@ Ejecutar setup de la base de datos:
     - npm run setup
 
 .configure_setup:
-  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:16-alpine
+  image: hub.upat.agetic.gob.bo/dockerhub-proxy/library/node:18-alpine
   stage: setup
   rules:
     - if: $TIPO_EJECUCION == 'setup'
