@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.5](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.4...v1.6.5) (2023-01-24)
+
+
+### Bug Fixes
+
+* cambio de versión a ES2021, dado que TypeORM no es compatible con ES2022 ([b01bf83](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b01bf83ff01f5f6d23d24b49d03e5dc817c36bf6))
+* corregido tipado de respuesta de funciones de authentication servicio ([4ffc906](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/4ffc906b2f37ed9b6b79bf0880dee33fd4d17022))
+* estandarizado formato de actualizar usuario DTO para que sea similar a otros servicios 🧹 ([1fa10ef](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/1fa10ef253f59a727fb29cb3fefdf8112642bd15))
+* estandarizados formatos de peticiones para módulos y roles, con sus respectivos DTO's ([2dc68ac](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2dc68acddb445be7af00dc10dbbd08871a216abd))
+* habilitados test para analisis en de lint, corregidos test de usuario service ([3a51f4b](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/3a51f4b78258120df1b3221256d3ccd2de0586ff))
+* validación y corrección de test de parámetros ([05f2f38](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/05f2f382ee51326027907a6c69a9cc6c5323f08e))
+
 ### [1.6.4](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.6.2...v1.6.4) (2022-12-11)
 
 
