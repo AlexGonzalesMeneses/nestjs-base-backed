@@ -70,7 +70,6 @@ export class UsuarioRepository {
   }
 
   async buscarUsuario(usuario: string) {
-    // return Usuario.findOne({ usuario });
     return await this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
@@ -149,9 +148,7 @@ export class UsuarioRepository {
     usuarioDto: CrearUsuarioDto,
     usuarioAuditoria: string,
     transaction: EntityManager
-  ): Promise<Usuario> {
-    // Usuario
-
+  ) {
     const personaResult = await transaction.getRepository(Persona).save(
       new Persona({
         nombres: usuarioDto?.persona?.nombres,

@@ -48,9 +48,9 @@ git pull origin2 master --allow-unrelated-histories
 - Clientes para Interoperabilidad (SEGIP, SIN)
 - Cliente para Mensajería Electrónica
 - Proveedores de:
-    - Logger
-    - Reportes
-    - Manejo de errores
+  - Logger
+  - Reportes
+  - Manejo de errores
 
 ## Documentación
 
@@ -95,15 +95,15 @@ Documentación relacionada con el proyecto:
 
 2. Generar tag y archivo CHANGELOG
 
-    ```bash
-    npm run release
-    ```
+   ```bash
+   npm run release
+   ```
 
 3. Guardar los tags generados
 
-    ```bash
-    git push --follow-tags origin master
-    ```
+   ```bash
+   git push --follow-tags origin master
+   ```
 
 ## Colaboradores
 

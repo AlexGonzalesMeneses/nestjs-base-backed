@@ -21,7 +21,7 @@ export class PdfService {
       footer: function footer(currentPage, pageCount) {
         return {
           text: `Página ${currentPage.toString()} de ${pageCount}`,
-          alignment: currentPage % 2 === 0 ? 'left' : 'rigth',
+          alignment: currentPage % 2 === 0 ? 'left' : 'right',
           style: 'normalText',
           margin: [40, 10, 40, 10],
         }

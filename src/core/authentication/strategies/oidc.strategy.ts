@@ -76,7 +76,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.tipoDocumento = ci.tipo_documento
       persona.nroDocumento = ci.numero_documento
       persona.fechaNacimiento = fechaNacimiento
-      const nombre = <NombreType>userinfo.profile?.nombre ?? ''
+      const nombre = userinfo.profile?.nombre
       persona.nombres = nombre.nombres
       persona.primerApellido = nombre.primer_apellido
       persona.segundoApellido = nombre.segundo_apellido

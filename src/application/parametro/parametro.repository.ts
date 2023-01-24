@@ -1,6 +1,6 @@
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { DataSource, UpdateResult } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { Parametro } from './parametro.entity'
 import { Injectable } from '@nestjs/common'
@@ -10,7 +10,7 @@ import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 export class ParametroRepository {
   constructor(private dataSource: DataSource) {}
 
-  async buscarPorId(id: string): Promise<Parametro | null> {
+  async buscarPorId(id: string) {
     return await this.dataSource
       .getRepository(Parametro)
       .createQueryBuilder('parametro')
@@ -22,7 +22,7 @@ export class ParametroRepository {
     id: string,
     parametroDto: ActualizarParametroDto,
     usuarioAuditoria: string
-  ): Promise<UpdateResult> {
+  ) {
     const datosActualizar: QueryDeepPartialEntity<Parametro> = new Parametro({
       ...parametroDto,
       usuarioModificacion: usuarioAuditoria,
