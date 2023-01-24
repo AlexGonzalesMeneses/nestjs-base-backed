@@ -11,3 +11,15 @@ stages:
   - deploy
   - dast
   - setup
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+.dependencies_cache:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm
+    policy: pull
