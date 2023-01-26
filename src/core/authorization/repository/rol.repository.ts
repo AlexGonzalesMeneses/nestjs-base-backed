@@ -1,5 +1,5 @@
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { DataSource, UpdateResult } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { Status } from '../../../common/constants'
 import { Injectable } from '@nestjs/common'
 import { Rol } from '../entity/rol.entity'
@@ -54,7 +54,7 @@ export class RolRepository {
       .getMany()
   }
 
-  async buscarPorId(id: string): Promise<Rol | null> {
+  async buscarPorId(id: string) {
     return await this.dataSource
       .getRepository(Rol)
       .createQueryBuilder('rol')
@@ -73,11 +73,7 @@ export class RolRepository {
     return await this.dataSource.getRepository(Rol).save(nuevoRol)
   }
 
-  async actualizar(
-    id: string,
-    rolDto: CrearRolDto,
-    usuarioAuditoria: string
-  ): Promise<UpdateResult> {
+  async actualizar(id: string, rolDto: CrearRolDto, usuarioAuditoria: string) {
     const datosActualizar: QueryDeepPartialEntity<Rol> = new Rol({
       ...rolDto,
       usuarioModificacion: usuarioAuditoria,

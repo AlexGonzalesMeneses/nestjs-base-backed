@@ -10,7 +10,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 export class ModuloRepository {
   constructor(private dataSource: DataSource) {}
 
-  async buscarPorId(id: string): Promise<Modulo | null> {
+  async buscarPorId(id: string) {
     return await this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')

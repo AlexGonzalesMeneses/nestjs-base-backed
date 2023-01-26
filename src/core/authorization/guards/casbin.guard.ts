@@ -1,11 +1,11 @@
 import { LoggerService } from '../../logger/logger.service'
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  Inject,
-  UnauthorizedException,
   ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
 import { Request } from 'express'
@@ -16,7 +16,7 @@ export class CasbinGuard implements CanActivate {
 
   constructor(@Inject(AUTHZ_ENFORCER) private enforcer: any) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext) {
     const {
       user,
       originalUrl,

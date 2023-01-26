@@ -91,7 +91,7 @@ export class modulo1611497480901 implements MigrationInterface {
         url: '/admin/modulos',
         label: 'Módulos',
         propiedades: {
-          icono: 'list',
+          icono: 'widgets',
           descripcion: 'Gestión de módulos',
           color_light: '#312403',
           color_dark: '#B77346',
