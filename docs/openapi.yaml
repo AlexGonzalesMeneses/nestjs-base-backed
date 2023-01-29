@@ -12,7 +12,7 @@ paths:
   /api/estado:
     get:
       summary: Api para obtener el estado de la aplicacion
-      tags: ['estado']
+      tags: [ 'estado' ]
       operationId: get-api-v1-status
       description: Api de estado del sistema
       responses:
@@ -32,7 +32,7 @@ paths:
   /api/auth:
     post:
       summary: Api para autenticacion con usuario y contrasena
-      tags: ['autenticacion']
+      tags: [ 'autenticacion' ]
       operationId: post-api-v1-auth
       description: Api para autenticacion
       requestBody:
@@ -73,7 +73,7 @@ paths:
   /api/usuarios/cuenta/perfil:
     get:
       summary: Obtiene la informacion del perfil del usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-profile
       description: Api para obtener la informacion del perfil del usuario
       responses:
@@ -165,7 +165,7 @@ paths:
   /api/usuarios/{id}/activacion:
     patch:
       summary: Activa un usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-activacion
       description: Api para activar un usuario
       parameters:
@@ -186,7 +186,7 @@ paths:
                 properties:
                   mensaje:
                     type: string
-                    example: 'Registro actualizado con exito!'
+                    example: 'Registro actualizado con éxito!'
                   finalizado:
                     type: boolean
                     example: true
@@ -202,7 +202,7 @@ paths:
   /api/usuarios/{id}/inactivacion:
     patch:
       summary: Inactiva un usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-inactivacion
       description: Api para inactivar un usuario
       parameters:
@@ -239,7 +239,7 @@ paths:
   /api/usuarios/cuenta/contrasena:
     patch:
       summary: Actualiza la contrasena de un usuario autenticado
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-activacion-id-contrasena
       description: Api para actualizar la contrasena de un usuario
       requestBody:
@@ -280,7 +280,7 @@ paths:
   /api/usuarios/cuenta/desbloqueo:
     get:
       summary: Desbloquea una cuenta bloqueada por muchos intentos fallidos
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-cuenta-desbloqueo
       description: Api para desbloquear una cuenta
       parameters:
@@ -310,7 +310,7 @@ paths:
   /api/usuarios/{id}/restauracion:
     patch:
       summary: Restaura la contrasena de un usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-v1-usuarios-contrasena-id
       description: Api para restaurar la contrasena de un usuario
       parameters:
@@ -348,7 +348,7 @@ paths:
   /api/autorizacion/permisos:
     get:
       summary: Api para obtener las politicas definidas en formato CASBIN
-      tags: ['autorizacion']
+      tags: [ 'autorizacion' ]
       operationId: get-api-autorizacion-politicas-roles
       description: Api para obtener las politicas definidas en formato CASBIN
       responses:
@@ -381,7 +381,7 @@ paths:
   /api/usuarios:
     get:
       summary: Api para obtener el listado de usuarios
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: get-api-usuarios
       description: Api para obtener el listado de usuarios
       parameters:
@@ -474,7 +474,7 @@ paths:
                         example: 1
     post:
       summary: Api para crear una nuevo usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: post-api-usuarios
       description: Api para crear un nuevo usuario
       requestBody:
@@ -508,7 +508,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
+                  example: [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ]
       responses:
         '201':
           description: CREATED
@@ -535,7 +535,7 @@ paths:
   /api/usuarios/cuenta/ciudadania:
     post:
       summary: Api para crear una nuevo usuario relacionado con ciudadania digital
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: post-api-usuarios-ciudadania
       description: Api para crear un nuevo usuario relacionado con ciudadania digital
       requestBody:
@@ -551,7 +551,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
+                  example: [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ]
       responses:
         '201':
           description: CREATED
@@ -578,7 +578,7 @@ paths:
   /api/usuarios/{id}:
     patch:
       summary: Actualiza datos de un usuario
-      tags: ['usuario']
+      tags: [ 'usuario' ]
       operationId: patch-api-v1-usuarios-id
       description: Api para actualizar datos de un usuario
       parameters:
@@ -602,7 +602,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  example: ['d5de12df-3cc3-5a58-a742-be24030482d8']
+                  example: [ 'd5de12df-3cc3-5a58-a742-be24030482d8' ]
       responses:
         '200':
           description: OK
@@ -626,7 +626,7 @@ paths:
   /api/autorizacion/politicas:
     get:
       summary: Api para obtener el listado de politicas
-      tags: ['autorizacion']
+      tags: [ 'autorizacion' ]
       operationId: get-api-autorizacion-politicas
       description: Api para obtener el listado de politicas
       parameters:
@@ -675,7 +675,7 @@ paths:
                         example: 1
     post:
       summary: Api para crear una nueva politica
-      tags: ['autorizacion']
+      tags: [ 'autorizacion' ]
       operationId: post-api-autorizacion-politicas
       description: Api para crear una nueva politica
       requestBody:
@@ -727,7 +727,7 @@ paths:
                         example: 'frontend'
     delete:
       summary: Api para eliminar una politica
-      tags: ['autorizacion']
+      tags: [ 'autorizacion' ]
       operationId: delete-api-autorizacion-politicas
       description: Api para eliminar una politica
       responses:
@@ -761,7 +761,7 @@ paths:
   /api/parametros:
     get:
       summary: Api para obtener el listado de parametros
-      tags: ['parametros']
+      tags: [ 'parametros' ]
       operationId: get-api-parametros
       description: Api para obtener el listado de parametros
       responses:
@@ -803,7 +803,7 @@ paths:
                         example: 1
     post:
       summary: Api para crear un nuevo parametro
-      tags: ['parametros']
+      tags: [ 'parametros' ]
       operationId: post-api-parametros
       description: Api para crear un nuevo parametro
       requestBody:
@@ -862,7 +862,7 @@ paths:
   /api/parametros/{grupo}/listado:
     get:
       summary: Api para obtener el listado de parametros por grupo
-      tags: ['parametros']
+      tags: [ 'parametros' ]
       operationId: get-api-parametros-grupo
       description: Api para obtener el listado de parametros por grupo
       parameters:
@@ -904,7 +904,7 @@ paths:
   /api/autorizacion/roles:
     get:
       summary: Api para obtener el listado de roles
-      tags: ['parametros']
+      tags: [ 'parametros' ]
       operationId: get-api-roles
       description: Api para obtener el listado de roles
       responses:

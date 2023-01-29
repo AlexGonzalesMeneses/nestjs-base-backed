@@ -40,7 +40,7 @@ export const SessionAppDataSource = new DataSource({
 
 const logger = LoggerService.getInstance('main')
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   })
@@ -99,7 +99,7 @@ async function bootstrap() {
   await app.listen(port)
 
   await printRoutes(app)
-  await printLogo(app)
+  await printLogo()
   await printInfo(app)
 }
 

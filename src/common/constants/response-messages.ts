@@ -14,10 +14,10 @@ export enum Messages {
 
   // generic messages success
   SUCCESS_DEFAULT = '¡Tarea completada con éxito!',
-  SUCCESS_LIST = 'Registro(s) obtenido(s) con exito!',
-  SUCCESS_CREATE = 'Registro creado con exito!',
-  SUCCESS_UPDATE = 'Registro actualizado con exito!',
-  SUCCESS_DELETE = 'Registro eliminado con exito!',
+  SUCCESS_LIST = 'Registro(s) obtenido(s) con éxito!',
+  SUCCESS_CREATE = 'Registro creado con éxito!',
+  SUCCESS_UPDATE = 'Registro actualizado con éxito!',
+  SUCCESS_DELETE = 'Registro eliminado con éxito!',
 
   // business logic messages
   SUCCESS_RESTART_PASSWORD = 'La nueva contraseña ha sido enviada por correo',

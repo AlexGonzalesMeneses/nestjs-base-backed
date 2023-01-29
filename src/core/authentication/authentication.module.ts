@@ -20,19 +20,23 @@ import { PersonaService } from '../usuario/service/persona.service'
 import { UsuarioRolRepository } from '../authorization/repository/usuario-rol.repository'
 import { PersonaRepository } from '../usuario/repository/persona.repository'
 import { RolRepository } from '../authorization/repository/rol.repository'
-import { BaseClient } from 'openid-client'
 import { Persona } from '../usuario/entity/persona.entity'
 import { Usuario } from '../usuario/entity/usuario.entity'
 import { RefreshTokens } from './entity/refreshTokens.entity'
 import { UsuarioRol } from '../authorization/entity/usuario-rol.entity'
 import { Rol } from '../authorization/entity/rol.entity'
+import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 
-const OidcStrategyFactory = {
+const OidcStrategyFactory: Provider = {
   provide: 'OidcStrategy',
   useFactory: async (autenticacionService: AuthenticationService) => {
-    const client: BaseClient | undefined = await buildOpenIdClient()
-    if (client) return new OidcStrategy(autenticacionService, client)
-    else return undefined
+    const client = await buildOpenIdClient()
+
+    if (!client) {
+      return undefined
+    }
+
+    return new OidcStrategy(autenticacionService, client)
   },
   inject: [AuthenticationService],
 }

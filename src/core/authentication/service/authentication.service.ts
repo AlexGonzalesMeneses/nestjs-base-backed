@@ -19,6 +19,7 @@ import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol
 import { PersonaService } from '../../usuario/service/persona.service'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
+import { Usuario } from 'src/core/usuario/entity/usuario.entity'
 
 @Injectable()
 export class AuthenticationService extends BaseService {
@@ -74,15 +75,15 @@ export class AuthenticationService extends BaseService {
     return true
   }
 
-  async generarIntentoBloqueo(usuario) {
+  async generarIntentoBloqueo(usuario: Usuario) {
     if (dayjs().isAfter(usuario.fechaBloqueo)) {
       // restaurar datos bloqueo
       await this.usuarioService.actualizarDatosBloqueo(usuario.id, null, null)
       await this.usuarioService.actualizarContadorBloqueos(usuario.id, 1)
-    } else {
-      const intento = usuario.intentos + 1
-      await this.usuarioService.actualizarContadorBloqueos(usuario.id, intento)
+      return
     }
+    const intento = usuario.intentos + 1
+    await this.usuarioService.actualizarContadorBloqueos(usuario.id, intento)
   }
 
   async validarUsuario(usuario: string, contrasena: string) {
@@ -121,14 +122,13 @@ export class AuthenticationService extends BaseService {
     if (respuesta.intentos > 0) {
       await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0)
     }
-    let roles: Array<string> = []
-    if (respuesta.usuarioRol.length) {
-      roles = respuesta.usuarioRol
-        .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
-        .map((usuarioRol) => usuarioRol.rol.rol)
-    }
 
-    return { id: respuesta.id, roles }
+    return {
+      id: respuesta.id,
+      roles: respuesta.usuarioRol
+        .filter((usuarioRol) => usuarioRol.estado === Status.ACTIVE)
+        .map((usuarioRol) => usuarioRol.rol.rol),
+    }
   }
 
   async autenticar(user: PassportUser) {
@@ -150,14 +150,21 @@ export class AuthenticationService extends BaseService {
 
   async validarUsuarioOidc(persona: PersonaDto) {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
+
     if (!respuesta) {
       return null
     }
 
-    const { estado, persona: datosPersona } = respuesta
-    if (estado === Status.INACTIVE) {
+    if (respuesta?.usuarioRol.length === 0) {
+      throw new UnauthorizedException(Messages.NO_PERMISSION_USER)
+    }
+
+    const { persona: datosPersona } = respuesta
+
+    if (respuesta.estado === Status.INACTIVE) {
       throw new UnauthorizedException(Messages.INACTIVE_USER)
     }
+
     // actualizar datos persona
     if (
       datosPersona.nombres !== persona.nombres &&
@@ -168,90 +175,63 @@ export class AuthenticationService extends BaseService {
       await this.usuarioService.actualizarDatosPersona(persona)
     }
 
-    if (!respuesta.usuarioRol.length) {
-      return null
+    return {
+      id: respuesta.id,
+      roles: respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol),
     }
-
-    const roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
-    return { id: respuesta.id, roles }
   }
 
-  async validarOCrearUsuarioOidc(persona: PersonaDto, datosUsuario) {
+  async validarOCrearUsuarioOidc(
+    persona: PersonaDto,
+    datosUsuario: { correoElectronico: string }
+  ) {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
-    if (respuesta) {
-      // Persona y usuario existen en BD
-      // console.log('persona', respuesta);
-      const { estado, persona: datosPersona } = respuesta
-      if (estado === Status.INACTIVE) {
-        throw new UnauthorizedException(Messages.INACTIVE_USER)
-      }
 
-      if (
-        datosPersona.nombres !== persona.nombres &&
-        datosPersona.primerApellido !== persona.primerApellido &&
-        datosPersona.segundoApellido !== persona.segundoApellido &&
-        datosPersona.fechaNacimiento !== persona.fechaNacimiento
-      ) {
-        // Actualizar datos de persona
-        await this.usuarioService.actualizarDatosPersona(persona)
-      }
-      if (datosUsuario.correoElectronico !== respuesta.correoElectronico) {
-        // Actualizar correo si es diferente en ciudadanía
-        respuesta.correoElectronico = datosUsuario.correoElectronico
-        await this.usuarioService.actualizarDatos(
-          String(respuesta.id),
-          {
-            correoElectronico: respuesta.correoElectronico,
-            roles: respuesta.usuarioRol.map((value) => value.rol.id),
-          },
-          USUARIO_SISTEMA
-        )
-      }
-      let roles: Array<string> = []
-
-      if (respuesta.usuarioRol.length) {
-        roles = respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
-      }
-      return { id: respuesta.id, roles }
-    } else {
+    if (!respuesta) {
       // No existe persona, o no cuenta con un usuario - registrar
-      let nuevoUsuario: { estado: string | null; id: string | null } = {
-        id: null,
-        estado: null,
-      }
+
       const respPersona = await this.personaService.buscarPersonaPorCI(persona)
-      if (respPersona) {
-        // Persona existe en base de datos, sólo crear usuario
-        if (respPersona.estado === Status.INACTIVE) {
-          throw new UnauthorizedException(Messages.INACTIVE_PERSON)
-        }
-        // Actualizar datos persona
-        if (
-          respPersona.nombres !== persona.nombres ||
-          respPersona.primerApellido !== persona.primerApellido ||
-          respPersona.segundoApellido !== persona.segundoApellido ||
-          respPersona.fechaNacimiento !== persona.fechaNacimiento
-        ) {
-          await this.usuarioService.actualizarDatosPersona(persona)
-        }
-        // Crear usuario y rol
-        nuevoUsuario = await this.usuarioService.crearConPersonaExistente(
-          respPersona,
-          datosUsuario,
-          USUARIO_NORMAL
-        )
-      } else {
+
+      if (!respPersona) {
         // No existe la persona en base de datos, crear registro completo de persona
-        nuevoUsuario = await this.usuarioService.crearConCiudadaniaV2(
+
+        await this.usuarioService.crearConCiudadaniaV2(
           persona,
           datosUsuario,
           USUARIO_NORMAL
         )
+
+        const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
+
+        if (!respuesta) {
+          return null
+        }
+
+        return {
+          id: respuesta.id,
+          roles: respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol),
+        }
       }
 
-      if (!(nuevoUsuario && nuevoUsuario.id)) {
-        return null
+      // Persona existe en base de datos, sólo crear usuario
+      if (respPersona.estado === Status.INACTIVE) {
+        throw new UnauthorizedException(Messages.INACTIVE_PERSON)
       }
+      // Actualizar datos persona
+      if (
+        respPersona.nombres !== persona.nombres ||
+        respPersona.primerApellido !== persona.primerApellido ||
+        respPersona.segundoApellido !== persona.segundoApellido ||
+        respPersona.fechaNacimiento !== persona.fechaNacimiento
+      ) {
+        await this.usuarioService.actualizarDatosPersona(persona)
+      }
+      // Crear usuario y rol
+      await this.usuarioService.crearConPersonaExistente(
+        respPersona,
+        datosUsuario,
+        USUARIO_NORMAL
+      )
 
       const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
 
@@ -261,10 +241,43 @@ export class AuthenticationService extends BaseService {
 
       return {
         id: respuesta.id,
-        roles: respuesta.usuarioRol
-          ? respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol)
-          : [],
+        roles: respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol),
       }
+    }
+
+    // Persona y usuario existen en BD
+
+    const { estado, persona: datosPersona } = respuesta
+
+    if (estado === Status.INACTIVE) {
+      throw new UnauthorizedException(Messages.INACTIVE_USER)
+    }
+
+    if (
+      datosPersona.nombres !== persona.nombres &&
+      datosPersona.primerApellido !== persona.primerApellido &&
+      datosPersona.segundoApellido !== persona.segundoApellido &&
+      datosPersona.fechaNacimiento !== persona.fechaNacimiento
+    ) {
+      // Actualizar datos de persona
+      await this.usuarioService.actualizarDatosPersona(persona)
+    }
+
+    if (datosUsuario.correoElectronico !== respuesta.correoElectronico) {
+      // Actualizar correo si es diferente en ciudadanía
+      await this.usuarioService.actualizarDatos(
+        respuesta.id,
+        {
+          correoElectronico: datosUsuario.correoElectronico,
+          roles: respuesta.usuarioRol.map((value) => value.rol.id),
+        },
+        USUARIO_SISTEMA
+      )
+    }
+
+    return {
+      id: respuesta.id,
+      roles: respuesta.usuarioRol.map((usuarioRol) => usuarioRol.rol.rol),
     }
   }
 

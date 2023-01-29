@@ -383,8 +383,8 @@ export class UsuarioService extends BaseService {
   }
 
   async crearConCiudadaniaV2(
-    personaCiudadania,
-    otrosDatos,
+    personaCiudadania: PersonaDto,
+    otrosDatos: { correoElectronico: string },
     usuarioAuditoria: string
   ) {
     const persona = new PersonaDto()
@@ -856,6 +856,5 @@ export class UsuarioService extends BaseService {
 
   async actualizarDatosPersona(datosPersona: PersonaDto) {
     return await this.usuarioRepositorio.actualizarDatosPersona(datosPersona)
-    // eslint-disable-next-line max-lines
   }
 }

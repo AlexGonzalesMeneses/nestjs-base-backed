@@ -62,23 +62,24 @@ export class AuthenticationController extends BaseController {
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-autorizar')
   async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
-    if (req.user) {
-      const result = await this.autenticacionService.autenticarOidc(req.user)
-      // sendRefreshToken(res, result.refresh_token.id);
-      const refreshToken = result.refresh_token.id
-      res
-        .cookie(
-          this.configService.get('REFRESH_TOKEN_NAME') || '',
-          refreshToken,
-          CookieService.makeConfig(this.configService)
-        )
-        .status(200)
-        .json({
-          access_token: result.data.access_token,
-        })
-    } else {
-      res.status(200).json({})
+    if (!req.user) {
+      return res.status(200).json({})
     }
+
+    const result = await this.autenticacionService.autenticarOidc(req.user)
+
+    const refreshToken = result.refresh_token.id
+
+    return res
+      .cookie(
+        this.configService.get('REFRESH_TOKEN_NAME') || '',
+        refreshToken,
+        CookieService.makeConfig(this.configService)
+      )
+      .status(200)
+      .json({
+        access_token: result.data.access_token,
+      })
   }
 
   @UseGuards(JwtAuthGuard)
@@ -113,14 +114,14 @@ export class AuthenticationController extends BaseController {
 
     this.logger.info(`Usuario: ${idUsuario} salió del sistema`)
 
-    if (url && idToken) {
-      return res.status(200).json({
-        url: `${url}?post_logout_redirect_uri=${this.configService.get(
-          'OIDC_POST_LOGOUT_REDIRECT_URI'
-        )}&id_token_hint=${idToken}`,
-      })
-    } else {
+    if (!(url && idToken)) {
       return res.status(200).json()
     }
+
+    return res.status(200).json({
+      url: `${url}?post_logout_redirect_uri=${this.configService.get(
+        'OIDC_POST_LOGOUT_REDIRECT_URI'
+      )}&id_token_hint=${idToken}`,
+    })
   }
 }

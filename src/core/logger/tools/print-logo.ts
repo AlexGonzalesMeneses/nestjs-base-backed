@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { INestApplication } from '@nestjs/common'
 import { COLOR } from '../constants'
 import { LoggerService } from '../logger.service'
 
 const logger = LoggerService.getInstance('logger')
 
-export async function printLogo(app: INestApplication) {
+export const printLogo = async () => {
   logger.trace('')
 
   const logo = `
