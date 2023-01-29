@@ -81,6 +81,7 @@ export class ModuloRepository {
         estado: Status.ACTIVE,
       })
       .orderBy('modulo.id', 'ASC')
+      .orderBy('subModulo.id', 'ASC')
       .getMany()
   }
 

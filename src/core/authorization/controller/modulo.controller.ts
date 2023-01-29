@@ -27,7 +27,6 @@ export class ModuloController extends BaseController {
 
   @Get()
   async listar(@Query() paginacionQueryDto: FiltroModuloDto) {
-    console.log(`paginacionQueryDto: `, paginacionQueryDto)
     const result = await this.moduloService.listar(paginacionQueryDto)
     return this.successListRows(result)
   }
