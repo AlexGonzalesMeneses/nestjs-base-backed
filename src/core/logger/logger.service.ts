@@ -18,7 +18,7 @@ export class LoggerService extends Logger {
     this.redact = fastRedact(LoggerConfig.redactOptions())
   }
 
-  setContext(context: string) {
+  private setContext(context: string) {
     if (!LoggerService.instances[context]) {
       LoggerService.instances[context] = this
       delete LoggerService.instances[this.context]

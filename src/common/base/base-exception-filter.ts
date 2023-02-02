@@ -2,10 +2,10 @@ import { ArgumentsHost, ExceptionFilter } from '@nestjs/common'
 import { LoggerService } from '../../core/logger/logger.service'
 
 export class BaseExceptionFilter implements ExceptionFilter {
-  protected logger = LoggerService.getInstance(BaseExceptionFilter.name)
+  protected logger: LoggerService
 
   constructor(context: string) {
-    this.logger.setContext(context)
+    this.logger = LoggerService.getInstance(context)
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
