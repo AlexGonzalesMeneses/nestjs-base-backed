@@ -7,8 +7,7 @@ import { UsuarioRepository } from '../repository/usuario.repository'
 import { UsuarioService } from './usuario.service'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
 import { MensajeriaModule } from '../../external-services/mensajeria/mensajeria.module'
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
-import { PreconditionFailedException } from '@nestjs/common'
+import { NotFoundException, PreconditionFailedException } from '@nestjs/common'
 import { AuthorizationService } from '../../authorization/controller/authorization.service'
 import { Messages } from '../../../common/constants/response-messages'
 import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository'
@@ -257,7 +256,7 @@ describe('UsuarioService', () => {
       const { id } = resUsuarioPerfil
       await service.buscarUsuarioId(id)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -370,7 +369,7 @@ describe('UsuarioService', () => {
       expect(usuario).toHaveProperty('estado')
       expect(usuario.estado).toEqual('PENDIENTE')
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -380,17 +379,17 @@ describe('UsuarioService', () => {
       const usuarioAuditoria = TextService.generateUuid()
       await service.activar(idUsuario, usuarioAuditoria)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
-  it('[activar] Debería lanzar una excepcion si el usuario no tiene un estado valido para activacion', async () => {
+  it('[activar] Debería lanzar una excepcion si el usuario no tiene un estado valido para activación', async () => {
     try {
       const idUsuario = TextService.generateUuid()
       const usuarioAuditoria = TextService.generateUuid()
       await service.activar(idUsuario, usuarioAuditoria)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -404,7 +403,7 @@ describe('UsuarioService', () => {
       expect(usuario).toHaveProperty('id')
       expect(usuario).toHaveProperty('estado')
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -414,7 +413,7 @@ describe('UsuarioService', () => {
       const usuarioAuditoria = TextService.generateUuid()
       await service.inactivar(idUsuario, usuarioAuditoria)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -473,7 +472,7 @@ describe('UsuarioService', () => {
       expect(result).toBeDefined()
       expect(result).toHaveProperty('id')
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -483,7 +482,7 @@ describe('UsuarioService', () => {
       const usuarioAuditoria = TextService.generateUuid()
       await service.restaurarContrasena(idUsuario, usuarioAuditoria)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 
@@ -497,22 +496,7 @@ describe('UsuarioService', () => {
     try {
       await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria)
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
-      expect(error.message).toEqual(Messages.INVALID_USER)
-    }
-  })
-
-  it('[actualizarDatos] Debería lanzar una excepcion si el usuario no existe 2', async () => {
-    const usuarioDto = new ActualizarUsuarioRolDto()
-    usuarioDto.correoElectronico = 'fake@gmail.com'
-    usuarioDto.roles = ['12323333']
-    const idUsuario = TextService.generateUuid()
-    const idUsuarioAuditoria = TextService.generateUuid()
-
-    try {
-      await service.actualizarDatos(idUsuario, usuarioDto, idUsuarioAuditoria)
-    } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
       expect(error.message).toEqual(Messages.INVALID_USER)
     }
   })
@@ -534,7 +518,7 @@ describe('UsuarioService', () => {
       expect(usuario).toBeDefined()
       expect(usuario).toHaveProperty('id')
     } catch (error) {
-      expect(error).toBeInstanceOf(EntityNotFoundException)
+      expect(error).toBeInstanceOf(NotFoundException)
     }
   })
 })

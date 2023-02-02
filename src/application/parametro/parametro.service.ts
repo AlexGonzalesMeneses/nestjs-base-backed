@@ -1,9 +1,13 @@
 import { BaseService } from '../../common/base/base-service'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { ParametroRepository } from './parametro.repository'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../common/constants/response-messages'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { Status } from '../../common/constants'
@@ -23,7 +27,7 @@ export class ParametroService extends BaseService {
     )
 
     if (parametroRepetido) {
-      throw new EntityNotFoundException(Messages.REPEATED_PARAMETER)
+      throw new ConflictException(Messages.REPEATED_PARAMETER)
     }
 
     return await this.parametroRepositorio.crear(parametroDto, usuarioAuditoria)
@@ -44,7 +48,7 @@ export class ParametroService extends BaseService {
   ) {
     const parametro = await this.parametroRepositorio.buscarPorId(id)
     if (!parametro) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
     await this.parametroRepositorio.actualizar(
       id,
@@ -57,7 +61,7 @@ export class ParametroService extends BaseService {
   async activar(idParametro: string, usuarioAuditoria: string) {
     const parametro = await this.parametroRepositorio.buscarPorId(idParametro)
     if (!parametro) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
     const parametroDto = new ActualizarParametroDto()
     parametroDto.estado = Status.ACTIVE
@@ -75,7 +79,7 @@ export class ParametroService extends BaseService {
   async inactivar(idParametro: string, usuarioAuditoria: string) {
     const parametro = await this.parametroRepositorio.buscarPorId(idParametro)
     if (!parametro) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
     const parametroDto = new ActualizarParametroDto()
     parametroDto.estado = Status.INACTIVE

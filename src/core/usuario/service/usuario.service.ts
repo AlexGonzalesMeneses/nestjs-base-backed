@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  NotFoundException,
   PreconditionFailedException,
   Query,
 } from '@nestjs/common'
@@ -15,7 +16,6 @@ import {
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { TextService } from '../../../common/lib/text.service'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../../common/constants/response-messages'
 import { AuthorizationService } from '../../authorization/controller/authorization.service'
 import { PersonaDto } from '../dto/persona.dto'
@@ -323,7 +323,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuarioActualizado) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     return { id: usuarioActualizado.id }
@@ -424,13 +424,13 @@ export class UsuarioService extends BaseService {
     return { id: result.id, estado: result.estado }
   }
 
-  async activar(idUsuario, usuarioAuditoria: string) {
+  async activar(idUsuario: string, usuarioAuditoria: string) {
     this.verificarPermisos(idUsuario, usuarioAuditoria)
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
     const statusValid = [Status.CREATE, Status.INACTIVE, Status.PENDING]
 
     if (!(usuario && statusValid.includes(usuario.estado as Status))) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     // cambiar estado al usuario y generar una nueva contrasena
@@ -453,16 +453,20 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    // sí está bien ≥ enviar el mail con la contraseña generada
-    const datosCorreo = {
-      correo: usuario.correoElectronico,
-      asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+    if (usuarioActualizado.correoElectronico) {
+      // sí está bien ≥ enviar el mail con la contraseña generada
+      const datosCorreo = {
+        correo: usuarioActualizado.correoElectronico,
+        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_ACTIVE,
+      }
+
+      await this.enviarCorreoContrasenia(
+        datosCorreo,
+        usuario.usuario,
+        contrasena
+      ).catch((err) => this.logger.error(err))
     }
-    await this.enviarCorreoContrasenia(
-      datosCorreo,
-      usuario.usuario,
-      contrasena
-    ).catch((err) => this.logger.error(err))
+
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
   }
 
@@ -471,7 +475,7 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarPorId(idUsuario)
 
     if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     await this.usuarioRepositorio.actualizarUsuario(
@@ -488,7 +492,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuarioActualizado) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     return {
@@ -497,7 +501,11 @@ export class UsuarioService extends BaseService {
     }
   }
 
-  async enviarCorreoContrasenia(datosCorreo, usuario, contrasena) {
+  async enviarCorreoContrasenia(
+    datosCorreo: { correo: string; asunto: Messages },
+    usuario: string,
+    contrasena: string
+  ) {
     const url = this.configService.get('URL_FRONTEND')
     const template = TemplateEmailService.armarPlantillaActivacionCuenta(
       url,
@@ -567,7 +575,7 @@ export class UsuarioService extends BaseService {
     const statusValid = [Status.ACTIVE, Status.PENDING]
 
     if (!(usuario && statusValid.includes(usuario.estado as Status))) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     const op = async (transaccion: EntityManager) => {
@@ -587,27 +595,29 @@ export class UsuarioService extends BaseService {
       )
 
       if (!usuarioActualizado) {
-        throw new EntityNotFoundException(Messages.INVALID_USER)
+        throw new NotFoundException(Messages.INVALID_USER)
       }
 
-      // sí está bien ≥ enviar el mail con la contraseña generada
-      const datosCorreo = {
-        correo: usuario.correoElectronico,
-        asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
-      }
+      if (usuarioActualizado.correoElectronico) {
+        // sí está bien ≥ enviar el mail con la contraseña generada
+        const datosCorreo = {
+          correo: usuarioActualizado.correoElectronico,
+          asunto: Messages.SUBJECT_EMAIL_ACCOUNT_RESET,
+        }
 
-      await this.enviarCorreoContrasenia(
-        datosCorreo,
-        usuarioActualizado.usuario,
-        contrasena
-      ).catch((err) => this.logger.error(err))
+        await this.enviarCorreoContrasenia(
+          datosCorreo,
+          usuarioActualizado.usuario,
+          contrasena
+        ).catch((err) => this.logger.error(err))
+      }
 
       return usuarioActualizado
     }
 
     const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
 
-    return { id: idUsuario, estado: usuarioResult.estado }
+    return { id: usuarioResult.id, estado: usuarioResult.estado }
   }
 
   async reenviarCorreoActivacion(idUsuario: string, usuarioAuditoria: string) {
@@ -615,7 +625,7 @@ export class UsuarioService extends BaseService {
     const statusValid = [Status.PENDING]
 
     if (!(usuario && statusValid.includes(usuario.estado as Status))) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     const op = async (transaction: EntityManager) => {
@@ -652,7 +662,7 @@ export class UsuarioService extends BaseService {
       )
 
       if (!usuarioActualizado) {
-        throw new EntityNotFoundException(Messages.INVALID_USER)
+        throw new NotFoundException(Messages.INVALID_USER)
       }
 
       return usuarioActualizado
@@ -673,7 +683,7 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarPorId(id)
 
     if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     const { correoElectronico, roles } = usuarioDto
@@ -759,7 +769,7 @@ export class UsuarioService extends BaseService {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
     if (!usuario) {
-      throw new EntityNotFoundException(Messages.INVALID_USER)
+      throw new NotFoundException(Messages.INVALID_USER)
     }
 
     return {

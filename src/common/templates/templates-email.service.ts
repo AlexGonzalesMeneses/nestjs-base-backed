@@ -1,5 +1,9 @@
 export class TemplateEmailService {
-  static armarPlantillaActivacionCuenta(url, usuario, contrasena) {
+  static armarPlantillaActivacionCuenta(
+    url: string,
+    usuario: string,
+    contrasena: string
+  ) {
     return `
       <!DOCTYPE html>
       <html lang='es'>
@@ -28,7 +32,7 @@ export class TemplateEmailService {
     `
   }
 
-  static armarPlantillaBloqueoCuenta(url) {
+  static armarPlantillaBloqueoCuenta(url: string) {
     return `
       <!DOCTYPE html>
       <html lang='es'>
@@ -53,7 +57,7 @@ export class TemplateEmailService {
     `
   }
 
-  static armarPlantillaRecuperacionCuenta(url) {
+  static armarPlantillaRecuperacionCuenta(url: string) {
     return `
       <!DOCTYPE html>
       <html lang='es'>
@@ -78,7 +82,7 @@ export class TemplateEmailService {
     `
   }
 
-  static armarPlantillaActivacionCuentaManual(url) {
+  static armarPlantillaActivacionCuentaManual(url: string) {
     return `
       <!DOCTYPE html>
       <html lang='es'>

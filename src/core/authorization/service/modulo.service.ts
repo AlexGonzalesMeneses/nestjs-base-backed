@@ -1,9 +1,9 @@
 import { BaseService } from '../../../common/base/base-service'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { ModuloRepository } from '../repository/modulo.repository'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { Status } from '../../../common/constants'
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
+
 import { Messages } from '../../../common/constants/response-messages'
 import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
 
@@ -47,7 +47,7 @@ export class ModuloService extends BaseService {
   async activar(id: string, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(id)
     if (!modulo) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
 
     const actualizarModuloDto = new ActualizarModuloDto()
@@ -67,7 +67,7 @@ export class ModuloService extends BaseService {
   async inactivar(id: string, usuarioAuditoria: string) {
     const modulo = await this.moduloRepositorio.buscarPorId(id)
     if (!modulo) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
 
     const actualizarModuloDto = new ActualizarModuloDto()

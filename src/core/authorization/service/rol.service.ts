@@ -1,8 +1,7 @@
 import { BaseService } from '../../../common/base/base-service'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { RolRepository } from '../repository/rol.repository'
 import { CrearRolDto } from '../dto/crear-rol.dto'
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../../common/constants/response-messages'
 import { Status } from '../../../common/constants'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
@@ -31,7 +30,7 @@ export class RolService extends BaseService {
   async actualizar(id: string, rolDto: CrearRolDto, usuarioAuditoria: string) {
     const rol = await this.rolRepositorio.buscarPorId(id)
     if (!rol) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
 
     await this.rolRepositorio.actualizar(id, rolDto, usuarioAuditoria)
@@ -41,7 +40,7 @@ export class RolService extends BaseService {
   async activar(idRol: string, usuarioAuditoria: string) {
     const rol = await this.rolRepositorio.buscarPorId(idRol)
     if (!rol) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
 
     const rolDto = new CrearRolDto()
@@ -53,7 +52,7 @@ export class RolService extends BaseService {
   async inactivar(idRol: string, usuarioAuditoria: string) {
     const rol = await this.rolRepositorio.buscarPorId(idRol)
     if (!rol) {
-      throw new EntityNotFoundException(Messages.EXCEPTION_DEFAULT)
+      throw new NotFoundException(Messages.EXCEPTION_DEFAULT)
     }
 
     const rolDto = new CrearRolDto()

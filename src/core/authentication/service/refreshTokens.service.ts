@@ -1,5 +1,10 @@
 import { BaseService } from '../../../common/base/base-service'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import dayjs from 'dayjs'
 import { ConfigService } from '@nestjs/config'
@@ -10,9 +15,7 @@ import { UsuarioService } from '../../usuario/service/usuario.service'
 import { Cron } from '@nestjs/schedule'
 
 import dotenv from 'dotenv'
-import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception'
 import { Messages } from '../../../common/constants/response-messages'
-import { EntityUnauthorizedException } from '../../../common/exceptions/entity-unauthorized.exception'
 import { TextService } from '../../../common/lib/text.service'
 
 dotenv.config()
@@ -56,15 +59,11 @@ export class RefreshTokensService extends BaseService {
     )
 
     if (!refreshToken) {
-      throw new EntityNotFoundException(
-        Messages.EXCEPTION_REFRESH_TOKEN_NOT_FOUND
-      )
+      throw new NotFoundException(Messages.EXCEPTION_REFRESH_TOKEN_NOT_FOUND)
     }
 
     if (!dayjs().isBefore(dayjs(refreshToken.expiresAt))) {
-      throw new EntityUnauthorizedException(
-        Messages.EXCEPTION_REFRESH_TOKEN_EXPIRED
-      )
+      throw new UnauthorizedException(Messages.EXCEPTION_REFRESH_TOKEN_EXPIRED)
     }
 
     // usuario
