@@ -9,7 +9,7 @@ import { PersonaDto } from '../dto/persona.dto'
 import { Status } from '../../../common/constants'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
 import { Injectable } from '@nestjs/common'
-import { DataSource, EntityManager } from 'typeorm'
+import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
 import dayjs from 'dayjs'
 
@@ -53,8 +53,21 @@ export class UsuarioRepository {
     }
     if (filtro) {
       query.andWhere(
-        '(persona.nroDocumento like :filtro or persona.nombres ilike :filtro or persona.primerApellido ilike :filtro or persona.segundoApellido ilike :filtro)',
-        { filtro: `%${filtro}%` }
+        new Brackets((qb) => {
+          qb.orWhere('usuario.usuario ilike :filtro', { filtro: `%${filtro}%` })
+          qb.orWhere('persona.nroDocumento ilike :filtro', {
+            filtro: `%${filtro}%`,
+          })
+          qb.orWhere('persona.nombres ilike :filtro', {
+            filtro: `%${filtro}%`,
+          })
+          qb.orWhere('persona.primerApellido ilike :filtro', {
+            filtro: `%${filtro}%`,
+          })
+          qb.orWhere('persona.segundoApellido ilike :filtro', {
+            filtro: `%${filtro}%`,
+          })
+        })
       )
     }
     return await query.getManyAndCount()
