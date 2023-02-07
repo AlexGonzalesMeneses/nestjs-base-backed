@@ -31,7 +31,7 @@ export class RolRepository {
 
     if (filtro) {
       query.andWhere('(rol.nombre ilike :filtro or rol.rol ilike :filtro)', {
-        filtro: `%${filtro}`,
+        filtro: `%${filtro}%`,
       })
     }
     return await query.getManyAndCount()
