@@ -157,7 +157,7 @@ RetireJS:
   tags:
     - kubernetes-runner
   variables:
-    ELK_URL_RETIREJS: http://192.168.21.70:5001 # TODO: Obtener desde vault
+    ELK_URL_RETIREJS: http://192.168.21.70:5001 
     SCAN_RETIRE: scan_retire_$CI_COMMIT_SHORT_SHA.json
   before_script:
     - npm set registry https://registry.agcs.agetic.gob.bo
@@ -193,7 +193,7 @@ Snyk:
     - kubernetes-runner
   variables:
     SCAN_SNYK: scan_snyk_$CI_COMMIT_SHORT_SHA.json
-    ELK_URL_SNYK: http://192.168.21.70:5002 # TODO: Obtener desde vault
+    ELK_URL_SNYK: http://192.168.21.70:5002 
   before_script:
     - npm set registry https://registry.agcs.agetic.gob.bo
     - npm set strict-ssl false
@@ -232,7 +232,7 @@ Trivy:
     IMAGE_NAME: '$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     TRIVY_URL_VERSION: https://api.github.com/repos/aquasecurity/trivy/releases/latest
     SCAN_TRIVY: trivy-report_$CI_COMMIT_SHORT_SHA.json
-    URL_ELK: http://192.168.21.70:5000 # TODO: Obtener desde vault
+    URL_ELK: http://192.168.21.70:5000 
   services:
     - name: docker:19.03.12-dind
   before_script:
