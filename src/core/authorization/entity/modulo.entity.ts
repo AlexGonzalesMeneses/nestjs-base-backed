@@ -18,8 +18,7 @@ dotenv.config()
 export type Propiedades = {
   icono?: string
   descripcion?: string
-  color_light?: string
-  color_dark?: string
+  orden: number
 }
 
 export const ModuloEstado = {
