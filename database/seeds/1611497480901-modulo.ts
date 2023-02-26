@@ -14,7 +14,7 @@ export class modulo1611497480901 implements MigrationInterface {
         url: '/principal',
         label: 'Principal',
         propiedades: {
-          icono: 'home',
+          descripcion: 'Sección principal',
           orden: 1,
         },
         subMenus: [
@@ -48,7 +48,7 @@ export class modulo1611497480901 implements MigrationInterface {
         url: '/configuraciones',
         label: 'Configuración',
         propiedades: {
-          icono: 'settings',
+          descripcion: 'Sección de configuraciones',
           orden: 2,
         },
         subMenus: [
@@ -77,7 +77,7 @@ export class modulo1611497480901 implements MigrationInterface {
             url: '/admin/modulos',
             label: 'Módulos',
             propiedades: {
-              icono: 'list',
+              icono: 'widgets',
               descripcion: 'Gestión de módulos',
               orden: 3,
             },
@@ -108,8 +108,8 @@ export class modulo1611497480901 implements MigrationInterface {
 
     for (const item of items) {
       const propiedades: Propiedades = {
-        icono: item.propiedades.icono,
         orden: item.propiedades.orden,
+        descripcion: item.propiedades.descripcion,
       }
       const modulo = await queryRunner.manager.save(
         new Modulo({
