@@ -1,6 +1,6 @@
 {
   "name": "agetic-nestjs-base-backend",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "Proyecto Base para el inicio de proyectos basados en NestJS",
   "author": "agetic@agetic.gob.bo",
   "private": true,
