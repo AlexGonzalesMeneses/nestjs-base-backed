@@ -53,7 +53,7 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       this.logger.error({ errorResponse })
       if (exceptionError.stack) {
         const customErrorStack = this.stackMsg(exceptionError.stack)
-        this.logger.error(customErrorStack)
+        if (customErrorStack) this.logger.error(customErrorStack)
       }
       this.logger.error({ errorRequest })
       if (exceptionError.stack) {
@@ -81,7 +81,8 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
             : x.trim()
         )
         .join('\n')
-      return `Error stack:\n${customErrorStack}`
+        .trim()
+      return customErrorStack ? `Error stack:\n${customErrorStack}` : ''
     } catch (err) {
       return originalErrorStack
     }
