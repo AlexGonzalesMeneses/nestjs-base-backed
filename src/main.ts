@@ -45,6 +45,8 @@ const bootstrap = async () => {
     logger: ['error', 'warn'],
   })
 
+  await LoggerService.initialize(app)
+
   const configService = app.get(ConfigService)
 
   // swagger
