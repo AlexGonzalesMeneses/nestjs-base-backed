@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
 import { ExceptionError } from './exception.error'
+import path from 'path'
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
@@ -37,16 +38,24 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     }
 
     if (errorResponse.codigo < 500) {
-      this.logger.warn({ errorRequest })
       this.logger.warn({ errorResponse })
+      if (exceptionError.stack) {
+        const customErrorStack = this.stackMsg(exceptionError.stack)
+        if (customErrorStack) this.logger.warn(customErrorStack)
+      }
+      this.logger.warn({ errorRequest })
       if (exceptionError.stack) {
         this.logger.warn(exceptionError.stack)
       }
     }
 
     if (errorResponse.codigo >= 500) {
-      this.logger.error({ errorRequest })
       this.logger.error({ errorResponse })
+      if (exceptionError.stack) {
+        const customErrorStack = this.stackMsg(exceptionError.stack)
+        this.logger.error(customErrorStack)
+      }
+      this.logger.error({ errorRequest })
       if (exceptionError.stack) {
         this.logger.error(exceptionError.stack)
       }
@@ -57,5 +66,24 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     }
 
     response.status(errorResponse.codigo).json(errorResponse)
+  }
+
+  private stackMsg(originalErrorStack: string) {
+    try {
+      const projectPath = path.resolve(__dirname, '../../../../')
+      const customErrorStack = originalErrorStack
+        .split('\n')
+        .map((x) => x.replace(new RegExp(projectPath, 'g'), '...'))
+        .filter((x) => x.includes('.../src'))
+        .map((x) =>
+          x.trim().startsWith('at')
+            ? x.trim().split(' ').slice(2).join(' -> ')
+            : x.trim()
+        )
+        .join('\n')
+      return `Error stack:\n${customErrorStack}`
+    } catch (err) {
+      return originalErrorStack
+    }
   }
 }
