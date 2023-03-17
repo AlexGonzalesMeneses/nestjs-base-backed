@@ -1,4 +1,4 @@
-import { PrintSQL } from '../../logger/tools/print-sql'
+import { PrintSQL } from '../../logger/tools'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'

@@ -34,7 +34,6 @@ export const SessionAppDataSource = new DataSource({
   database: process.env.DB_DATABASE,
   schema: process.env.DB_SCHEMA,
   synchronize: false,
-  logging: process.env.LOG_SQL === 'true',
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 

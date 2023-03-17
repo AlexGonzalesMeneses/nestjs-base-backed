@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm'
 import dotenv from 'dotenv'
-import { PrintSQL } from './src/core/logger/tools/print-sql'
+import { PrintSQL } from './src/core/logger/tools'
 
 dotenv.config()
 process.env.FORCE_SQL_LOG = 'true'
