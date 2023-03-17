@@ -9,7 +9,7 @@ dotenv.config()
 
 export class PrintSQL extends AdvancedConsoleLogger {
   private readonly loggerOptions?: LoggerOptions
-  private logger: LoggerService = LoggerService.getInstance(PrintSQL.name)
+  private logger: LoggerService = LoggerService.getInstance()
 
   constructor(options: LoggerOptions = true) {
     super(options)

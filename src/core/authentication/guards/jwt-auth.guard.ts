@@ -9,7 +9,7 @@ import { Request } from 'express'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  protected logger = LoggerService.getInstance(JwtAuthGuard.name)
+  protected logger = LoggerService.getInstance()
 
   async canActivate(context: ExecutionContext) {
     const {

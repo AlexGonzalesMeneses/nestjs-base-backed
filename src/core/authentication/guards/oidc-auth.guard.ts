@@ -8,7 +8,7 @@ import { AuthGuard } from '@nestjs/passport'
 
 @Injectable()
 export class OidcAuthGuard extends AuthGuard('oidc') {
-  protected logger = LoggerService.getInstance(OidcAuthGuard.name)
+  protected logger = LoggerService.getInstance()
 
   async canActivate(context: ExecutionContext) {
     const {

@@ -37,7 +37,7 @@ export const SessionAppDataSource = new DataSource({
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 
-const logger = LoggerService.getInstance('main')
+const logger = LoggerService.getInstance()
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {

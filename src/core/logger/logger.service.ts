@@ -24,8 +24,7 @@ export class LoggerService {
     LoggerService.pinoInstance = pinoLogger
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static getInstance(context?: string) {
+  static getInstance() {
     if (LoggerService.instance) {
       return LoggerService.instance
     }

@@ -7,7 +7,7 @@ import path from 'path'
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
   constructor() {
-    super(HttpExceptionFilter.name)
+    super()
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
