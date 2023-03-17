@@ -17,6 +17,10 @@ export class PrintSQL extends AdvancedConsoleLogger {
   }
 
   logQuery(query: string, parameters?: any[]) {
+    if (process.env.NODE_ENV === 'production') {
+      return
+    }
+
     if (process.env.LOG_SQL !== 'true') {
       if (process.env.FORCE_SQL_LOG === 'true') {
         // continue

@@ -11,8 +11,8 @@ import path from 'path'
 
 @Injectable()
 export class LoggerService {
-  static _instance: LoggerService | null = null
-  private static _pinoInstance: PinoLogger | null = null
+  private static instance: LoggerService | null = null
+  private static pinoInstance: PinoLogger | null = null
   private readonly redact: fastRedact.redactFn
 
   constructor() {
@@ -21,17 +21,17 @@ export class LoggerService {
 
   static async initialize(app: INestApplication) {
     const pinoLogger = await app.resolve<PinoLogger>(PinoLogger)
-    LoggerService._pinoInstance = pinoLogger
+    LoggerService.pinoInstance = pinoLogger
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static getInstance(context?: string) {
-    if (LoggerService._instance) {
-      return LoggerService._instance
+    if (LoggerService.instance) {
+      return LoggerService.instance
     }
     const logger = new LoggerService()
-    LoggerService._instance = logger
-    return LoggerService._instance
+    LoggerService.instance = logger
+    return LoggerService.instance
   }
 
   getContext(): string {
@@ -145,8 +145,8 @@ export class LoggerService {
 
       if (LoggerConfig.logLevelSelected.includes(level)) {
         optionalParams.map((param) => {
-          if (LoggerService._pinoInstance) {
-            LoggerService._pinoInstance[level]({ msg: param, context })
+          if (LoggerService.pinoInstance) {
+            LoggerService.pinoInstance[level]({ msg: param, context })
           }
         })
       }
