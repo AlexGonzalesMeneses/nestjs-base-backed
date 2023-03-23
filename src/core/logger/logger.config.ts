@@ -17,12 +17,16 @@ export class LoggerConfig {
   static appName = packageJson.name || 'APP'
   static logLevelSelected: Level[] = []
 
-  static getStream(): pino.MultiStreamRes {
+  static getStream(subFolderName = ''): pino.MultiStreamRes {
     const streamDisk: pino.StreamEntry[] = []
     if (process.env.LOG_PATH && process.env.LOG_PATH.length > 0) {
       const options: RotateOptions = {
         size: process.env.LOG_SIZE || '5M',
-        path: path.resolve(process.env.LOG_PATH, LoggerConfig.appName),
+        path: path.resolve(
+          process.env.LOG_PATH,
+          subFolderName,
+          LoggerConfig.appName
+        ),
         interval: process.env.LOG_INTERVAL || '1d',
       }
 

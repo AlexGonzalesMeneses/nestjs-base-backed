@@ -12,7 +12,7 @@ import { Request } from 'express'
 
 @Injectable()
 export class CasbinGuard implements CanActivate {
-  protected logger = LoggerService.getInstance(CasbinGuard.name)
+  protected logger = LoggerService.getInstance()
 
   constructor(@Inject(AUTHZ_ENFORCER) private enforcer: any) {}
 

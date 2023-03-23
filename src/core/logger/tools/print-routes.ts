@@ -3,7 +3,7 @@ import listEndpoints from 'express-list-endpoints'
 import { COLOR } from '../constants'
 import { LoggerService } from '../logger.service'
 
-const logger = LoggerService.getInstance('logger')
+const logger = LoggerService.getInstance()
 
 export async function printRoutes(app: INestApplication) {
   logger.info('Cargando aplicación...')

@@ -1,35 +1,52 @@
 import { AxiosError } from 'axios'
-import { Injectable, Scope } from '@nestjs/common'
+import { Injectable, INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { Logger, PinoLogger } from 'nestjs-pino'
+import { PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
 import { COLOR, LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './logger.config'
 import { toJSON } from 'flatted'
+import path from 'path'
 
-@Injectable({ scope: Scope.TRANSIENT })
-export class LoggerService extends Logger {
-  private context: string = LoggerService.name
+@Injectable()
+export class LoggerService {
+  private static instance: LoggerService | null = null
+  private static pinoInstance: PinoLogger | null = null
   private readonly redact: fastRedact.redactFn
 
-  constructor(pinoLogger: PinoLogger) {
-    super(pinoLogger, {})
+  constructor() {
     this.redact = fastRedact(LoggerConfig.redactOptions())
   }
 
-  private setContext(context: string) {
-    if (!LoggerService.instances[context]) {
-      LoggerService.instances[context] = this
-      delete LoggerService.instances[this.context]
-    }
+  static async initialize(app: INestApplication) {
+    const pinoLogger = await app.resolve<PinoLogger>(PinoLogger)
+    LoggerService.pinoInstance = pinoLogger
+  }
 
-    this.logger.setContext(context)
-    this.context = context
+  static getInstance() {
+    if (LoggerService.instance) {
+      return LoggerService.instance
+    }
+    const logger = new LoggerService()
+    LoggerService.instance = logger
+    return LoggerService.instance
   }
 
   getContext(): string {
-    return this.context
+    try {
+      const projectPath = path.resolve(__dirname, '../../../../')
+      const method = String(new Error().stack)
+        .split('\n')
+        .slice(4)
+        .map((line) => line.replace(new RegExp(projectPath, 'g'), '...'))
+        .filter((line) => line.includes('.../src'))
+        .map((line) => line.split('/').pop()?.slice(0, -1))
+        .shift()
+      return method || '-'
+    } catch (e) {
+      return '-'
+    }
   }
 
   /**
@@ -69,10 +86,10 @@ export class LoggerService extends Logger {
   }
 
   static cleanAxiosResponse(value: any, deep = 0) {
-    // Para evitar recursividad infinita
-    if (deep > 5) return String(value)
-
     try {
+      // Para evitar recursividad infinita
+      if (deep > 5) return String(value)
+
       JSON.stringify(value)
       return value
     } catch (error) {
@@ -118,21 +135,30 @@ export class LoggerService extends Logger {
 
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
     try {
+      const context = this.getContext()
+
       // CLEAN PARAMS
       optionalParams = optionalParams.map((data: any) =>
         LoggerService.cleanAxiosResponse(data)
       )
 
       if (LoggerConfig.logLevelSelected.includes(level)) {
-        optionalParams.map((param) => this.logger[level](param))
+        optionalParams.map((param) => {
+          if (LoggerService.pinoInstance) {
+            LoggerService.pinoInstance[level]({ msg: param, context })
+          }
+        })
       }
-      if (process.env.NODE_ENV === 'production') return
+      if (process.env.NODE_ENV === 'production') {
+        return
+      }
 
       const color = this.getColor(level)
       const time = dayjs().format('DD/MM/YYYY HH:mm:ss')
       const cTime = `${COLOR.RESET}[${time}]${COLOR.RESET}`
       const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
-      const cContext = `${COLOR.RESET}(${this.context}):${COLOR.RESET}`
+      const cContext = `${COLOR.RESET}(${context}):${COLOR.RESET}`
+
       process.stdout.write('\n')
       process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
@@ -161,20 +187,5 @@ export class LoggerService extends Logger {
 
   private getColor(level: LOG_LEVEL) {
     return LOG_COLOR[level]
-  }
-
-  static instances: { [key: string]: LoggerService } = {}
-
-  static getInstance(context: string) {
-    if (LoggerService.instances[context]) {
-      return LoggerService.instances[context]
-    }
-    const pinoLogger = new PinoLogger({
-      pinoHttp: [LoggerConfig.getPinoHttpConfig(), LoggerConfig.getStream()],
-    })
-    const logger = new LoggerService(pinoLogger)
-    logger.setContext(context)
-    LoggerService.instances[context] = logger
-    return LoggerService.instances[context]
   }
 }

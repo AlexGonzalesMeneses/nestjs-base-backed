@@ -5,7 +5,7 @@ import ip from 'ip'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService } from '../logger.service'
 
-const logger = LoggerService.getInstance('logger')
+const logger = LoggerService.getInstance()
 
 export async function printInfo(app: INestApplication) {
   const configService = app.get(ConfigService)
