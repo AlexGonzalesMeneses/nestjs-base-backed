@@ -28,7 +28,10 @@ export class LocalAuthGuard extends AuthGuard('local') {
       throw err
     }
 
-    this.logger.info(`${action} ${resource} -> true - LOGIN BÁSICO`)
+    const { user } = context.switchToHttp().getRequest()
+    this.logger.info(
+      `${action} ${resource} -> true - LOGIN BÁSICO (usuario: ${user?.id})`
+    )
     return true
   }
 }

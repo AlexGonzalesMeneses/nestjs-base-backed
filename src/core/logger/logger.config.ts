@@ -3,7 +3,6 @@ import { GenReqId, Options, ReqId } from 'pino-http'
 import { createWriteStream } from 'pino-http-send'
 import pino, { Level, multistream } from 'pino'
 import { IncomingMessage, ServerResponse } from 'http'
-import pretty from 'pino-pretty'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import { Request, Response } from 'express'
 import packageJson from '../../../package.json'
@@ -47,17 +46,6 @@ export class LoggerConfig {
         }
       }
     }
-
-    const streamStandar: pretty.PrettyStream[] = []
-    if (process.env.LOG_STD_OUT && process.env.LOG_STD_OUT === 'true') {
-      /*streamStandar.push(
-        pretty({
-          colorize: true,
-          sync: false,
-        })
-      )*/
-    }
-
     const streamHttp: any[] = []
     if (
       process.env.LOG_URL &&
@@ -75,7 +63,7 @@ export class LoggerConfig {
       )
     }
 
-    return multistream([...streamDisk, ...streamStandar, ...streamHttp])
+    return multistream([...streamDisk, ...streamHttp])
   }
 
   static getLoggerConfig() {
@@ -112,10 +100,7 @@ export class LoggerConfig {
   }
 
   static genReqId: GenReqId = (req: Request) => {
-    const user: { id?: string } | undefined = req.user
-    const uid = user && user.id ? user.id : '-'
-    const rid = (req.id || rTracer.id()) as ReqId
-    return `${rid} usuario:${uid}`
+    return (req.id || rTracer.id()) as ReqId
   }
 
   static getPinoHttpConfig(): Options {

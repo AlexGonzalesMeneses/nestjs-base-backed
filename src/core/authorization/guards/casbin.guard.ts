@@ -28,7 +28,7 @@ export class CasbinGuard implements CanActivate {
 
     if (!user) {
       this.logger.warn(
-        `${action} ${resource} -> false - Rol: desconocido (Valor requerido: req.user)`
+        `${action} ${resource} -> false - El usuario no se encuentra autenticado`
       )
       throw new UnauthorizedException()
     }
@@ -37,15 +37,14 @@ export class CasbinGuard implements CanActivate {
       const isPermitted = await this.enforcer.enforce(rol, resource, action)
       if (isPermitted) {
         this.logger.info(
-          `${action} ${resource} -> true - Rol: ${rol} (usuario: ${user.id})`
+          `${action} ${resource} -> true - CASBIN (rol: ${rol} usuario: ${user.id})`
         )
         return true
       }
     }
 
-    const rolesDelToken = user.roles
     this.logger.warn(
-      `${action} ${resource} -> false - Rol: desconocido (Roles permitidos: ${rolesDelToken.toString()})`
+      `${action} ${resource} -> false - Permisos insuficientes (CASBIN)`
     )
     throw new ForbiddenException()
   }
