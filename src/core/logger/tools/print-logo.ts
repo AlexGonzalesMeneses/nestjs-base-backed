@@ -1,5 +1,6 @@
 import { COLOR } from '../constants'
 import { LoggerService } from '../logger.service'
+import { stdoutWrite } from './util'
 
 const logger = LoggerService.getInstance()
 
@@ -38,5 +39,5 @@ $@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@P   g@@@@@@@p
   `
 
   const toPrint = logo.replace(/\n/g, `\n${COLOR.LIGHT_GREY}`)
-  process.stdout.write(`${COLOR.LIGHT_GREY}${toPrint}${COLOR.RESET}\n`)
+  stdoutWrite(`${COLOR.LIGHT_GREY}${toPrint}${COLOR.RESET}\n`)
 }

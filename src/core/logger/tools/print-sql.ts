@@ -4,6 +4,7 @@ import { COLOR } from '../constants'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
 import dotenv from 'dotenv'
 import { LoggerService } from '../logger.service'
+import { stdoutWrite } from './util'
 
 dotenv.config()
 
@@ -39,7 +40,7 @@ export class PrintSQL extends AdvancedConsoleLogger {
     }
 
     const sql = this.buildSql(query, parameters, false, true)
-    process.stdout.write(`\n${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
+    stdoutWrite(`\n${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
   }
 
   logQueryError(error: string, query: string, parameters?: any[]): void {

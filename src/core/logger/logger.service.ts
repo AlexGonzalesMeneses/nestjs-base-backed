@@ -1,13 +1,13 @@
 import { AxiosError } from 'axios'
 import { Injectable, INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { PinoLogger } from 'nestjs-pino'
+import { Params, PinoLogger } from 'nestjs-pino'
 import { inspect } from 'util'
 import { COLOR, LOG_COLOR, LOG_LEVEL } from './constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './logger.config'
 import { toJSON } from 'flatted'
-import path from 'path'
+import { stdoutWrite } from './tools/util'
 
 @Injectable()
 export class LoggerService {
@@ -20,8 +20,13 @@ export class LoggerService {
   }
 
   static async initialize(app: INestApplication) {
-    const pinoLogger = await app.resolve<PinoLogger>(PinoLogger)
-    LoggerService.pinoInstance = pinoLogger
+    if (LoggerService.pinoInstance) return
+    LoggerService.pinoInstance = await app.resolve<PinoLogger>(PinoLogger)
+  }
+
+  static initializeWithParams(params: Params) {
+    if (LoggerService.pinoInstance) return
+    LoggerService.pinoInstance = new PinoLogger(params)
   }
 
   static getInstance() {
@@ -35,7 +40,7 @@ export class LoggerService {
 
   getContext(): string {
     try {
-      const projectPath = path.resolve(__dirname, '../../../../')
+      const projectPath = process.cwd()
       const method = String(new Error().stack)
         .split('\n')
         .slice(4)
@@ -100,11 +105,11 @@ export class LoggerService {
       }
       if (LoggerService.isAxiosResponse(value)) {
         return {
-          data: value.response.data,
-          status: value.response.status,
-          statusText: value.response.statusText,
-          headers: value.response.headers,
-          config: value.response.config,
+          data: value.data,
+          status: value.status,
+          statusText: value.statusText,
+          headers: value.headers,
+          config: value.config,
         }
       }
       if (typeof value === 'object') {
@@ -124,12 +129,11 @@ export class LoggerService {
   private static isAxiosResponse(data: any) {
     return Boolean(
       typeof data === 'object' &&
-        data.response &&
-        typeof data.response.data !== 'undefined' &&
-        typeof data.response.status !== 'undefined' &&
-        typeof data.response.statusText !== 'undefined' &&
-        typeof data.response.headers !== 'undefined' &&
-        typeof data.response.config !== 'undefined'
+        typeof data.data !== 'undefined' &&
+        typeof data.status !== 'undefined' &&
+        typeof data.statusText !== 'undefined' &&
+        typeof data.headers !== 'undefined' &&
+        typeof data.config !== 'undefined'
     )
   }
 
@@ -159,8 +163,8 @@ export class LoggerService {
       const cLevel = `${color}${level.toUpperCase()}${COLOR.RESET}`
       const cContext = `${COLOR.RESET}(${context}):${COLOR.RESET}`
 
-      process.stdout.write('\n')
-      process.stdout.write(`${cTime} ${cLevel} ${cContext} ${color}`)
+      stdoutWrite('\n')
+      stdoutWrite(`${cTime} ${cLevel} ${cContext} ${color}`)
       optionalParams.map((data) => {
         try {
           if (data && data instanceof AxiosError) {
@@ -177,9 +181,9 @@ export class LoggerService {
           typeof data === 'object'
             ? inspect(data, false, null, false)
             : String(data)
-        console.log(`${color}${toPrint.replace(/\n/g, `\n${color}`)}`)
+        stdoutWrite(`${color}${toPrint.replace(/\n/g, `\n${color}`)}\n`)
       })
-      process.stdout.write(COLOR.RESET)
+      stdoutWrite(COLOR.RESET)
     } catch (e) {
       console.error(e)
     }
