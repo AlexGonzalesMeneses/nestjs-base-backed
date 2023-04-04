@@ -20,6 +20,7 @@ import { PersonaService } from '../../usuario/service/persona.service'
 import { RolRepository } from '../../authorization/repository/rol.repository'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { Usuario } from 'src/core/usuario/entity/usuario.entity'
+import { CambioRolDto } from '../dto/index.dto'
 
 @Injectable()
 export class AuthenticationService extends BaseService {
@@ -134,21 +135,49 @@ export class AuthenticationService extends BaseService {
   async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id)
 
-    // TODO: revisar
-    const idRol = usuario.roles[0].idRol
-    const payload = { id: user.id, roles: user.roles, idRol }
+    const rol = await this.obtenerRolActual(user, usuario.roles)
+
+    const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
-      idRol,
+      idRol: rol.idRol,
     }
     return {
       refresh_token: { id: refreshToken.id },
       data,
     }
+  }
+
+  obtenerRolActual(user: PassportUser, roles: any) {
+    if (roles.length < 1) {
+      throw new UnauthorizedException(`El usuario no cuenta con roles.`)
+    }
+    let rol: any
+    if (user.idRol) {
+      // buscar el rol activo
+      rol = roles.find((item) => item.idRol === user.idRol)
+      if (!rol) {
+        throw new UnauthorizedException(`Rol no permitido.`)
+      }
+    } else {
+      // buscar el primer rol
+      rol = roles[0]
+    }
+    console.log('----------------rol', rol)
+
+    return rol
+  }
+
+  async cambiarRol(user: PassportUser, data: CambioRolDto) {
+    const usuarioRol = {
+      ...user,
+      idRol: data.idRol,
+    }
+    return this.autenticar(usuarioRol)
   }
 
   async validarUsuarioOidc(persona: PersonaDto) {
