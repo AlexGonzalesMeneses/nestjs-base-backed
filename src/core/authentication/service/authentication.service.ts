@@ -134,13 +134,16 @@ export class AuthenticationService extends BaseService {
   async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id)
 
-    const payload = { id: user.id, roles: user.roles }
+    // TODO: revisar
+    const idRol = usuario.roles[0].idRol
+    const payload = { id: user.id, roles: user.roles, idRol }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
+      idRol,
     }
     return {
       refresh_token: { id: refreshToken.id },
