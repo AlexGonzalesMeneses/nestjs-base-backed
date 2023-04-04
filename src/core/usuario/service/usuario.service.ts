@@ -765,6 +765,10 @@ export class UsuarioService extends BaseService {
     }
   }
 
+  async buscarUsuarioPerfil(id: string, idRol: string) {
+    const perfil = await this.buscarUsuarioId(id)
+    return { ...perfil, idRol }
+  }
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
