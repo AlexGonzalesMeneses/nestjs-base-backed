@@ -135,7 +135,7 @@ export class AuthenticationService extends BaseService {
   async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id)
 
-    const rol = await this.obtenerRolActual(user, usuario.roles)
+    const rol = this.obtenerRolActual(user, usuario.roles)
 
     const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
     // crear refresh_token
@@ -152,23 +152,21 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  obtenerRolActual(user: PassportUser, roles: any) {
+  obtenerRolActual(user: PassportUser, roles: Array<{ idRol: string }>) {
     if (roles.length < 1) {
       throw new UnauthorizedException(`El usuario no cuenta con roles.`)
     }
-    let rol: any
-    if (user.idRol) {
-      // buscar el rol activo
-      rol = roles.find((item) => item.idRol === user.idRol)
-      if (!rol) {
-        throw new UnauthorizedException(`Rol no permitido.`)
-      }
-    } else {
-      // buscar el primer rol
-      rol = roles[0]
-    }
-    console.log('----------------rol', rol)
 
+    // buscar el primer rol
+    if (!user.idRol) {
+      return roles[0]
+    }
+
+    // buscar el rol activo
+    const rol = roles.find((item) => item.idRol === user.idRol)
+    if (!rol) {
+      throw new UnauthorizedException(`Rol no permitido.`)
+    }
     return rol
   }
 
@@ -177,7 +175,8 @@ export class AuthenticationService extends BaseService {
       ...user,
       idRol: data.idRol,
     }
-    return this.autenticar(usuarioRol)
+
+    return await this.autenticar(usuarioRol)
   }
 
   async validarUsuarioOidc(persona: PersonaDto) {
