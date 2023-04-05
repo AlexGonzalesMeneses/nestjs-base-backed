@@ -1,3 +1,4 @@
+import { TokenDto } from './../dto/index.dto'
 import { BaseService } from '../../../common/base/base-service'
 import {
   Inject,
@@ -53,7 +54,7 @@ export class RefreshTokensService extends BaseService {
     })
   }
 
-  async createAccessToken(refreshTokenId: string) {
+  async createAccessToken(refreshTokenId: string, datos: TokenDto) {
     const refreshToken = await this.refreshTokensRepository.findById(
       refreshTokenId
     )
@@ -78,10 +79,19 @@ export class RefreshTokensService extends BaseService {
       })
     }
 
-    const payload = { id: usuario.id, roles }
+    // obtener rol
+    // this.jwtService.decode(token)
+
+    // TODO: revisar
+    const idRol = '1'
+
+    const rol = this.usuarioService.obtenerRolActual(usuario.roles, idRol)
+
+    const payload = { id: usuario.id, roles, idRol: rol.idRol }
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
+      idRol: rol.idRol,
     }
 
     const rft = parseInt(

@@ -5,3 +5,9 @@ export class CambioRolDto {
   @IsNotEmpty()
   idRol: string
 }
+
+export class TokenDto {
+  @IsString()
+  @IsNotEmpty()
+  token: string
+}

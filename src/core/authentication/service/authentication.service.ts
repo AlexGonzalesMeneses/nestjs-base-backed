@@ -135,7 +135,7 @@ export class AuthenticationService extends BaseService {
   async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id)
 
-    const rol = this.obtenerRolActual(user, usuario.roles)
+    const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
 
     const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
     // crear refresh_token
@@ -150,24 +150,6 @@ export class AuthenticationService extends BaseService {
       refresh_token: { id: refreshToken.id },
       data,
     }
-  }
-
-  obtenerRolActual(user: PassportUser, roles: Array<{ idRol: string }>) {
-    if (roles.length < 1) {
-      throw new UnauthorizedException(`El usuario no cuenta con roles.`)
-    }
-
-    // buscar el primer rol
-    if (!user.idRol) {
-      return roles[0]
-    }
-
-    // buscar el rol activo
-    const rol = roles.find((item) => item.idRol === user.idRol)
-    if (!rol) {
-      throw new UnauthorizedException(`Rol no permitido.`)
-    }
-    return rol
   }
 
   async cambiarRol(user: PassportUser, data: CambioRolDto) {
