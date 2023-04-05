@@ -1,4 +1,4 @@
-import { TokenDto } from './../dto/index.dto'
+import { TokenDto } from '../dto/index.dto'
 import { BaseService } from '../../../common/base/base-service'
 import {
   Inject,
@@ -32,10 +32,6 @@ export class RefreshTokensService extends BaseService {
     private readonly configService: ConfigService
   ) {
     super()
-  }
-
-  async findById(id: string) {
-    return await this.refreshTokensRepository.findById(id)
   }
 
   async create(grantId: string) {
@@ -79,13 +75,29 @@ export class RefreshTokensService extends BaseService {
       })
     }
 
-    // obtener rol
-    // this.jwtService.decode(token)
+    try {
+      this.jwtService.verify(datos.token, {
+        secret: this.configService.get('JWT_SECRET'),
+      })
+    } catch (err) {
+      this.logger.error(err)
 
-    // TODO: revisar
-    const idRol = '1'
+      if (err.name === 'JsonWebTokenError') {
+        // handle expired token
+        throw new UnauthorizedException(Messages.EXCEPTION_UNAUTHORIZED)
+      }
+    }
 
-    const rol = this.usuarioService.obtenerRolActual(usuario.roles, idRol)
+    const decode = this.jwtService.decode(datos.token)
+
+    if (!decode) {
+      throw new NotFoundException(Messages.EXCEPTION_NOT_FOUND)
+    }
+
+    const rol = this.usuarioService.obtenerRolActual(
+      usuario.roles,
+      decode['idRol']
+    )
 
     const payload = { id: usuario.id, roles, idRol: rol.idRol }
     const data = {
