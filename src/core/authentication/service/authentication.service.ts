@@ -295,7 +295,11 @@ export class AuthenticationService extends BaseService {
   }
 
   async autenticarOidc(user: PassportUser) {
-    const payload = { id: user.id, roles: user.roles }
+    const usuario = await this.usuarioService.buscarUsuarioId(user.id)
+
+    const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
+
+    const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
