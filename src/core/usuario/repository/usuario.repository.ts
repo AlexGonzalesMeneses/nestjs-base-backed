@@ -18,7 +18,8 @@ export class UsuarioRepository {
   constructor(private dataSource: DataSource) {}
 
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
-    const { limite, saltar, filtro, rol } = paginacionQueryDto
+    const { limite, saltar, filtro, rol, orden } = paginacionQueryDto
+
     const query = this.dataSource
       .getRepository(Usuario)
       .createQueryBuilder('usuario')
@@ -45,6 +46,16 @@ export class UsuarioRepository {
       .take(limite)
       .skip(saltar)
       .orderBy('usuario.id', 'ASC')
+
+    if (orden) {
+      for (const value of orden) {
+        const sentido = value.startsWith('-') // descendente
+        query.addOrderBy(
+          sentido ? value.substring(1) : value,
+          sentido ? 'DESC' : 'ASC'
+        )
+      }
+    }
 
     if (rol) {
       query.andWhere('rol.id IN(:...roles)', {
