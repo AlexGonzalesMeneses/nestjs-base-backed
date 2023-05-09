@@ -45,15 +45,33 @@ export class UsuarioRepository {
       .where('usuarioRol.estado = :estado', { estado: Status.ACTIVE })
       .take(limite)
       .skip(saltar)
-      .orderBy('usuario.id', 'ASC')
+
+    if (!orden) {
+      query.addOrderBy('usuario.id', 'ASC')
+    }
 
     if (orden) {
-      for (const value of orden) {
-        const sentido = value.startsWith('-') // descendente
-        query.addOrderBy(
-          sentido ? value.substring(1) : value,
-          sentido ? 'DESC' : 'ASC'
-        )
+      for (const criterio of orden) {
+        const descendente = criterio.startsWith('-')
+        const buscar = descendente ? criterio.substring(1) : criterio
+        const sentido = descendente ? 'DESC' : 'ASC'
+        switch (buscar) {
+          case 'nroDocumento':
+            query.addOrderBy('persona.nroDocumento', sentido)
+            break
+          case 'nombres':
+            query.addOrderBy('persona.nombres', sentido)
+            break
+          case 'usuario':
+            query.addOrderBy('usuario.usuario', sentido)
+            break
+          case 'rol':
+            query.addOrderBy('rol.rol', sentido)
+            break
+          case 'estado':
+            query.addOrderBy('usuario.estado', sentido)
+            break
+        }
       }
     }
 
