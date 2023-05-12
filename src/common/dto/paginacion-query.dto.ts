@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   IsInt,
   IsNotEmpty,
@@ -50,8 +50,8 @@ export class PaginacionQueryDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @Transform(({ value }) => (value ? value.split(',') : null))
-  readonly orden?: Array<string>
+  @IsString()
+  readonly orden?: string
 
   get saltar(): number {
     return (this.pagina - 1) * this.limite
