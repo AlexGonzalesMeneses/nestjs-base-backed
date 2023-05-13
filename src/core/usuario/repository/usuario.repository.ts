@@ -52,9 +52,9 @@ export class UsuarioRepository {
 
     if (orden) {
       const descendente = orden.startsWith('-')
-      const buscar = descendente ? orden.substring(1) : orden
+      const campo = descendente ? orden.substring(1) : orden
       const sentido = descendente ? 'DESC' : 'ASC'
-      switch (buscar) {
+      switch (campo) {
         case 'nroDocumento':
           query.addOrderBy('persona.nroDocumento', sentido)
           break
