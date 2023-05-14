@@ -12,6 +12,7 @@ import { Injectable } from '@nestjs/common'
 import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
 import dayjs from 'dayjs'
+import { UtilService } from '../../../common/lib/util.service'
 
 @Injectable()
 export class UsuarioRepository {
@@ -51,9 +52,8 @@ export class UsuarioRepository {
     }
 
     if (orden) {
-      const descendente = orden.startsWith('-')
-      const campo = descendente ? orden.substring(1) : orden
-      const sentido = descendente ? 'DESC' : 'ASC'
+      const { campo, sentido } = UtilService.getCampoSentido(orden)
+
       switch (campo) {
         case 'nroDocumento':
           query.addOrderBy('persona.nroDocumento', sentido)

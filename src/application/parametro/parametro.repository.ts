@@ -6,6 +6,7 @@ import { Parametro } from './parametro.entity'
 import { Injectable } from '@nestjs/common'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { Status } from '../../common/constants'
+import { UtilService } from '../../common/lib/util.service'
 
 @Injectable()
 export class ParametroRepository {
@@ -54,9 +55,7 @@ export class ParametroRepository {
     }
 
     if (orden) {
-      const descendente = orden.startsWith('-')
-      const campo = descendente ? orden.substring(1) : orden
-      const sentido = descendente ? 'DESC' : 'ASC'
+      const { campo, sentido } = UtilService.getCampoSentido(orden)
 
       switch (campo) {
         case 'codigo':
