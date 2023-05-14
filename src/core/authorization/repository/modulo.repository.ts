@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { Status } from '../../../common/constants'
 import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { UtilService } from '../../../common/lib/util.service'
 
 @Injectable()
 export class ModuloRepository {
@@ -19,7 +20,7 @@ export class ModuloRepository {
   }
 
   async listar(paginacionQueryDto: FiltroModuloDto) {
-    const { limite, saltar, filtro, seccion } = paginacionQueryDto
+    const { limite, saltar, filtro, seccion, orden } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
@@ -35,7 +36,29 @@ export class ModuloRepository {
       ])
       .take(limite)
       .skip(saltar)
-      .orderBy('modulo.id', 'ASC')
+
+    if (!orden) {
+      query.addOrderBy('modulo.id', 'ASC')
+    }
+
+    if (orden) {
+      const { campo, sentido } = UtilService.getCampoSentido(orden)
+
+      switch (campo) {
+        case 'nombre':
+          query.addOrderBy('modulo.nombre', sentido)
+          break
+        case 'label':
+          query.addOrderBy('modulo.label', sentido)
+          break
+        case 'url':
+          query.addOrderBy('modulo.url', sentido)
+          break
+        case 'estado':
+          query.addOrderBy('modulo.estado', sentido)
+          break
+      }
+    }
 
     if (filtro) {
       query.andWhere(
