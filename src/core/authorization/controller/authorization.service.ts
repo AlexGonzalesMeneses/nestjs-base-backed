@@ -3,6 +3,7 @@ import { Injectable, Query } from '@nestjs/common'
 import { AuthZManagementService } from 'nest-authz'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
 import { ModuloService } from '../service/modulo.service'
+import { UtilService } from '../../../common/lib/util.service'
 
 interface politicaType {
   sujeto: string
@@ -21,7 +22,7 @@ export class AuthorizationService extends BaseService {
   }
 
   async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
-    const { limite, pagina, filtro, aplicacion } = paginacionQueryDto
+    const { limite, pagina, filtro, aplicacion, orden } = paginacionQueryDto
 
     const politicas = await this.authZManagerService.getPolicy()
 
@@ -31,6 +32,36 @@ export class AuthorizationService extends BaseService {
       accion: politica[2],
       app: politica[3],
     }))
+
+    if (orden) {
+      const { campo, descendente } = UtilService.getCampoSentido(orden)
+      switch (campo) {
+        case 'sujeto':
+          result = result.sort((a, b) => {
+            const compareResult = a.sujeto.localeCompare(b.sujeto)
+            return descendente ? -compareResult : compareResult
+          })
+          break
+        case 'objeto':
+          result = result.sort((a, b) => {
+            const compareResult = a.objeto.localeCompare(b.objeto)
+            return descendente ? -compareResult : compareResult
+          })
+          break
+        case 'accion':
+          result = result.sort((a, b) => {
+            const compareResult = a.accion.localeCompare(b.accion)
+            return descendente ? -compareResult : compareResult
+          })
+          break
+        case 'app':
+          result = result.sort((a, b) => {
+            const compareResult = a.app.localeCompare(b.app)
+            return descendente ? -compareResult : compareResult
+          })
+          break
+      }
+    }
 
     if (filtro) {
       result = result.filter(

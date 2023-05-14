@@ -56,6 +56,6 @@ export class UtilService {
     const descendente = orden.startsWith('-')
     const campo = descendente ? orden.substring(1) : orden
     const sentido: 'ASC' | 'DESC' = descendente ? 'DESC' : 'ASC'
-    return { campo, sentido }
+    return { campo, descendente, sentido }
   }
 }
