@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common'
 import { Status } from '../../../common/constants'
 import { ActualizarModuloDto } from '../dto/actualizar-modulo.dto'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { UtilService } from '../../../common/lib/util.service'
 
 @Injectable()
 export class ModuloRepository {
@@ -20,7 +19,8 @@ export class ModuloRepository {
   }
 
   async listar(paginacionQueryDto: FiltroModuloDto) {
-    const { limite, saltar, filtro, seccion, orden } = paginacionQueryDto
+    const { limite, saltar, filtro, seccion, orden, sentido } =
+      paginacionQueryDto
     const query = this.dataSource
       .getRepository(Modulo)
       .createQueryBuilder('modulo')
@@ -42,9 +42,7 @@ export class ModuloRepository {
     }
 
     if (orden) {
-      const { campo, sentido } = UtilService.getCampoSentido(orden)
-
-      switch (campo) {
+      switch (orden) {
         case 'nombre':
           query.addOrderBy('modulo.nombre', sentido)
           break

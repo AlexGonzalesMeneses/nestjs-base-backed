@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common'
 import { Rol } from '../entity/rol.entity'
 import { CrearRolDto } from '../dto/crear-rol.dto'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
-import { UtilService } from '../../../common/lib/util.service'
 
 @Injectable()
 export class RolRepository {
@@ -21,7 +20,7 @@ export class RolRepository {
   }
 
   async listarTodos(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, filtro, orden } = paginacionQueryDto
+    const { limite, saltar, filtro, orden, sentido } = paginacionQueryDto
     const query = await this.dataSource
       .getRepository(Rol)
       .createQueryBuilder('rol')
@@ -34,9 +33,7 @@ export class RolRepository {
     }
 
     if (orden) {
-      const { campo, sentido } = UtilService.getCampoSentido(orden)
-
-      switch (campo) {
+      switch (orden) {
         case 'rol':
           query.addOrderBy('rol.rol', sentido)
           break

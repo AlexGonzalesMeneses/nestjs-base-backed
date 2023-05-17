@@ -51,11 +51,4 @@ export class UtilService {
     }
     return `${field} IN ('${values.join(`','`)}')`
   }
-
-  static getCampoSentido(orden: string) {
-    const descendente = orden.startsWith('-')
-    const campo = descendente ? orden.substring(1) : orden
-    const sentido: 'ASC' | 'DESC' = descendente ? 'DESC' : 'ASC'
-    return { campo, descendente, sentido }
-  }
 }

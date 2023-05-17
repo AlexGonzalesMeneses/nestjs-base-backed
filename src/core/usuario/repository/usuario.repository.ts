@@ -12,14 +12,13 @@ import { Injectable } from '@nestjs/common'
 import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
 import dayjs from 'dayjs'
-import { UtilService } from '../../../common/lib/util.service'
 
 @Injectable()
 export class UsuarioRepository {
   constructor(private dataSource: DataSource) {}
 
   async listar(paginacionQueryDto: FiltrosUsuarioDto) {
-    const { limite, saltar, filtro, rol, orden } = paginacionQueryDto
+    const { limite, saltar, filtro, rol, orden, sentido } = paginacionQueryDto
 
     const query = this.dataSource
       .getRepository(Usuario)
@@ -52,9 +51,7 @@ export class UsuarioRepository {
     }
 
     if (orden) {
-      const { campo, sentido } = UtilService.getCampoSentido(orden)
-
-      switch (campo) {
+      switch (orden) {
         case 'nroDocumento':
           query.addOrderBy('persona.nroDocumento', sentido)
           break

@@ -6,7 +6,6 @@ import { Parametro } from './parametro.entity'
 import { Injectable } from '@nestjs/common'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { Status } from '../../common/constants'
-import { UtilService } from '../../common/lib/util.service'
 
 @Injectable()
 export class ParametroRepository {
@@ -35,7 +34,7 @@ export class ParametroRepository {
   }
 
   async listar(paginacionQueryDto: PaginacionQueryDto) {
-    const { limite, saltar, filtro, orden } = paginacionQueryDto
+    const { limite, saltar, filtro, orden, sentido } = paginacionQueryDto
     const query = this.dataSource
       .getRepository(Parametro)
       .createQueryBuilder('parametro')
@@ -55,9 +54,7 @@ export class ParametroRepository {
     }
 
     if (orden) {
-      const { campo, sentido } = UtilService.getCampoSentido(orden)
-
-      switch (campo) {
+      switch (orden) {
         case 'codigo':
           query.addOrderBy('parametro.codigo', sentido)
           break

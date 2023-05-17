@@ -3,7 +3,6 @@ import { Injectable, Query } from '@nestjs/common'
 import { AuthZManagementService } from 'nest-authz'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
 import { ModuloService } from '../service/modulo.service'
-import { UtilService } from '../../../common/lib/util.service'
 
 interface politicaType {
   sujeto: string
@@ -22,7 +21,8 @@ export class AuthorizationService extends BaseService {
   }
 
   async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
-    const { limite, pagina, filtro, aplicacion, orden } = paginacionQueryDto
+    const { limite, pagina, filtro, aplicacion, orden, descendente } =
+      paginacionQueryDto
 
     const politicas = await this.authZManagerService.getPolicy()
 
@@ -34,8 +34,7 @@ export class AuthorizationService extends BaseService {
     }))
 
     if (orden) {
-      const { campo, descendente } = UtilService.getCampoSentido(orden)
-      switch (campo) {
+      switch (orden) {
         case 'sujeto':
           result = result.sort((a, b) => {
             const compareResult = a.sujeto.localeCompare(b.sujeto)
