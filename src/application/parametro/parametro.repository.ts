@@ -49,28 +49,24 @@ export class ParametroRepository {
       .take(limite)
       .skip(saltar)
 
-    if (!orden) {
-      query.orderBy('parametro.id', 'ASC')
-    }
-
-    if (orden) {
-      switch (orden) {
-        case 'codigo':
-          query.addOrderBy('parametro.codigo', sentido)
-          break
-        case 'nombre':
-          query.addOrderBy('parametro.nombre', sentido)
-          break
-        case 'descripcion':
-          query.addOrderBy('parametro.descripcion', sentido)
-          break
-        case 'grupo':
-          query.addOrderBy('parametro.grupo', sentido)
-          break
-        case 'estado':
-          query.addOrderBy('parametro.estado', sentido)
-          break
-      }
+    switch (orden) {
+      case 'codigo':
+        query.addOrderBy('parametro.codigo', sentido)
+        break
+      case 'nombre':
+        query.addOrderBy('parametro.nombre', sentido)
+        break
+      case 'descripcion':
+        query.addOrderBy('parametro.descripcion', sentido)
+        break
+      case 'grupo':
+        query.addOrderBy('parametro.grupo', sentido)
+        break
+      case 'estado':
+        query.addOrderBy('parametro.estado', sentido)
+        break
+      default:
+        query.orderBy('parametro.id', 'ASC')
     }
 
     if (filtro) {

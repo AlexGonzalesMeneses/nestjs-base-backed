@@ -46,28 +46,24 @@ export class UsuarioRepository {
       .take(limite)
       .skip(saltar)
 
-    if (!orden) {
-      query.addOrderBy('usuario.id', 'ASC')
-    }
-
-    if (orden) {
-      switch (orden) {
-        case 'nroDocumento':
-          query.addOrderBy('persona.nroDocumento', sentido)
-          break
-        case 'nombres':
-          query.addOrderBy('persona.nombres', sentido)
-          break
-        case 'usuario':
-          query.addOrderBy('usuario.usuario', sentido)
-          break
-        case 'rol':
-          query.addOrderBy('rol.rol', sentido)
-          break
-        case 'estado':
-          query.addOrderBy('usuario.estado', sentido)
-          break
-      }
+    switch (orden) {
+      case 'nroDocumento':
+        query.addOrderBy('persona.nroDocumento', sentido)
+        break
+      case 'nombres':
+        query.addOrderBy('persona.nombres', sentido)
+        break
+      case 'usuario':
+        query.addOrderBy('usuario.usuario', sentido)
+        break
+      case 'rol':
+        query.addOrderBy('rol.rol', sentido)
+        break
+      case 'estado':
+        query.addOrderBy('usuario.estado', sentido)
+        break
+      default:
+        query.addOrderBy('usuario.id', 'ASC')
     }
 
     if (rol) {

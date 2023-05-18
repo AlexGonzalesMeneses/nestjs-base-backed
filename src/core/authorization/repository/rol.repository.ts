@@ -28,22 +28,18 @@ export class RolRepository {
       .take(limite)
       .skip(saltar)
 
-    if (!orden) {
-      query.addOrderBy('rol.id', 'ASC')
-    }
-
-    if (orden) {
-      switch (orden) {
-        case 'rol':
-          query.addOrderBy('rol.rol', sentido)
-          break
-        case 'nombre':
-          query.addOrderBy('rol.nombre', sentido)
-          break
-        case 'estado':
-          query.addOrderBy('rol.estado', sentido)
-          break
-      }
+    switch (orden) {
+      case 'rol':
+        query.addOrderBy('rol.rol', sentido)
+        break
+      case 'nombre':
+        query.addOrderBy('rol.nombre', sentido)
+        break
+      case 'estado':
+        query.addOrderBy('rol.estado', sentido)
+        break
+      default:
+        query.addOrderBy('rol.id', 'ASC')
     }
 
     if (filtro) {

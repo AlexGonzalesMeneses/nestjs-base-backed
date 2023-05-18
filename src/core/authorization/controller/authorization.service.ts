@@ -33,33 +33,31 @@ export class AuthorizationService extends BaseService {
       app: politica[3],
     }))
 
-    if (orden) {
-      switch (orden) {
-        case 'sujeto':
-          result = result.sort((a, b) => {
-            const compareResult = a.sujeto.localeCompare(b.sujeto)
-            return descendente ? -compareResult : compareResult
-          })
-          break
-        case 'objeto':
-          result = result.sort((a, b) => {
-            const compareResult = a.objeto.localeCompare(b.objeto)
-            return descendente ? -compareResult : compareResult
-          })
-          break
-        case 'accion':
-          result = result.sort((a, b) => {
-            const compareResult = a.accion.localeCompare(b.accion)
-            return descendente ? -compareResult : compareResult
-          })
-          break
-        case 'app':
-          result = result.sort((a, b) => {
-            const compareResult = a.app.localeCompare(b.app)
-            return descendente ? -compareResult : compareResult
-          })
-          break
-      }
+    switch (orden) {
+      case 'sujeto':
+        result = result.sort((a, b) => {
+          const compareResult = a.sujeto.localeCompare(b.sujeto)
+          return descendente ? -compareResult : compareResult
+        })
+        break
+      case 'objeto':
+        result = result.sort((a, b) => {
+          const compareResult = a.objeto.localeCompare(b.objeto)
+          return descendente ? -compareResult : compareResult
+        })
+        break
+      case 'accion':
+        result = result.sort((a, b) => {
+          const compareResult = a.accion.localeCompare(b.accion)
+          return descendente ? -compareResult : compareResult
+        })
+        break
+      case 'app':
+        result = result.sort((a, b) => {
+          const compareResult = a.app.localeCompare(b.app)
+          return descendente ? -compareResult : compareResult
+        })
+        break
     }
 
     if (filtro) {
