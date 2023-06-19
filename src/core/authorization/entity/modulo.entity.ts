@@ -32,14 +32,14 @@ export class Modulo extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla Módulo',
+    comment: 'Clave primaria de la tabla módulo',
   })
   id: string
 
   @Column({
     length: 50,
     type: 'varchar',
-    comment: 'Etiqueta del Módulo para el Sidebar(Menú principal) del proyecto',
+    comment: 'Etiqueta del módulo para el sidebar(Menú principal) del proyecto',
   })
   label: string
 
@@ -47,16 +47,16 @@ export class Modulo extends AuditoriaEntity {
     length: 50,
     type: 'varchar',
     unique: true,
-    comment: 'Dirección para acceder al Módulo',
+    comment: 'Dirección para acceder al módulo',
   })
   url: string
 
-  @Column({ length: 50, type: 'varchar', comment: 'Nombre del Módulo' })
+  @Column({ length: 50, type: 'varchar', comment: 'Nombre del módulo' })
   nombre: string
 
   @Column({
     type: 'jsonb',
-    comment: 'Propiedades definidas del Módulo, como orden, icono, etc.',
+    comment: 'Propiedades definidas del módulo, como orden, icono, etc.',
   })
   propiedades: Propiedades
 

@@ -25,7 +25,7 @@ export class Rol extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla Rol',
+    comment: 'Clave primaria de la tabla rol',
   })
   id: string
 
@@ -37,7 +37,7 @@ export class Rol extends AuditoriaEntity {
   })
   rol: string
 
-  @Column({ length: 100, type: 'varchar', comment: 'Nombre de Rol' })
+  @Column({ length: 100, type: 'varchar', comment: 'Nombre de rol' })
   nombre: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)

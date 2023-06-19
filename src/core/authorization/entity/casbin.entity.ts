@@ -26,14 +26,14 @@ export class CasbinRule extends BaseEntity {
   @Column({
     nullable: true,
     type: 'varchar',
-    comment: 'Se define Rutas',
+    comment: 'Se define rutas',
   })
   public v1: string | null
 
   @Column({
     nullable: true,
     type: 'varchar',
-    comment: 'Se define Permisos de CRUD(Create, Read, Update, Delete)',
+    comment: 'Se define permisos de CRUD(Create, Read, Update, Delete)',
   })
   public v2: string | null
 

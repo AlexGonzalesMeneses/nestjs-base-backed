@@ -25,7 +25,7 @@ export class Persona extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla Persona',
+    comment: 'Clave primaria de la tabla persona',
   })
   id: string
 
@@ -33,7 +33,7 @@ export class Persona extends AuditoriaEntity {
     length: 100,
     type: 'varchar',
     nullable: true,
-    comment: 'Nombre de la Persona',
+    comment: 'Nombre de la persona',
   })
   nombres?: string | null
 
@@ -42,7 +42,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 100,
     nullable: true,
-    comment: 'Primer apellido de la Persona',
+    comment: 'Primer apellido de la persona',
   })
   primerApellido?: string | null
 
@@ -51,7 +51,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 100,
     nullable: true,
-    comment: 'Segundo apellido de la Persona',
+    comment: 'Segundo apellido de la persona',
   })
   segundoApellido?: string | null
 
@@ -64,7 +64,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     default: TipoDocumento.CI,
     comment:
-      'Tipo de Documento de la Persona, como Carnet de Identidad(C.I.), Pasaporte, otros',
+      'Tipo de documento de la persona, como carnet de identidad(C.I.), pasaporte, otros',
   })
   tipoDocumento: string
 
@@ -73,14 +73,14 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 50,
     nullable: true,
-    comment: 'Se define otro tipo de documento de la Persona, si existe',
+    comment: 'Se define otro tipo de documento de la persona, si existe',
   })
   tipoDocumentoOtro?: string | null
 
   @Column({
     name: 'nro_documento',
     length: 50,
-    comment: 'Número de documento de la Persona',
+    comment: 'Número de documento de la persona',
   })
   nroDocumento: string
 
@@ -88,7 +88,7 @@ export class Persona extends AuditoriaEntity {
     name: 'fecha_nacimiento',
     type: 'date',
     nullable: true,
-    comment: 'Fecha de nacimiento de la Persona',
+    comment: 'Fecha de nacimiento de la persona',
   })
   fechaNacimiento?: Date | null
 
@@ -96,7 +96,7 @@ export class Persona extends AuditoriaEntity {
     length: 50,
     type: 'varchar',
     nullable: true,
-    comment: 'Telefono de la Persona',
+    comment: 'Telefono de la persona',
   })
   telefono?: string | null
 
@@ -107,7 +107,7 @@ export class Persona extends AuditoriaEntity {
     length: 15,
     type: 'varchar',
     nullable: true,
-    comment: 'Género de la Persona',
+    comment: 'Género de la persona',
   })
   genero?: string | null
 
@@ -116,7 +116,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     nullable: true,
     comment:
-      'Observación, informacion relevante no definida en los campos establecidos referente a la Persona',
+      'Observación, informacion relevante no definida en los campos establecidos referente a la persona',
   })
   observacion?: string | null
 
