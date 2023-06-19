@@ -4,21 +4,37 @@ dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class RefreshTokens {
-  @PrimaryColumn()
+  @PrimaryColumn({
+    comment: 'Clave primaria de la tabla de RefresToken',
+  })
   id: string
 
-  @Column({ name: 'grant_id' })
+  @Column({
+    name: 'grant_id',
+    comment: 'id de usuario al que se le asigno el token generado',
+  })
   grantId: string
 
-  @Column({ type: 'timestamp without time zone' })
+  @Column({
+    type: 'timestamp without time zone',
+    comment: 'Fecha de creación de token',
+  })
   iat: Date
 
-  @Column({ name: 'expires_at', type: 'timestamp without time zone' })
+  @Column({
+    name: 'expires_at',
+    type: 'timestamp without time zone',
+    comment: 'Fecha expiración de Token',
+  })
   expiresAt: Date
 
-  @Column({ name: 'is_revoked', type: 'boolean' })
+  @Column({
+    name: 'is_revoked',
+    type: 'boolean',
+    comment: 'Estado de token, Valor booleano para rebocar el token generado',
+  })
   isRevoked: boolean
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', comment: 'Información del token' })
   data: unknown
 }
