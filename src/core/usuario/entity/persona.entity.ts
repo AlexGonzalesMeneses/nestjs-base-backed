@@ -22,10 +22,19 @@ export const PersonaEstado = {
 @Check(UtilService.buildStatusCheck(PersonaEstado))
 @Entity({ name: 'personas', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Persona extends AuditoriaEntity {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    name: 'id',
+    comment: 'Clave primaria de la tabla Persona',
+  })
   id: string
 
-  @Column({ length: 100, type: 'varchar', nullable: true })
+  @Column({
+    length: 100,
+    type: 'varchar',
+    nullable: true,
+    comment: 'Nombre de la Persona',
+  })
   nombres?: string | null
 
   @Column({
@@ -33,6 +42,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 100,
     nullable: true,
+    comment: 'Primer apellido de la Persona',
   })
   primerApellido?: string | null
 
@@ -41,6 +51,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 100,
     nullable: true,
+    comment: 'Segundo apellido de la Persona',
   })
   segundoApellido?: string | null
 
@@ -52,6 +63,8 @@ export class Persona extends AuditoriaEntity {
     length: 15,
     type: 'varchar',
     default: TipoDocumento.CI,
+    comment:
+      'Tipo de Documento de la Persona, como Carnet de Identidad(C.I.), Pasaporte, otros',
   })
   tipoDocumento: string
 
@@ -60,29 +73,51 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 50,
     nullable: true,
+    comment: 'Se define otro tipo de documento de la Persona, si existe',
   })
   tipoDocumentoOtro?: string | null
 
-  @Column({ name: 'nro_documento', length: 50 })
+  @Column({
+    name: 'nro_documento',
+    length: 50,
+    comment: 'Número de documento de la Persona',
+  })
   nroDocumento: string
 
   @Column({
     name: 'fecha_nacimiento',
     type: 'date',
     nullable: true,
+    comment: 'Fecha de nacimiento de la Persona',
   })
   fechaNacimiento?: Date | null
 
-  @Column({ length: 50, type: 'varchar', nullable: true })
+  @Column({
+    length: 50,
+    type: 'varchar',
+    nullable: true,
+    comment: 'Telefono de la Persona',
+  })
   telefono?: string | null
 
   @Check(
     `genero in ('${Genero.MASCULINO}', '${Genero.FEMENINO}', '${Genero.OTRO}')`
   )
-  @Column({ length: 15, type: 'varchar', nullable: true })
+  @Column({
+    length: 15,
+    type: 'varchar',
+    nullable: true,
+    comment: 'Género de la Persona',
+  })
   genero?: string | null
 
-  @Column({ length: 255, type: 'varchar', nullable: true })
+  @Column({
+    length: 255,
+    type: 'varchar',
+    nullable: true,
+    comment:
+      'Observación, informacion relevante no definida en los campos establecidos referente a la Persona',
+  })
   observacion?: string | null
 
   @OneToMany(() => Usuario, (usuario) => usuario.persona)
