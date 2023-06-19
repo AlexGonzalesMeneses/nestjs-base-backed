@@ -24,7 +24,7 @@ export class RefreshTokens {
   @Column({
     name: 'expires_at',
     type: 'timestamp without time zone',
-    comment: 'Fecha expiración de Token',
+    comment: 'Fecha expiración de token',
   })
   expiresAt: Date
 
