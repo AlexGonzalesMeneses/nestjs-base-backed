@@ -11,7 +11,7 @@ export class RefreshTokens {
 
   @Column({
     name: 'grant_id',
-    comment: 'id de usuario al que se le asigno el token generado',
+    comment: 'Id de usuario al que se le asignó el token generado',
   })
   grantId: string
 
@@ -31,7 +31,7 @@ export class RefreshTokens {
   @Column({
     name: 'is_revoked',
     type: 'boolean',
-    comment: 'Estado de token, Valor booleano para rebocar el token generado',
+    comment: 'Estado de token, Valor booleano para revocar el token generado',
   })
   isRevoked: boolean
 

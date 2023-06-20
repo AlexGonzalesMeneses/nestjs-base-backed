@@ -31,7 +31,7 @@ export class Parametro extends AuditoriaEntity {
     length: 15,
     type: 'varchar',
     unique: true,
-    comment: 'Codigo del parámetro',
+    comment: 'Código del parámetro',
   })
   codigo: string
 

@@ -96,7 +96,7 @@ export class Persona extends AuditoriaEntity {
     length: 50,
     type: 'varchar',
     nullable: true,
-    comment: 'Telefono de la persona',
+    comment: 'Teléfono de la persona',
   })
   telefono?: string | null
 
@@ -116,7 +116,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     nullable: true,
     comment:
-      'Observación, informacion relevante no definida en los campos establecidos referente a la persona',
+      'Observación, información relevante no definida en los campos establecidos referentes a la persona',
   })
   observacion?: string | null
 
