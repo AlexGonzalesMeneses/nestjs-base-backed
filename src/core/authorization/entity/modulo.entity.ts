@@ -64,7 +64,7 @@ export class Modulo extends AuditoriaEntity {
     name: 'id_modulo',
     type: 'bigint',
     nullable: true,
-    comment: 'clave foránea que autoreferencia a la misma tabla Módulo',
+    comment: 'Clave foránea que autorreferencia a la misma tabla módulo',
   })
   idModulo?: string | null
 

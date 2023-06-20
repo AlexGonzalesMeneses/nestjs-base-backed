@@ -12,7 +12,7 @@ export class CasbinRule extends BaseEntity {
   @Column({
     nullable: true,
     type: 'varchar',
-    comment: 'Tipo de parametro',
+    comment: 'Tipo de parámetro',
   })
   public ptype: string | null
 

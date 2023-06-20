@@ -29,7 +29,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
   @Column('bigint', {
     name: '_usuario_creacion',
     nullable: false,
-    comment: 'Id de usuario que realizó el registro o la creación',
+    comment: 'Id de usuario que creó el registro',
   })
   usuarioCreacion: string
 
@@ -45,7 +45,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
   @Column('bigint', {
     name: '_usuario_modificacion',
     nullable: true,
-    comment: 'Id de usuario que realiza la modificación',
+    comment: 'Id de usuario que realiza una modificación',
   })
   usuarioModificacion?: string | null
 

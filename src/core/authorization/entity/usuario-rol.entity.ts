@@ -43,7 +43,7 @@ export class UsuarioRol extends AuditoriaEntity {
     name: 'id_usuario',
     type: 'bigint',
     nullable: false,
-    comment: 'Clave foranea que referencia la tabla usuarios',
+    comment: 'Clave foránea que referencia la tabla usuarios',
   })
   idUsuario: string
 
