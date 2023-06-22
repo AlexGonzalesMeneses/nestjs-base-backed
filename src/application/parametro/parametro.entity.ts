@@ -20,19 +20,28 @@ export const ParametroEstado = {
 @Check(UtilService.buildStatusCheck(ParametroEstado))
 @Entity({ name: 'parametros', schema: process.env.DB_SCHEMA_PARAMETRICAS })
 export class Parametro extends AuditoriaEntity {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    name: 'id',
+    comment: 'Clave primaria de la tabla parámetro',
+  })
   id: string
 
-  @Column({ length: 15, type: 'varchar', unique: true })
+  @Column({
+    length: 15,
+    type: 'varchar',
+    unique: true,
+    comment: 'Código del parámetro',
+  })
   codigo: string
 
-  @Column({ length: 50, type: 'varchar' })
+  @Column({ length: 50, type: 'varchar', comment: 'Nombre del parámetro' })
   nombre: string
 
-  @Column({ length: 15, type: 'varchar' })
+  @Column({ length: 15, type: 'varchar', comment: 'Grupo del parámetro' })
   grupo: string
 
-  @Column({ length: 255, type: 'varchar' })
+  @Column({ length: 255, type: 'varchar', comment: 'Desripción de parámetro' })
   descripcion: string
 
   constructor(data?: Partial<Parametro>) {

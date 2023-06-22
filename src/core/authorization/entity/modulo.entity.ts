@@ -29,25 +29,42 @@ export const ModuloEstado = {
 @Check(UtilService.buildStatusCheck(ModuloEstado))
 @Entity({ name: 'modulos', schema: process.env.DB_SCHEMA_USUARIOS })
 export class Modulo extends AuditoriaEntity {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    name: 'id',
+    comment: 'Clave primaria de la tabla módulo',
+  })
   id: string
 
-  @Column({ length: 50, type: 'varchar' })
+  @Column({
+    length: 50,
+    type: 'varchar',
+    comment: 'Etiqueta del módulo para el sidebar(Menú principal) del proyecto',
+  })
   label: string
 
-  @Column({ length: 50, type: 'varchar', unique: true })
+  @Column({
+    length: 50,
+    type: 'varchar',
+    unique: true,
+    comment: 'Dirección para acceder al módulo',
+  })
   url: string
 
-  @Column({ length: 50, type: 'varchar' })
+  @Column({ length: 50, type: 'varchar', comment: 'Nombre del módulo' })
   nombre: string
 
-  @Column({ type: 'jsonb' })
+  @Column({
+    type: 'jsonb',
+    comment: 'Propiedades definidas del módulo, como orden, icono, etc.',
+  })
   propiedades: Propiedades
 
   @Column({
     name: 'id_modulo',
     type: 'bigint',
     nullable: true,
+    comment: 'Clave foránea que autorreferencia a la misma tabla módulo',
   })
   idModulo?: string | null
 
