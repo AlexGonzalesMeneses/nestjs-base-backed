@@ -32,14 +32,14 @@ export class Modulo extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla módulo',
+    comment: 'Clave primaria de la tabla Módulo',
   })
   id: string
 
   @Column({
     length: 50,
     type: 'varchar',
-    comment: 'Etiqueta del módulo para el sidebar(Menú principal) del proyecto',
+    comment: 'Etiqueta del módulo para el Sidebar del proyecto',
   })
   label: string
 
@@ -47,7 +47,7 @@ export class Modulo extends AuditoriaEntity {
     length: 50,
     type: 'varchar',
     unique: true,
-    comment: 'Dirección para acceder al módulo',
+    comment: 'Ruta para acceder al módulo',
   })
   url: string
 
@@ -64,7 +64,7 @@ export class Modulo extends AuditoriaEntity {
     name: 'id_modulo',
     type: 'bigint',
     nullable: true,
-    comment: 'Clave foránea que autorreferencia a la misma tabla módulo',
+    comment: 'Clave foránea que indica que pertenece a otro módulo',
   })
   idModulo?: string | null
 

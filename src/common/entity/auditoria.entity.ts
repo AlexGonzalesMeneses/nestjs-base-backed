@@ -14,7 +14,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
     length: 30,
     type: 'varchar',
     nullable: false,
-    comment: 'Estado del registro, fila o tupla',
+    comment: 'Estado del registro',
   })
   estado: string
 
@@ -45,7 +45,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
   @Column('bigint', {
     name: '_usuario_modificacion',
     nullable: true,
-    comment: 'Id de usuario que realiza una modificación',
+    comment: 'Id de usuario que realizo una modificación',
   })
   usuarioModificacion?: string | null
 
@@ -53,7 +53,7 @@ export abstract class AuditoriaEntity extends BaseEntity {
     name: '_fecha_modificacion',
     type: 'timestamp without time zone',
     nullable: true,
-    comment: 'Fecha en que se realiza modificación',
+    comment: 'Fecha en que se realizo una modificación',
   })
   fechaModificacion?: Date | null
 

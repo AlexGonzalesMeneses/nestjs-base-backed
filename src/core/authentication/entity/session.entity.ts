@@ -17,7 +17,7 @@ export class Session implements ISession {
   public id = ''
 
   @Column('text', {
-    comment: 'Información de la sesión en formato json, respecto de la sesión',
+    comment: 'Información de la sesión en formato json',
   })
   public json = ''
 
