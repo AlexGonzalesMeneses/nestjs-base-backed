@@ -23,7 +23,7 @@ export class Parametro extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla parámetro',
+    comment: 'Clave primaria de la tabla Parámetro',
   })
   id: string
 
@@ -31,17 +31,17 @@ export class Parametro extends AuditoriaEntity {
     length: 15,
     type: 'varchar',
     unique: true,
-    comment: 'Código del parámetro',
+    comment: 'Código de parámetro',
   })
   codigo: string
 
-  @Column({ length: 50, type: 'varchar', comment: 'Nombre del parámetro' })
+  @Column({ length: 50, type: 'varchar', comment: 'Nombre de parámetro' })
   nombre: string
 
-  @Column({ length: 15, type: 'varchar', comment: 'Grupo del parámetro' })
+  @Column({ length: 15, type: 'varchar', comment: 'Grupo de parámetro' })
   grupo: string
 
-  @Column({ length: 255, type: 'varchar', comment: 'Desripción de parámetro' })
+  @Column({ length: 255, type: 'varchar', comment: 'Descripción de parámetro' })
   descripcion: string
 
   constructor(data?: Partial<Parametro>) {

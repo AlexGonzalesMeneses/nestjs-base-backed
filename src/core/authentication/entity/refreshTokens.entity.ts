@@ -1,11 +1,12 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 @Entity({ schema: process.env.DB_SCHEMA_USUARIOS })
 export class RefreshTokens {
   @PrimaryColumn({
-    comment: 'Clave primaria de la tabla de RefresToken',
+    comment: 'Clave primaria de la tabla RefresToken',
   })
   id: string
 
@@ -31,7 +32,7 @@ export class RefreshTokens {
   @Column({
     name: 'is_revoked',
     type: 'boolean',
-    comment: 'Estado de token, Valor booleano para revocar el token generado',
+    comment: 'Estado de token, valor booleano para revocar el token generado',
   })
   isRevoked: boolean
 

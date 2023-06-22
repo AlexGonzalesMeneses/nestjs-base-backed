@@ -25,7 +25,7 @@ export class Rol extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla rol',
+    comment: 'Clave primaria de la tabla Rol',
   })
   id: string
 

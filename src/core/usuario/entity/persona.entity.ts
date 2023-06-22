@@ -25,7 +25,7 @@ export class Persona extends AuditoriaEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
     name: 'id',
-    comment: 'Clave primaria de la tabla persona',
+    comment: 'Clave primaria de la tabla Persona',
   })
   id: string
 
@@ -63,8 +63,7 @@ export class Persona extends AuditoriaEntity {
     length: 15,
     type: 'varchar',
     default: TipoDocumento.CI,
-    comment:
-      'Tipo de documento de la persona, como carnet de identidad(C.I.), pasaporte, otros',
+    comment: 'Tipo de documento de la persona (CI, Pasaporte, otros)',
   })
   tipoDocumento: string
 
@@ -73,7 +72,7 @@ export class Persona extends AuditoriaEntity {
     type: 'varchar',
     length: 50,
     nullable: true,
-    comment: 'Se define otro tipo de documento de la persona, si existe',
+    comment: 'Otro tipo de documento de la persona, si existe',
   })
   tipoDocumentoOtro?: string | null
 
