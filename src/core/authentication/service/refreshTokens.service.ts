@@ -69,6 +69,7 @@ export class RefreshTokensService extends BaseService {
     )
 
     const roles: Array<string | null> = []
+
     if (usuario.roles.length) {
       usuario.roles.map((usuarioRol) => {
         roles.push(usuarioRol.rol)
@@ -80,9 +81,8 @@ export class RefreshTokensService extends BaseService {
         secret: this.configService.get('JWT_SECRET'),
       })
     } catch (err) {
-      this.logger.error(err)
-
       if (err.name === 'JsonWebTokenError') {
+        this.logger.error(err)
         // handle expired token
         throw new UnauthorizedException(Messages.EXCEPTION_UNAUTHORIZED)
       }
@@ -113,6 +113,7 @@ export class RefreshTokensService extends BaseService {
 
     // crear rotacion de refresh token
     const sigueVigente = dayjs(refreshToken.expiresAt).diff(dayjs()) < rft
+
     if (!sigueVigente) {
       return {
         data,
