@@ -770,6 +770,7 @@ export class UsuarioService extends BaseService {
     const perfil = await this.buscarUsuarioId(id)
     return { ...perfil, idRol }
   }
+
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
@@ -874,7 +875,7 @@ export class UsuarioService extends BaseService {
   }
 
   obtenerRolActual(
-    roles: Array<{ idRol: string }>,
+    roles: Array<{ idRol: string; rol: string }>,
     idRol: string | null | undefined
   ) {
     if (roles.length < 1) {

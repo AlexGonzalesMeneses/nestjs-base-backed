@@ -137,7 +137,12 @@ export class AuthenticationService extends BaseService {
 
     const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
 
-    const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
+    const payload = {
+      id: user.id,
+      roles: user.roles,
+      idRol: rol.idRol,
+      rol: rol.rol,
+    }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
@@ -145,6 +150,7 @@ export class AuthenticationService extends BaseService {
       access_token: this.jwtService.sign(payload),
       ...usuario,
       idRol: rol.idRol,
+      rol: rol.rol,
     }
     return {
       refresh_token: { id: refreshToken.id },
@@ -299,7 +305,12 @@ export class AuthenticationService extends BaseService {
 
     const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
 
-    const payload = { id: user.id, roles: user.roles, idRol: rol.idRol }
+    const payload = {
+      id: user.id,
+      roles: user.roles,
+      idRol: rol.idRol,
+      rol: rol.rol,
+    }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
