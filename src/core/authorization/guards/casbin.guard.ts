@@ -1,4 +1,4 @@
-import { LoggerService } from '../../logger/logger.service'
+import { LoggerService } from '../../logger'
 import {
   CanActivate,
   ExecutionContext,
@@ -45,7 +45,7 @@ export class CasbinGuard implements CanActivate {
     }
 
     this.logger.warn(
-      `${action} ${resource} -> false - Permisos insuficientes (CASBIN)`
+      `${action} ${resource} (${user.roles.toString()}) -> false - Permisos insuficientes (CASBIN)`
     )
     throw new ForbiddenException()
   }

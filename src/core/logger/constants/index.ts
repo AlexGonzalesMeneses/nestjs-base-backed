@@ -1,3 +1,5 @@
+import { LoggerParams } from '../types'
+
 export enum COLOR {
   BLACK = `\x1b[30m`,
   RED = `\x1b[31m`,
@@ -17,18 +19,54 @@ export enum COLOR {
   RESET = '\x1b[0m',
 }
 
+//Más info:  https://betterstack.com/community/guides/logging/log-levels-explained/
 export enum LOG_LEVEL {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  DEBUG = 'debug',
-  TRACE = 'trace',
+  FATAL = 'fatal', // 60 Mensajes críticos (Ej.: conexión a la base de datos)
+  ERROR = 'error', // 50 Mensajes de error (Ej.: errores del lado del servidor HTTP 500)
+  WARN = 'warn', // 40 Mensajes de advertencia (Ej.: errores del lado del cliente HTTP 400)
+  INFO = 'info', // 30 Mensajes informativos (Ej.: cuando un servicio ha sido iniciado o detenido, cuando un componente ha sido activado)
+  DEBUG = 'debug', // 20 Mensajes para el desarrollador (Ej.: Información detallada que puede ayudar al desarrollador a resolver un problema - puede activarse en prod temporalmente)
+  TRACE = 'trace', // 10 Mensajes para el desarrollador (Ej.: Para rastrear la ruta de ejecución del código en un programa - solo para test y desarrollo)
 }
 
 export const LOG_COLOR = {
+  [LOG_LEVEL.FATAL]: COLOR.RED,
   [LOG_LEVEL.ERROR]: COLOR.LIGHT_RED,
   [LOG_LEVEL.WARN]: COLOR.YELLOW,
   [LOG_LEVEL.INFO]: COLOR.CYAN,
   [LOG_LEVEL.DEBUG]: COLOR.LIGHT_MAGENTA,
   [LOG_LEVEL.TRACE]: COLOR.LIGHT_GREY,
 }
+
+export const DEFAULT_PARAMS: LoggerParams = {
+  appName: 'app',
+  level: 'info',
+  hide: '',
+  projectPath: process.cwd(),
+  fileParams: {
+    path: '',
+    size: '5M',
+    rotateInterval: '1d',
+    compress: 'false',
+  },
+  lokiParams: {
+    url: '',
+    username: '',
+    password: '',
+    batching: 'true',
+    batchInterval: '5', // en segundos
+  },
+  _levels: [],
+}
+
+export const DEFAULT_SENSITIVE_PARAMS: string[] = [
+  'contrasena',
+  'password',
+  'authorization',
+  'cookie',
+  'token',
+  'access_token',
+  'idToken',
+  'accessToken',
+  'refreshToken',
+]

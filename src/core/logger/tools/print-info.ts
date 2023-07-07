@@ -1,20 +1,16 @@
-import { INestApplication } from '@nestjs/common'
 import { COLOR } from '../constants'
-import packageJson from '../../../../package.json'
 import ip from 'ip'
-import { ConfigService } from '@nestjs/config'
-import { LoggerService } from '../logger.service'
-import { stdoutWrite } from './util'
+import { LoggerService } from '../core'
+import { stdoutWrite } from '../tools'
+import { AppInfo } from '../types'
 
-const logger = LoggerService.getInstance()
+export function printInfo(appInfo: AppInfo) {
+  const logger = LoggerService.getInstance()
 
-export async function printInfo(app: INestApplication) {
-  const configService = app.get(ConfigService)
-
-  const appName = packageJson.name
-  const appVersion = packageJson.version
-  const nodeEnv = configService.get('NODE_ENV')
-  const port = configService.get('PORT')
+  const appName = appInfo.name
+  const appVersion = appInfo.version
+  const nodeEnv = appInfo.env
+  const port = appInfo.port
   const appLocalUrl = `http://localhost:${port}`
   const appNetworkUrl = `http://${ip.address()}:${port}`
 

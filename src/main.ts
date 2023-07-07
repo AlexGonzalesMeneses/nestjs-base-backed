@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { TypeormStore } from 'connect-typeorm'
 import { Session } from './core/authentication/entity/session.entity'
-import { expressMiddleware } from 'cls-rtracer'
 import dotenv from 'dotenv'
 
 import {
@@ -19,9 +18,15 @@ import {
   SWAGGER_API_ROOT,
 } from './common/constants'
 import { DataSource } from 'typeorm'
-import { LoggerService } from './core/logger/logger.service'
-import { NextFunction, Request, Response } from 'express'
-import { printInfo, printLogo, printRoutes } from './core/logger/tools'
+import {
+  LoggerService,
+  LoggerModule,
+  printInfo,
+  printLogo,
+  printRoutes,
+} from './core/logger'
+import packageJson from '../package.json'
+import { ExceptionManager } from './common/exception-manager'
 
 dotenv.config()
 
@@ -40,11 +45,13 @@ export const SessionAppDataSource = new DataSource({
 const logger = LoggerService.getInstance()
 
 const bootstrap = async () => {
+  ExceptionManager.initialize({ logger })
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   })
 
-  await LoggerService.initialize(app)
+  await LoggerModule.initialize(app)
 
   const configService = app.get(ConfigService)
 
@@ -55,8 +62,6 @@ const bootstrap = async () => {
 
   // configuration app
   const repositorySession = SessionAppDataSource.getRepository(Session)
-
-  app.use(expressMiddleware())
 
   app.use(
     session({
@@ -88,20 +93,17 @@ const bootstrap = async () => {
   app.setGlobalPrefix(configService.get('PATH_SUBDOMAIN') || 'api')
   app.useGlobalPipes(new ValidationPipe({ transform: true }))
 
-  if (process.env.NODE_ENV !== 'production') {
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.method.toLowerCase() === 'options') return next()
-      logger.trace(`${req.method} ${req.originalUrl.split('?')[0]}`)
-      return next()
-    })
-  }
-
   const port = configService.get('PORT')
   await app.listen(port)
 
-  await printRoutes(app)
-  await printLogo()
-  await printInfo(app)
+  printRoutes(app)
+  printLogo()
+  printInfo({
+    env: String(process.env.NODE_ENV),
+    name: packageJson.name,
+    port: port,
+    version: packageJson.version,
+  })
 }
 
 function createSwagger(app: INestApplication) {

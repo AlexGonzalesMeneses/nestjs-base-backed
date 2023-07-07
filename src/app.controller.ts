@@ -1,5 +1,4 @@
-import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common'
-import { Response } from 'express'
+import { Controller, Get, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
@@ -12,8 +11,11 @@ export class AppController extends BaseController {
   }
 
   @Get('/estado')
-  async verificarEstado(@Res() res: Response) {
-    return res.status(HttpStatus.OK).json({
+  async verificarEstado() {
+    // await new Promise((resolve) => setTimeout(() => resolve(1), 10000))
+    throw new Error('BOOM')
+    const now = dayjs()
+    return {
       servicio: packageJson.name,
       version: packageJson.version,
       entorno: process.env.NODE_ENV,
@@ -21,8 +23,8 @@ export class AppController extends BaseController {
       commit_sha: this.configService.get('CI_COMMIT_SHORT_SHA'),
       mensaje: this.configService.get('CI_COMMIT_MESSAGE'),
       branch: this.configService.get('CI_COMMIT_REF_NAME'),
-      fecha: dayjs().format('DD/MM/YYYY HH:mm:ss'),
-      hora: Math.floor(Date.now() / 1000),
-    })
+      fecha: now.format('YYYY-MM-DD HH:mm:ss.SSS'),
+      hora: now.valueOf(),
+    }
   }
 }

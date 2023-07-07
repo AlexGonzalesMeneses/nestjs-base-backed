@@ -1,4 +1,4 @@
-import { LoggerService } from '../../logger/logger.service'
+import { LoggerService } from '../../logger'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
@@ -20,6 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       id: payload.id,
       roles: payload.roles,
+      idRol: payload.idRol,
       exp: payload.exp,
       iat: payload.iat,
     }

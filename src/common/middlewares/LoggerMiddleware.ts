@@ -1,0 +1,35 @@
+import { Injectable, NestMiddleware } from '@nestjs/common'
+import { Request, Response, NextFunction } from 'express'
+import { LoggerService } from '../../core/logger'
+
+const logger = LoggerService.getInstance()
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    const t1 = Date.now()
+    const url = req.originalUrl.split('?')[0]
+    const msg = `${req.method} ${url}`
+    logger.trace(msg)
+
+    res.on('finish', () => {
+      const t2 = Date.now()
+      const statusCode = res.statusCode
+      const statusText = res.statusMessage
+      const elapsedTime = (t2 - t1) / 1000
+      const msg = `${req.method} ${url} ${statusCode} ${statusText} (${elapsedTime} seg)`
+      const logLevel = this.getLogLevel(statusCode)
+      logger[logLevel](msg)
+    })
+
+    next()
+  }
+
+  getLogLevel(statusCode: number, err?: Error) {
+    if (statusCode >= 200 && statusCode < 400) return 'trace'
+    if (statusCode >= 400 && statusCode < 500) return 'warn'
+    if (statusCode >= 500) return 'error'
+    if (err) return 'error'
+    return 'info'
+  }
+}

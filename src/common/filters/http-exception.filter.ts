@@ -1,8 +1,8 @@
 import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
-import { ExceptionError } from './exception.error'
-import path from 'path'
+import { ExceptionManager } from '../../common/exception-manager'
+import packageJson from '../../../package.json'
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
@@ -25,66 +25,35 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       user: request.user,
     }
 
-    const exceptionError = new ExceptionError(exception)
+    const errorInfo = ExceptionManager.handleError(exception, {
+      origen: `${packageJson.name} v${packageJson.version}`,
+      modulo: HttpExceptionFilter.name,
+    })
 
-    const errorResponse = {
+    const errorResult: any = {
       finalizado: false,
-      codigo: exceptionError.codigo,
+      codigo: errorInfo.codigo,
       timestamp: Math.floor(Date.now() / 1000),
-      mensaje: exceptionError.mensaje,
-      datos: {
-        errores: exceptionError.errores,
-      },
+      mensaje: errorInfo.mensaje,
+      datos: null,
     }
 
-    if (errorResponse.codigo < 500) {
-      this.logger.warn({ errorResponse })
-      if (exceptionError.stack) {
-        const customErrorStack = this.stackMsg(exceptionError.stack)
-        if (customErrorStack) this.logger.warn(customErrorStack)
-      }
-      this.logger.warn({ errorRequest })
-      if (exceptionError.stack) {
-        this.logger.warn(exceptionError.stack)
+    if (process.env.NODE_ENV !== 'production') {
+      errorResult.datos = {
+        causa: errorInfo.causa,
+        origen: errorInfo.origen,
+        accion: errorInfo.accion,
+        errores: errorInfo.errores,
       }
     }
 
-    if (errorResponse.codigo >= 500) {
-      this.logger.error({ errorResponse })
-      if (exceptionError.stack) {
-        const customErrorStack = this.stackMsg(exceptionError.stack)
-        if (customErrorStack) this.logger.error(customErrorStack)
-      }
-      this.logger.error({ errorRequest })
-      if (exceptionError.stack) {
-        this.logger.error(exceptionError.stack)
-      }
-    }
+    this.logger[errorInfo.codigo < 500 ? 'warn' : 'error'](
+      '\n───────── Respuesta ────────',
+      errorResult,
+      '\n───────── Petición ────────',
+      errorRequest
+    )
 
-    if (process.env.NODE_ENV === 'production') {
-      errorResponse.datos.errores = []
-    }
-
-    response.status(errorResponse.codigo).json(errorResponse)
-  }
-
-  private stackMsg(originalErrorStack: string) {
-    try {
-      const projectPath = path.resolve(__dirname, '../../../../')
-      const customErrorStack = originalErrorStack
-        .split('\n')
-        .map((x) => x.replace(new RegExp(projectPath, 'g'), '...'))
-        .filter((x) => x.includes('.../src'))
-        .map((x) =>
-          x.trim().startsWith('at')
-            ? x.trim().split(' ').slice(2).join(' -> ')
-            : x.trim()
-        )
-        .join('\n')
-        .trim()
-      return customErrorStack ? `Error stack:\n${customErrorStack}` : ''
-    } catch (err) {
-      return originalErrorStack
-    }
+    response.status(errorResult.codigo).json(errorResult)
   }
 }
