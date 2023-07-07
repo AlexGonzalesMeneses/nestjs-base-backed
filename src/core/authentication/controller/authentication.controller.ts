@@ -35,7 +35,7 @@ export class AuthenticationController extends BaseController {
   async login(@Req() req: Request, @Res() res: Response) {
     if (!req.user) {
       throw new BadRequestException(
-        `Es necesario que este autenticado para consumir este recurso.`
+        `Es necesario que esté autenticado para consumir este recurso.`
       )
     }
     const result = await this.autenticacionService.autenticar(req.user)
