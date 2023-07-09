@@ -21,7 +21,6 @@ import { ConfigService } from '@nestjs/config'
 
 @Controller()
 export class AuthenticationController extends BaseController {
-  // eslint-disable-next-line max-params
   constructor(
     private autenticacionService: AuthenticationService,
     private refreshTokensService: RefreshTokensService,
