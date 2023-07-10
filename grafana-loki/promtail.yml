@@ -1,0 +1,11 @@
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: agetic-nestjs-base-log-scraper
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: agetic-nestjs-base-job
+          __path__: /tmp/logs/**/info.log

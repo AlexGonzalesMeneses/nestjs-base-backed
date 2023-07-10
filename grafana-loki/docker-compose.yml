@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  grafana:
+    image: "grafana/grafana"
+    container_name: grafana
+    env_file: ./grafana.env
+    ports:
+      - "5000:3000"
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+
+  loki:
+    image: "grafana/loki"
+    container_name: loki
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: "grafana/promtail"
+    container_name: promtail
+    volumes:
+      - /tmp/logs:/tmp/logs:ro
+      - ./promtail.yml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
