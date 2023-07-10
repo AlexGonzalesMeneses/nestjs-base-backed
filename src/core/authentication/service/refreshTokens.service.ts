@@ -92,7 +92,12 @@ export class RefreshTokensService extends BaseService {
       decode['idRol']
     )
 
-    const payload = { id: usuario.id, roles, idRol: rol.idRol, rol: rol.rol }
+    const payload: PayloadType = {
+      id: usuario.id,
+      roles,
+      idRol: rol.idRol,
+      rol: rol.rol,
+    }
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,

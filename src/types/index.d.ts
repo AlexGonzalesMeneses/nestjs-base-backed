@@ -12,6 +12,15 @@ declare global {
     exp?: number
     iat?: number
   }
+
+  type PayloadType = {
+    id: string
+    roles: Array<string>
+    idRol?: string // rol principal
+    rol?: string // rol principal
+    exp?: number
+    iat?: number
+  }
 }
 
 declare module 'express-serve-static-core' {

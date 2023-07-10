@@ -137,7 +137,7 @@ export class AuthenticationService extends BaseService {
 
     const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
 
-    const payload = {
+    const payload: PayloadType = {
       id: user.id,
       roles: user.roles,
       idRol: rol.idRol,
@@ -305,7 +305,7 @@ export class AuthenticationService extends BaseService {
 
     const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
 
-    const payload = {
+    const payload: PayloadType = {
       id: user.id,
       roles: user.roles,
       idRol: rol.idRol,
