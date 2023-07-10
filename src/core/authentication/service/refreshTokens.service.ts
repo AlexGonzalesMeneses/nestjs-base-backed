@@ -23,7 +23,6 @@ dotenv.config()
 
 @Injectable()
 export class RefreshTokensService extends BaseService {
-  // eslint-disable-next-line max-params
   constructor(
     @Inject(RefreshTokensRepository)
     private refreshTokensRepository: RefreshTokensRepository,
@@ -68,13 +67,7 @@ export class RefreshTokensService extends BaseService {
       refreshToken.grantId
     )
 
-    const roles: Array<string | null> = []
-
-    if (usuario.roles.length) {
-      usuario.roles.map((usuarioRol) => {
-        roles.push(usuarioRol.rol)
-      })
-    }
+    const roles = usuario.roles.map((rol) => rol.rol)
 
     try {
       this.jwtService.verify(datos.token, {
