@@ -72,7 +72,7 @@ export class RefreshTokensService extends BaseService {
 
     const roles = usuario.roles.map((rol) => rol.rol)
 
-    const payload = { id: usuario.id, roles }
+    const payload: PayloadType = { id: usuario.id, roles }
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
