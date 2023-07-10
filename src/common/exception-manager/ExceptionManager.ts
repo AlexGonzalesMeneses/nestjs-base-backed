@@ -235,7 +235,7 @@ export class ExceptionManager {
     const logger = ExceptionManager.logger
     if (!logger) return
 
-    logger[errorInfo.codigo < 500 ? 'warn' : 'error'](
+    const args: unknown[] = [
       '\n───────────────────────',
       `─ Mensaje : ${errorInfo.mensaje}`,
       `─ Causa   : ${errorInfo.causa}`,
@@ -243,14 +243,28 @@ export class ExceptionManager {
       `─ Acción  : ${errorInfo.accion}`,
       `─ Sistema : ${errorInfo.sistema}`,
       `─ Handler : ${errorInfo.errorHandler}`,
-      '\n───── Detalle ─────────',
-      errorInfo.detalle,
-      '\n───── Error ───────────',
-      errorInfo.error,
-      '\n───── Error stack ─────',
-      errorInfo.errorStack,
-      '\n───── Trace stack ─────',
-      errorInfo.traceStack
-    )
+    ]
+
+    if (errorInfo.detalle && errorInfo.detalle.length > 0) {
+      args.push('\n───── Detalle ─────────')
+      args.push(errorInfo.detalle)
+    }
+
+    if (errorInfo.error) {
+      args.push('\n───── Error ───────────')
+      args.push(errorInfo.error)
+    }
+
+    if (errorInfo.errorStack) {
+      args.push('\n───── Error stack ─────')
+      args.push(errorInfo.errorStack)
+    }
+
+    if (errorInfo.traceStack) {
+      args.push('\n───── Trace stack ─────')
+      args.push(errorInfo.traceStack)
+    }
+
+    logger[errorInfo.codigo < 500 ? 'warn' : 'error'](...args)
   }
 }
