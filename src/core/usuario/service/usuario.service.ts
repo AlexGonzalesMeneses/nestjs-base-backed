@@ -523,7 +523,7 @@ export class UsuarioService extends BaseService {
   verificarPermisos(usuarioAuditoria, id) {
     if (usuarioAuditoria === id) {
       throw new ForbiddenException(
-        'No tienes permisos para realizar la acción porque se trata de tu propia cuenta'
+        'No tiene permiso para realizar esta acción porque se trata de su propia cuenta'
       )
     }
   }

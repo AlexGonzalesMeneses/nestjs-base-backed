@@ -10,8 +10,16 @@ import { catchError, timeout } from 'rxjs/operators'
 import { LoggerService } from '../../core/logger'
 import { Request } from 'express'
 
+import dotenv from 'dotenv'
+dotenv.config()
+
 const logger = LoggerService.getInstance()
-const tiempoMaximoEspera = 5 // Tiempo máximo de espera en segundos
+
+const DEFAULT_REQUEST_TIMEOUT = '30' // en segundos
+
+const tiempoMaximoEspera = Number(
+  process.env.REQUEST_TIMEOUT_IN_SECONDS || DEFAULT_REQUEST_TIMEOUT
+)
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {

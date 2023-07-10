@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import { map } from 'rxjs/operators'
-import { ExternalServiceException } from '../../../common/exceptions/external-service.exception'
+import { ExternalServiceException } from '../../../common/exceptions'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
+import { LoggerService } from '../../logger/core'
+
+const logger = LoggerService.getInstance()
 
 @Injectable()
 export class MensajeriaService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) {
+    logger.trace('Instanciando servicio de MENSAJERÍA...', {
+      baseURL: httpService.axiosRef.defaults.baseURL,
+    })
+  }
 
   /**
    * Metodo para enviar sms
@@ -19,13 +26,16 @@ export class MensajeriaService {
         para: [cellphone],
         contenido: content,
       }
-      const response = await this.httpService
+      const response = this.httpService
         .post('/sms', smsBody)
         .pipe(map((res) => res.data))
 
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:SMS', error)
+      throw new ExternalServiceException(error, MensajeriaService.name, {
+        origen: 'MENSAJERÍA:SMS',
+        mensaje: 'Ocurrió un problema al enviar el mensaje por SMS',
+      })
     }
   }
 
@@ -42,13 +52,15 @@ export class MensajeriaService {
         asunto: subject,
         contenido: content,
       }
-      const response = await this.httpService
+      const response = this.httpService
         .post('/correo', emailBody)
         .pipe(map((res) => res.data))
-
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:CORREO', error)
+      throw new ExternalServiceException(error, MensajeriaService.name, {
+        origen: 'MENSAJERÍA:CORREO',
+        mensaje: 'Ocurrió un problema al enviar el mensaje por E-MAIL',
+      })
     }
   }
 
@@ -62,9 +74,12 @@ export class MensajeriaService {
         .get(`/sms/reporte/${id}`)
         .pipe(map((res) => res.data))
 
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:SMS', error)
+      throw new ExternalServiceException(error, MensajeriaService.name, {
+        origen: 'MENSAJERÍA:SMS',
+        mensaje: 'Ocurrió un problema al obtener el reporte del SMS',
+      })
     }
   }
 
@@ -77,9 +92,12 @@ export class MensajeriaService {
       const response = this.httpService
         .get(`/correo/reporte/${id}`)
         .pipe(map((res) => res.data))
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:CORREO', error)
+      throw new ExternalServiceException(error, MensajeriaService.name, {
+        origen: 'MENSAJERÍA:CORREO',
+        mensaje: 'Ocurrió un problema al obtener el reporte del E-MAIL',
+      })
     }
   }
 }

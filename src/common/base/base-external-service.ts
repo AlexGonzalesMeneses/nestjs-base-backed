@@ -1,125 +1,67 @@
 import { HttpService } from '@nestjs/axios'
-import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { BaseService } from './base-service'
-
-export type RequestOptions = {
-  validarIOP?: boolean
-}
+import { ExternalServiceException } from '../exceptions'
 
 export type RequestResult = {
-  config?: AxiosRequestConfig
-  error?: unknown | null
-  response: Partial<AxiosResponse> | null
+  response: AxiosResponse | null
+  config: AxiosRequestConfig
+  error?: unknown
   errorMessage?: string
 }
 
 export class BaseExternalService extends BaseService {
-  protected name = 'BASE'
+  protected name = 'Servicio Externo'
 
   constructor(protected http: HttpService) {
     super()
   }
 
-  async request(
-    axiosConfig: AxiosRequestConfig,
-    opt: RequestOptions = {}
-  ): Promise<RequestResult> {
-    try {
-      this.setDefaultValues(opt)
-      const response = await firstValueFrom(this.http.request(axiosConfig))
-      this.logger.trace({
-        config: axiosConfig,
-        response: {
-          status: response.status,
-          body: response.data,
-        },
-      })
-      return { response }
-    } catch (error) {
-      const requestInfo: RequestResult = {
-        config: axiosConfig,
-        response: null,
-        error,
-        errorMessage: 'Error desconocido',
-      }
+  async request(axiosConfig: AxiosRequestConfig): Promise<RequestResult> {
+    const method = axiosConfig.method?.padEnd(6, ' ')
+    let t2 = 0,
+      elapsedTime: number,
+      msg: string
 
-      // TYPED ERROR
-      if (!error || typeof error !== 'object') {
-        this.logger.error(requestInfo)
-        return requestInfo
-      }
-
-      // CONEXION ERROR
-      if (!(error instanceof AxiosError) || !error.response) {
-        if (
-          [
-            'ESOCKETTIMEDOUT',
-            'ETIMEDOUT',
-            'ECONNREFUSED',
-            'ENOTFOUND',
-          ].includes(String(error.code))
-        ) {
-          requestInfo.errorMessage = `No es posible conectarse con el servicio. Por favor vuelva a intentarlo o comuníquese con el Administrador del Sistema si el problema persiste.`
-          this.logger.error(requestInfo)
-          return requestInfo
-        }
-
-        this.logger.error(requestInfo)
-        return requestInfo
-      }
-
-      requestInfo.response = error.response
-
-      // IOP ERROR tipo 1 body = { message: "detalle del error" }
-      if (
-        opt.validarIOP &&
-        error.response &&
-        error.response.data &&
-        typeof error.response.data === 'object' &&
-        Object.keys(error.response.data || {}).length === 1 &&
-        error.response.data.message &&
-        typeof error.response.data.message === 'string'
-      ) {
-        requestInfo.errorMessage = `Ocurrió un error con el servicio de interoperabilidad`
-        this.logger.error(requestInfo)
-        return requestInfo
-      }
-
-      // IOP ERROR tipo 2 body = { data: "detalle del error" }
-      if (
-        opt.validarIOP &&
-        error.response &&
-        error.response.data &&
-        typeof error.response.data === 'object' &&
-        Object.keys(error.response.data || {}).length === 1 &&
-        error.response.data.data &&
-        typeof error.response.data.data === 'string'
-      ) {
-        requestInfo.errorMessage = `Ocurrió un error con el servicio de interoperabilidad`
-        this.logger.error(requestInfo)
-        return requestInfo
-      }
-
-      // UPSTREAM ERROR
-      if (
-        error.response &&
-        error.response.data === 'The upstream server is timing out'
-      ) {
-        requestInfo.errorMessage = `El servicio no está disponible. Intente otra vez.`
-        this.logger.error(requestInfo)
-        return requestInfo
-      }
-
-      // AXIOS ERROR
-      requestInfo.errorMessage = `AxiosError ${requestInfo.response.status}`
-      this.logger.error(requestInfo)
-      return requestInfo
+    const requestInfo: RequestResult = {
+      response: null,
+      errorMessage: undefined,
+      error: null,
+      config: axiosConfig,
     }
-  }
 
-  private setDefaultValues(opt: RequestOptions = {}) {
-    opt.validarIOP =
-      typeof opt.validarIOP === 'boolean' ? Boolean(opt.validarIOP) : true
+    const t1 = Date.now()
+    try {
+      const response = await firstValueFrom(this.http.request(axiosConfig))
+      t2 = Date.now()
+      requestInfo.response = response
+    } catch (error: unknown) {
+      t2 = Date.now()
+      const except = new ExternalServiceException(
+        error,
+        BaseExternalService.name,
+        { origen: this.name }
+      )
+      requestInfo.response =
+        error && typeof error === 'object' && 'response' in error
+          ? (error.response as AxiosResponse)
+          : null
+      requestInfo.errorMessage = except.errorInfo.obtenerMensajeCliente()
+      requestInfo.error = error
+    } finally {
+      elapsedTime = (t2 - t1) / 1000
+      const statusCode = requestInfo.response?.status || '-'
+      const statusText = requestInfo.response?.statusText || '-'
+      msg = `[Servicio externo] ${method} ${axiosConfig.url} ${statusCode} ${statusText} (${elapsedTime} seg)`
+
+      this.logger.trace({
+        axiosConfig,
+        responseData: requestInfo.response?.data,
+      })
+      this.logger.trace(msg)
+    }
+
+    return requestInfo
   }
 }

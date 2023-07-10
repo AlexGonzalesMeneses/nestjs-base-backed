@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { map } from 'rxjs/operators'
-import { ExternalServiceException } from '../../../../common/exceptions/external-service.exception'
+import { ExternalServiceException } from '../../../../common/exceptions'
 import dayjs from 'dayjs'
 import { PersonaDto } from '../../../usuario/dto/persona.dto'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
 import { BaseExternalService } from '../../../../common/base/base-external-service'
+import { LoggerService } from '../../../logger'
 
 // Respuestas códigos SEGIP
 enum CodigoResSegipEnum {
@@ -23,10 +24,15 @@ enum EstadosDatosEnum {
   // NO_VERIFICADO = 2, // Dato no verificado
 }
 
+const logger = LoggerService.getInstance()
+
 @Injectable()
 export class SegipService extends BaseExternalService {
   constructor(private readonly httpService: HttpService) {
     super(httpService)
+    logger.trace('Instanciando servicio de SEGIP...', {
+      baseURL: httpService.axiosRef.defaults.baseURL,
+    })
   }
 
   /**
@@ -40,7 +46,7 @@ export class SegipService extends BaseExternalService {
       const urlContrastacion = encodeURI(`/v2/personas/contrastacion`)
 
       const respuesta = await firstValueFrom(
-        await this.httpService
+        this.httpService
           .get(urlContrastacion, {
             params: {
               tipo_persona: 1,
@@ -83,7 +89,10 @@ export class SegipService extends BaseExternalService {
 
       return this.armarRespuesta(exito, mensaje)
     } catch (error) {
-      throw new ExternalServiceException('SEGIP:CONTRASTACION', error)
+      throw new ExternalServiceException(error, SegipService.name, {
+        origen: 'SEGIP:CONTRASTACION',
+        mensaje: 'Ocurrió un problema al contrastar los datos de la persona',
+      })
     }
   }
 

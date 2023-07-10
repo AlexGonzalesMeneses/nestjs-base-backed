@@ -1,16 +1,21 @@
-import { BaseExternalService } from '../../../../common/base/base-external-service'
+import { ExternalServiceException } from '../../../../common/exceptions'
+import { BaseExternalService } from '../../../../common/base'
 import { Injectable } from '@nestjs/common'
 import { SINCredencialesDTO } from './credenciales.dto'
 import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig } from 'axios'
 import { LoginResponse, LoginResult } from './types'
+import { LoggerService } from '../../../logger'
+
+const logger = LoggerService.getInstance()
 
 @Injectable()
 export class SinService extends BaseExternalService {
-  protected name = 'SIN'
-
   constructor(protected http: HttpService) {
     super(http)
+    logger.trace('Instanciando servicio de SIN...', {
+      baseURL: http.axiosRef.defaults.baseURL,
+    })
   }
 
   /**
@@ -31,7 +36,6 @@ export class SinService extends BaseExternalService {
 
       const requestResult = await this.request(config)
       if (requestResult.error && requestResult.errorMessage) {
-        this.logger.error(requestResult)
         return {
           finalizado: false,
           mensaje: requestResult.errorMessage,
@@ -81,12 +85,14 @@ export class SinService extends BaseExternalService {
         finalizado: true,
         mensaje: body.Estado,
       }
-    } catch (error) {
-      const errMsg = `${this.name}: Error interno`
-      this.logger.error(errMsg, error)
+    } catch (error: unknown) {
+      const except = new ExternalServiceException(error, SinService.name, {
+        origen: 'SIN',
+        mensaje: 'Ocurrió un error con el Servicio de Impuestos Nacionales',
+      })
       return {
         finalizado: false,
-        mensaje: errMsg,
+        mensaje: except.errorInfo.obtenerMensajeCliente(),
       }
     }
   }

@@ -10,6 +10,7 @@ export {
   cleanParamValue,
   isAxiosError,
   isConexionError,
+  isCertExpiredError,
   getErrorStack,
   getContext,
   SQLLogger,

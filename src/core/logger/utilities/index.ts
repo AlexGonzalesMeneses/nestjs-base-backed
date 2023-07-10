@@ -4,5 +4,6 @@ export {
   cleanParamValue,
   isAxiosError,
   isConexionError,
+  isCertExpiredError,
 } from './clean-param-value'
 export { SQLLogger } from './SQLLogger'

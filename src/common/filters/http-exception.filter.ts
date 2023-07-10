@@ -2,7 +2,6 @@ import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
 import { ExceptionManager } from '../../common/exception-manager'
-import packageJson from '../../../package.json'
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
@@ -25,26 +24,20 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       user: request.user,
     }
 
-    const errorInfo = ExceptionManager.handleError(exception, {
-      origen: `${packageJson.name} v${packageJson.version}`,
-      modulo: HttpExceptionFilter.name,
-    })
+    const errorInfo = ExceptionManager.handleError(
+      exception,
+      HttpExceptionFilter.name
+    )
 
-    const errorResult: any = {
+    const errorResult = {
       finalizado: false,
       codigo: errorInfo.codigo,
       timestamp: Math.floor(Date.now() / 1000),
-      mensaje: errorInfo.mensaje,
-      datos: null,
-    }
-
-    if (process.env.NODE_ENV !== 'production') {
-      errorResult.datos = {
+      mensaje: errorInfo.obtenerMensajeCliente(),
+      datos: {
         causa: errorInfo.causa,
-        origen: errorInfo.origen,
         accion: errorInfo.accion,
-        errores: errorInfo.errores,
-      }
+      },
     }
 
     this.logger[errorInfo.codigo < 500 ? 'warn' : 'error'](

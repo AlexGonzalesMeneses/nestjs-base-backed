@@ -1,15 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toJSON } from 'flatted'
-import { DEFAULT_SENSITIVE_PARAMS } from '../constants'
+import {
+  CLEAN_PARAM_VALUE_MAX_DEEP,
+  DEFAULT_SENSITIVE_PARAMS,
+} from '../constants'
 
 export function cleanParamValue(
-  value: any,
+  value: unknown,
   deep = 0,
   sensitiveParams = DEFAULT_SENSITIVE_PARAMS
 ) {
   try {
     // Para evitar recursividad infinita
-    if (deep > 10) return String(value)
+    if (deep > CLEAN_PARAM_VALUE_MAX_DEEP) return String(value)
 
     // START
     if (typeof value === 'object' && value !== null) {
@@ -20,48 +22,80 @@ export function cleanParamValue(
       }
       if (isAxiosResponse(value)) {
         return {
-          data: value.data,
-          status: value.status,
-          statusText: value.statusText,
+          data: 'data' in value ? cleanParamValue(value.data) : undefined,
+          status: 'status' in value ? value.status : undefined,
+          statusText: 'statusText' in value ? value.statusText : undefined,
         }
       }
       if (isAxiosRequest(value)) {
         return {
-          path: value.path,
-          method: value.method,
-          host: value.host,
-          protocol: value.protocol,
+          path: 'path' in value ? value.path : undefined,
+          method: 'method' in value ? value.method : undefined,
+          host: 'host' in value ? value.host : undefined,
+          protocol: 'protocol' in value ? value.protocol : undefined,
         }
       }
       if (isAxiosError(value)) {
+        const config =
+          'config' in value && value.config && typeof value.config === 'object'
+            ? value.config
+            : undefined
+        const response =
+          'response' in value &&
+          value.response &&
+          typeof value.response === 'object'
+            ? value.response
+            : undefined
         return {
-          code: value.code,
-          config: {
-            headers: value.config?.headers,
-            baseURL: value.config?.baseURL,
-            method: value.config?.method,
-            url: value.config?.url,
-            data: value.config?.data,
-          },
-          response: {
-            status: value.response?.status,
-            statusText: value.response?.statusText,
-            data: value.response?.data,
-          },
+          code: 'code' in value ? value.code : undefined,
+          config: config
+            ? {
+                headers:
+                  'headers' in config
+                    ? cleanParamValue(config.headers)
+                    : undefined,
+                baseURL: 'baseURL' in config ? config.baseURL : undefined,
+                method: 'method' in config ? config.method : undefined,
+                url: 'url' in config ? config.url : undefined,
+                data:
+                  'data' in config ? cleanParamValue(config.data) : undefined,
+              }
+            : undefined,
+          response: response
+            ? {
+                status: 'status' in response ? response.status : undefined,
+                statusText:
+                  'statusText' in response ? response.statusText : undefined,
+                data:
+                  'data' in response
+                    ? cleanParamValue(response.data)
+                    : undefined,
+              }
+            : undefined,
         }
       }
       if (isConexionError(value)) {
+        const config =
+          'config' in value && value.config && typeof value.config === 'object'
+            ? value.config
+            : undefined
         return {
-          name: value.name,
-          message: value.message,
-          code: value.code,
-          config: {
-            headers: value.config?.headers,
-            baseURL: value.config?.baseURL,
-            method: value.config?.method,
-            url: value.config?.url,
-            data: value.config?.data,
-          },
+          name: 'name' in value ? value.name : undefined,
+          message: 'message' in value ? value.message : undefined,
+          code: 'code' in value ? value.code : undefined,
+          config: config
+            ? {
+                headers:
+                  'headers' in config
+                    ? cleanParamValue(config.headers)
+                    : undefined,
+                baseURL: 'baseURL' in config ? config.baseURL : undefined,
+                method: 'method' in config ? config.method : undefined,
+                url: 'url' in config ? config.url : undefined,
+                data:
+                  'data' in config ? cleanParamValue(config.data) : undefined,
+              }
+            : undefined,
         }
       }
       return Object.keys(value).reduce((prev, curr) => {
@@ -97,43 +131,65 @@ export function cleanParamValue(
   }
 }
 
-function isAxiosResponse(data: any) {
+function isAxiosResponse(data: unknown) {
   const result = Boolean(
-    typeof data === 'object' &&
+    data &&
+      typeof data === 'object' &&
+      'data' in data &&
       typeof data.data !== 'undefined' &&
+      'status' in data &&
       typeof data.status !== 'undefined' &&
+      'statusText' in data &&
       typeof data.statusText !== 'undefined' &&
+      'headers' in data &&
       typeof data.headers !== 'undefined' &&
+      'config' in data &&
       typeof data.config !== 'undefined'
   )
   return result
 }
 
-function isAxiosRequest(data: any) {
+function isAxiosRequest(data: unknown) {
   const result = Boolean(
-    typeof data === 'object' &&
+    data &&
+      typeof data === 'object' &&
+      'path' in data &&
       typeof data.path !== 'undefined' &&
+      'method' in data &&
       typeof data.method !== 'undefined' &&
+      'host' in data &&
       typeof data.host !== 'undefined' &&
+      'protocol' in data &&
       typeof data.protocol !== 'undefined' &&
+      'res' in data &&
       typeof data.res !== 'undefined'
   )
   return result
 }
 
-export function isAxiosError(data: any): boolean {
+export function isAxiosError(data: unknown): boolean {
   const result = Boolean(data instanceof Error && data.name === 'AxiosError')
   return result
 }
 
-export function isConexionError(data: any): boolean {
-  const result = Boolean(
-    (!isAxiosError(data) || !data.response) &&
-      data.code &&
+export function isConexionError(data: unknown): boolean {
+  return Boolean(
+    data &&
+      typeof data === 'object' &&
+      'code' in data &&
       typeof data.code === 'string' &&
       ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND'].includes(
         data.code
       )
   )
-  return result
+}
+
+export function isCertExpiredError(data: unknown): boolean {
+  return Boolean(
+    data &&
+      typeof data === 'object' &&
+      'code' in data &&
+      typeof data.code === 'string' &&
+      data.code === 'CERT_HAS_EXPIRED'
+  )
 }

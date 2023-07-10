@@ -1,4 +1,5 @@
-import { LoggerParams } from '../types'
+import { LoggerService } from '../core'
+import { LoggerParams, SQLLoggerParams } from '../types'
 
 export enum COLOR {
   BLACK = `\x1b[30m`,
@@ -59,6 +60,8 @@ export const DEFAULT_PARAMS: LoggerParams = {
   _levels: [],
 }
 
+export const CLEAN_PARAM_VALUE_MAX_DEEP = 10
+
 export const DEFAULT_SENSITIVE_PARAMS: string[] = [
   'contrasena',
   'password',
@@ -70,3 +73,11 @@ export const DEFAULT_SENSITIVE_PARAMS: string[] = [
   'accessToken',
   'refreshToken',
 ]
+
+export const DEFAULT_SQL_LOGGER_PARAMS: SQLLoggerParams = {
+  logger: { error: (...params) => console.error(...params) } as LoggerService,
+  level: {
+    error: true,
+    query: true,
+  },
+}

@@ -9,7 +9,7 @@ export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const t1 = Date.now()
     const url = req.originalUrl.split('?')[0]
-    const msg = `${req.method} ${url}`
+    const msg = `${req.method} ${url}...`
     logger.trace(msg)
 
     res.on('finish', () => {

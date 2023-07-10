@@ -1,4 +1,5 @@
 import { Level } from 'pino'
+import { LoggerService } from '../core'
 
 export type FileParams = {
   path: string
@@ -39,4 +40,19 @@ export type AppInfo = {
   version: string
   env: string
   port: string
+}
+
+export type SQLLoggerParams = {
+  logger: LoggerService
+  level: {
+    error: boolean
+    query: boolean
+  }
+}
+
+export type SQLLoggerOptions = Partial<SQLLoggerParams>
+
+export type SQLLogLevel = {
+  error: boolean
+  query: boolean
 }

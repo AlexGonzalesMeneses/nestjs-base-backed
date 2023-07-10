@@ -1,42 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AdvancedConsoleLogger } from 'typeorm'
 import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
-import { LoggerService } from '../core'
 import { getErrorStack } from './get-error-stack'
 import { stdoutWrite } from '../tools'
-import { COLOR } from '../constants'
-
-export type SQLLoggerParams = {
-  logger: LoggerService
-  level: {
-    error: boolean
-    query: boolean
-  }
-}
-
-export type SQLLogLevel = {
-  error: boolean
-  query: boolean
-}
-
-export const DEFAULT_SQL_LOGGER_PARAMS: SQLLoggerParams = {
-  logger: { error: (sql) => console.error(sql) } as LoggerService,
-  level: {
-    error: true,
-    query: true,
-  },
-}
+import { COLOR, DEFAULT_SQL_LOGGER_PARAMS } from '../constants'
+import { SQLLoggerParams, SQLLoggerOptions } from '../types'
 
 export class SQLLogger extends AdvancedConsoleLogger {
   private params: SQLLoggerParams = DEFAULT_SQL_LOGGER_PARAMS
 
-  constructor(opt: Partial<SQLLoggerParams> = {}) {
+  constructor(opt: SQLLoggerOptions = {}) {
     super(true)
     this.params = Object.assign({}, DEFAULT_SQL_LOGGER_PARAMS, opt)
   }
 
-  logQuery(query: string, parameters?: any[]) {
+  logQuery(query: string, parameters?: unknown[]) {
     if (!this.params.level.query) {
       return
     }
@@ -44,18 +22,18 @@ export class SQLLogger extends AdvancedConsoleLogger {
     stdoutWrite(`\n${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
   }
 
-  logQueryError(error: string, query: string, parameters?: any[]): void {
+  logQueryError(error: string, query: string, parameters?: unknown[]): void {
     if (!this.params.level.error) {
       return
     }
     const ctx = getErrorStack(new Error())
     const sql = this.buildSql(query, parameters, true, false)
     this.params.logger.error(
-      '\n───────── QUERY FAILED ────────',
+      '\n───────── QUERY FAILED ────────\n',
       sql,
-      '\n───────── QUERY ERROR ────────',
+      '\n───────── QUERY ERROR ────────\n',
       error,
-      '\n───────── QUERY STACK ────────',
+      '\n───────── QUERY STACK ────────\n',
       `${ctx}\n`
     )
   }
@@ -80,7 +58,7 @@ export class SQLLogger extends AdvancedConsoleLogger {
 
   private buildSql(
     query: string,
-    parameters?: Array<any>,
+    parameters?: Array<unknown>,
     pretty?: boolean,
     colorize = true
   ) {

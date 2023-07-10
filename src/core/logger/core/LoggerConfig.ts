@@ -37,7 +37,7 @@ export class LoggerConfig {
       }
     }
 
-    const lokiStream: any[] = []
+    const lokiStream: pino.StreamEntry[] = []
     if (loggerParams.lokiParams) {
       lokiStream.push({
         level: 'trace',

@@ -1,8 +1,11 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
+import { ExceptionManager } from './common/exception-manager'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
+import { LogRequestDTO } from './app.dto'
+import { Response } from 'express'
 
 @Controller()
 export class AppController extends BaseController {
@@ -12,8 +15,6 @@ export class AppController extends BaseController {
 
   @Get('/estado')
   async verificarEstado() {
-    // await new Promise((resolve) => setTimeout(() => resolve(1), 10000))
-    throw new Error('BOOM')
     const now = dayjs()
     return {
       servicio: packageJson.name,
@@ -25,6 +26,36 @@ export class AppController extends BaseController {
       branch: this.configService.get('CI_COMMIT_REF_NAME'),
       fecha: now.format('YYYY-MM-DD HH:mm:ss.SSS'),
       hora: now.valueOf(),
+    }
+  }
+
+  @Post('/log')
+  async registrarLog(@Res() res: Response, @Body() body: LogRequestDTO) {
+    try {
+      const codigoHttp = body.codigo || 500
+      if (codigoHttp >= 400) {
+        ExceptionManager.handleError('', AppController.name, {
+          codigo: codigoHttp,
+          mensaje: body.mensaje,
+          detalle: [
+            {
+              fecha: body.fecha,
+              navegador: body.navegador,
+            },
+            body.detalle,
+          ],
+          sistema: body.sistema,
+          causa: body.causa,
+          origen: body.origen,
+          accion: body.accion,
+        })
+      } else {
+        this.logger.trace(body)
+      }
+
+      return res.status(204).send()
+    } catch (err) {
+      //
     }
   }
 }

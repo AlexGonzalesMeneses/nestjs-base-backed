@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import express from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import helmet from 'helmet'
@@ -45,7 +46,11 @@ export const SessionAppDataSource = new DataSource({
 const logger = LoggerService.getInstance()
 
 const bootstrap = async () => {
-  ExceptionManager.initialize({ logger })
+  ExceptionManager.initialize({
+    appName: packageJson.name,
+    appVersion: packageJson.version,
+    logger,
+  })
 
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
@@ -82,6 +87,7 @@ const bootstrap = async () => {
   app.use(passport.initialize())
   app.use(passport.session())
   app.use(cookieParser())
+  app.use(express.static('public'))
 
   app.enableCors({
     origin: true,
