@@ -1,5 +1,4 @@
 import {
-  LoggerService,
   cleanParamValue,
   getErrorStack,
   isAxiosError,
@@ -7,40 +6,13 @@ import {
   isConexionError,
 } from '../../core/logger'
 import { HttpException, HttpStatus } from '@nestjs/common'
-import {
-  ExceptionManagerOptions,
-  ExceptionManagerParams,
-  HandleErrorOptions,
-} from './types'
-import { DEFAULT_PARAMS } from './constants'
+import { HandleErrorOptions } from './types'
 import { extractMessage } from './utils'
 import { ErrorInfo } from './ErrorInfo'
 import { BaseException } from './BaseException'
 import { HttpMessages } from './messages'
 
 export class ExceptionManager {
-  private static params: ExceptionManagerParams | null = null
-  private static logger: LoggerService | undefined = undefined
-
-  static initialize(options: ExceptionManagerOptions) {
-    const newParams: ExceptionManagerParams = {
-      appName:
-        typeof options.appName === 'undefined'
-          ? DEFAULT_PARAMS.appName
-          : options.appName,
-      appVersion:
-        typeof options.appVersion === 'undefined'
-          ? DEFAULT_PARAMS.appVersion
-          : options.appVersion,
-      logger:
-        typeof options.logger === 'undefined'
-          ? DEFAULT_PARAMS.logger
-          : options.logger,
-    }
-    ExceptionManager.params = newParams
-    ExceptionManager.logger = newParams.logger
-  }
-
   static handleError(
     error: unknown,
     errorHandler: string,
@@ -58,9 +30,7 @@ export class ExceptionManager {
       detalle:
         opt.detalle ||
         cleanParamValue(error instanceof Error ? [error.toString()] : []),
-      sistema:
-        opt.sistema ||
-        `${ExceptionManager.params?.appName} v${ExceptionManager.params?.appVersion}`,
+      sistema: opt.sistema || '',
       causa: opt.causa || '',
       origen: opt.origen || '',
       accion: opt.accion || 'Más info en detalles',
@@ -78,7 +48,6 @@ export class ExceptionManager {
         opt.causa || 'Posiblemente sea el formato de los datos de entrada'
       errorInfo.accion =
         opt.accion || 'Verifica el contenido del objeto JSON enviado en el body'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // CONEXION ERROR
@@ -93,7 +62,6 @@ export class ExceptionManager {
       errorInfo.accion =
         opt.accion ||
         'Verifique la configuración de red y que el servicio al cual se intenta conectar se encuentre activo'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // IOP ERROR tipo 1 body = { message: "detalle del error" }
@@ -118,7 +86,6 @@ export class ExceptionManager {
       errorInfo.accion =
         opt.accion ||
         'Verificar que el servicio de INTEROPRABILIDAD se encuentre activo y respondiendo correctamente'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // IOP ERROR tipo 2 body = { data: "detalle del error" }
@@ -143,7 +110,6 @@ export class ExceptionManager {
       errorInfo.accion =
         opt.accion ||
         'Verificar que el servicio de INTEROPRABILIDAD se encuentre activo y respondiendo correctamente'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // UPSTREAM ERROR
@@ -163,7 +129,6 @@ export class ExceptionManager {
       errorInfo.accion =
         opt.accion ||
         'Verificar que el servicio al cual se intenta conectar se encuentre activo y respondiendo correctamente'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // CERT EXPIRED ERROR
@@ -176,7 +141,6 @@ export class ExceptionManager {
         opt.causa ||
         ('code' in error && typeof error.code === 'string' ? error.code : '')
       errorInfo.accion = opt.accion || 'Renovar el certificado digital'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // HTTP ERROR
@@ -191,7 +155,6 @@ export class ExceptionManager {
           : 'Más info en detalles')
       errorInfo.error = error.toString()
       errorInfo.detalle = []
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // AXIOS ERROR
@@ -210,7 +173,6 @@ export class ExceptionManager {
         opt.causa || `Error HTTP ${errorInfo.codigo} (Servicio externo)`
       errorInfo.accion =
         opt.accion || 'Revisar la respuesta devuelta por el servicio externo'
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     // SQL ERROR
@@ -220,51 +182,8 @@ export class ExceptionManager {
     ) {
       errorInfo.causa = opt.causa || error.name
       errorInfo.accion = opt.accion || 'Verificar las consultas SQL'
-      ExceptionManager.printErrorInfo(errorInfo)
-    }
-
-    // OTRO ERROR
-    else {
-      ExceptionManager.printErrorInfo(errorInfo)
     }
 
     return errorInfo
-  }
-
-  private static printErrorInfo(errorInfo: ErrorInfo) {
-    const logger = ExceptionManager.logger
-    if (!logger) return
-
-    const args: unknown[] = [
-      '\n───────────────────────',
-      `─ Mensaje : ${errorInfo.mensaje}`,
-      `─ Causa   : ${errorInfo.causa}`,
-      `─ Origen  : ${errorInfo.origen}`,
-      `─ Acción  : ${errorInfo.accion}`,
-      `─ Sistema : ${errorInfo.sistema}`,
-      `─ Handler : ${errorInfo.errorHandler}`,
-    ]
-
-    if (errorInfo.detalle && errorInfo.detalle.length > 0) {
-      args.push('\n───── Detalle ─────────')
-      args.push(errorInfo.detalle)
-    }
-
-    if (errorInfo.error) {
-      args.push('\n───── Error ───────────')
-      args.push(errorInfo.error)
-    }
-
-    if (errorInfo.errorStack) {
-      args.push('\n───── Error stack ─────')
-      args.push(errorInfo.errorStack)
-    }
-
-    if (errorInfo.traceStack) {
-      args.push('\n───── Trace stack ─────')
-      args.push(errorInfo.traceStack)
-    }
-
-    logger[errorInfo.codigo < 500 ? 'warn' : 'error'](...args)
   }
 }

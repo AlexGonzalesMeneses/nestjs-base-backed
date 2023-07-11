@@ -27,7 +27,11 @@ try {
 } catch (error: unknown) {
   const errorInfo = ExceptionManager.handleError(error, 'Nombre del Servicio', {
     mensaje: 'Mensaje para el cliente',
+    sistema: 'app-backend',
   })
+  const level = errorInfo.getLogLevel()
+  const args = errorInfo.toPrint()
+  logger[level](...args)
 }
 ```
 

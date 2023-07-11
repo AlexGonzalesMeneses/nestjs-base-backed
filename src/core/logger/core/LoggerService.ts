@@ -9,6 +9,7 @@ import { LoggerOptions, LoggerParams } from '../types'
 import * as rTracer from 'cls-rtracer'
 import { printLoggerParams, stdoutWrite } from '../tools'
 import { cleanParamValue, getContext } from '../utilities'
+import { LogFields } from './LogFields'
 
 export class LoggerService {
   private static loggerParams: LoggerParams | null = null
@@ -163,11 +164,11 @@ export class LoggerService {
 
       // CLEAN PARAMS
       const paramsValue = cleanParamValue(optionalParams)
-      const msg = this.getMsg(paramsValue)
-      const origen = this.getOrigen(paramsValue)
+      const msg = this.buildMsg(paramsValue)
+      const fields = this.findFields(paramsValue)
 
       // SAVE WITH PINO
-      this.saveWithPino(level, msg, reqId, caller, origen)
+      this.saveWithPino(level, msg, reqId, caller, fields)
 
       if (process.env.NODE_ENV === 'production') {
         return
@@ -186,27 +187,24 @@ export class LoggerService {
     msg: string,
     reqId: string | null,
     caller: string,
-    origen?: string
+    fieldParam: unknown
   ) {
     const pinoInstance = LoggerService.pinoInstance
     if (!pinoInstance) return
 
     if (!pinoInstance.logger[level]) return
 
-    if (origen) {
-      pinoInstance.logger[level]({
-        reqId,
-        caller,
-        msg,
-        origen,
-      })
-    } else {
-      pinoInstance.logger[level]({
-        reqId,
-        caller,
-        msg,
-      })
+    const args: object = {
+      reqId,
+      caller,
+      msg,
     }
+
+    if (this.isFieldParam(fieldParam)) {
+      Object.assign(args, (fieldParam as LogFields).args)
+    }
+
+    pinoInstance.logger[level](args)
   }
 
   private printToConsole(
@@ -231,8 +229,9 @@ export class LoggerService {
     return LOG_COLOR[level]
   }
 
-  private getMsg(paramsValue: unknown[]) {
+  private buildMsg(paramsValue: unknown[]) {
     return paramsValue
+      .filter((data) => !this.isFieldParam(data))
       .map((data) => {
         try {
           data =
@@ -255,23 +254,16 @@ export class LoggerService {
       .join('\n')
   }
 
-  private getOrigen(paramsValue: unknown[]): string {
-    let origen = ''
-    paramsValue.find((data) => {
-      if (data && typeof data === 'object' && (data as any).origen) {
-        origen = (data as any).origen
-        return true
+  private findFields(paramsValue: unknown[]): unknown {
+    for (const param of paramsValue) {
+      if (this.isFieldParam(param)) {
+        return param
       }
-      if (data && typeof data === 'string') {
-        const index = data.indexOf('─ Origen')
-        if (index > -1) {
-          origen = data.substring(index + 11)
-          return true
-        }
-      }
-      return false
-    })
-    return origen
+    }
+  }
+
+  private isFieldParam = (param: unknown): boolean => {
+    return Boolean(param && typeof param === 'object' && '__FIELD__' in param)
   }
 
   private static getLevelList(logLevel: string): Level[] {

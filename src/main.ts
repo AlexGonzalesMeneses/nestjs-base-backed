@@ -19,15 +19,8 @@ import {
   SWAGGER_API_ROOT,
 } from './common/constants'
 import { DataSource } from 'typeorm'
-import {
-  LoggerService,
-  LoggerModule,
-  printInfo,
-  printLogo,
-  printRoutes,
-} from './core/logger'
+import { LoggerModule, printInfo, printLogo, printRoutes } from './core/logger'
 import packageJson from '../package.json'
-import { ExceptionManager } from './common/exception-manager'
 
 dotenv.config()
 
@@ -43,15 +36,7 @@ export const SessionAppDataSource = new DataSource({
   entities: [__dirname + '/../src/**/*.entity{.ts,.js}'],
 })
 
-const logger = LoggerService.getInstance()
-
 const bootstrap = async () => {
-  ExceptionManager.initialize({
-    appName: packageJson.name,
-    appVersion: packageJson.version,
-    logger,
-  })
-
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   })

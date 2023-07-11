@@ -34,7 +34,7 @@ export class AppController extends BaseController {
     try {
       const codigoHttp = body.codigo || 500
       if (codigoHttp >= 400) {
-        ExceptionManager.handleError('', AppController.name, {
+        const errorInfo = ExceptionManager.handleError('', AppController.name, {
           codigo: codigoHttp,
           mensaje: body.mensaje,
           detalle: [
@@ -49,6 +49,9 @@ export class AppController extends BaseController {
           origen: body.origen,
           accion: body.accion,
         })
+        const args = errorInfo.toPrint()
+        const logLevel = errorInfo.getLogLevel()
+        this.logger[logLevel](...args)
       } else {
         this.logger.trace(body)
       }

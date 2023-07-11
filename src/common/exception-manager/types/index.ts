@@ -1,13 +1,3 @@
-import { LoggerService } from '../../../core/logger'
-
-export type ExceptionManagerParams = {
-  appName: string
-  appVersion: string
-  logger?: LoggerService
-}
-
-export type ExceptionManagerOptions = Partial<ExceptionManagerParams>
-
 export type HandleErrorParams = {
   codigo: number
   mensaje: string

@@ -1,3 +1,4 @@
+import { LogFields } from '../../core/logger'
 import { HttpStatus } from '@nestjs/common'
 
 export class ErrorInfo {
@@ -26,5 +27,57 @@ export class ErrorInfo {
       return `${this.origen} :: ${this.mensaje}`
     }
     return this.mensaje
+  }
+
+  getLogLevel() {
+    if (this.codigo >= 200 && this.codigo < 400) return 'trace'
+    if (this.codigo >= 400 && this.codigo < 500) return 'warn'
+    if (this.codigo >= 500) return 'error'
+    return 'info'
+  }
+
+  toPrint() {
+    const args: unknown[] = [
+      '\n───────────────────────',
+      `─ Mensaje : ${this.mensaje}`,
+      `─ Causa   : ${this.causa}`,
+      `─ Origen  : ${this.origen}`,
+      `─ Acción  : ${this.accion}`,
+      `─ Sistema : ${this.sistema}`,
+      `─ Handler : ${this.errorHandler}`,
+    ]
+
+    if (this.detalle && this.detalle.length > 0) {
+      args.push('\n───── Detalle ─────────')
+      args.push(this.detalle)
+    }
+
+    if (this.error) {
+      args.push('\n───── Error ───────────')
+      args.push(this.error)
+    }
+
+    if (this.errorStack) {
+      args.push('\n───── Error stack ─────')
+      args.push(this.errorStack)
+    }
+
+    if (this.traceStack) {
+      args.push('\n───── Trace stack ─────')
+      args.push(this.traceStack)
+    }
+
+    args.push(
+      new LogFields({
+        _codigo: this.codigo,
+        _mensaje: this.mensaje,
+        _causa: this.causa,
+        _origen: this.origen,
+        _accion: this.accion,
+        _sistema: this.sistema,
+        _errorHandler: this.errorHandler,
+      })
+    )
+    return args
   }
 }

@@ -1,4 +1,4 @@
-export { ExpressLogger, LoggerService, LoggerModule } from './core'
+export { ExpressLogger, LoggerService, LoggerModule, LogFields } from './core'
 export {
   printInfo,
   printExpressLogo,
