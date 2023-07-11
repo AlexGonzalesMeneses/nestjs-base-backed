@@ -31,8 +31,7 @@ export class ClientOidcService {
     } catch (error: unknown) {
       setTimeout(() => {
         new ExternalServiceException(error, ClientOidcService.name, {
-          origen: 'CIUDADANÍA',
-          mensaje: 'Error de conexión con ciudadanía',
+          mensaje: 'CIUDADANÏA :: Error de conexión con ciudadanía',
           accion: `Verifique que el servicio de ciudadanía se encuentre activo y funcionando correctamente. ${oidcIssuer}`,
         })
       }, 2000)

@@ -22,17 +22,18 @@ export class ExceptionManager {
     if (error && error instanceof ErrorInfo) return error
     if (error && error instanceof BaseException) return error.errorInfo
 
+    const errorStack = error instanceof Error ? getErrorStack(error) : ''
     const errorInfo = new ErrorInfo({
       codigo: opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR,
       mensaje: opt.mensaje || HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR,
       error: cleanParamValue(error),
-      errorStack: error instanceof Error ? getErrorStack(error) : '',
+      errorStack,
       detalle:
         opt.detalle ||
         cleanParamValue(error instanceof Error ? [error.toString()] : []),
       sistema: opt.sistema || '',
       causa: opt.causa || '',
-      origen: opt.origen || '',
+      origen: opt.origen || errorStack.split('\n').shift() || '',
       accion: opt.accion || 'Más info en detalles',
       errorHandler: errorHandler,
       traceStack: getErrorStack(new Error()),

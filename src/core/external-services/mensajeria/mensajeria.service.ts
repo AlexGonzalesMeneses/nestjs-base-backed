@@ -33,8 +33,8 @@ export class MensajeriaService {
       return await firstValueFrom(response)
     } catch (error) {
       throw new ExternalServiceException(error, MensajeriaService.name, {
-        origen: 'MENSAJERÍA:SMS',
-        mensaje: 'Ocurrió un problema al enviar el mensaje por SMS',
+        mensaje:
+          'MENSAJERÍA:SMS :: Ocurrió un error al enviar el mensaje por SMS',
       })
     }
   }
@@ -58,8 +58,8 @@ export class MensajeriaService {
       return await firstValueFrom(response)
     } catch (error) {
       throw new ExternalServiceException(error, MensajeriaService.name, {
-        origen: 'MENSAJERÍA:CORREO',
-        mensaje: 'Ocurrió un problema al enviar el mensaje por E-MAIL',
+        mensaje:
+          'MENSAJERÍA:CORREO :: Ocurrió un error al enviar el mensaje por E-MAIL',
       })
     }
   }
@@ -77,8 +77,8 @@ export class MensajeriaService {
       return await firstValueFrom(response)
     } catch (error) {
       throw new ExternalServiceException(error, MensajeriaService.name, {
-        origen: 'MENSAJERÍA:SMS',
-        mensaje: 'Ocurrió un problema al obtener el reporte del SMS',
+        mensaje:
+          'MENSAJERÍA:SMS :: Ocurrió un error al obtener el reporte del SMS',
       })
     }
   }
@@ -95,8 +95,8 @@ export class MensajeriaService {
       return await firstValueFrom(response)
     } catch (error) {
       throw new ExternalServiceException(error, MensajeriaService.name, {
-        origen: 'MENSAJERÍA:CORREO',
-        mensaje: 'Ocurrió un problema al obtener el reporte del E-MAIL',
+        mensaje:
+          'MENSAJERÍA:CORREO :: Ocurrió un error al obtener el reporte del E-MAIL',
       })
     }
   }

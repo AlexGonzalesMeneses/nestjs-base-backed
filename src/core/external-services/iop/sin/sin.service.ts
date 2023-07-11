@@ -87,8 +87,8 @@ export class SinService extends BaseExternalService {
       }
     } catch (error: unknown) {
       const except = new ExternalServiceException(error, SinService.name, {
-        origen: 'SIN',
-        mensaje: 'Ocurrió un error con el Servicio de Impuestos Nacionales',
+        mensaje:
+          'SIN :: Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales',
       })
       return {
         finalizado: false,

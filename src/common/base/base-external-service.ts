@@ -12,8 +12,6 @@ export type RequestResult = {
 }
 
 export class BaseExternalService extends BaseService {
-  protected name = 'Servicio Externo'
-
   constructor(protected http: HttpService) {
     super()
   }
@@ -41,7 +39,7 @@ export class BaseExternalService extends BaseService {
       const except = new ExternalServiceException(
         error,
         BaseExternalService.name,
-        { origen: this.name }
+        {}
       )
       requestInfo.response =
         error && typeof error === 'object' && 'response' in error

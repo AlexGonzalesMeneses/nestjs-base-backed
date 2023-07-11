@@ -90,8 +90,8 @@ export class SegipService extends BaseExternalService {
       return this.armarRespuesta(exito, mensaje)
     } catch (error) {
       throw new ExternalServiceException(error, SegipService.name, {
-        origen: 'SEGIP:CONTRASTACION',
-        mensaje: 'Ocurrió un problema al contrastar los datos de la persona',
+        mensaje:
+          'SEGIP:CONTRASTACION :: Ocurrió un problema al contrastar los datos de la persona',
       })
     }
   }

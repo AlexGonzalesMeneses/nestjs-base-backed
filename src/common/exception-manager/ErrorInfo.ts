@@ -12,7 +12,7 @@ export class ErrorInfo {
 
   sistema: string // Identificador de la aplicación: app-backend | app-frontend | node-script
   causa: string // Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
-  origen: string // Sistema, servicio, módulo o componente que originó el error
+  origen: string // Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
   accion: string // Mensaje que indica cómo resolver el error en base a la causa detectada
 
   errorHandler: string // Componente que esta capturando el error: HttpExceptionFilter | ScriptExceptionHandler | ExternalLogRegister
@@ -23,9 +23,6 @@ export class ErrorInfo {
   }
 
   obtenerMensajeCliente() {
-    if (this.origen) {
-      return `${this.origen} :: ${this.mensaje}`
-    }
     return this.mensaje
   }
 
