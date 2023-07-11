@@ -1,3 +1,4 @@
+import { LoggerService } from '../../core/logger'
 import { ExceptionManager } from './ExceptionManager'
 import { ErrorInfo } from './ErrorInfo'
 import { HandleErrorOptions } from './types'
@@ -15,5 +16,9 @@ export class BaseException extends Error {
 
     this.errorInfo = ExceptionManager.handleError(error, errorHandler, opt)
     this.message = this.errorInfo.obtenerMensajeCliente()
+  }
+
+  save(logger: LoggerService) {
+    this.errorInfo.save(logger)
   }
 }

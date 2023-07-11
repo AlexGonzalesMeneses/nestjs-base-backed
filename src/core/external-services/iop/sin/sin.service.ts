@@ -90,6 +90,8 @@ export class SinService extends BaseExternalService {
         mensaje:
           'SIN :: Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales',
       })
+      except.save(this.logger)
+
       return {
         finalizado: false,
         mensaje: except.errorInfo.obtenerMensajeCliente(),

@@ -1,4 +1,4 @@
-import { LogFields } from '../../core/logger'
+import { LogFields, LoggerService } from '../../core/logger'
 import { HttpStatus } from '@nestjs/common'
 
 export class ErrorInfo {
@@ -75,5 +75,11 @@ export class ErrorInfo {
       })
     )
     return args
+  }
+
+  save(logger: LoggerService) {
+    const level = this.getLogLevel()
+    const args = this.toPrint()
+    logger[level](...args)
   }
 }
