@@ -28,7 +28,7 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     const errorInfo = ExceptionManager.handleError(
       exception,
       HttpExceptionFilter.name,
-      { sistema: packageJson.name }
+      { sistema: `${packageJson.name} v${packageJson.version}` }
     )
     const errorResult = {
       finalizado: false,

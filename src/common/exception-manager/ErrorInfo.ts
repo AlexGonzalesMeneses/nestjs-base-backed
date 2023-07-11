@@ -41,7 +41,6 @@ export class ErrorInfo {
       `─ Origen  : ${this.origen}`,
       `─ Acción  : ${this.accion}`,
       `─ Sistema : ${this.sistema}`,
-      `─ Handler : ${this.errorHandler}`,
     ]
 
     if (this.detalle && this.detalle.length > 0) {
