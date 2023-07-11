@@ -2,7 +2,7 @@
 
 Librería para registrar eventos o capturar errores del sistema.
 
-## Modo de uso
+## Modo de uso - Configuración Global
 
 Desde cualquier parte de la aplicación, importamos `LoggerService` y `ExceptionManager`.
 
@@ -11,12 +11,6 @@ import { LoggerService } from '../src/core/logger'
 import { ExceptionManager } from '../src/common/exception-manager'
 
 const logger = LoggerService.getInstance()
-
-ExceptionManager.initialize({
-  appName: 'app-demo-backend',
-  appVersion: '1.0.0',
-  logger,
-})
 ```
 
 Luego configuramos el manejador de errores para una determinada tarea:
@@ -25,13 +19,10 @@ Luego configuramos el manejador de errores para una determinada tarea:
 try {
   // Tareas a controlar
 } catch (error: unknown) {
-  const errorInfo = ExceptionManager.handleError(error, 'Nombre del Servicio', {
-    mensaje: 'Mensaje para el cliente',
-    sistema: 'app-backend',
+  const errorInfo = ExceptionManager.handleError(error, HttpExceptionFilter.name, {
+    sistema: 'app-backend v0.0.1',
   })
-  const level = errorInfo.getLogLevel()
-  const args = errorInfo.toPrint()
-  logger[level](...args)
+  errorInfo.save(logger)
 }
 ```
 
