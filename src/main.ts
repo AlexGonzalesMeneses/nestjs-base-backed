@@ -46,7 +46,9 @@ const bootstrap = async () => {
   const configService = app.get(ConfigService)
 
   // swagger
-  createSwagger(app)
+  if (configService.get('NODE_ENV') !== 'production') {
+    createSwagger(app)
+  }
 
   await SessionAppDataSource.initialize()
 
