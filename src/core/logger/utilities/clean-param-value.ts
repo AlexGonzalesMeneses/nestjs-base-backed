@@ -22,7 +22,10 @@ export function cleanParamValue(
       }
       if (isAxiosResponse(value)) {
         return {
-          data: 'data' in value ? cleanParamValue(value.data) : undefined,
+          data:
+            'data' in value
+              ? cleanParamValue(value.data, 0, sensitiveParams)
+              : undefined,
           status: 'status' in value ? value.status : undefined,
           statusText: 'statusText' in value ? value.statusText : undefined,
         }
@@ -52,13 +55,15 @@ export function cleanParamValue(
             ? {
                 headers:
                   'headers' in config
-                    ? cleanParamValue(config.headers)
+                    ? cleanParamValue(config.headers, 0, sensitiveParams)
                     : undefined,
                 baseURL: 'baseURL' in config ? config.baseURL : undefined,
                 method: 'method' in config ? config.method : undefined,
                 url: 'url' in config ? config.url : undefined,
                 data:
-                  'data' in config ? cleanParamValue(config.data) : undefined,
+                  'data' in config
+                    ? cleanParamValue(config.data, 0, sensitiveParams)
+                    : undefined,
               }
             : undefined,
           response: response
@@ -68,7 +73,7 @@ export function cleanParamValue(
                   'statusText' in response ? response.statusText : undefined,
                 data:
                   'data' in response
-                    ? cleanParamValue(response.data)
+                    ? cleanParamValue(response.data, 0, sensitiveParams)
                     : undefined,
               }
             : undefined,
@@ -87,13 +92,15 @@ export function cleanParamValue(
             ? {
                 headers:
                   'headers' in config
-                    ? cleanParamValue(config.headers)
+                    ? cleanParamValue(config.headers, 0, sensitiveParams)
                     : undefined,
                 baseURL: 'baseURL' in config ? config.baseURL : undefined,
                 method: 'method' in config ? config.method : undefined,
                 url: 'url' in config ? config.url : undefined,
                 data:
-                  'data' in config ? cleanParamValue(config.data) : undefined,
+                  'data' in config
+                    ? cleanParamValue(config.data, 0, sensitiveParams)
+                    : undefined,
               }
             : undefined,
         }
