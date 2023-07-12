@@ -25,11 +25,10 @@ export class LoggerMiddleware implements NestMiddleware {
     next()
   }
 
-  getLogLevel(statusCode: number, err?: Error) {
+  getLogLevel(statusCode: number) {
     if (statusCode >= 200 && statusCode < 400) return 'trace'
     if (statusCode >= 400 && statusCode < 500) return 'warn'
     if (statusCode >= 500) return 'error'
-    if (err) return 'error'
     return 'info'
   }
 }

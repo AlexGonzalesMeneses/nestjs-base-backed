@@ -49,9 +49,7 @@ export class AppController extends BaseController {
           origen: body.origen,
           accion: body.accion,
         })
-        const args = errorInfo.toPrint()
-        const logLevel = errorInfo.getLogLevel()
-        this.logger[logLevel](...args)
+        errorInfo.save(this.logger)
       } else {
         this.logger.trace(body)
       }
