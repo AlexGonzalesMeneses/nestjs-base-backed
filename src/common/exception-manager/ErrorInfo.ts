@@ -7,24 +7,30 @@ import packageJson from '../../../package.json'
 export class ErrorInfo {
   codigo: number = HttpStatus.INTERNAL_SERVER_ERROR // Código HTTP que será devuelto al cliente: 200 | 400 | 500 (se genera de forma automática en base a la causa detectada)
   mensaje: string = HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR // Mensaje para el cliente
-
   error?: unknown // contenido original del error
   errorStack?: string // Stack del error (se genera de forma automática)
-
   detalle: unknown[] = [] // Detalle del error
-
   sistema = `${packageJson.name} v${packageJson.version}` // Identificador de la aplicación: app-backend | app-frontend | node-script
   causa = '' // Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
   origen = '' // Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
   accion = '' // Mensaje que indica cómo resolver el error en base a la causa detectada
-
   traceStack = getErrorStack(new Error()) // Stack del componente que capturó el error (se genera de forma automática)
-
   request?: RequestInfo // Datos de la petición del cliente
   response?: ResponseInfo // Datos de la respuesta del cliente
 
   constructor(obj: ErrorParams) {
-    if (obj) Object.assign(this, obj)
+    if (typeof obj.codigo !== 'undefined') this.codigo = obj.codigo
+    if (typeof obj.mensaje !== 'undefined') this.mensaje = obj.mensaje
+    if (typeof obj.error !== 'undefined') this.error = obj.error
+    if (typeof obj.errorStack !== 'undefined') this.errorStack = obj.errorStack
+    if (typeof obj.detalle !== 'undefined') this.detalle = obj.detalle
+    if (typeof obj.sistema !== 'undefined') this.sistema = obj.sistema
+    if (typeof obj.causa !== 'undefined') this.causa = obj.causa
+    if (typeof obj.origen !== 'undefined') this.origen = obj.origen
+    if (typeof obj.accion !== 'undefined') this.accion = obj.accion
+    if (typeof obj.traceStack !== 'undefined') this.traceStack = obj.traceStack
+    if (typeof obj.request !== 'undefined') this.request = obj.request
+    if (typeof obj.response !== 'undefined') this.response = obj.response
   }
 
   obtenerMensajeCliente() {
@@ -59,7 +65,10 @@ export class ErrorInfo {
 
     if (this.detalle && this.detalle.length > 0) {
       args.push('\n───── Detalle ─────────')
-      args.push(this.detalle)
+      this.detalle.map((item) => {
+        args.push(item)
+        args.push('---')
+      })
     }
 
     if (this.error) {

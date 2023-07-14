@@ -1,3 +1,4 @@
+import { ExternalServiceException } from '../../../common/exceptions'
 import { AdvancedConsoleLogger } from 'typeorm'
 import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
@@ -29,14 +30,14 @@ export class SQLLogger extends AdvancedConsoleLogger {
     const ctx = getErrorStack(new Error())
     const sql = this.buildSql(query, parameters, true, false)
 
-    const args: unknown[] = [
-      '\n───────── QUERY FAILED ────────\n',
-      sql,
-      '\n───────── QUERY STACK ────────\n',
-      `${ctx}\n`,
-    ]
-
-    this.params.logger.error('Falló la consulta SQL', error, [args])
+    throw new ExternalServiceException({
+      error,
+      codigo: 500,
+      mensaje: 'Ocurrió un error inesperado',
+      detalle: [sql, ctx],
+      causa: error.toString(),
+      accion: 'Verificar las consultas SQL',
+    })
   }
 
   private getValueToPrintSql(val: unknown): string {

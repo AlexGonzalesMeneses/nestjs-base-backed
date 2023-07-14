@@ -45,14 +45,15 @@ export class ExceptionManager {
           ? opt.mensaje || error
           : opt.mensaje ||
             'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente'
-      errorInfo.causa = error
-        ? opt.causa || 'Posiblemente sea el formato de los datos de entrada'
-        : ''
-
-      errorInfo.accion = error
-        ? opt.accion ||
-          'Verifica el contenido del objeto JSON enviado en el body'
-        : ''
+      errorInfo.causa =
+        error && typeof error !== 'string'
+          ? opt.causa || 'Posiblemente sea el formato de los datos de entrada'
+          : ''
+      errorInfo.accion =
+        error && typeof error !== 'string'
+          ? opt.accion ||
+            'Verifica el contenido del objeto JSON enviado en el body'
+          : ''
     }
 
     // CONEXION ERROR
