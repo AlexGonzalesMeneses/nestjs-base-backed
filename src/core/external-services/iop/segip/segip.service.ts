@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { map } from 'rxjs/operators'
-import { ExternalServiceException } from '../../../../common/exceptions'
 import dayjs from 'dayjs'
 import { PersonaDto } from '../../../usuario/dto/persona.dto'
 import { HttpService } from '@nestjs/axios'
@@ -89,10 +88,8 @@ export class SegipService extends BaseExternalService {
 
       return this.armarRespuesta(exito, mensaje)
     } catch (error) {
-      throw new ExternalServiceException(error, SegipService.name, {
-        mensaje:
-          'SEGIP:CONTRASTACION :: Ocurrió un problema al contrastar los datos de la persona',
-      })
+      const mensaje = `SEGIP:CONTRASTACION :: Ocurrió un problema al contrastar los datos de la persona`
+      throw this.logger.error(mensaje, error)
     }
   }
 

@@ -16,3 +16,4 @@ export {
   SQLLogger,
 } from './utilities'
 export type { AppInfo, LoggerParams } from './types'
+export { LOG_LEVEL } from './constants'

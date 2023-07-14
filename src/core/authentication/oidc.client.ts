@@ -1,4 +1,3 @@
-import { ExternalServiceException } from '../../common/exceptions'
 import { Client, Issuer } from 'openid-client'
 import { LoggerService } from '../logger'
 import { custom } from 'openid-client'
@@ -30,7 +29,8 @@ export class ClientOidcService {
       })
     } catch (error: unknown) {
       setTimeout(() => {
-        new ExternalServiceException(error, ClientOidcService.name, {
+        logger.fatal({
+          error,
           mensaje: 'CIUDADANÏA :: Error de conexión con ciudadanía',
           accion: `Verifique que el servicio de ciudadanía se encuentre activo y funcionando correctamente. ${oidcIssuer}`,
         })

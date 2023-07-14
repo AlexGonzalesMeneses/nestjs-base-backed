@@ -18,17 +18,9 @@ export class LoggerMiddleware implements NestMiddleware {
       const statusText = res.statusMessage
       const elapsedTime = (t2 - t1) / 1000
       const msg = `${req.method} ${url} ${statusCode} ${statusText} (${elapsedTime} seg)`
-      const logLevel = this.getLogLevel(statusCode)
-      logger[logLevel](msg)
+      logger.trace(msg)
     })
 
     next()
-  }
-
-  getLogLevel(statusCode: number) {
-    if (statusCode >= 200 && statusCode < 400) return 'trace'
-    if (statusCode >= 400 && statusCode < 500) return 'warn'
-    if (statusCode >= 500) return 'error'
-    return 'info'
   }
 }

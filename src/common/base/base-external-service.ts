@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { BaseService } from './base-service'
-import { ExternalServiceException } from '../exceptions'
+import { ErrorInfo, ExceptionManager } from '../exception-manager'
 
 export type RequestResult = {
   response: AxiosResponse | null
@@ -22,6 +22,8 @@ export class BaseExternalService extends BaseService {
       elapsedTime: number,
       msg: string
 
+    let errorInfo: ErrorInfo | null = null
+
     const requestInfo: RequestResult = {
       response: null,
       errorMessage: undefined,
@@ -36,28 +38,42 @@ export class BaseExternalService extends BaseService {
       requestInfo.response = response
     } catch (error: unknown) {
       t2 = Date.now()
-      const except = new ExternalServiceException(
-        error,
-        BaseExternalService.name,
-        {}
-      )
+      errorInfo = ExceptionManager.handleError({ error })
+      errorInfo.request = {
+        method: axiosConfig.method,
+        originalUrl: `${axiosConfig.baseURL || ''}${axiosConfig.url}`,
+        headers: axiosConfig.headers,
+        params: axiosConfig.params,
+        body: axiosConfig.data,
+      }
       requestInfo.response =
         error && typeof error === 'object' && 'response' in error
           ? (error.response as AxiosResponse)
           : null
-      requestInfo.errorMessage = except.errorInfo.obtenerMensajeCliente()
+      requestInfo.errorMessage =
+        'Ocurrió un error al consultar un servicio externo'
       requestInfo.error = error
     } finally {
       elapsedTime = (t2 - t1) / 1000
-      const statusCode = requestInfo.response?.status || '-'
+      const statusCode = requestInfo.response?.status || 0
       const statusText = requestInfo.response?.statusText || '-'
       msg = `[Servicio externo] ${method} ${axiosConfig.url} ${statusCode} ${statusText} (${elapsedTime} seg)`
+
+      if (errorInfo) {
+        errorInfo.response = {
+          finalizado: false,
+          codigo: statusCode,
+          timestamp: Date.now(),
+          mensaje: msg,
+          datos: requestInfo.response?.data,
+        }
+      }
 
       this.logger.trace({
         axiosConfig,
         responseData: requestInfo.response?.data,
+        errorInfo,
       })
-      this.logger.trace(msg)
     }
 
     return requestInfo

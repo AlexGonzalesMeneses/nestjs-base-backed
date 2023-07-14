@@ -6,49 +6,53 @@ import {
   isConexionError,
 } from '../../core/logger'
 import { HttpException, HttpStatus } from '@nestjs/common'
-import { HandleErrorOptions } from './types'
+import { ErrorParams } from './types'
 import { extractMessage } from './utils'
 import { ErrorInfo } from './ErrorInfo'
 import { BaseException } from './BaseException'
-import { HttpMessages } from './messages'
 
 export class ExceptionManager {
-  static handleError(
-    error: unknown,
-    errorHandler: string,
-    opt: HandleErrorOptions = {}
-  ): ErrorInfo {
+  static handleError(opt: ErrorParams = {}): ErrorInfo {
+    const error = opt.error
+
     // si ya se procesó el error entonces devolvemos esta información
     if (error && error instanceof ErrorInfo) return error
     if (error && error instanceof BaseException) return error.errorInfo
 
     const errorStack = error instanceof Error ? getErrorStack(error) : ''
     const errorInfo = new ErrorInfo({
-      codigo: opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR,
-      mensaje: opt.mensaje || HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR,
+      codigo: opt.codigo,
+      mensaje: opt.mensaje,
       error: cleanParamValue(error),
       errorStack,
       detalle:
         opt.detalle ||
         cleanParamValue(error instanceof Error ? [error.toString()] : []),
-      sistema: opt.sistema || '',
-      causa: opt.causa || '',
-      origen: opt.origen || errorStack.split('\n').shift() || '',
-      accion: opt.accion || 'Más info en detalles',
-      errorHandler: errorHandler,
+      sistema: opt.sistema,
+      causa: opt.causa,
+      origen: opt.origen || errorStack.split('\n').shift(),
+      accion: opt.accion,
       traceStack: getErrorStack(new Error()),
+      request: opt.request,
+      response: opt.response,
     })
 
     // TYPED ERROR
     if (!error || typeof error !== 'object') {
       errorInfo.codigo = opt.codigo || HttpStatus.BAD_REQUEST
       errorInfo.mensaje =
-        opt.mensaje ||
-        'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente'
-      errorInfo.causa =
-        opt.causa || 'Posiblemente sea el formato de los datos de entrada'
-      errorInfo.accion =
-        opt.accion || 'Verifica el contenido del objeto JSON enviado en el body'
+        error && typeof error === 'string'
+          ? opt.mensaje || error
+          : opt.mensaje ||
+            'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente'
+      errorInfo.causa = error
+        ? opt.causa || 'Posiblemente sea el formato de los datos de entrada'
+        : ''
+
+      errorInfo.accion = error
+        ? opt.accion ||
+          'Verifica el contenido del objeto JSON enviado en el body'
+        : ''
     }
 
     // CONEXION ERROR
@@ -65,7 +69,7 @@ export class ExceptionManager {
         'Verifique la configuración de red y que el servicio al cual se intenta conectar se encuentre activo'
     }
 
-    // IOP ERROR tipo 1 body = { message: "detalle del error" }
+    // SERVER ERROR tipo 1 body = { message: "detalle del error" }
     else if (
       'response' in error &&
       error.response &&
@@ -83,13 +87,14 @@ export class ExceptionManager {
         opt.mensaje ||
         'Ocurrió un error inesperado, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
       errorInfo.causa =
-        opt.causa || `Posible problema con IOP ${error.response.data.message}`
+        opt.causa ||
+        `Posible problema con el SERVIDOR ${error.response.data.message}`
       errorInfo.accion =
         opt.accion ||
-        'Verificar que el servicio de INTEROPRABILIDAD se encuentre activo y respondiendo correctamente'
+        'Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente'
     }
 
-    // IOP ERROR tipo 2 body = { data: "detalle del error" }
+    // SERVER ERROR tipo 2 body = { data: "detalle del error" }
     else if (
       'response' in error &&
       error.response &&
@@ -107,10 +112,11 @@ export class ExceptionManager {
         opt.mensaje ||
         'Ocurrió un error inesperado, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
       errorInfo.causa =
-        opt.causa || `Posible problema con IOP ${error.response.data.data}`
+        opt.causa ||
+        `Posible problema con el SERVIDOR ${error.response.data.data}`
       errorInfo.accion =
         opt.accion ||
-        'Verificar que el servicio de INTEROPRABILIDAD se encuentre activo y respondiendo correctamente'
+        'Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente'
     }
 
     // UPSTREAM ERROR
@@ -151,8 +157,20 @@ export class ExceptionManager {
       errorInfo.causa = opt.causa || `HttpException ${errorInfo.codigo}`
       errorInfo.accion =
         opt.accion ||
-        (errorInfo.codigo < 500
-          ? 'Verifique los datos de entrada e inténtelo nuevamente'
+        (errorInfo.codigo === HttpStatus.BAD_REQUEST
+          ? 'Verifique los datos de entrada'
+          : errorInfo.codigo === HttpStatus.UNAUTHORIZED
+          ? 'Verifique si se están enviando las credenciales de acceso'
+          : errorInfo.codigo === HttpStatus.FORBIDDEN
+          ? 'Verifique si el usuario actual tiene acceso a este recurso'
+          : errorInfo.codigo === HttpStatus.NOT_FOUND
+          ? 'Verifique que el recurso solicitado realmente exista'
+          : errorInfo.codigo === HttpStatus.REQUEST_TIMEOUT
+          ? 'Verifique el tiempo de respuesta de este recurso'
+          : errorInfo.codigo === HttpStatus.PRECONDITION_FAILED
+          ? 'Verifique si cumple con las condiciones requeridas para consumir este recurso'
+          : errorInfo.codigo === HttpStatus.INTERNAL_SERVER_ERROR
+          ? 'Más info en detalles'
           : 'Más info en detalles')
       errorInfo.error = error.toString()
       errorInfo.detalle = []

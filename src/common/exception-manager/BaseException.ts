@@ -1,24 +1,19 @@
-import { LoggerService } from '../../core/logger'
 import { ExceptionManager } from './ExceptionManager'
 import { ErrorInfo } from './ErrorInfo'
-import { HandleErrorOptions } from './types'
+import { ErrorParams } from './types'
 
 export class BaseException extends Error {
   errorInfo: ErrorInfo
 
-  constructor(error: unknown, errorHandler: string, opt: HandleErrorOptions) {
+  constructor(opt: ErrorParams) {
     super()
 
-    if (error instanceof BaseException) {
-      this.errorInfo = error.errorInfo
-      this.message = error.message
+    if (opt.error instanceof BaseException) {
+      this.errorInfo = opt.error.errorInfo
+      this.message = opt.error.message
     }
 
-    this.errorInfo = ExceptionManager.handleError(error, errorHandler, opt)
+    this.errorInfo = ExceptionManager.handleError(opt)
     this.message = this.errorInfo.obtenerMensajeCliente()
-  }
-
-  save(logger: LoggerService) {
-    this.errorInfo.save(logger)
   }
 }

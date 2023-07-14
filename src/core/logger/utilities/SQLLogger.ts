@@ -28,14 +28,15 @@ export class SQLLogger extends AdvancedConsoleLogger {
     }
     const ctx = getErrorStack(new Error())
     const sql = this.buildSql(query, parameters, true, false)
-    this.params.logger.error(
+
+    const args: unknown[] = [
       '\n───────── QUERY FAILED ────────\n',
       sql,
-      '\n───────── QUERY ERROR ────────\n',
-      error,
       '\n───────── QUERY STACK ────────\n',
-      `${ctx}\n`
-    )
+      `${ctx}\n`,
+    ]
+
+    this.params.logger.error('Falló la consulta SQL', error, [args])
   }
 
   private getValueToPrintSql(val: unknown): string {

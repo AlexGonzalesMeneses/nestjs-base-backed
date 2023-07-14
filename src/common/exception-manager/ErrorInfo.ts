@@ -1,24 +1,29 @@
-import { LogFields, LoggerService } from '../../core/logger'
 import { HttpStatus } from '@nestjs/common'
+import { LogFields, getErrorStack } from '../../core/logger'
+import { ErrorParams, RequestInfo, ResponseInfo } from './types'
+import { HttpMessages } from './messages'
+import packageJson from '../../../package.json'
 
 export class ErrorInfo {
-  codigo: HttpStatus // Código HTTP que será devuelto al cliente: 200 | 400 | 500 (se genera de forma automática en base a la causa detectada)
-  mensaje: string // Mensaje para el cliente
+  codigo: number = HttpStatus.INTERNAL_SERVER_ERROR // Código HTTP que será devuelto al cliente: 200 | 400 | 500 (se genera de forma automática en base a la causa detectada)
+  mensaje: string = HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR // Mensaje para el cliente
 
-  error: unknown // contenido original del error
-  errorStack: string // Stack del error (se genera de forma automática)
+  error?: unknown // contenido original del error
+  errorStack?: string // Stack del error (se genera de forma automática)
 
-  detalle: unknown[] // Detalle del error
+  detalle: unknown[] = [] // Detalle del error
 
-  sistema: string // Identificador de la aplicación: app-backend | app-frontend | node-script
-  causa: string // Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
-  origen: string // Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
-  accion: string // Mensaje que indica cómo resolver el error en base a la causa detectada
+  sistema = `${packageJson.name} v${packageJson.version}` // Identificador de la aplicación: app-backend | app-frontend | node-script
+  causa = '' // Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
+  origen = '' // Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
+  accion = '' // Mensaje que indica cómo resolver el error en base a la causa detectada
 
-  errorHandler: string // Componente que esta capturando el error: HttpExceptionFilter | ScriptExceptionHandler | ExternalLogRegister
-  traceStack: string // Stack del componente que capturó el error (se genera de forma automática)
+  traceStack = getErrorStack(new Error()) // Stack del componente que capturó el error (se genera de forma automática)
 
-  constructor(obj: object) {
+  request?: RequestInfo // Datos de la petición del cliente
+  response?: ResponseInfo // Datos de la respuesta del cliente
+
+  constructor(obj: ErrorParams) {
     if (obj) Object.assign(this, obj)
   }
 
@@ -27,21 +32,30 @@ export class ErrorInfo {
   }
 
   getLogLevel() {
-    if (this.codigo >= 200 && this.codigo < 400) return 'trace'
-    if (this.codigo >= 400 && this.codigo < 500) return 'warn'
-    if (this.codigo >= 500) return 'error'
-    return 'info'
+    if (this.codigo && this.codigo < 400) return 'trace'
+    if (this.codigo && this.codigo < 500) return 'warn'
+    return 'error'
   }
 
   toPrint() {
-    const args: unknown[] = [
-      '\n───────────────────────',
-      `─ Mensaje : ${this.mensaje}`,
-      `─ Causa   : ${this.causa}`,
-      `─ Origen  : ${this.origen}`,
-      `─ Acción  : ${this.accion}`,
-      `─ Sistema : ${this.sistema}`,
-    ]
+    const args: unknown[] = []
+    args.push('\n───────────────────────')
+
+    if (this.mensaje) {
+      args.push(`─ Mensaje : ${this.mensaje}`)
+    }
+
+    if (this.causa) {
+      args.push(`─ Causa   : ${this.causa}`)
+    }
+
+    if (this.origen) {
+      args.push(`─ Origen  : ${this.origen}`)
+    }
+
+    if (this.accion) {
+      args.push(`─ Acción  : ${this.accion}`)
+    }
 
     if (this.detalle && this.detalle.length > 0) {
       args.push('\n───── Detalle ─────────')
@@ -63,6 +77,16 @@ export class ErrorInfo {
       args.push(this.traceStack)
     }
 
+    if (this.response) {
+      args.push('\n───── Response ────────')
+      args.push(this.response)
+    }
+
+    if (this.request) {
+      args.push('\n───── Request ─────────')
+      args.push(this.request)
+    }
+
     args.push(
       new LogFields({
         _codigo: this.codigo,
@@ -71,15 +95,8 @@ export class ErrorInfo {
         _origen: this.origen,
         _accion: this.accion,
         _sistema: this.sistema,
-        _errorHandler: this.errorHandler,
       })
     )
     return args
-  }
-
-  save(logger: LoggerService) {
-    const level = this.getLogLevel()
-    const args = this.toPrint()
-    logger[level](...args)
   }
 }

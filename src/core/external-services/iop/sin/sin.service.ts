@@ -1,4 +1,3 @@
-import { ExternalServiceException } from '../../../../common/exceptions'
 import { BaseExternalService } from '../../../../common/base'
 import { Injectable } from '@nestjs/common'
 import { SINCredencialesDTO } from './credenciales.dto'
@@ -51,7 +50,10 @@ export class SinService extends BaseExternalService {
         body.Mensaje.includes('You cannot consume this service')
       ) {
         requestResult.errorMessage = `No tiene permisos para usar este servicio.`
-        this.logger.error(requestResult)
+        this.logger.error({
+          mensaje: requestResult.errorMessage,
+          detalle: [{ requestResult }],
+        })
         return {
           finalizado: false,
           mensaje: requestResult.errorMessage,
@@ -64,7 +66,10 @@ export class SinService extends BaseExternalService {
         body.Mensaje.includes('no API found with those values')
       ) {
         requestResult.errorMessage = `No se encontró el servicio solicitado.`
-        this.logger.error(requestResult)
+        this.logger.error({
+          mensaje: requestResult.errorMessage,
+          detalle: [{ requestResult }],
+        })
         return {
           finalizado: false,
           mensaje: requestResult.errorMessage,
@@ -74,7 +79,10 @@ export class SinService extends BaseExternalService {
       if (!body.Autenticado) {
         requestResult.errorMessage =
           body.Mensaje || requestResult.errorMessage || 'Error desconocido'
-        this.logger.error(requestResult)
+        this.logger.error({
+          mensaje: requestResult.errorMessage,
+          detalle: [{ requestResult }],
+        })
         return {
           finalizado: false,
           mensaje: requestResult.errorMessage,
@@ -86,15 +94,12 @@ export class SinService extends BaseExternalService {
         mensaje: body.Estado,
       }
     } catch (error: unknown) {
-      const except = new ExternalServiceException(error, SinService.name, {
-        mensaje:
-          'SIN :: Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales',
-      })
-      except.save(this.logger)
+      const mensaje = `SIN :: Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
+      this.logger.error(mensaje, error)
 
       return {
         finalizado: false,
-        mensaje: except.errorInfo.obtenerMensajeCliente(),
+        mensaje,
       }
     }
   }

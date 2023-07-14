@@ -1,3 +1,8 @@
+import {
+  ErrorInfo,
+  ErrorParams,
+  ExceptionManager,
+} from '../../../common/exception-manager'
 import dayjs from 'dayjs'
 import { Level, pino } from 'pino'
 import pinoHttp, { HttpLogger, Options } from 'pino-http'
@@ -128,16 +133,49 @@ export class LoggerService {
     return LoggerService.loggerParams
   }
 
-  fatal(...optionalParams: unknown[]): void {
+  fatal(mensaje: string): ErrorInfo
+  fatal(mensaje: string, error: unknown): ErrorInfo
+  fatal(mensaje: string, error: unknown, detalle: unknown[]): ErrorInfo
+  fatal(opt: ErrorParams): ErrorInfo
+  fatal(
+    arg1: string | ErrorParams,
+    arg2?: unknown,
+    arg3?: unknown[]
+  ): ErrorInfo {
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const optionalParams = errorInfo.toPrint()
     this.print(LOG_LEVEL.FATAL, ...optionalParams)
+    return errorInfo
   }
 
-  error(...optionalParams: unknown[]): void {
+  error(mensaje: string): ErrorInfo
+  error(mensaje: string, error: unknown): ErrorInfo
+  error(mensaje: string, error: unknown, detalle: unknown[]): ErrorInfo
+  error(opt: ErrorParams): ErrorInfo
+  error(
+    arg1: string | ErrorParams,
+    arg2?: unknown,
+    arg3?: unknown[]
+  ): ErrorInfo {
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const optionalParams = errorInfo.toPrint()
     this.print(LOG_LEVEL.ERROR, ...optionalParams)
+    return errorInfo
   }
 
-  warn(...optionalParams: unknown[]): void {
+  warn(mensaje: string): ErrorInfo
+  warn(mensaje: string, error: unknown): ErrorInfo
+  warn(mensaje: string, error: unknown, detalle: unknown[]): ErrorInfo
+  warn(opt: ErrorParams): ErrorInfo
+  warn(
+    arg1: string | ErrorParams,
+    arg2?: unknown,
+    arg3?: unknown[]
+  ): ErrorInfo {
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const optionalParams = errorInfo.toPrint()
     this.print(LOG_LEVEL.WARN, ...optionalParams)
+    return errorInfo
   }
 
   info(...optionalParams: unknown[]): void {
@@ -150,6 +188,41 @@ export class LoggerService {
 
   trace(...optionalParams: unknown[]): void {
     this.print(LOG_LEVEL.TRACE, ...optionalParams)
+  }
+
+  static handleError(
+    arg1: string | ErrorParams,
+    arg2?: unknown,
+    arg3?: unknown[]
+  ): ErrorInfo {
+    // 1ra forma - (mensaje: string) => ErrorInfo
+    if (arguments.length === 1 && typeof arg1 === 'string') {
+      const mensaje = arg1
+      return ExceptionManager.handleError({ mensaje })
+    }
+
+    // 2da forma - (mensaje: string, error: unknown) => ErrorInfo
+    else if (arguments.length === 2 && typeof arg1 === 'string') {
+      return ExceptionManager.handleError({
+        mensaje: arg1,
+        error: arg2,
+      })
+    }
+
+    // 3ra forma - (mensaje: string, error: unknown, detalle: unknown[]) => ErrorInfo
+    else if (arguments.length === 3 && typeof arg1 === 'string') {
+      return ExceptionManager.handleError({
+        mensaje: arg1,
+        error: arg2,
+        detalle: arg3,
+      })
+    }
+
+    // 4ta forma - (opt: ErrorParams) => ErrorInfo
+    else {
+      const opt = arg1 as ErrorInfo
+      return ExceptionManager.handleError(opt)
+    }
   }
 
   private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {

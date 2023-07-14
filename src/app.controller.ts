@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
-import { ExceptionManager } from './common/exception-manager'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
 import { LogRequestDTO } from './app.dto'
@@ -34,7 +33,7 @@ export class AppController extends BaseController {
     try {
       const codigoHttp = body.codigo || 500
       if (codigoHttp >= 400) {
-        const errorInfo = ExceptionManager.handleError('', AppController.name, {
+        this.logger.error({
           codigo: codigoHttp,
           mensaje: body.mensaje,
           detalle: [
@@ -49,7 +48,6 @@ export class AppController extends BaseController {
           origen: body.origen,
           accion: body.accion,
         })
-        errorInfo.save(this.logger)
       } else {
         this.logger.trace(body)
       }

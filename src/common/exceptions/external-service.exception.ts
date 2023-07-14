@@ -1,8 +1,13 @@
+import { LoggerService } from '../../core/logger'
 import { BaseException } from '../../common/exception-manager'
-import { HandleErrorOptions } from '../exception-manager/types'
+import { ErrorParams } from '../exception-manager/types'
 
 export class ExternalServiceException extends BaseException {
-  constructor(error: unknown, errorHandler: string, opt: HandleErrorOptions) {
-    super(error, errorHandler, opt)
+  constructor(mensaje: string)
+  constructor(mensaje: string, error: unknown)
+  constructor(mensaje: string, error: unknown, detalle: unknown[])
+  constructor(opt: ErrorParams)
+  constructor(arg1: string | ErrorParams, arg2?: unknown, arg3?: unknown[]) {
+    super(LoggerService.handleError(arg1, arg2, arg3))
   }
 }
