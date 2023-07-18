@@ -1,5 +1,5 @@
 import { COLOR } from '../constants'
-import { LoggerService } from '../core'
+import { LoggerService } from '../classes'
 import { stdoutWrite } from '../tools'
 
 export function printLoggerParams() {

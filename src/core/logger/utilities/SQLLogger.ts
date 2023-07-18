@@ -1,4 +1,3 @@
-import { BaseException } from '../../../common/exception-manager'
 import { AdvancedConsoleLogger } from 'typeorm'
 import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
@@ -6,6 +5,7 @@ import { getErrorStack } from './get-error-stack'
 import { stdoutWrite } from '../tools'
 import { COLOR, DEFAULT_SQL_LOGGER_PARAMS } from '../constants'
 import { SQLLoggerParams, SQLLoggerOptions } from '../types'
+import { BaseException } from '../classes'
 
 export class SQLLogger extends AdvancedConsoleLogger {
   private params: SQLLoggerParams = DEFAULT_SQL_LOGGER_PARAMS

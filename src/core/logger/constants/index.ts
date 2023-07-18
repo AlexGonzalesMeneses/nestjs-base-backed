@@ -1,4 +1,4 @@
-import { LoggerService } from '../core'
+import { LoggerService } from '../classes'
 import { LoggerParams, SQLLoggerParams } from '../types'
 
 export enum COLOR {

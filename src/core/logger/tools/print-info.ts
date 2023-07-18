@@ -1,6 +1,6 @@
 import { COLOR } from '../constants'
 import ip from 'ip'
-import { LoggerService } from '../core'
+import { LoggerService } from '../classes'
 import { stdoutWrite } from '../tools'
 import { AppInfo } from '../types'
 

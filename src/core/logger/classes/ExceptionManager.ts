@@ -1,18 +1,18 @@
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { ErrorOptions } from '../types'
+import { extractMessage } from '../utils'
+import { ErrorInfo } from './ErrorInfo'
+import { BaseException } from './BaseException'
 import {
   cleanParamValue,
   getErrorStack,
   isAxiosError,
   isCertExpiredError,
   isConexionError,
-} from '../../core/logger'
-import { HttpException, HttpStatus } from '@nestjs/common'
-import { ErrorParams } from './types'
-import { extractMessage } from './utils'
-import { ErrorInfo } from './ErrorInfo'
-import { BaseException } from './BaseException'
+} from '../utilities'
 
 export class ExceptionManager {
-  static handleError(opt: ErrorParams | ErrorInfo = {}): ErrorInfo {
+  static handleError(opt: ErrorOptions | ErrorInfo = {}): ErrorInfo {
     // si ya se procesó el error entonces devolvemos esta información
     if (opt instanceof ErrorInfo) return opt
 

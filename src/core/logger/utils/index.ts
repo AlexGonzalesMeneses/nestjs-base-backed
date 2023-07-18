@@ -38,20 +38,29 @@ export function extractMessage(exception: HttpException): string {
     }
   }
 
-  switch (exception.constructor) {
-    case BadRequestException:
-      return HttpMessages.EXCEPTION_BAD_REQUEST
-    case UnauthorizedException:
-      return HttpMessages.EXCEPTION_UNAUTHORIZED
-    case NotFoundException:
-      return HttpMessages.EXCEPTION_NOT_FOUND
-    case PreconditionFailedException:
-      return HttpMessages.EXCEPTION_PRECONDITION_FAILED
-    case ForbiddenException:
-      return HttpMessages.EXCEPTION_FORBIDDEN
-    case RequestTimeoutException:
-      return HttpMessages.EXCEPTION_REQUEST_TIMEOUT
-    default:
-      return HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR
+  if (exception.constructor === BadRequestException) {
+    return HttpMessages.EXCEPTION_BAD_REQUEST
   }
+
+  if (exception.constructor === UnauthorizedException) {
+    return HttpMessages.EXCEPTION_UNAUTHORIZED
+  }
+
+  if (exception.constructor === NotFoundException) {
+    return HttpMessages.EXCEPTION_NOT_FOUND
+  }
+
+  if (exception.constructor === PreconditionFailedException) {
+    return HttpMessages.EXCEPTION_PRECONDITION_FAILED
+  }
+
+  if (exception.constructor === ForbiddenException) {
+    return HttpMessages.EXCEPTION_FORBIDDEN
+  }
+
+  if (exception.constructor === RequestTimeoutException) {
+    return HttpMessages.EXCEPTION_REQUEST_TIMEOUT
+  }
+
+  return HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR
 }

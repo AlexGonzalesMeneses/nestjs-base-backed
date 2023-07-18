@@ -1,8 +1,10 @@
 import { HttpStatus } from '@nestjs/common'
-import { LOG_LEVEL, LogFields, getErrorStack } from '../../core/logger'
-import { ErrorParams, RequestInfo } from './types'
-import { HttpMessages } from './messages'
-import packageJson from '../../../package.json'
+import { getErrorStack } from '../utilities'
+import { ErrorOptions, RequestInfo } from '../types'
+import { HttpMessages } from '../messages'
+import packageJson from '../../../../package.json'
+import { LOG_LEVEL } from '../constants'
+import { LogFields } from './LogFields'
 
 export class ErrorInfo {
   codigo: number = HttpStatus.INTERNAL_SERVER_ERROR // Código HTTP que será devuelto al cliente: 200 | 400 | 500 (se genera de forma automática en base a la causa detectada)
@@ -18,7 +20,7 @@ export class ErrorInfo {
   traceStack = getErrorStack(new Error()) // Stack del componente que capturó el error (se genera de forma automática)
   request?: RequestInfo // Datos de la petición del cliente
 
-  constructor(obj: ErrorParams) {
+  constructor(obj: ErrorOptions) {
     if (typeof obj.codigo !== 'undefined') this.codigo = obj.codigo
     if (typeof obj.mensaje !== 'undefined') this.mensaje = obj.mensaje
     if (typeof obj.error !== 'undefined') this.error = obj.error

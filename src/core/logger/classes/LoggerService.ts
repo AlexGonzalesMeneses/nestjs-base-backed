@@ -1,8 +1,3 @@
-import {
-  ErrorInfo,
-  ErrorParams,
-  ExceptionManager,
-} from '../../../common/exception-manager'
 import dayjs from 'dayjs'
 import { Level, pino } from 'pino'
 import pinoHttp, { HttpLogger, Options } from 'pino-http'
@@ -10,11 +5,13 @@ import { inspect } from 'util'
 import { COLOR, DEFAULT_PARAMS, LOG_COLOR, LOG_LEVEL } from '../constants'
 import fastRedact, { RedactOptions } from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
-import { LoggerOptions, LoggerParams } from '../types'
+import { ErrorOptions, LoggerOptions, LoggerParams } from '../types'
 import * as rTracer from 'cls-rtracer'
 import { printLoggerParams, stdoutWrite } from '../tools'
 import { cleanParamValue, getContext } from '../utilities'
 import { LogFields } from './LogFields'
+import { ErrorInfo } from './ErrorInfo'
+import { ExceptionManager } from './ExceptionManager'
 
 export class LoggerService {
   private static loggerParams: LoggerParams | null = null
@@ -136,13 +133,20 @@ export class LoggerService {
   fatal(error: unknown): ErrorInfo
   fatal(error: unknown, mensaje: string): ErrorInfo
   fatal(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
-  fatal(error: unknown, opt: ErrorParams): ErrorInfo
+  fatal(
+    error: unknown,
+    mensaje: string,
+    detalle: unknown[],
+    modulo: string
+  ): ErrorInfo
+  fatal(error: unknown, opt: ErrorOptions): ErrorInfo
   fatal(
     arg1: unknown,
-    arg2?: string | ErrorParams,
-    arg3?: unknown[]
+    arg2?: string | ErrorOptions,
+    arg3?: unknown[],
+    arg4?: string
   ): ErrorInfo {
-    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3, arg4)
     const optionalParams = errorInfo.toPrint()
     const level = errorInfo.getLogLevel()
     this.print(level, ...optionalParams)
@@ -152,13 +156,26 @@ export class LoggerService {
   error(error: unknown): ErrorInfo
   error(error: unknown, mensaje: string): ErrorInfo
   error(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
-  error(error: unknown, opt: ErrorParams): ErrorInfo
+  error(
+    error: unknown,
+    mensaje: string,
+    detalle: unknown[],
+    modulo: string
+  ): ErrorInfo
+  error(
+    error: unknown,
+    mensaje: string,
+    detalle: unknown[],
+    modulo: string
+  ): ErrorInfo
+  error(error: unknown, opt: ErrorOptions): ErrorInfo
   error(
     arg1: unknown,
-    arg2?: string | ErrorParams,
-    arg3?: unknown[]
+    arg2?: string | ErrorOptions,
+    arg3?: unknown[],
+    arg4?: string
   ): ErrorInfo {
-    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3, arg4)
     const optionalParams = errorInfo.toPrint()
     const level = errorInfo.getLogLevel()
     this.print(level, ...optionalParams)
@@ -168,13 +185,20 @@ export class LoggerService {
   warn(error: unknown): ErrorInfo
   warn(error: unknown, mensaje: string): ErrorInfo
   warn(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
-  warn(error: unknown, opt: ErrorParams): ErrorInfo
+  warn(
+    error: unknown,
+    mensaje: string,
+    detalle: unknown[],
+    modulo: string
+  ): ErrorInfo
+  warn(error: unknown, opt: ErrorOptions): ErrorInfo
   warn(
     arg1: unknown,
-    arg2?: string | ErrorParams,
-    arg3?: unknown[]
+    arg2?: string | ErrorOptions,
+    arg3?: unknown[],
+    arg4?: string
   ): ErrorInfo {
-    const errorInfo = LoggerService.handleError(arg1, arg2, arg3)
+    const errorInfo = LoggerService.handleError(arg1, arg2, arg3, arg4)
     const optionalParams = errorInfo.toPrint()
     const level = errorInfo.getLogLevel()
     this.print(level, ...optionalParams)
@@ -195,8 +219,9 @@ export class LoggerService {
 
   static handleError(
     arg1: unknown,
-    arg2?: string | ErrorParams,
-    arg3?: unknown[]
+    arg2?: string | ErrorOptions,
+    arg3?: unknown[],
+    arg4?: string
   ): ErrorInfo {
     // 1ra forma - (error: unknown) => ErrorInfo
     if (arguments.length === 1) {
@@ -221,7 +246,21 @@ export class LoggerService {
       })
     }
 
-    // 4ta forma - (error: unknown, opt: ErrorParams) => ErrorInfo
+    // 4ta forma - (error: unknown, mensaje: string, detalle: unknown[], modulo: string) => ErrorInfo
+    else if (
+      arguments.length === 4 &&
+      typeof arg2 === 'string' &&
+      typeof arg4 === 'string'
+    ) {
+      return ExceptionManager.handleError({
+        error: arg1,
+        mensaje: arg2,
+        detalle: arg3,
+        modulo: arg4,
+      })
+    }
+
+    // 5ta forma - (error: unknown, opt: ErrorOptions) => ErrorInfo
     else {
       const error = arg1
       const opt = arg2 as ErrorInfo

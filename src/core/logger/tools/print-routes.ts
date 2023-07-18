@@ -1,7 +1,7 @@
 import listEndpoints from 'express-list-endpoints'
 import { Express } from 'express'
 import { COLOR } from '../constants'
-import { LoggerService } from '../core'
+import { LoggerService } from '../classes'
 import { stdoutWrite } from '../tools'
 
 export async function _printRoutes(mainRouter: Express) {

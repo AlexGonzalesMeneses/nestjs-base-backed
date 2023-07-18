@@ -1,4 +1,4 @@
-import { LoggerService } from '../core'
+import { LoggerService } from '../classes'
 
 export function getContext(saltar = 4): string {
   try {

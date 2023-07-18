@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators'
 import { ExternalServiceException } from '../../../common/exceptions'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
-import { LoggerService } from '../../logger/core'
+import { LoggerService } from '../../logger/classes'
 
 const logger = LoggerService.getInstance()
 

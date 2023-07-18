@@ -1,4 +1,4 @@
-# Exception Manager
+# Logger
 
 Librería para registrar eventos o capturar errores del sistema.
 

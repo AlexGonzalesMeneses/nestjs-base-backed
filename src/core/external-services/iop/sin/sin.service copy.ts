@@ -21,8 +21,6 @@ export class SinService extends BaseService {
    * @description Metodo para verificar si la información de la empresa existe en el servicio del SIN
    */
   async login(datosSIN: SINCredencialesDTO): Promise<LoginResult> {
-    let mensaje: string | undefined = undefined
-
     try {
       const config: AxiosRequestConfig = {
         url: '/login',
@@ -36,16 +34,23 @@ export class SinService extends BaseService {
 
       const response = await firstValueFrom(this.http.request(config))
       const body = response?.data as LoginResponse
-      const detalle = [{ datosSIN }, { response }]
 
       if (
         !body.Estado &&
         body.Mensaje &&
         body.Mensaje.includes('You cannot consume this service')
       ) {
-        const error = body.Mensaje
-        mensaje = `No tiene permisos para usar este servicio.`
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        const exception = new ExternalServiceException({
+          error: body.Mensaje,
+          modulo: 'SIN',
+          mensaje: `No tiene permisos para usar este servicio.`,
+          detalle: [{ datosSIN }, { response }],
+        })
+        this.logger.error(exception)
+        return {
+          finalizado: false,
+          mensaje: exception.errorInfo.obtenerMensajeCliente(),
+        }
       }
 
       if (
@@ -54,14 +59,26 @@ export class SinService extends BaseService {
         body.Mensaje.includes('no API found with those values')
       ) {
         const error = body.Mensaje
-        mensaje = `No se encontró el servicio solicitado.`
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        const mensaje = `No se encontró el servicio solicitado.`
+        const detalle = [{ datosSIN }, { response }]
+        const err = new ExternalServiceException('SIN', error, mensaje, detalle)
+        this.logger.error(err)
+        return {
+          finalizado: false,
+          mensaje,
+        }
       }
 
       if (!body.Autenticado) {
         const error = null
-        mensaje = body.Mensaje || 'Error desconocido'
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        const mensaje = body.Mensaje || 'Error desconocido'
+        const detalle = [{ datosSIN }, { response }]
+        const err = new ExternalServiceException('SIN', error, mensaje, detalle)
+        this.logger.error(err)
+        return {
+          finalizado: false,
+          mensaje,
+        }
       }
 
       return {
@@ -69,11 +86,10 @@ export class SinService extends BaseService {
         mensaje: body.Estado,
       }
     } catch (error) {
-      const mensajePorDefecto = `Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
-      mensaje = mensaje || mensajePorDefecto
-
+      const mensaje = `Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
       const detalle = [{ datosSIN }]
-      this.logger.error(error, mensaje, detalle, 'SIN')
+      const err = new ExternalServiceException('SIN', error, mensaje, detalle)
+      this.logger.error(err)
       return {
         finalizado: false,
         mensaje,

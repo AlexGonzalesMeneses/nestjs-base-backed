@@ -1,11 +1,11 @@
 import { ExceptionManager } from './ExceptionManager'
 import { ErrorInfo } from './ErrorInfo'
-import { ErrorParams } from './types'
+import { ErrorOptions } from '../types'
 
 export class BaseException extends Error {
   errorInfo: ErrorInfo
 
-  constructor(opt: ErrorParams) {
+  constructor(opt: ErrorOptions) {
     const errorInfo = ExceptionManager.handleError(opt)
     const message = errorInfo.obtenerMensajeCliente()
     super(message)
