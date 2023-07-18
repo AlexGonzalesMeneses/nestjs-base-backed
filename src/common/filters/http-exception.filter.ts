@@ -1,3 +1,4 @@
+import { BaseException } from '../../core/logger'
 import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
@@ -23,18 +24,21 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       user: request.user,
     }
 
-    const errorInfo = this.logger.error(exception, {
+    const except = new BaseException({
+      error: exception,
       request: errorRequest,
     })
 
+    this.logger.error(except)
+
     const errorResult = {
       finalizado: false,
-      codigo: errorInfo.codigo,
+      codigo: except.errorInfo.codigo,
       timestamp: Math.floor(Date.now() / 1000),
-      mensaje: errorInfo.obtenerMensajeCliente(),
+      mensaje: except.errorInfo.obtenerMensajeCliente(),
       datos: {
-        causa: errorInfo.causa,
-        accion: errorInfo.accion,
+        causa: except.errorInfo.causa,
+        accion: except.errorInfo.accion,
       },
     }
 

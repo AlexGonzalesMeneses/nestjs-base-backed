@@ -5,6 +5,7 @@ import packageJson from '../package.json'
 import dayjs from 'dayjs'
 import { LogRequestDTO } from './app.dto'
 import { Response } from 'express'
+import { BaseException } from './core/logger'
 
 @Controller()
 export class AppController extends BaseController {
@@ -33,7 +34,7 @@ export class AppController extends BaseController {
     try {
       const codigoHttp = body.codigo || 500
       if (codigoHttp >= 400) {
-        this.logger.error(body, {
+        const except = new BaseException({
           codigo: codigoHttp,
           mensaje: body.mensaje,
           detalle: [
@@ -48,6 +49,7 @@ export class AppController extends BaseController {
           origen: body.origen,
           accion: body.accion,
         })
+        this.logger.error(except)
       } else {
         this.logger.trace(body)
       }

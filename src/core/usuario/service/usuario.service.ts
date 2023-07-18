@@ -194,10 +194,8 @@ export class UsuarioService extends BaseService {
               template
             )
             .catch((err) => {
-              this.logger.error(
-                'Falló al enviar el correo de activación de cuenta',
-                err
-              )
+              const mensaje = `Falló al enviar el correo de activación de cuenta`
+              this.logger.error(err, mensaje)
             })
         }
       }
@@ -266,10 +264,8 @@ export class UsuarioService extends BaseService {
           template
         )
         .catch((err) => {
-          this.logger.error(
-            'Falló al enviar el correo de recuperación de cuenta',
-            err
-          )
+          const mensaje = `Falló al enviar el correo de recuperación de cuenta`
+          this.logger.error(err, mensaje)
         })
     }
     return 'Búsqueda terminada'
@@ -477,10 +473,8 @@ export class UsuarioService extends BaseService {
         usuario.usuario,
         contrasena
       ).catch((err) => {
-        this.logger.error(
-          'Falló al enviar el correo de activación de cuenta',
-          err
-        )
+        const mensaje = `Falló al enviar el correo de activación de cuenta`
+        this.logger.error(err, mensaje)
       })
     }
 
@@ -628,7 +622,7 @@ export class UsuarioService extends BaseService {
           contrasena
         ).catch((error) => {
           const mensaje = `Ocurrió un error al enviar el correo electrónico para restaurar la contraseña`
-          this.logger.error(mensaje, error)
+          this.logger.error(error, mensaje)
         })
       }
 
@@ -675,7 +669,7 @@ export class UsuarioService extends BaseService {
           )
           .catch((error) => {
             const mensaje = `Ocurrió un error al enviar el correo electrónico de activación de cuenta`
-            this.logger.error(mensaje, error)
+            this.logger.error(error, mensaje)
           })
       }
 
