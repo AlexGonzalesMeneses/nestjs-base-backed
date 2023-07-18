@@ -5,11 +5,11 @@ export type ErrorParams = {
   errorStack?: string
   detalle?: unknown[]
   sistema?: string
+  modulo?: string
   causa?: string
   origen?: string
   accion?: string
   request?: RequestInfo
-  response?: ResponseInfo
   traceStack?: string
 }
 
@@ -27,12 +27,4 @@ export type RequestInfo = {
   query?: object
   body?: unknown
   user?: unknown
-}
-
-export type ResponseInfo = {
-  finalizado?: boolean
-  codigo?: number
-  timestamp?: number
-  mensaje?: string
-  datos?: unknown
 }

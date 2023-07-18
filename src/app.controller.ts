@@ -33,7 +33,7 @@ export class AppController extends BaseController {
     try {
       const codigoHttp = body.codigo || 500
       if (codigoHttp >= 400) {
-        this.logger.error({
+        this.logger.error(body, {
           codigo: codigoHttp,
           mensaje: body.mensaje,
           detalle: [

@@ -12,12 +12,14 @@ import { ErrorInfo } from './ErrorInfo'
 import { BaseException } from './BaseException'
 
 export class ExceptionManager {
-  static handleError(opt: ErrorParams = {}): ErrorInfo {
+  static handleError(opt: ErrorParams | ErrorInfo = {}): ErrorInfo {
+    // si ya se procesó el error entonces devolvemos esta información
+    if (opt instanceof ErrorInfo) return opt
+
     const error = opt.error
 
     // si ya se procesó el error entonces devolvemos esta información
-    if (error && error instanceof ErrorInfo) return error
-    if (error && error instanceof BaseException) return error.errorInfo
+    if (error instanceof BaseException) return error.errorInfo
 
     const errorStack = error instanceof Error ? getErrorStack(error) : ''
     const errorInfo = new ErrorInfo({
@@ -29,12 +31,12 @@ export class ExceptionManager {
         opt.detalle ||
         cleanParamValue(error instanceof Error ? [error.toString()] : []),
       sistema: opt.sistema,
+      modulo: opt.modulo,
       causa: opt.causa,
       origen: opt.origen || errorStack.split('\n').shift(),
       accion: opt.accion,
       traceStack: getErrorStack(new Error()),
       request: opt.request,
-      response: opt.response,
     })
 
     // TYPED ERROR
@@ -159,17 +161,17 @@ export class ExceptionManager {
       errorInfo.accion =
         opt.accion ||
         (errorInfo.codigo === HttpStatus.BAD_REQUEST
-          ? 'Verifique los datos de entrada'
+          ? 'Verifique que los datos de entrada se estén enviando correctamente'
           : errorInfo.codigo === HttpStatus.UNAUTHORIZED
-          ? 'Verifique si se están enviando las credenciales de acceso'
+          ? 'Verifique que las credenciales de acceso se estén enviando correctamente'
           : errorInfo.codigo === HttpStatus.FORBIDDEN
-          ? 'Verifique si el usuario actual tiene acceso a este recurso'
+          ? 'Verifique que el usuario actual tenga acceso a este recurso'
           : errorInfo.codigo === HttpStatus.NOT_FOUND
           ? 'Verifique que el recurso solicitado realmente exista'
           : errorInfo.codigo === HttpStatus.REQUEST_TIMEOUT
-          ? 'Verifique el tiempo de respuesta de este recurso'
+          ? 'Verifique que el servicio responda en un tiempo menor al tiempo máximo de espera establecido en la variable de entorno REQUEST_TIMEOUT_IN_SECONDS'
           : errorInfo.codigo === HttpStatus.PRECONDITION_FAILED
-          ? 'Verifique si cumple con las condiciones requeridas para consumir este recurso'
+          ? 'Verifique que se cumpla con todas las condiciones requeridas para consumir este recurso'
           : errorInfo.codigo === HttpStatus.INTERNAL_SERVER_ERROR
           ? 'Más info en detalles'
           : 'Más info en detalles')

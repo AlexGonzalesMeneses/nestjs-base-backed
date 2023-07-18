@@ -32,10 +32,8 @@ export class MensajeriaService {
 
       return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException(
-        'MENSAJERÍA:SMS :: Ocurrió un error al enviar el mensaje por SMS',
-        error
-      )
+      const mensaje = 'Ocurrió un error al enviar el mensaje por SMS'
+      throw new ExternalServiceException('MENSAJERÍA:SMS', error, mensaje)
     }
   }
 
@@ -57,10 +55,8 @@ export class MensajeriaService {
         .pipe(map((res) => res.data))
       return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException(
-        'MENSAJERÍA:CORREO :: Ocurrió un error al enviar el mensaje por E-MAIL',
-        error
-      )
+      const mensaje = 'Ocurrió un error al enviar el mensaje por E-MAIL'
+      throw new ExternalServiceException('MENSAJERÍA:CORREO', error, mensaje)
     }
   }
 
@@ -76,10 +72,8 @@ export class MensajeriaService {
 
       return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException(
-        'MENSAJERÍA:SMS :: Ocurrió un error al obtener el reporte del SMS',
-        error
-      )
+      const mensaje = 'Ocurrió un error al obtener el reporte del SMS'
+      throw new ExternalServiceException('MENSAJERÍA:SMS', error, mensaje)
     }
   }
 
@@ -94,10 +88,8 @@ export class MensajeriaService {
         .pipe(map((res) => res.data))
       return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException(
-        'MENSAJERÍA:CORREO :: Ocurrió un error al obtener el reporte del E-MAIL',
-        error
-      )
+      const mensaje = 'Ocurrió un error al obtener el reporte del E-MAIL'
+      throw new ExternalServiceException('MENSAJERÍA:CORREO', error, mensaje)
     }
   }
 }

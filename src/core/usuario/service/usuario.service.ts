@@ -108,11 +108,9 @@ export class UsuarioService extends BaseService {
       datosCorreo,
       usuarioDto.persona.nroDocumento,
       contrasena
-    ).catch((err: unknown) => {
-      this.logger.error(
-        'Falló al enviar la contraseña del usuario por correo electrónico',
-        err
-      )
+    ).catch((error) => {
+      const mensaje = `Falló al enviar la contraseña del usuario por correo electrónico`
+      this.logger.error(error, mensaje)
     })
 
     return crearResult

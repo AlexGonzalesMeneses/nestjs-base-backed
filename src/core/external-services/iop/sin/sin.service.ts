@@ -1,18 +1,16 @@
-import { BaseExternalService } from '../../../../common/base'
+import { BaseService } from '../../../../common/base'
 import { Injectable } from '@nestjs/common'
 import { SINCredencialesDTO } from './credenciales.dto'
 import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig } from 'axios'
 import { LoginResponse, LoginResult } from './types'
-import { LoggerService } from '../../../logger'
-
-const logger = LoggerService.getInstance()
+import { firstValueFrom } from 'rxjs'
 
 @Injectable()
-export class SinService extends BaseExternalService {
+export class SinService extends BaseService {
   constructor(protected http: HttpService) {
-    super(http)
-    logger.trace('Instanciando servicio de SIN...', {
+    super()
+    this.logger.trace('Instanciando servicio de SIN...', {
       baseURL: http.axiosRef.defaults.baseURL,
     })
   }
@@ -33,15 +31,7 @@ export class SinService extends BaseExternalService {
         },
       }
 
-      const requestResult = await this.request(config)
-      if (requestResult.error && requestResult.errorMessage) {
-        return {
-          finalizado: false,
-          mensaje: requestResult.errorMessage,
-        }
-      }
-
-      const response = requestResult.response
+      const response = await firstValueFrom(this.http.request(config))
       const body = response?.data as LoginResponse
 
       if (
@@ -49,14 +39,11 @@ export class SinService extends BaseExternalService {
         body.Mensaje &&
         body.Mensaje.includes('You cannot consume this service')
       ) {
-        requestResult.errorMessage = `No tiene permisos para usar este servicio.`
-        this.logger.error({
-          mensaje: requestResult.errorMessage,
-          detalle: [{ requestResult }],
-        })
+        const mensaje = `No tiene permisos para usar este servicio.`
+        this.logger.error(body, { modulo: 'SIN', mensaje, detalle: [response] })
         return {
           finalizado: false,
-          mensaje: requestResult.errorMessage,
+          mensaje,
         }
       }
 
@@ -65,27 +52,20 @@ export class SinService extends BaseExternalService {
         body.Mensaje &&
         body.Mensaje.includes('no API found with those values')
       ) {
-        requestResult.errorMessage = `No se encontró el servicio solicitado.`
-        this.logger.error({
-          mensaje: requestResult.errorMessage,
-          detalle: [{ requestResult }],
-        })
+        const mensaje = `No se encontró el servicio solicitado.`
+        this.logger.error(body, { modulo: 'SIN', mensaje, detalle: [response] })
         return {
           finalizado: false,
-          mensaje: requestResult.errorMessage,
+          mensaje,
         }
       }
 
       if (!body.Autenticado) {
-        requestResult.errorMessage =
-          body.Mensaje || requestResult.errorMessage || 'Error desconocido'
-        this.logger.error({
-          mensaje: requestResult.errorMessage,
-          detalle: [{ requestResult }],
-        })
+        const mensaje = body.Mensaje || 'Error desconocido'
+        this.logger.error(body, { modulo: 'SIN', mensaje, detalle: [response] })
         return {
           finalizado: false,
-          mensaje: requestResult.errorMessage,
+          mensaje,
         }
       }
 
@@ -94,8 +74,8 @@ export class SinService extends BaseExternalService {
         mensaje: body.Estado,
       }
     } catch (error: unknown) {
-      const mensaje = `SIN :: Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
-      this.logger.error(mensaje, error)
+      const mensaje = `Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
+      this.logger.error(error, { modulo: 'SIN', mensaje })
 
       return {
         finalizado: false,

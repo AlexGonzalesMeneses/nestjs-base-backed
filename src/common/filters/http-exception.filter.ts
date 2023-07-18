@@ -1,8 +1,6 @@
 import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
-import { ExceptionManager } from '../../common/exception-manager'
-import { LOG_LEVEL } from '../../core/logger'
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
@@ -25,7 +23,10 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       user: request.user,
     }
 
-    const errorInfo = ExceptionManager.handleError({ error: exception })
+    const errorInfo = this.logger.error(exception, {
+      request: errorRequest,
+    })
+
     const errorResult = {
       finalizado: false,
       codigo: errorInfo.codigo,
@@ -35,26 +36,6 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
         causa: errorInfo.causa,
         accion: errorInfo.accion,
       },
-    }
-
-    errorInfo.request = errorRequest
-    errorInfo.response = errorResult
-
-    const logLevel = errorInfo.getLogLevel()
-
-    // ERROR
-    if (logLevel === LOG_LEVEL.ERROR) {
-      this.logger.error(errorInfo)
-    }
-
-    // WARN
-    else if (logLevel === LOG_LEVEL.WARN) {
-      this.logger.warn(errorInfo)
-    }
-
-    // INFO
-    else {
-      this.logger.info(errorInfo)
     }
 
     response.status(errorResult.codigo).json(errorResult)

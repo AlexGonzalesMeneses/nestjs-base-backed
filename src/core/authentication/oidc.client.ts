@@ -29,10 +29,10 @@ export class ClientOidcService {
       })
     } catch (error: unknown) {
       setTimeout(() => {
-        logger.fatal({
-          error,
-          mensaje: 'CIUDADANÏA :: Error de conexión con ciudadanía',
-          accion: `Verifique que el servicio de ciudadanía se encuentre activo y funcionando correctamente. ${oidcIssuer}`,
+        logger.fatal(error, {
+          modulo: 'CIUDADANÏA',
+          mensaje: 'Error de conexión con ciudadanía',
+          detalle: [oidcIssuer],
         })
       }, 2000)
     }

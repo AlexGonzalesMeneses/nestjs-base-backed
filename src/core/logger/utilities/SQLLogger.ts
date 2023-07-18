@@ -1,4 +1,4 @@
-import { ExternalServiceException } from '../../../common/exceptions'
+import { BaseException } from '../../../common/exception-manager'
 import { AdvancedConsoleLogger } from 'typeorm'
 import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
@@ -30,7 +30,7 @@ export class SQLLogger extends AdvancedConsoleLogger {
     const ctx = getErrorStack(new Error())
     const sql = this.buildSql(query, parameters, true, false)
 
-    throw new ExternalServiceException({
+    throw new BaseException({
       error,
       codigo: 500,
       mensaje: 'Ocurrió un error inesperado',

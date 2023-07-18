@@ -33,9 +33,8 @@ export class TimeoutInterceptor implements NestInterceptor {
       catchError((err) => {
         if (err instanceof TimeoutError) {
           const url = originalUrl.split('?')[0]
-          logger.error(
-            `${method} ${url} tardó demasiado en responder (tiempo transcurrido: ${tiempoMaximoEspera} seg)`
-          )
+          const mensaje = `${method} ${url} tardó demasiado en responder (tiempo transcurrido: ${tiempoMaximoEspera} seg)`
+          logger.error(err, mensaje)
           return throwError(() => new RequestTimeoutException())
         }
         return throwError(() => err)
