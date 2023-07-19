@@ -2,52 +2,105 @@
 
 Librería para registrar eventos o capturar errores del sistema.
 
-## Modo de uso - Configuración Global
+## Modo de uso
 
-Desde cualquier parte de la aplicación, importamos `LoggerService` y `ExceptionManager`.
+**Ejemplo 1** Para registrar un error controlado manualmente
 
 ```ts
 import { LoggerService } from '../src/core/logger'
-import { ExceptionManager } from '../src/common/exception-manager'
 
 const logger = LoggerService.getInstance()
+
+function tarea(datos) {
+  try {
+    // código inseguro
+  } catch (error) {
+    logger.error(error, {
+      mensaje: 'mensaje genérico opcional',
+      detalle: ['info adicional', datos],
+      modulo: 'MENSAJERÍA'
+    })
+  }
+}
 ```
 
-Luego configuramos el manejador de errores para una determinada tarea:
+Ejemplos de implementación:
 
 ```ts
-try {
-  // Tareas a controlar
-} catch (error: unknown) {
-  const errorInfo = ExceptionManager.handleError(error, HttpExceptionFilter.name, {
-    sistema: 'app-backend v0.0.1',
-  })
-  errorInfo.save(logger)
+logger.error(error)
+logger.error(error, mensaje)
+logger.error(error, mensaje, detalle)
+logger.error(error, mensaje, detalle. modulo)
+logger.error(error, {
+  mensaje,
+  detalle,
+  modulo,
+})
+
+// todos los parámetros posibles
+logger.error(error, {
+  codigo,
+  mensaje,
+  detalle,
+  sistema,
+  modulo,
+  causa,
+  accion,
+})
+```
+
+**Ejemplo 2** Para lanzar una excepción controlada
+
+```ts
+import { BaseException } from '../src/core/logger'
+
+function tarea(datos) {
+  try {
+    // código inseguro
+  } catch (error) {
+    throw new BaseException({
+      error,
+      mensaje: 'mensaje genérico opcional',
+      detalle: ['info adicional', datos],
+      modulo: 'MENSAJERÍA'
+    })
+  }
 }
+```
+
+Ejemplos de implementación:
+
+```ts
+// Si se conoce el error, el código y la causa se asignan automáticamente en base a este
+throw new BaseException({
+  error,
+})
+
+// Si no conoce el error, puede especificar manualmente el codigo y la causa del mismo
+throw new BaseException({
+  codigo,
+  causa,
+})
+
+// Todos los valores posibles
+throw new BaseException({
+  error,
+  codigo,
+  causa,
+  mensaje,
+  detalle,
+  sistema,
+  modulo,
+  accion,
+})
 ```
 
 ## Casos de uso
 
-- Para registrar errores críticos. Ej.: errores de conexión con la base de datos. Registro manual
 - Para registrar errores. Ej.: errores en tiempo de ejecución. Registro manual (errores controlados) y registro automático (errores no controlados)
 - Para registrar eventos. Ej.: cuando un servicio ha sido iniciado o detenido, cuando un componente ha sido activado. Registro manual
 
-## 1. Para registrar errores críticos
-
-Los errores críticos son aquellos que interrumpen o impiden el funcionamiento normal del sistema y pueden causar fallas graves o incluso la detención completa del sistema.
-
-**Ejemplo:** Errores de conexión con la base de datos
-
-```ts
-db.open((error) => {
-  if (error) {
-    logger.fatal('No se pudo establecer conexión con la base de datos', error)
-    process.exit(1)
-  }
-})
-```
-
-## 2. Para capturar errores en tiempo de ejecución
+## 1. Para capturar errores en tiempo de ejecución
 
 Los errores en tiempo de ejecución son problemas que se producen durante la ejecución de un programa y pueden interrumpir su funcionamiento normal.
 
@@ -65,41 +118,40 @@ Nest proporciona un conjunto de [excepciones estándar](https://docs.nestjs.com/
 - `PreconditionFailedException`
 - `...`
 
-**Ejemplo 1:** Archivo `src/core/usuario/service/usuario.service.ts`
+**Ejemplo 1:** Para lanzar una excepción propia de NestJS (de tipo `HttpException`)
 
 ```ts
-import { PreconditionFailedException } from '@nestjs/common'
+import { UnauthorizedException } from '@nestjs/common'
 
-if (!usuario) {
-  throw new PreconditionFailedException(Messages.INVALID_USER)
+function validar(headers) {
+  if (!headers.authorization) {
+    throw new UnauthorizedException()
+  }
 }
 ```
 
-**Ejemplo 2:** Archivo `src/core/authentication/controller/authentication.controller.ts`
+**Ejemplo 2:** Para lanzar una excepción personalizada (de tipo `BaseException`)
 
 ```ts
-import { BadRequestException } from '@nestjs/common'
+import { BaseException } from '../src/core/logger'
+import { HttpStatus } from '@nestjs/common'
 
-if (!req.user) {
-  throw new BadRequestException(
-    `Es necesario que esté autenticado para consumir este recurso.`
-  )
+function validar(headers) {
+  if (!headers.authorization) {
+    throw new BaseException({
+      codigo: HttpStatus.UNAUTHORIZED,
+      causa: 'Valor no definido "headers.authorization"',
+      detalle: { headers },
+    })
+  }
 }
 ```
 
 ## 2.2 Errores No Controlados
 
-Este tipo de errores siempre serán considerados de tipo `500 Internal Server Error`
+Algunos errores que pueden presentarse de manera imprevista son los siguientes:
 
-**Ejemplo 1:** Archivo `src/common/lib/util.service.ts`
-
-```ts
-if (values.length === 0) {
-  throw new Error('[buildCheck] Debe especificarse al menos un item')
-}
-```
-
-**Ejemplo 2:** Archivo `src/core/usuario/repository/usuario.repository.ts`
+**Ejemplo 1:** Cuando una consulta SQL no se encuentra bien formulada:
 
 ```ts
 async recuperar() {
@@ -110,6 +162,8 @@ async recuperar() {
     .getMany()
 }
 ```
+
+**Nota.-** Estos tipos de errores siempre serán de tipo `500 Internal Server Exception`
 
 ## 3. Para registrar eventos
 
