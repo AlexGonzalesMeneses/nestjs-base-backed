@@ -1,4 +1,4 @@
-import { LoggerService } from '../../logger'
+import { BaseException, LoggerService } from '../../logger'
 import {
   ExecutionContext,
   Injectable,
@@ -23,9 +23,12 @@ export class LocalAuthGuard extends AuthGuard('local') {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new UnauthorizedException()
     } catch (err) {
-      const errMsg = `${action} ${resource} -> false - LOGIN BÁSICO (Error con usuario y contraseña)`
-      this.logger.warn(errMsg, err)
-      throw err
+      throw new BaseException({
+        error: err,
+        causa: 'AuthGuard LOCAL super.canActivate(context)',
+        accion: 'Verifique que las credenciales de acceso sean las correctas',
+        detalle: `${action} ${resource} -> false - LOGIN BÁSICO (Error con usuario y contraseña)`,
+      })
     }
 
     const { user } = context.switchToHttp().getRequest()

@@ -1,11 +1,9 @@
-import { LoggerService } from '../../logger'
+import { BaseException, LoggerService } from '../../logger'
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Inject,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
 import { Request } from 'express'
@@ -28,10 +26,11 @@ export class CasbinGuard implements CanActivate {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!user) {
-      this.logger.warn(
-        `${action} ${resource} -> false - El usuario no se encuentra autenticado`
-      )
-      throw new UnauthorizedException()
+      throw new BaseException({
+        causa: 'Valor "req.user" no definido',
+        accion: 'Agregar JWTGuard. Ej.: @UseGuards(JwtAuthGuard, CasbinGuard)',
+        detalle: `${action} ${resource} -> false - El usuario no se encuentra autenticado`,
+      })
     }
 
     for (const rol of user.roles) {
@@ -44,9 +43,10 @@ export class CasbinGuard implements CanActivate {
       }
     }
 
-    this.logger.warn(
-      `${action} ${resource} (${user.roles.toString()}) -> false - Permisos insuficientes (CASBIN)`
-    )
-    throw new ForbiddenException()
+    throw new BaseException({
+      causa: `No se encontraron roles válidos que puedan acceder a este recurso`,
+      accion: 'Definir la regla CASBIN para consumir el recurso',
+      detalle: `${action} ${resource} (${user.roles.toString()}) -> false - Permisos insuficientes (CASBIN)`,
+    })
   }
 }

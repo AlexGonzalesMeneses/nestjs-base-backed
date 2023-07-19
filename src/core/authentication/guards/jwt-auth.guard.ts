@@ -1,4 +1,4 @@
-import { LoggerService } from '../../logger'
+import { BaseException, LoggerService } from '../../logger'
 import {
   ExecutionContext,
   ForbiddenException,
@@ -21,6 +21,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     } = context.switchToHttp().getRequest() as Request
     const resource = Object.keys(query).length ? route.path : originalUrl
 
+    if (!headers.authorization) {
+      throw new BaseException({
+        causa: 'Valor "headers.authorization" no definido',
+        accion: 'Agregar el token de acceso en el header de la petición',
+        detalle: `${action} ${resource} -> false - Token inválido (req.headers.authorization)`,
+      })
+    }
+
     try {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new ForbiddenException()
@@ -29,15 +37,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         ? `${headers.authorization.substring(0, 20)}...`
         : String(headers.authorization)
 
-      if (!headers.authorization) {
-        const errMsg = `${action} ${resource} -> false - Token inválido (req.headers.authorization)`
-        this.logger.warn(errMsg)
-        throw err
-      }
-
-      const errMsg = `${action} ${resource} -> false - Token inválido (${token})`
-      this.logger.warn(errMsg, err)
-      throw err
+      throw new BaseException({
+        error: err,
+        causa: 'AuthGuard JWT super.canActivate(context)',
+        accion: 'Verificar que el token sea el correcto',
+        detalle: `${action} ${resource} -> false - Token inválido (${token})`,
+      })
     }
 
     const { user } = context.switchToHttp().getRequest()

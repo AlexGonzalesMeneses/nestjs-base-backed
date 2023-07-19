@@ -26,8 +26,9 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
     } catch (err) {
       throw new BaseException({
         error: err,
+        causa: 'AuthGuard OIDC super.canActivate(context)',
+        accion: `Asegúrese de que el usuario se encuentre registrado en ciudadanía`,
         detalle: `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`,
-        causa: err.toString(),
       })
     }
 

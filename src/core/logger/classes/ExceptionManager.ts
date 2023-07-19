@@ -39,21 +39,22 @@ export class ExceptionManager {
 
     // TYPED ERROR
     if (!error || typeof error !== 'object') {
-      errorInfo.codigo = opt.codigo || HttpStatus.BAD_REQUEST
+      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
-        error && typeof error === 'string'
-          ? opt.mensaje || error
-          : opt.mensaje ||
-            'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente'
+        opt.mensaje ||
+        (error && typeof error === 'string'
+          ? error
+          : 'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente')
       errorInfo.causa =
-        error && typeof error !== 'string'
-          ? opt.causa || 'Posiblemente sea el formato de los datos de entrada'
-          : ''
+        opt.causa ||
+        (error && typeof error !== 'string'
+          ? 'Posiblemente sea el formato de los datos de entrada'
+          : '')
       errorInfo.accion =
-        error && typeof error !== 'string'
-          ? opt.accion ||
-            'Verifica el contenido del objeto JSON enviado en el body'
-          : ''
+        opt.accion ||
+        (error && typeof error !== 'string'
+          ? 'Verifica el contenido del objeto JSON enviado en el body'
+          : '')
     }
 
     // CONEXION ERROR
