@@ -36,7 +36,7 @@ export class SQLLogger extends AdvancedConsoleLogger {
       mensaje: 'Ocurrió un error inesperado',
       detalle: [sql, ctx],
       causa: error.toString(),
-      accion: 'Verificar las consultas SQL',
+      accion: 'Verificar la consulta SQL',
     })
   }
 

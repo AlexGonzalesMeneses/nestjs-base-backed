@@ -200,7 +200,7 @@ export class ExceptionManager {
       (error.name === 'TypeORMError' || error.name === 'QueryFailedError')
     ) {
       errorInfo.causa = opt.causa || error.name
-      errorInfo.accion = opt.accion || 'Verificar las consultas SQL'
+      errorInfo.accion = opt.accion || 'Verificar la consulta SQL'
     }
 
     return errorInfo

@@ -67,7 +67,7 @@ export class ErrorInfo {
           args.push('\n───── Detalle ─────────')
           this.detalle.map((item) => {
             args.push(item)
-            args.push('---')
+            args.push('-----------------------')
           })
         }
       }
