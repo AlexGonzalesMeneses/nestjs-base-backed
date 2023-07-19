@@ -36,6 +36,23 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         await this.client.userinfo(tokenset)
 
       const ci = <DocumentoIdentidadType>userinfo?.profile?.documento_identidad
+      if (!ci) {
+        throw new Error(
+          'El cliente de ciudadanía (client.userinfo(tokenset)) no devolvió el campo "profile.documento_identidad"'
+        )
+      }
+
+      if (!userinfo.fecha_nacimiento) {
+        throw new Error(
+          'El cliente de ciudadanía (client.userinfo(tokenset)) no devolvió el campo "fecha_nacimiento"'
+        )
+      }
+
+      if (!userinfo.email) {
+        throw new Error(
+          'El cliente de ciudadanía (client.userinfo(tokenset)) no devolvió el campo "email"'
+        )
+      }
 
       /*if (/[a-z]/i.test(ci.numero_documento)) {
         ci.complemento = ci.numero_documento.slice(-2);

@@ -26,7 +26,9 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
 
     const except = new BaseException({
       error: exception,
-      request: errorRequest,
+      detalle: {
+        request: errorRequest,
+      },
     })
 
     this.logger.error(except)

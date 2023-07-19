@@ -32,7 +32,7 @@ export class ClientOidcService {
         logger.fatal(error, {
           modulo: 'CIUDADANÏA',
           mensaje: 'Error de conexión con ciudadanía',
-          detalle: [oidcIssuer],
+          detalle: { oidcIssuer },
         })
       }, 2000)
     }

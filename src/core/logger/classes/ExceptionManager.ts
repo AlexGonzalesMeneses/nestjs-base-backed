@@ -28,15 +28,13 @@ export class ExceptionManager {
       error: cleanParamValue(error),
       errorStack,
       detalle:
-        opt.detalle ||
-        cleanParamValue(error instanceof Error ? [error.toString()] : []),
+        opt.detalle || (error instanceof Error ? error.toString() : undefined),
       sistema: opt.sistema,
       modulo: opt.modulo,
       causa: opt.causa,
       origen: opt.origen || errorStack.split('\n').shift(),
       accion: opt.accion,
       traceStack: getErrorStack(new Error()),
-      request: opt.request,
     })
 
     // TYPED ERROR
@@ -176,7 +174,6 @@ export class ExceptionManager {
           ? 'Más info en detalles'
           : 'Más info en detalles')
       errorInfo.error = error.toString()
-      errorInfo.detalle = []
     }
 
     // AXIOS ERROR

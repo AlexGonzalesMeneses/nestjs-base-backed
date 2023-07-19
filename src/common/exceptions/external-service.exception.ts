@@ -8,13 +8,13 @@ export class ExternalServiceException extends BaseException {
     servicio: string,
     error: unknown,
     mensaje: string,
-    detalle: unknown[]
+    detalle: unknown
   )
   constructor(
     arg1: string | ErrorOptions,
     error?: unknown,
     mensaje?: string,
-    detalle?: unknown[]
+    detalle?: unknown
   ) {
     const opt =
       typeof arg1 === 'string'

@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common'
 import { getErrorStack } from '../utilities'
-import { ErrorOptions, RequestInfo } from '../types'
+import { ErrorOptions } from '../types'
 import { HttpMessages } from '../messages'
 import packageJson from '../../../../package.json'
 import { LOG_LEVEL } from '../constants'
@@ -11,14 +11,13 @@ export class ErrorInfo {
   mensaje: string = HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR // Mensaje para el cliente
   error?: unknown // contenido original del error
   errorStack?: string // Stack del error (se genera de forma automática)
-  detalle: unknown[] = [] // Detalle del error
+  detalle: unknown // Información adicional para determinar la causa del error
   sistema = `${packageJson.name} v${packageJson.version}` // Identificador de la aplicación: app-backend | app-frontend | node-script
   modulo = '' // Identificador del módulo que esta produciendo el error
   causa = '' // Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
   origen = '' // Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
   accion = '' // Mensaje que indica cómo resolver el error en base a la causa detectada
   traceStack = getErrorStack(new Error()) // Stack del componente que capturó el error (se genera de forma automática)
-  request?: RequestInfo // Datos de la petición del cliente
 
   constructor(obj: ErrorOptions) {
     if (typeof obj.codigo !== 'undefined') this.codigo = obj.codigo
@@ -32,7 +31,6 @@ export class ErrorInfo {
     if (typeof obj.origen !== 'undefined') this.origen = obj.origen
     if (typeof obj.accion !== 'undefined') this.accion = obj.accion
     if (typeof obj.traceStack !== 'undefined') this.traceStack = obj.traceStack
-    if (typeof obj.request !== 'undefined') this.request = obj.request
   }
 
   obtenerMensajeCliente() {
@@ -62,12 +60,23 @@ export class ErrorInfo {
       args.push(`─ Acción  : ${this.accion}`)
     }
 
-    if (this.detalle && this.detalle.length > 0) {
-      args.push('\n───── Detalle ─────────')
-      this.detalle.map((item) => {
-        args.push(item)
-        args.push('---')
-      })
+    if (this.detalle) {
+      // detalle = [{ some: 'value' }, 'información adicional']
+      if (Array.isArray(this.detalle)) {
+        if (this.detalle.length > 0) {
+          args.push('\n───── Detalle ─────────')
+          this.detalle.map((item) => {
+            args.push(item)
+            args.push('---')
+          })
+        }
+      }
+
+      // detalle = { some: 'value' }
+      else {
+        args.push('\n───── Detalle ─────────')
+        args.push(this.detalle)
+      }
     }
 
     if (this.error) {
@@ -83,11 +92,6 @@ export class ErrorInfo {
     if (this.traceStack) {
       args.push('\n───── Trace stack ─────')
       args.push(this.traceStack)
-    }
-
-    if (this.request) {
-      args.push('\n───── Request ─────────')
-      args.push(this.request)
     }
 
     args.push(

@@ -1,4 +1,4 @@
-import { LoggerService } from '../../logger'
+import { BaseException, LoggerService } from '../../logger'
 import {
   ExecutionContext,
   Injectable,
@@ -24,9 +24,11 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new UnauthorizedException()
     } catch (err) {
-      const mensaje = `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`
-      this.logger.error(err, mensaje)
-      throw err
+      throw new BaseException({
+        error: err,
+        detalle: `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`,
+        causa: err.toString(),
+      })
     }
 
     await super.logIn(request)

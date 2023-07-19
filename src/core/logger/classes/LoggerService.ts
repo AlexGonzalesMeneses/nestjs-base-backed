@@ -132,11 +132,11 @@ export class LoggerService {
 
   fatal(error: unknown): ErrorInfo
   fatal(error: unknown, mensaje: string): ErrorInfo
-  fatal(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
+  fatal(error: unknown, mensaje: string, detalle: unknown): ErrorInfo
   fatal(
     error: unknown,
     mensaje: string,
-    detalle: unknown[],
+    detalle: unknown,
     modulo: string
   ): ErrorInfo
   fatal(error: unknown, opt: ErrorOptions): ErrorInfo
@@ -155,17 +155,17 @@ export class LoggerService {
 
   error(error: unknown): ErrorInfo
   error(error: unknown, mensaje: string): ErrorInfo
-  error(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
+  error(error: unknown, mensaje: string, detalle: unknown): ErrorInfo
   error(
     error: unknown,
     mensaje: string,
-    detalle: unknown[],
+    detalle: unknown,
     modulo: string
   ): ErrorInfo
   error(
     error: unknown,
     mensaje: string,
-    detalle: unknown[],
+    detalle: unknown,
     modulo: string
   ): ErrorInfo
   error(error: unknown, opt: ErrorOptions): ErrorInfo
@@ -184,11 +184,11 @@ export class LoggerService {
 
   warn(error: unknown): ErrorInfo
   warn(error: unknown, mensaje: string): ErrorInfo
-  warn(error: unknown, mensaje: string, detalle: unknown[]): ErrorInfo
+  warn(error: unknown, mensaje: string, detalle: unknown): ErrorInfo
   warn(
     error: unknown,
     mensaje: string,
-    detalle: unknown[],
+    detalle: unknown,
     modulo: string
   ): ErrorInfo
   warn(error: unknown, opt: ErrorOptions): ErrorInfo
@@ -237,7 +237,7 @@ export class LoggerService {
       })
     }
 
-    // 3ra forma - (error: unknown, mensaje: string, detalle: unknown[]) => ErrorInfo
+    // 3ra forma - (error: unknown, mensaje: string, detalle: unknown) => ErrorInfo
     else if (arguments.length === 3 && typeof arg2 === 'string') {
       return ExceptionManager.handleError({
         error: arg1,
@@ -246,7 +246,7 @@ export class LoggerService {
       })
     }
 
-    // 4ta forma - (error: unknown, mensaje: string, detalle: unknown[], modulo: string) => ErrorInfo
+    // 4ta forma - (error: unknown, mensaje: string, detalle: unknown, modulo: string) => ErrorInfo
     else if (
       arguments.length === 4 &&
       typeof arg2 === 'string' &&
