@@ -2,6 +2,7 @@ import { BaseException, LoggerService } from '../../logger'
 import {
   ExecutionContext,
   ForbiddenException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
@@ -23,6 +24,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (!headers.authorization) {
       throw new BaseException({
+        codigo: HttpStatus.FORBIDDEN,
         causa: 'Valor "headers.authorization" no definido',
         accion: 'Agregar el token de acceso en el header de la petición',
         detalle: `${action} ${resource} -> false - Token inválido (req.headers.authorization)`,
@@ -39,7 +41,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       throw new BaseException({
         error: err,
-        causa: 'AuthGuard JWT super.canActivate(context)',
         accion: 'Verificar que el token sea el correcto',
         detalle: `${action} ${resource} -> false - Token inválido (${token})`,
       })

@@ -32,11 +32,9 @@ export class SQLLogger extends AdvancedConsoleLogger {
 
     throw new BaseException({
       error,
-      codigo: 500,
       mensaje: 'Ocurrió un error inesperado',
-      detalle: [sql, ctx],
-      causa: error.toString(),
       accion: 'Verificar la consulta SQL',
+      detalle: [sql, ctx],
     })
   }
 

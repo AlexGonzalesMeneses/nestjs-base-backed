@@ -25,7 +25,6 @@ export class LocalAuthGuard extends AuthGuard('local') {
     } catch (err) {
       throw new BaseException({
         error: err,
-        causa: 'AuthGuard LOCAL super.canActivate(context)',
         accion: 'Verifique que las credenciales de acceso sean las correctas',
         detalle: `${action} ${resource} -> false - LOGIN BÁSICO (Error con usuario y contraseña)`,
       })

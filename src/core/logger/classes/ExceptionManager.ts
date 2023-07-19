@@ -31,7 +31,8 @@ export class ExceptionManager {
         opt.detalle || (error instanceof Error ? error.toString() : undefined),
       sistema: opt.sistema,
       modulo: opt.modulo,
-      causa: opt.causa,
+      causa:
+        opt.causa || (error instanceof Error ? error.toString() : undefined),
       origen: opt.origen || errorStack.split('\n').shift(),
       accion: opt.accion,
       traceStack: getErrorStack(new Error()),
@@ -39,27 +40,17 @@ export class ExceptionManager {
 
     // TYPED ERROR
     if (!error || typeof error !== 'object') {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         (error && typeof error === 'string'
           ? error
           : 'Ocurrió un error inesperado, por favor verifique los datos de entrada e inténtelo nuevamente')
-      errorInfo.causa =
-        opt.causa ||
-        (error && typeof error !== 'string'
-          ? 'Posiblemente sea el formato de los datos de entrada'
-          : '')
-      errorInfo.accion =
-        opt.accion ||
-        (error && typeof error !== 'string'
-          ? 'Verifica el contenido del objeto JSON enviado en el body'
-          : '')
+      errorInfo.causa = opt.causa || ''
+      errorInfo.accion = opt.accion || ''
     }
 
     // CONEXION ERROR
     else if (isConexionError(error)) {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         'Error de conexión, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
@@ -84,7 +75,6 @@ export class ExceptionManager {
       error.response.data.message &&
       typeof error.response.data.message === 'string'
     ) {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         'Ocurrió un error inesperado, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
@@ -109,7 +99,6 @@ export class ExceptionManager {
       error.response.data.data &&
       typeof error.response.data.data === 'string'
     ) {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         'Ocurrió un error inesperado, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
@@ -130,7 +119,6 @@ export class ExceptionManager {
       typeof error.response.data === 'string' &&
       error.response.data === 'The upstream server is timing out'
     ) {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         'Ocurrió un error inesperado, por favor vuelva a intentarlo o comuníquese con soporte técnico si el problema persiste'
@@ -142,7 +130,6 @@ export class ExceptionManager {
 
     // CERT EXPIRED ERROR
     else if (isCertExpiredError(error)) {
-      errorInfo.codigo = opt.codigo || HttpStatus.INTERNAL_SERVER_ERROR
       errorInfo.mensaje =
         opt.mensaje ||
         'El certificado digital utilizado por un sitio web, aplicación o servicio ha caducado'
@@ -200,7 +187,8 @@ export class ExceptionManager {
       'name' in error &&
       (error.name === 'TypeORMError' || error.name === 'QueryFailedError')
     ) {
-      errorInfo.causa = opt.causa || error.name
+      errorInfo.causa =
+        opt.causa || (error instanceof Error ? error.toString() : error.name)
       errorInfo.accion = opt.accion || 'Verificar la consulta SQL'
     }
 

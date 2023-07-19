@@ -35,8 +35,10 @@ export class AppController extends BaseController {
       const codigoHttp = body.codigo || 500
       if (codigoHttp >= 400) {
         const except = new BaseException({
-          codigo: codigoHttp,
           mensaje: body.mensaje,
+          codigo: codigoHttp,
+          causa: String(body.causa),
+          accion: body.accion,
           detalle: [
             {
               fecha: body.fecha,
@@ -45,9 +47,7 @@ export class AppController extends BaseController {
             body.detalle,
           ],
           sistema: body.sistema,
-          causa: body.causa,
           origen: body.origen,
-          accion: body.accion,
         })
         this.logger.error(except)
       } else {
