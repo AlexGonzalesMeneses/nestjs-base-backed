@@ -1,9 +1,10 @@
+import { HttpStatus } from '@nestjs/common'
 import { IsNumber, IsObject, IsOptional, IsString } from './common/validation'
 
 export class LogRequestDTO {
   @IsNumber()
   @IsOptional()
-  codigo?: number
+  codigo?: HttpStatus
 
   @IsString()
   @IsOptional()

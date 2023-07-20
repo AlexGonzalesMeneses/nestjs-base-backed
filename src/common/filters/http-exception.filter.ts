@@ -24,8 +24,7 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       user: request.user,
     }
 
-    const except = new BaseException({
-      error: exception,
+    const except = new BaseException(exception, {
       detalle: {
         request: errorRequest,
       },
@@ -35,12 +34,12 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
 
     const errorResult = {
       finalizado: false,
-      codigo: except.errorInfo.codigo,
+      codigo: except.getHttpStatus(),
       timestamp: Math.floor(Date.now() / 1000),
-      mensaje: except.errorInfo.obtenerMensajeCliente(),
+      mensaje: except.obtenerMensajeCliente(),
       datos: {
-        causa: except.errorInfo.causa,
-        accion: except.errorInfo.accion,
+        causa: except.getCausa(),
+        accion: except.getAccion(),
       },
     }
 

@@ -23,8 +23,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!headers.authorization) {
-      throw new BaseException({
-        codigo: HttpStatus.FORBIDDEN,
+      throw new BaseException(null, {
+        httpStatus: HttpStatus.FORBIDDEN,
         causa: 'Valor "headers.authorization" no definido',
         accion: 'Agregar el token de acceso en el header de la petición',
         detalle: `${action} ${resource} -> false - Token inválido (req.headers.authorization)`,
@@ -39,8 +39,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         ? `${headers.authorization.substring(0, 20)}...`
         : String(headers.authorization)
 
-      throw new BaseException({
-        error: err,
+      throw new BaseException(err, {
         accion: 'Verificar que el token sea el correcto',
         detalle: `${action} ${resource} -> false - Token inválido (${token})`,
       })

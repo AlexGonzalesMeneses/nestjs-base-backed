@@ -23,8 +23,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new UnauthorizedException()
     } catch (err) {
-      throw new BaseException({
-        error: err,
+      throw new BaseException(err, {
         accion: 'Verifique que las credenciales de acceso sean las correctas',
         detalle: `${action} ${resource} -> false - LOGIN BÁSICO (Error con usuario y contraseña)`,
       })
