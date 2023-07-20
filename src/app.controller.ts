@@ -4,13 +4,16 @@ import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 @Controller()
+@ApiTags('Estado')
 export class AppController extends BaseController {
   constructor(@Inject(ConfigService) private configService: ConfigService) {
     super()
   }
 
+  @ApiOperation({ summary: 'API para obtener el estado de la aplicación' })
   @Get('/estado')
   async verificarEstado(@Res() res: Response) {
     return res.status(HttpStatus.OK).json({

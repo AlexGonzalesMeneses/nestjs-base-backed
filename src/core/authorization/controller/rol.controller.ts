@@ -17,7 +17,16 @@ import { CrearRolDto } from '../dto/crear-rol.dto'
 import { ParamIdDto } from '../../../common/dto/params-id.dto'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
 import { ActualizarRolDto } from '../dto/actualizar-rol.dto'
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger'
 
+@ApiTags('Roles')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/roles')
 export class RolController extends BaseController {
@@ -25,18 +34,26 @@ export class RolController extends BaseController {
     super()
   }
 
+  @ApiOperation({ summary: 'API para obtener el listado de  Roles' })
   @Get()
   async listar() {
     const result = await this.rolService.listar()
     return this.successList(result)
   }
 
+  @ApiOperation({ summary: 'API para obtener el listado de todos los Roles' })
   @Get('todos')
   async listarTodos(@Query() paginacionQueryDto: PaginacionQueryDto) {
     const result = await this.rolService.listarTodos(paginacionQueryDto)
     return this.successListRows(result)
   }
 
+  @ApiOperation({ summary: 'API para crear un Rol' })
+  @ApiBody({
+    type: CrearRolDto,
+    description: 'new Rol',
+    required: true,
+  })
   @Post()
   async crear(@Req() req, @Body() rolDto: CrearRolDto) {
     const usuarioAuditoria = this.getUser(req)
@@ -44,6 +61,15 @@ export class RolController extends BaseController {
     return this.successCreate(result)
   }
 
+  @ApiOperation({ summary: 'API para actualizar un Rol' })
+  @ApiProperty({
+    type: ParamIdDto,
+  })
+  @ApiBody({
+    type: ActualizarRolDto,
+    description: 'new Rol',
+    required: true,
+  })
   @Patch(':id')
   async actualizar(
     @Param() params: ParamIdDto,
@@ -60,6 +86,10 @@ export class RolController extends BaseController {
     return this.successUpdate(result)
   }
 
+  @ApiOperation({ summary: 'API para activar un Rol' })
+  @ApiProperty({
+    type: ParamIdDto,
+  })
   @Patch('/:id/activacion')
   async activar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idRol } = params
@@ -68,6 +98,10 @@ export class RolController extends BaseController {
     return this.successUpdate(result)
   }
 
+  @ApiOperation({ summary: 'API para inactivar un Rol' })
+  @ApiProperty({
+    type: ParamIdDto,
+  })
   @Patch('/:id/inactivacion')
   async inactivar(@Req() req, @Param() params: ParamIdDto) {
     const { id: idRol } = params

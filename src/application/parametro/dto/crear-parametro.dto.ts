@@ -2,17 +2,18 @@ import { IsNotEmpty } from '../../../common/validation'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CrearParametroDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'TD-2' })
   @IsNotEmpty()
   codigo: string
-  @ApiProperty()
+  @ApiProperty({ example: 'Documento de extranjería' })
   @IsNotEmpty()
   nombre: string
-  @ApiProperty()
+  @ApiProperty({ example: 'TD' })
   @IsNotEmpty()
   grupo: string
-  @ApiProperty()
+  @ApiProperty({ example: 'Tipo de documento de extranjería' })
   @IsNotEmpty()
   descripcion: string
+  @ApiProperty({ example: 'ACTIVO' })
   estado?: string
 }

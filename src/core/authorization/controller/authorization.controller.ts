@@ -13,7 +13,16 @@ import { BaseController } from '../../../common/base/base-controller'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 
+@ApiBearerAuth('JWT-auth')
+@ApiTags('Autorización')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
 export class AuthorizationController extends BaseController {
@@ -21,12 +30,25 @@ export class AuthorizationController extends BaseController {
     super()
   }
 
+  @ApiOperation({ summary: 'API para crear una nueva política' })
+  @ApiBody({
+    //type: CrearParametroDto,
+    description: 'new Politica',
+    required: true,
+  })
   @Post('/politicas')
   async crearPolitica(@Body() politica) {
     const result = await this.authorizationService.crearPolitica(politica)
     return this.successCreate(result)
   }
 
+  @ApiOperation({ summary: 'API para actualizar una nueva politica' })
+  @ApiQuery({ name: 'id' })
+  @ApiBody({
+    //type: CrearParametroDto,
+    description: 'Politica',
+    required: true,
+  })
   @Patch('/politicas')
   async actualizarPolitica(@Body() politica, @Query() query) {
     const result = await this.authorizationService.actualizarPolitica(
@@ -36,6 +58,8 @@ export class AuthorizationController extends BaseController {
     return this.successUpdate(result)
   }
 
+  @ApiOperation({ summary: 'API para obtener el listado de politicas' })
+  @ApiQuery({ name: 'query', type: FiltrosPoliticasDto })
   @Get('/politicas')
   async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
     const result = await this.authorizationService.listarPoliticas(
@@ -44,12 +68,17 @@ export class AuthorizationController extends BaseController {
     return this.successListRows(result)
   }
 
+  @ApiOperation({ summary: 'API para eliminar una política' })
+  @ApiQuery({ name: 'id' })
   @Delete('/politicas')
   async eliminarPolitica(@Query() query) {
     const result = await this.authorizationService.eliminarPolitica(query)
     return this.successDelete(result)
   }
 
+  @ApiOperation({
+    summary: 'API para obtener las politicas definidas en formato CASBIN',
+  })
   @Get('/permisos')
   async obtenerRoles() {
     const result = await this.authorizationService.obtenerRoles()

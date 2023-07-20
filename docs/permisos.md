@@ -11,7 +11,7 @@ El proyecto base actualmente cuenta con roles y permisos de ejemplo
 #### RUTAS sin autenticación
 
 | verbo | ruta                        | descripcion                                 |
-|-------|-----------------------------|---------------------------------------------|
+| ----- | --------------------------- | ------------------------------------------- |
 | GET   | /estado                     | Verificar el estado de la aplicación        |
 | POST  | /auth                       | Autenticacion usuario y contraseña          |
 | GET   | /ciudadania-auth            | Autenticación con ciudadania digital        |
@@ -21,14 +21,14 @@ El proyecto base actualmente cuenta con roles y permisos de ejemplo
 #### RUTAS con autenticación (acciones sobre la misma cuenta)
 
 | VERBO | ruta                        | descripción                                     |
-|-------|-----------------------------|-------------------------------------------------|
+| ----- | --------------------------- | ----------------------------------------------- |
 | GET   | /usuarios/cuenta/perfil     | Obtener informacion del perfil autenticado      |
 | PATCH | /usuarios/cuenta/contrasena | Actualizar la contraseña del perfil autenticado |
 
 #### Rutas con autenticación (configuraciones y paramétricas)
 
 | verbo  | ruta                               | descripcion                               |
-|--------|------------------------------------|-------------------------------------------|
+| ------ | ---------------------------------- | ----------------------------------------- |
 | GET    | /parametros/:grupo/listado         | Obtener parametricas por grupo            |
 | GET    | /autorizacion/permisos             | Lista politicas de permisos para frontend |
 | POST   | /autenticacion/token\*             | Obtener un nuevo access token             |
@@ -38,7 +38,7 @@ El proyecto base actualmente cuenta con roles y permisos de ejemplo
 #### Rutas con autenticación (específicas por rol)
 
 | ruta/roles                       | ADMINISTRADOR | TECNICO | USUARIO |
-|----------------------------------|---------------|---------|---------|
+| -------------------------------- | ------------- | ------- | ------- |
 | GET /autorizacion/politicas      | x             |         |         |
 | POST /autorizacion/politicas     | x             |         |         |
 | PATCH /autorizacion/politicas    | x             |         |         |

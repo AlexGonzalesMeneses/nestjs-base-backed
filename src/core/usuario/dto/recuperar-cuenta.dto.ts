@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   CorreoLista,
   IsEmail,
@@ -6,6 +7,7 @@ import {
 } from '../../../common/validation'
 
 export class RecuperarCuentaDto {
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()
@@ -13,22 +15,25 @@ export class RecuperarCuentaDto {
 }
 
 export class ValidarRecuperarCuentaDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   codigo: string
 }
 
 export class ActivarCuentaDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   codigo: string
 }
 
 export class NuevaContrasenaDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   codigo: string
-
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   contrasenaNueva: string

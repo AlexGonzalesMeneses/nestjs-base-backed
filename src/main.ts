@@ -111,6 +111,16 @@ function createSwagger(app: INestApplication) {
     .setTitle(SWAGGER_API_NAME)
     .setDescription(SWAGGER_API_DESCRIPTION)
     .setVersion(SWAGGER_API_CURRENT_VERSION)
+    .addServer('http://localhost:3000/api/')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter JWT token',
+      },
+      'JWT-auth'
+    )
     .build()
 
   const document = SwaggerModule.createDocument(app, options)

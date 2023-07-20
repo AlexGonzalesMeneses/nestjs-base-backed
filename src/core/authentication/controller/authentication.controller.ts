@@ -18,8 +18,29 @@ import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
 import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 import { ConfigService } from '@nestjs/config'
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger'
 
+export class AuthSchema {
+  @ApiProperty({
+    example: 'USER',
+    description: 'Usuario',
+  })
+  usuario: string
+
+  @ApiProperty({
+    example: 'MTIz',
+    description: 'Contraseña',
+  })
+  contrasena: string
+}
 @Controller()
+@ApiTags('Autenticación')
 export class AuthenticationController extends BaseController {
   constructor(
     private autenticacionService: AuthenticationService,
@@ -29,6 +50,8 @@ export class AuthenticationController extends BaseController {
     super()
   }
 
+  @ApiOperation({ summary: 'API para autenticación con usuario y contraseña' })
+  @ApiBody({ description: 'Autenticación de usuarios', type: AuthSchema })
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Req() req: Request, @Res() res: Response) {
@@ -52,12 +75,14 @@ export class AuthenticationController extends BaseController {
       .send({ finalizado: true, mensaje: 'ok', datos: result.data })
   }
 
+  @ApiOperation({ summary: 'API para autenticación con ciudadania digital' })
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-auth')
   async loginCiudadania() {
     //
   }
 
+  @ApiOperation({ summary: 'API para autorización con ciudadania digital' })
   @UseGuards(OidcAuthGuard)
   @Get('ciudadania-autorizar')
   async loginCiudadaniaCallback(@Req() req: Request, @Res() res: Response) {
@@ -81,6 +106,8 @@ export class AuthenticationController extends BaseController {
       })
   }
 
+  @ApiOperation({ summary: 'API para logout digital' })
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {
