@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Post,
+  Res,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
@@ -32,11 +40,11 @@ export class AppController extends BaseController {
   @Post('/log')
   async registrarLog(@Res() res: Response, @Body() body: LogRequestDTO) {
     try {
-      const codigoHttp = body.codigo || 500
-      if (codigoHttp >= 400) {
-        const except = new BaseException({
+      const codigoHttp = body.codigo || HttpStatus.INTERNAL_SERVER_ERROR
+      if (codigoHttp >= HttpStatus.BAD_REQUEST) {
+        const except = new BaseException(null, {
           mensaje: body.mensaje,
-          codigo: codigoHttp,
+          httpStatus: codigoHttp,
           causa: String(body.causa),
           accion: body.accion,
           detalle: [

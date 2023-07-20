@@ -1,5 +1,6 @@
 import { Level } from 'pino'
 import { LoggerService } from '../classes'
+import { HttpStatus } from '@nestjs/common'
 
 export type FileParams = {
   path: string
@@ -57,10 +58,9 @@ export type SQLLogLevel = {
   query: boolean
 }
 
-export type ErrorOptions = {
-  codigo?: number
+export type BaseExceptionOptions = {
+  httpStatus?: HttpStatus
   mensaje?: string
-  error?: unknown
   errorStack?: string
   detalle?: unknown
   sistema?: string
