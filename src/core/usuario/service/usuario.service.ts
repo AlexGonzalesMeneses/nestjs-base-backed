@@ -686,13 +686,14 @@ export class UsuarioService extends BaseService {
       if (!usuario) {
         throw new NotFoundException(Messages.INVALID_USER)
       }
-      //contrastacion segip
       const { persona } = usuarioDto
       if (persona) {
-        // const contrastaSegip = await this.segipServices.contrastar(persona)
-        // if (!contrastaSegip?.finalizado) {
-        //   throw new PreconditionFailedException(contrastaSegip?.mensaje)
-        // }
+        //contrastacion segip
+        const contrastaSegip = await this.segipServices.contrastar(persona)
+        if (!contrastaSegip?.finalizado) {
+          throw new PreconditionFailedException(contrastaSegip?.mensaje)
+        }
+
         //updatePersona
         const persona1 = await this.PersonaRepository.buscarPersonaId(
           usuario.idPersona,
