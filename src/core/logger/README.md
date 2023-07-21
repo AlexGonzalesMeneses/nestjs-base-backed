@@ -39,7 +39,7 @@ logger.error(error, {
 
 // todos los parámetros posibles
 logger.error(error, {
-  codigo,
+  httpStatus,
   mensaje,
   detalle,
   sistema,

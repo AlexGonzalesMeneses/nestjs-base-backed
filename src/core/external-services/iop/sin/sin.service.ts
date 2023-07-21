@@ -12,7 +12,7 @@ export class SinService extends BaseService {
   constructor(protected http: HttpService) {
     super()
     this.logger.trace('Instanciando servicio de SIN...', {
-      baseURL: http.axiosRef.defaults.baseURL,
+      baseURL: http.axiosRef?.defaults?.baseURL,
     })
   }
 

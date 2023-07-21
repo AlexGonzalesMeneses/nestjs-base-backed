@@ -11,7 +11,7 @@ const logger = LoggerService.getInstance()
 export class MensajeriaService {
   constructor(private httpService: HttpService) {
     logger.trace('Instanciando servicio de MENSAJERÍA...', {
-      baseURL: httpService.axiosRef.defaults.baseURL,
+      baseURL: httpService.axiosRef?.defaults?.baseURL,
     })
   }
 

@@ -28,7 +28,7 @@ export class SegipService extends BaseService {
   constructor(private readonly httpService: HttpService) {
     super()
     this.logger.trace('Instanciando servicio de SEGIP...', {
-      baseURL: httpService.axiosRef.defaults.baseURL,
+      baseURL: httpService.axiosRef?.defaults?.baseURL,
     })
   }
 

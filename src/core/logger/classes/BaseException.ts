@@ -8,10 +8,10 @@ import {
 } from '../utilities'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { extractMessage } from '../utils'
-import { HttpMessages } from '../messages'
 import packageJson from '../../../../package.json'
 import { ERROR_CODE, LOG_LEVEL } from '../constants'
 import { LogFields } from './LogFields'
+import dayjs from 'dayjs'
 
 export class BaseException extends Error {
   private codigo: ERROR_CODE
@@ -19,12 +19,12 @@ export class BaseException extends Error {
   /**
    * Código HTTP que será devuelto al cliente: 200 | 400 | 500 (se genera de forma automática en base a la causa detectada)
    */
-  private httpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+  private httpStatus: HttpStatus
 
   /**
    * Mensaje para el cliente
    */
-  private mensaje: string = HttpMessages.EXCEPTION_INTERNAL_SERVER_ERROR
+  private mensaje: string
 
   /**
    * contenido original del error (parseado)
@@ -44,7 +44,7 @@ export class BaseException extends Error {
   /**
    * Identificador de la aplicación: app-backend | app-frontend | node-script
    */
-  private sistema = `${packageJson.name} v${packageJson.version}`
+  private sistema = ''
 
   /**
    * Identificador del módulo que esta produciendo el error
@@ -67,6 +67,11 @@ export class BaseException extends Error {
   private accion = ''
 
   /**
+   * Fecha en la que se registró el mensaje (YYYY-MM-DD HH:mm:ss.SSS)
+   */
+  private fecha = ''
+
+  /**
    * Stack del componente que capturó el error (se genera de forma automática)
    */
   private traceStack = getErrorStack(new Error())
@@ -85,7 +90,7 @@ export class BaseException extends Error {
         : undefined
 
     let detalle: unknown = ''
-    let sistema = ''
+    let sistema = `${packageJson.name} v${packageJson.version}`
     let modulo = ''
     let origen = errorStack ? errorStack.split('\n').shift() || '' : ''
     const traceStack =
@@ -103,6 +108,7 @@ export class BaseException extends Error {
     let mensaje = `Error Interno (código ${ERROR_CODE.UNKNOWN_ERROR})`
     let causa = errorString
     let accion = ''
+    let fecha = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
 
     // EMPTY_ERROR
     if (!error) {
@@ -132,6 +138,7 @@ export class BaseException extends Error {
       modulo = error.modulo
       origen = error.origen
       detalle = error.detalle
+      fecha = error.fecha
     }
 
     // SERVER_CONEXION
@@ -253,6 +260,7 @@ export class BaseException extends Error {
     // GUARDANDO VALORES
     this.error = errorParsed
     this.codigo = codigo
+    this.fecha = fecha
 
     this.httpStatus =
       opt && typeof opt.httpStatus !== 'undefined' ? opt.httpStatus : httpStatus
@@ -322,7 +330,7 @@ export class BaseException extends Error {
           args.push('\n───── Detalle ─────────')
           this.detalle.map((item) => {
             args.push(item)
-            args.push('-----------------------')
+            args.push('')
           })
         }
       }
@@ -334,7 +342,11 @@ export class BaseException extends Error {
       }
     }
 
-    if (this.error) {
+    if (
+      this.error &&
+      typeof this.error === 'object' &&
+      Object.keys(this.error).length > 0
+    ) {
       args.push('\n───── Error ───────────')
       args.push(this.error)
     }
@@ -360,6 +372,7 @@ export class BaseException extends Error {
         _accion: this.accion,
         _sistema: this.sistema,
         _modulo: this.modulo,
+        _fecha: this.fecha,
       })
     )
     return args
