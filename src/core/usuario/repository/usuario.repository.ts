@@ -12,6 +12,7 @@ import { Injectable } from '@nestjs/common'
 import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
 import dayjs from 'dayjs'
+//import { UpdateUsuarioDto } from '../dto/update-Usuario.dto'
 
 @Injectable()
 export class UsuarioRepository {
@@ -169,9 +170,11 @@ export class UsuarioRepository {
       .getOne()
   }
 
-  async buscarUsuarioPorCorreo(correo: string) {
-    return await this.dataSource
-      .getRepository(Usuario)
+  async buscarUsuarioPorCorreo(correo: string, transaction?: EntityManager) {
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    )
       .createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
       .getOne()
@@ -429,5 +432,26 @@ export class UsuarioRepository {
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.manager.transaction<T>(op)
+  }
+
+  async UpdateDatosPersona(
+    persona: PersonaDto,
+    idPersona: string,
+    transaction?: EntityManager
+  ) {
+    const datosActualizar: QueryDeepPartialEntity<Persona> = new Persona({
+      ...persona,
+    })
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    )
+      .createQueryBuilder()
+      .update(Persona)
+      .set(datosActualizar)
+      .where('id = :id', {
+        id: idPersona,
+      })
+      .execute()
   }
 }

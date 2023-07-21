@@ -1,5 +1,5 @@
 import { UsuarioRol } from '../entity/usuario-rol.entity'
-import { DataSource } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { Usuario } from '../../usuario/entity/usuario.entity'
 import { Rol } from '../entity/rol.entity'
 import { Status } from '../../../common/constants'
@@ -9,18 +9,27 @@ import { Injectable } from '@nestjs/common'
 export class UsuarioRolRepository {
   constructor(private dataSource: DataSource) {}
 
-  async obtenerRolesPorUsuario(idUsuario: string) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+  async obtenerRolesPorUsuario(idUsuario: string, transaction?: EntityManager) {
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder('usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('usuarioRol.id_usuario = :idUsuario', { idUsuario })
       .getMany()
   }
 
-  async activar(idUsuario, roles, usuarioActualizacion) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+  async activar(
+    idUsuario,
+    roles,
+    usuarioActualizacion,
+    transaction?: EntityManager
+  ) {
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder()
       .update(UsuarioRol)
       .set({
@@ -32,9 +41,16 @@ export class UsuarioRolRepository {
       .execute()
   }
 
-  async inactivar(idUsuario, roles, usuarioActualizacion) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+  async inactivar(
+    idUsuario,
+    roles,
+    usuarioActualizacion,
+    transaction?: EntityManager
+  ) {
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder()
       .update(UsuarioRol)
       .set({
@@ -46,7 +62,7 @@ export class UsuarioRolRepository {
       .execute()
   }
 
-  async crear(idUsuario, roles, usuarioAuditoria) {
+  async crear(idUsuario, roles, usuarioAuditoria, transaction?: EntityManager) {
     const usuarioRoles: UsuarioRol[] = roles.map((idRol) => {
       const usuario = new Usuario()
       usuario.id = idUsuario
@@ -62,6 +78,9 @@ export class UsuarioRolRepository {
       return usuarioRol
     })
 
-    return await this.dataSource.getRepository(UsuarioRol).save(usuarioRoles)
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    ).save(usuarioRoles)
   }
 }

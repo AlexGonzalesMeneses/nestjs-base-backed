@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { Persona } from '../entity/persona.entity'
 import { PersonaDto } from '../dto/persona.dto'
 import { Status } from '../../../common/constants'
@@ -26,6 +26,16 @@ export class PersonaRepository {
       .where('p.nro_documento = :numeroDocumento', { numeroDocumento })
       .andWhere('p.tipo_documento = :tipoDocumento', { tipoDocumento })
       .andWhere('p.estado = :estado', { estado: Status.ACTIVE })
+      .getOne()
+  }
+
+  async buscarPersonaId(id: string, transaction?: EntityManager) {
+    return await (
+      transaction?.getRepository(Persona) ??
+      this.dataSource.getRepository(Persona)
+    )
+      .createQueryBuilder('persona')
+      .where('persona.id = :id', { id: id })
       .getOne()
   }
 }
