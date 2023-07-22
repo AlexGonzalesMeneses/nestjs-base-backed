@@ -1,9 +1,8 @@
 import { AdvancedConsoleLogger } from 'typeorm'
 import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
-import { getErrorStack } from './get-error-stack'
 import { stdoutWrite } from '../tools'
-import { COLOR, DEFAULT_SQL_LOGGER_PARAMS } from '../constants'
+import { COLOR, DEFAULT_SQL_LOGGER_PARAMS, ERROR_CODE } from '../constants'
 import { SQLLoggerParams, SQLLoggerOptions } from '../types'
 import { BaseException } from '../classes'
 
@@ -27,14 +26,12 @@ export class SQLLogger extends AdvancedConsoleLogger {
     if (!this.params.level.error) {
       return
     }
-    const ctx = getErrorStack(new Error())
     const sql = this.buildSql(query, parameters, true, false)
 
-    throw new BaseException({
-      error,
-      mensaje: 'Ocurrió un error inesperado',
+    throw new BaseException(error, {
+      mensaje: `Ocurrió un error interno (${ERROR_CODE.SQL_ERROR})`,
       accion: 'Verificar la consulta SQL',
-      detalle: [sql, ctx],
+      detalle: sql,
     })
   }
 

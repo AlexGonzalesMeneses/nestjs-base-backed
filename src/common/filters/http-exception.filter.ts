@@ -30,7 +30,7 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       },
     })
 
-    this.logger.error(except)
+    this.logger.logError(except)
 
     const errorResult = {
       finalizado: false,

@@ -1,6 +1,7 @@
 import { Level } from 'pino'
 import { LoggerService } from '../classes'
 import { HttpStatus } from '@nestjs/common'
+import { LOG_LEVEL } from '../constants'
 
 export type FileParams = {
   path: string
@@ -60,14 +61,18 @@ export type SQLLogLevel = {
 
 export type BaseExceptionOptions = {
   httpStatus?: HttpStatus
-  mensaje?: string
   errorStack?: string
-  detalle?: unknown
-  sistema?: string
-  modulo?: string
   causa?: string
   origen?: string
   accion?: string
+}
+
+export type BaseLogOptions = {
+  level?: LOG_LEVEL
+  mensaje?: string
+  detalle?: unknown
+  sistema?: string
+  modulo?: string
   traceStack?: string
 }
 

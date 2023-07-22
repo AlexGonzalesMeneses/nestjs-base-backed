@@ -80,25 +80,22 @@ export class LoggerConfig {
 
   static getPinoHttpConfig(loggerParams: LoggerParams): Options {
     return {
-      name: loggerParams.appName,
+      // name: loggerParams.appName,
       genReqId: LoggerConfig.genReqId,
+      level: 'trace',
+      redact: LoggerConfig.redactOptions(loggerParams),
+      autoLogging: false,
       serializers: {
         err: () => {
           return
         },
-        req: (req) => {
-          return {
-            id: req.id,
-            method: req.method,
-            url: req.url ? req.url.split('?')[0] : undefined,
-          }
+        req: () => {
+          return
         },
-        res: (res) => {
-          return { statusCode: res.statusCode }
+        res: () => {
+          return
         },
       },
-      level: 'trace',
-      redact: LoggerConfig.redactOptions(loggerParams),
     }
   }
 }

@@ -1,22 +1,26 @@
 import dayjs from 'dayjs'
 import { Level, pino } from 'pino'
 import pinoHttp, { HttpLogger, Options } from 'pino-http'
-import { inspect } from 'util'
 import { COLOR, DEFAULT_PARAMS, LOG_COLOR, LOG_LEVEL } from '../constants'
 import fastRedact, { RedactOptions } from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
-import { BaseExceptionOptions, LoggerOptions, LoggerParams } from '../types'
+import {
+  BaseExceptionOptions,
+  BaseLogOptions,
+  LoggerOptions,
+  LoggerParams,
+} from '../types'
 import * as rTracer from 'cls-rtracer'
 import { printLoggerParams, stdoutWrite } from '../tools'
-import { cleanParamValue, getContext } from '../utilities'
-import { LogFields } from './LogFields'
+import { getContext } from '../utilities'
 import { BaseException } from './BaseException'
+import { BaseLog } from './BaseLog'
 
 export class LoggerService {
   private static loggerParams: LoggerParams | null = null
   private static instance: LoggerService | null = null
   private static pinoInstance: HttpLogger | null = null
-  private static redact: fastRedact.redactFn | null = null
+  static redact: fastRedact.redactFn | null = null
 
   static initializeWithoutPino(options: LoggerOptions) {
     LoggerService._initialize(options, false)
@@ -129,116 +133,165 @@ export class LoggerService {
     return LoggerService.loggerParams
   }
 
+  logError(error: unknown): void {
+    const exceptInfo = new BaseException(error)
+    this.print(exceptInfo)
+  }
+
   fatal(error: unknown): void
   fatal(error: unknown, mensaje: string): void
   fatal(error: unknown, mensaje: string, detalle: unknown): void
   fatal(error: unknown, mensaje: string, detalle: unknown, modulo: string): void
-  fatal(error: unknown, opt: BaseExceptionOptions): void
-  fatal(
-    arg1: unknown,
-    arg2?: string | BaseExceptionOptions,
-    arg3?: unknown[],
-    arg4?: string
-  ): void {
-    const errorInfo = LoggerService.buildException(arg1, arg2, arg3, arg4)
-    const optionalParams = errorInfo.toPrint()
-    const level = errorInfo.getLogLevel()
-    this.print(level, ...optionalParams)
+  fatal(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
+  fatal(...args: unknown[]): void {
+    const exceptInfo = LoggerService.buildException(LOG_LEVEL.FATAL, ...args)
+    this.print(exceptInfo)
   }
 
   error(error: unknown): void
   error(error: unknown, mensaje: string): void
   error(error: unknown, mensaje: string, detalle: unknown): void
   error(error: unknown, mensaje: string, detalle: unknown, modulo: string): void
-  error(error: unknown, opt: BaseExceptionOptions): void
-  error(
-    arg1: unknown,
-    arg2?: string | BaseExceptionOptions,
-    arg3?: unknown[],
-    arg4?: string
-  ): void {
-    const errorInfo = LoggerService.buildException(arg1, arg2, arg3, arg4)
-    const optionalParams = errorInfo.toPrint()
-    const level = errorInfo.getLogLevel()
-    this.print(level, ...optionalParams)
+  error(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
+  error(...args: unknown[]): void {
+    const exceptInfo = LoggerService.buildException(LOG_LEVEL.ERROR, ...args)
+    this.print(exceptInfo)
   }
 
-  warn(error: unknown): void
-  warn(error: unknown, mensaje: string): void
-  warn(error: unknown, mensaje: string, detalle: unknown): void
-  warn(error: unknown, mensaje: string, detalle: unknown, modulo: string): void
-  warn(error: unknown, opt: BaseExceptionOptions): void
-  warn(
-    arg1: unknown,
-    arg2?: string | BaseExceptionOptions,
-    arg3?: unknown[],
-    arg4?: string
-  ): void {
-    const errorInfo = LoggerService.buildException(arg1, arg2, arg3, arg4)
-    const optionalParams = errorInfo.toPrint()
-    const level = errorInfo.getLogLevel()
-    this.print(level, ...optionalParams)
+  warn(mensaje: string): void
+  warn(mensaje: string, detalle: unknown): void
+  warn(mensaje: string, detalle: unknown, modulo: string): void
+  warn(opt: BaseExceptionOptions & BaseLogOptions): void
+  warn(...args: unknown[]): void {
+    const exceptInfo = LoggerService.buildException(
+      LOG_LEVEL.WARN,
+      null,
+      ...args
+    )
+    this.print(exceptInfo)
   }
 
-  info(...optionalParams: unknown[]): void {
-    this.print(LOG_LEVEL.INFO, ...optionalParams)
+  info(mensaje: string): void
+  info(mensaje: string, detalle: unknown): void
+  info(mensaje: string, detalle: unknown, modulo: string): void
+  info(opt: BaseLogOptions): void
+  info(...args: unknown[]): void {
+    const logInfo = LoggerService.buildLog(LOG_LEVEL.INFO, ...args)
+    this.print(logInfo)
   }
 
-  debug(...optionalParams: unknown[]): void {
-    this.print(LOG_LEVEL.DEBUG, ...optionalParams)
+  debug(mensaje: string): void
+  debug(mensaje: string, detalle: unknown): void
+  debug(mensaje: string, detalle: unknown, modulo: string): void
+  debug(opt: BaseLogOptions): void
+  debug(...args: unknown[]): void {
+    const logInfo = LoggerService.buildLog(LOG_LEVEL.DEBUG, ...args)
+    this.print(logInfo)
   }
 
-  trace(...optionalParams: unknown[]): void {
-    this.print(LOG_LEVEL.TRACE, ...optionalParams)
+  trace(mensaje: string): void
+  trace(mensaje: string, detalle: unknown): void
+  trace(mensaje: string, detalle: unknown, modulo: string): void
+  trace(opt: BaseLogOptions): void
+  trace(...args: unknown[]): void {
+    const logInfo = LoggerService.buildLog(LOG_LEVEL.TRACE, ...args)
+    this.print(logInfo)
   }
 
   private static buildException(
-    arg1: unknown,
-    arg2?: string | BaseExceptionOptions,
-    arg3?: unknown[],
-    arg4?: string
+    lvl: LOG_LEVEL,
+    ...args: unknown[]
   ): BaseException {
     // 1ra forma - (error: unknown) => BaseException
-    if (arguments.length === 1) {
-      return new BaseException(arg1)
+    if (arguments.length === 2) {
+      return new BaseException(args[0], { level: lvl })
     }
 
     // 2da forma - (error: unknown, mensaje: string) => BaseException
-    else if (arguments.length === 2 && typeof arg2 === 'string') {
-      return new BaseException(arg1, {
-        mensaje: arg2,
+    else if (arguments.length === 3 && typeof args[1] === 'string') {
+      return new BaseException(args[0], {
+        mensaje: args[1],
+        level: lvl,
       })
     }
 
     // 3ra forma - (error: unknown, mensaje: string, detalle: unknown) => BaseException
-    else if (arguments.length === 3 && typeof arg2 === 'string') {
-      return new BaseException(arg1, {
-        mensaje: arg2,
-        detalle: arg3,
+    else if (arguments.length === 4 && typeof args[1] === 'string') {
+      return new BaseException(args[0], {
+        mensaje: args[1],
+        detalle: args[2],
+        level: lvl,
       })
     }
 
     // 4ta forma - (error: unknown, mensaje: string, detalle: unknown, modulo: string) => BaseException
     else if (
-      arguments.length === 4 &&
-      typeof arg2 === 'string' &&
-      typeof arg4 === 'string'
+      arguments.length === 5 &&
+      typeof args[1] === 'string' &&
+      typeof args[3] === 'string'
     ) {
-      return new BaseException(arg1, {
-        mensaje: arg2,
-        detalle: arg3,
-        modulo: arg4,
+      return new BaseException(args[0], {
+        mensaje: args[1],
+        detalle: args[2],
+        modulo: args[3],
+        level: lvl,
       })
     }
 
     // 5ta forma - (error: unknown, opt: BaseExceptionOptions) => BaseException
     else {
-      return new BaseException(arg1, arg2 as BaseExceptionOptions)
+      return new BaseException(args[0], {
+        ...(args[1] as BaseExceptionOptions),
+        level: lvl,
+      })
     }
   }
 
-  private print(level: LOG_LEVEL, ...optionalParams: unknown[]) {
+  private static buildLog(lvl: LOG_LEVEL, ...args: unknown[]): BaseLog {
+    // 1ra forma - (mensaje: string) => BaseLog
+    if (arguments.length === 2 && typeof args[0] === 'string') {
+      return new BaseLog({
+        mensaje: args[0],
+        level: lvl,
+      })
+    }
+
+    // 2da forma - (mensaje: string, detalle: unknown) => BaseLog
+    else if (arguments.length === 3 && typeof args[0] === 'string') {
+      return new BaseLog({
+        mensaje: args[0],
+        detalle: args[1],
+        level: lvl,
+      })
+    }
+
+    // 3ra forma - (mensaje: string, detalle: unknown, modulo: string) => BaseLog
+    else if (
+      arguments.length === 4 &&
+      typeof args[0] === 'string' &&
+      typeof args[2] === 'string'
+    ) {
+      return new BaseLog({
+        mensaje: args[0],
+        detalle: args[1],
+        modulo: args[2],
+        level: lvl,
+      })
+    }
+
+    // 4ta forma - (opt: BaseLogOptions) => BaseLog
+    else {
+      return new BaseLog({
+        ...(args[0] as BaseLogOptions),
+        level: lvl,
+      })
+    }
+  }
+
+  private print(info: BaseLog | BaseException) {
     try {
+      const level = info.getLevel()
+
       const levelSelected = LoggerService.loggerParams?._levels || []
       if (!levelSelected.includes(level as pino.Level)) {
         return
@@ -246,58 +299,59 @@ export class LoggerService {
 
       const reqId = String(rTracer.id() || '') || '-'
       const caller = getContext()
+      const msg = info.toString()
 
-      // CLEAN PARAMS
-      const paramsValue = cleanParamValue(optionalParams)
-      const msg = this.buildMsg(paramsValue)
-      const fields = this.findFields(paramsValue)
+      const logFields = {
+        _reqId: reqId,
+        _caller: caller,
+        _formato: msg,
+        _nivel: info.level,
+        _mensaje: info.mensaje,
+        _sistema: info.sistema,
+        _modulo: info.modulo,
+        _fecha: info.fecha,
+        _traceStack: info.traceStack,
+        _detalle: info.detalle,
+      }
+
+      let errorFields = {}
+      if (info instanceof BaseException) {
+        errorFields = {
+          _httpStatus: info.httpStatus,
+          _codigo: info.codigo,
+          _causa: info.causa,
+          _origen: info.origen,
+          _accion: info.accion,
+          _error: info.error,
+          _errorStack: info.errorStack,
+        }
+      }
+
+      const args = { ...logFields, ...errorFields }
 
       // SAVE WITH PINO
-      this.saveWithPino(level, msg, reqId, caller, fields)
+      this.saveWithPino(level, args)
 
       if (process.env.NODE_ENV === 'production') {
         return
       }
 
       // PRINT TO CONSOLE
-      this.printToConsole(level, msg, reqId, caller)
+      this.printToConsole(level, msg, caller)
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e)
     }
   }
 
-  private saveWithPino(
-    level: LOG_LEVEL,
-    msg: string,
-    reqId: string | null,
-    caller: string,
-    fieldParam: unknown
-  ) {
-    const pinoInstance = LoggerService.pinoInstance
-    if (!pinoInstance) return
-
-    if (!pinoInstance.logger[level]) return
-
-    const args: object = {
-      reqId,
-      caller,
-      msg,
+  private saveWithPino(level: LOG_LEVEL, args: { [key: string]: unknown }) {
+    const instance = LoggerService.pinoInstance
+    if (instance && instance.logger[level]) {
+      instance.logger[level](args)
     }
-
-    if (this.isFieldParam(fieldParam)) {
-      Object.assign(args, (fieldParam as LogFields).args)
-    }
-
-    pinoInstance.logger[level](args)
   }
 
-  private printToConsole(
-    level: LOG_LEVEL,
-    msg: string,
-    reqId: string | null,
-    caller: string
-  ): void {
+  private printToConsole(level: LOG_LEVEL, msg: string, caller: string): void {
     const color = this.getColor(level)
     const time = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
     const cTime = `${COLOR.RESET}${time}${COLOR.RESET}`
@@ -312,43 +366,6 @@ export class LoggerService {
 
   private getColor(level: LOG_LEVEL): string {
     return LOG_COLOR[level]
-  }
-
-  private buildMsg(paramsValue: unknown[]) {
-    return paramsValue
-      .filter((data) => !this.isFieldParam(data))
-      .map((data) => {
-        try {
-          data =
-            data && typeof data === 'object' && !(data instanceof Error)
-              ? JSON.parse(
-                  LoggerService.redact
-                    ? LoggerService.redact(JSON.parse(JSON.stringify(data)))
-                    : JSON.parse(JSON.stringify(data))
-                )
-              : data
-        } catch (err) {
-          // lo intentamos :)
-        }
-        const toPrint =
-          typeof data === 'object'
-            ? inspect(data, false, null, false)
-            : String(data)
-        return toPrint
-      })
-      .join('\n')
-  }
-
-  private findFields(paramsValue: unknown[]): unknown {
-    for (const param of paramsValue) {
-      if (this.isFieldParam(param)) {
-        return param
-      }
-    }
-  }
-
-  private isFieldParam = (param: unknown): boolean => {
-    return Boolean(param && typeof param === 'object' && '__FIELD__' in param)
   }
 
   private static getLevelList(logLevel: string): Level[] {

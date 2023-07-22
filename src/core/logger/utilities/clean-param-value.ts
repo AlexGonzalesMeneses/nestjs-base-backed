@@ -3,6 +3,7 @@ import {
   CLEAN_PARAM_VALUE_MAX_DEEP,
   DEFAULT_SENSITIVE_PARAMS,
 } from '../constants'
+import { LoggerService } from '../classes'
 
 export function cleanParamValue(
   value: unknown,
@@ -12,6 +13,23 @@ export function cleanParamValue(
   try {
     // Para evitar recursividad infinita
     if (deep > CLEAN_PARAM_VALUE_MAX_DEEP) return String(value)
+
+    // INI - Removiendo datos sensibles con la herramienta LoggerService.redact
+    if (
+      deep === 0 &&
+      value &&
+      typeof value === 'object' &&
+      !(value instanceof Error)
+    ) {
+      try {
+        value = LoggerService.redact
+          ? JSON.parse(LoggerService.redact(JSON.parse(JSON.stringify(value))))
+          : JSON.parse(JSON.stringify(value))
+      } catch (err) {
+        // lo intentamos :)
+      }
+    }
+    // FIN - Removiendo datos sensibles
 
     // START
     if (typeof value === 'object' && value !== null) {
@@ -113,7 +131,11 @@ export function cleanParamValue(
 
         // en otros casos
         else {
-          prev[curr] = cleanParamValue(value[curr], deep + 1, sensitiveParams)
+          prev[curr] = cleanParamValue(
+            (value as object)[curr],
+            deep + 1,
+            sensitiveParams
+          )
         }
 
         return prev
@@ -123,9 +145,8 @@ export function cleanParamValue(
 
     // Por seguridad se ofuscan los tokens
     if (typeof value === 'string' && value.indexOf('Bearer') > -1) {
-      const regex = /(Bearer\s+)([^\s]+)/g
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      return value.replace(regex, (match, p1, p2) => `${p1}*****`)
+      const regex = /Bearer\s+[A-Za-z0-9.-_]+/g
+      return value.replace(regex, 'Bearer *****')
     }
 
     return value

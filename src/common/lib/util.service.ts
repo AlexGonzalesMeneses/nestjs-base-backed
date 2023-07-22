@@ -12,7 +12,7 @@ export class UtilService {
    *   INACTIVO = 'INACTIVO',
    * }
    * const expression = UtilService.buildCheck(PersonaEstadoEnum)
-   * console.log(expression) // "_estado IN ('ACTIVO', 'INACTIVO')"
+   * // expression = "_estado IN ('ACTIVO', 'INACTIVO')"
    */
   static buildStatusCheck(items: object = {}): string {
     return UtilService.buildCheck('_estado', items)
@@ -29,14 +29,14 @@ export class UtilService {
    *   PASAPORTE = 'PASAPORTE',
    * }
    * const expression = UtilService.buildCheck('tipo_documento', PersonaTipoDocumentoEnum)
-   * console.log(expression) // "tipo_documento IN ('CI', 'PASAPORTE')"
+   * // expression = "tipo_documento IN ('CI', 'PASAPORTE')"
    * @example
    * const PersonaTipoDocumento = {
    *   CI: 'CI',
    *   PASAPORTE: 'PASAPORTE',
    * }
    * const expression = UtilService.buildCheck('tipo_documento', PersonaTipoDocumento)
-   * console.log(expression) // "tipo_documento IN ('CI', 'PASAPORTE')"
+   * // expression = "tipo_documento IN ('CI', 'PASAPORTE')"
    */
   static buildCheck(field: string, items: object = {}): string {
     const values = Object.keys(items).map((k) => items[k])

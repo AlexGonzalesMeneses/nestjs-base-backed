@@ -58,8 +58,7 @@ function tarea(datos) {
   try {
     // código inseguro
   } catch (error) {
-    throw new BaseException({
-      error,
+    throw new BaseException(error, {
       mensaje: 'mensaje genérico opcional',
       detalle: ['info adicional', datos],
       modulo: 'MENSAJERÍA'
@@ -71,21 +70,18 @@ function tarea(datos) {
 Ejemplos de implementación:
 
 ```ts
-// Si se conoce el error, el código y la causa se asignan automáticamente en base a este
-throw new BaseException({
-  error,
-})
+// Si se conoce el error, el httpStatus y la causa se asignan automáticamente en base a este
+throw new BaseException(error)
 
-// Si no conoce el error, puede especificar manualmente el codigo y la causa del mismo
-throw new BaseException({
-  codigo,
+// Si no conoce el error, puede especificar manualmente el httpStatus y la causa del mismo
+throw new BaseException(null, {
+  httpStatus,
   causa,
 })
 
 // Todos los valores posibles
-throw new BaseException({
-  error,
-  codigo,
+throw new BaseException(error, {
+  httpStatus,
   causa,
   mensaje,
   detalle,
@@ -138,8 +134,8 @@ import { HttpStatus } from '@nestjs/common'
 
 function validar(headers) {
   if (!headers.authorization) {
-    throw new BaseException({
-      codigo: HttpStatus.UNAUTHORIZED,
+    throw new BaseException(null, {
+      httpStatus: HttpStatus.UNAUTHORIZED,
       causa: 'Valor no definido "headers.authorization"',
       detalle: { headers },
     })
