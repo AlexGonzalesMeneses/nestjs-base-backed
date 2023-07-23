@@ -1,4 +1,4 @@
-export { getErrorStack } from './get-error-stack'
+export { getErrorStack, getFullErrorStack } from './get-error-stack'
 export { getContext } from './get-context'
 export {
   cleanParamValue,

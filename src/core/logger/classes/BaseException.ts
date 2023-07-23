@@ -3,6 +3,7 @@ import { BaseExceptionOptions, BaseLogOptions, Metadata } from '../types'
 import {
   cleanParamValue,
   getErrorStack,
+  getFullErrorStack,
   isAxiosError,
   isCertExpiredError,
   isConexionError,
@@ -44,6 +45,11 @@ export class BaseException extends Error implements LogEntry {
   errorStack?: string
 
   /**
+   * Stack original del error (se genera de forma automática)
+   */
+  errorStackOriginal?: string
+
+  /**
    * Tipo de error detectado: TYPED ERROR | CONEXION ERROR | IOP ERROR | UPSTREAM ERROR | HTTP ERROR | AXIOS ERROR | UNKNOWN ERROR (se genera de forma automática)
    */
   causa: string
@@ -63,10 +69,7 @@ export class BaseException extends Error implements LogEntry {
 
     // UNKNOWN_ERROR
     let codigo = ERROR_CODE.UNKNOWN_ERROR
-    const errorString =
-      error instanceof Error
-        ? error.toString()
-        : 'El error no es una instancia de la clase Error'
+
     const errorStack =
       error instanceof BaseException
         ? error.errorStack
@@ -74,11 +77,20 @@ export class BaseException extends Error implements LogEntry {
         ? getErrorStack(error)
         : getErrorStack(new Error())
 
+    const errorStackOriginal =
+      error instanceof BaseException
+        ? error.errorStackOriginal
+        : error instanceof Error
+        ? getFullErrorStack(error)
+        : getFullErrorStack(new Error())
+
     let metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
     let appName = loggerParams?.appName || ''
     let modulo = ''
-    let origen = errorStack ? errorStack.split('\n').shift() || '' : ''
+    let origen = errorStackOriginal
+      ? (errorStackOriginal.split('\n').splice(1, 1).shift() || '').trim()
+      : ''
     const traceStack =
       error instanceof BaseException
         ? error.traceStack
@@ -92,7 +104,7 @@ export class BaseException extends Error implements LogEntry {
 
     let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
     let mensaje = `Error Interno (${ERROR_CODE.UNKNOWN_ERROR})`
-    let causa = errorString
+    let causa = error instanceof Error ? error.toString() : ''
     let accion = ''
     let fecha = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
 
@@ -203,7 +215,7 @@ export class BaseException extends Error implements LogEntry {
       codigo = ERROR_CODE.HTTP_EXCEPTION
       httpStatus = error.getStatus()
       mensaje = extractMessage(error)
-      causa = `HttpException ${httpStatus}` // TODO error.toString() ???
+      causa = error.toString()
       accion =
         httpStatus === HttpStatus.BAD_REQUEST
           ? 'Verifique que los datos de entrada se estén enviando correctamente'
@@ -304,6 +316,13 @@ export class BaseException extends Error implements LogEntry {
       opt && 'errorStack' in opt && typeof opt.errorStack !== 'undefined'
         ? opt.errorStack
         : errorStack
+
+    this.errorStackOriginal =
+      opt &&
+      'errorStackOriginal' in opt &&
+      typeof opt.errorStackOriginal !== 'undefined'
+        ? opt.errorStackOriginal
+        : errorStackOriginal
 
     this.causa =
       opt && 'causa' in opt && typeof opt.causa !== 'undefined'

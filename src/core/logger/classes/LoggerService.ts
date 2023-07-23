@@ -321,7 +321,6 @@ export class LoggerService {
         formato: msg,
         modulo: info.modulo,
         mensaje: info.obtenerMensajeCliente(),
-        metadata: info.metadata,
         traceStack: info.traceStack,
       }
 
@@ -334,11 +333,16 @@ export class LoggerService {
           origen: info.origen,
           accion: info.accion,
           error: info.error,
-          errorStack: info.errorStack,
+          errorStack: info.errorStackOriginal,
         }
       }
 
-      const args = { ...logFields, ...errorFields }
+      let metadata = {}
+      if (info.metadata && Object.keys(info.metadata).length > 0) {
+        metadata = info.metadata
+      }
+
+      const args = { ...logFields, ...errorFields, metadata }
 
       // SAVE WITH PINO
       this.saveWithPino(level, args)

@@ -62,6 +62,7 @@ export type SQLLogLevel = {
 export type BaseExceptionOptions = {
   httpStatus?: HttpStatus
   errorStack?: string
+  errorStackOriginal?: string
   causa?: string
   origen?: string
   accion?: string

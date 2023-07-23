@@ -8,3 +8,4 @@ export type {
   BaseLogOptions,
   Metadata,
 } from './types'
+export { ERROR_CODE } from './constants'
