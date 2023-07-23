@@ -47,13 +47,11 @@ export class AppController extends BaseController {
           httpStatus: codigoHttp,
           causa: String(body.causa),
           accion: body.accion,
-          detalle: [
-            {
-              fecha: body.fecha,
-              navegador: body.navegador,
-            },
-            body.detalle,
-          ],
+          metadata: {
+            fecha: body.fecha,
+            navegador: body.navegador,
+            detalle: body.detalle,
+          },
           sistema: body.sistema,
           origen: body.origen,
         })

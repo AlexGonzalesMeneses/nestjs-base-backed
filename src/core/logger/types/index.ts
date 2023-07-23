@@ -70,11 +70,13 @@ export type BaseExceptionOptions = {
 export type BaseLogOptions = {
   level?: LOG_LEVEL
   mensaje?: string
-  detalle?: unknown
+  metadata?: Metadata
   sistema?: string
   modulo?: string
   traceStack?: string
 }
+
+export type Metadata = { [key: string]: unknown }
 
 export type ObjectOrError = {
   statusCode?: number

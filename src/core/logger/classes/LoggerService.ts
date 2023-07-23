@@ -7,6 +7,7 @@ import { LoggerConfig } from './LoggerConfig'
 import {
   BaseExceptionOptions,
   BaseLogOptions,
+  Metadata,
   LoggerOptions,
   LoggerParams,
 } from '../types'
@@ -140,8 +141,13 @@ export class LoggerService {
 
   fatal(error: unknown): void
   fatal(error: unknown, mensaje: string): void
-  fatal(error: unknown, mensaje: string, detalle: unknown): void
-  fatal(error: unknown, mensaje: string, detalle: unknown, modulo: string): void
+  fatal(error: unknown, mensaje: string, metadata: Metadata): void
+  fatal(
+    error: unknown,
+    mensaje: string,
+    metadata: Metadata,
+    modulo: string
+  ): void
   fatal(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
   fatal(...args: unknown[]): void {
     const exceptInfo = LoggerService.buildException(LOG_LEVEL.FATAL, ...args)
@@ -150,8 +156,13 @@ export class LoggerService {
 
   error(error: unknown): void
   error(error: unknown, mensaje: string): void
-  error(error: unknown, mensaje: string, detalle: unknown): void
-  error(error: unknown, mensaje: string, detalle: unknown, modulo: string): void
+  error(error: unknown, mensaje: string, metadata: Metadata): void
+  error(
+    error: unknown,
+    mensaje: string,
+    metadata: Metadata,
+    modulo: string
+  ): void
   error(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
   error(...args: unknown[]): void {
     const exceptInfo = LoggerService.buildException(LOG_LEVEL.ERROR, ...args)
@@ -159,8 +170,8 @@ export class LoggerService {
   }
 
   warn(mensaje: string): void
-  warn(mensaje: string, detalle: unknown): void
-  warn(mensaje: string, detalle: unknown, modulo: string): void
+  warn(mensaje: string, metadata: Metadata): void
+  warn(mensaje: string, metadata: Metadata, modulo: string): void
   warn(opt: BaseExceptionOptions & BaseLogOptions): void
   warn(...args: unknown[]): void {
     const exceptInfo = LoggerService.buildException(
@@ -172,8 +183,8 @@ export class LoggerService {
   }
 
   info(mensaje: string): void
-  info(mensaje: string, detalle: unknown): void
-  info(mensaje: string, detalle: unknown, modulo: string): void
+  info(mensaje: string, metadata: Metadata): void
+  info(mensaje: string, metadata: Metadata, modulo: string): void
   info(opt: BaseLogOptions): void
   info(...args: unknown[]): void {
     const logInfo = LoggerService.buildLog(LOG_LEVEL.INFO, ...args)
@@ -181,8 +192,8 @@ export class LoggerService {
   }
 
   debug(mensaje: string): void
-  debug(mensaje: string, detalle: unknown): void
-  debug(mensaje: string, detalle: unknown, modulo: string): void
+  debug(mensaje: string, metadata: Metadata): void
+  debug(mensaje: string, metadata: Metadata, modulo: string): void
   debug(opt: BaseLogOptions): void
   debug(...args: unknown[]): void {
     const logInfo = LoggerService.buildLog(LOG_LEVEL.DEBUG, ...args)
@@ -190,8 +201,8 @@ export class LoggerService {
   }
 
   trace(mensaje: string): void
-  trace(mensaje: string, detalle: unknown): void
-  trace(mensaje: string, detalle: unknown, modulo: string): void
+  trace(mensaje: string, metadata: Metadata): void
+  trace(mensaje: string, metadata: Metadata, modulo: string): void
   trace(opt: BaseLogOptions): void
   trace(...args: unknown[]): void {
     const logInfo = LoggerService.buildLog(LOG_LEVEL.TRACE, ...args)
@@ -215,16 +226,16 @@ export class LoggerService {
       })
     }
 
-    // 3ra forma - (error: unknown, mensaje: string, detalle: unknown) => BaseException
+    // 3ra forma - (error: unknown, mensaje: string, metadata: Metadata) => BaseException
     else if (arguments.length === 4 && typeof args[1] === 'string') {
       return new BaseException(args[0], {
         mensaje: args[1],
-        detalle: args[2],
+        metadata: args[2] as Metadata,
         level: lvl,
       })
     }
 
-    // 4ta forma - (error: unknown, mensaje: string, detalle: unknown, modulo: string) => BaseException
+    // 4ta forma - (error: unknown, mensaje: string, metadata: Metadata, modulo: string) => BaseException
     else if (
       arguments.length === 5 &&
       typeof args[1] === 'string' &&
@@ -232,7 +243,7 @@ export class LoggerService {
     ) {
       return new BaseException(args[0], {
         mensaje: args[1],
-        detalle: args[2],
+        metadata: args[2] as Metadata,
         modulo: args[3],
         level: lvl,
       })
@@ -256,16 +267,16 @@ export class LoggerService {
       })
     }
 
-    // 2da forma - (mensaje: string, detalle: unknown) => BaseLog
+    // 2da forma - (mensaje: string, metadata: Metadata) => BaseLog
     else if (arguments.length === 3 && typeof args[0] === 'string') {
       return new BaseLog({
         mensaje: args[0],
-        detalle: args[1],
+        metadata: args[1] as Metadata,
         level: lvl,
       })
     }
 
-    // 3ra forma - (mensaje: string, detalle: unknown, modulo: string) => BaseLog
+    // 3ra forma - (mensaje: string, metadata: Metadata, modulo: string) => BaseLog
     else if (
       arguments.length === 4 &&
       typeof args[0] === 'string' &&
@@ -273,7 +284,7 @@ export class LoggerService {
     ) {
       return new BaseLog({
         mensaje: args[0],
-        detalle: args[1],
+        metadata: args[1] as Metadata,
         modulo: args[2],
         level: lvl,
       })
@@ -297,33 +308,33 @@ export class LoggerService {
         return
       }
 
-      const reqId = String(rTracer.id() || '') || '-'
+      const reqId = String(rTracer.id() || '') || ''
       const caller = getContext()
       const msg = info.toString()
 
       const logFields = {
-        _reqId: reqId,
-        _caller: caller,
-        _formato: msg,
-        _nivel: info.level,
-        _mensaje: info.mensaje,
-        _sistema: info.sistema,
-        _modulo: info.modulo,
-        _fecha: info.fecha,
-        _traceStack: info.traceStack,
-        _detalle: info.detalle,
+        reqId: reqId,
+        caller: caller,
+        fecha: info.fecha,
+        levelText: info.level,
+        appName: info.sistema,
+        formato: msg,
+        modulo: info.modulo,
+        mensaje: info.obtenerMensajeCliente(),
+        metadata: info.metadata,
+        traceStack: info.traceStack,
       }
 
       let errorFields = {}
       if (info instanceof BaseException) {
         errorFields = {
-          _httpStatus: info.httpStatus,
-          _codigo: info.codigo,
-          _causa: info.causa,
-          _origen: info.origen,
-          _accion: info.accion,
-          _error: info.error,
-          _errorStack: info.errorStack,
+          httpStatus: info.httpStatus,
+          codigo: info.codigo,
+          causa: info.causa,
+          origen: info.origen,
+          accion: info.accion,
+          error: info.error,
+          errorStack: info.errorStack,
         }
       }
 

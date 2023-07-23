@@ -25,8 +25,8 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     }
 
     const except = new BaseException(exception, {
-      detalle: {
-        request: errorRequest,
+      metadata: {
+        req: errorRequest,
       },
     })
 

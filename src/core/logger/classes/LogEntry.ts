@@ -1,4 +1,5 @@
 import { LOG_LEVEL } from '../constants'
+import { Metadata } from '../types'
 
 export interface LogEntry {
   level: LOG_LEVEL
@@ -9,9 +10,9 @@ export interface LogEntry {
   mensaje: string
 
   /**
-   * Información adicional
+   * Objeto que contiene información adicional
    */
-  detalle: unknown
+  metadata: Metadata
 
   /**
    * Identificador de la aplicación. Ej: app-backend | app-frontend | node-script

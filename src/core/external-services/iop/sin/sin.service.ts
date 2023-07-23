@@ -72,8 +72,8 @@ export class SinService extends BaseService {
       const mensajePorDefecto = `Ocurrió un error de autenticación con el Servicio de Impuestos Nacionales`
       mensaje = mensaje || mensajePorDefecto
 
-      const detalle = [{ datosSIN }]
-      this.logger.error(error, mensaje, detalle, 'SIN')
+      const metadata = { datosSIN }
+      this.logger.error(error, mensaje, metadata, 'SIN')
       return {
         finalizado: false,
         mensaje,

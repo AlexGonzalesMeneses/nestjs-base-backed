@@ -1,4 +1,4 @@
-import { BaseLogOptions } from '../types'
+import { BaseLogOptions, Metadata } from '../types'
 import { cleanParamValue, getErrorStack } from '../utilities'
 import { LOG_LEVEL, LOG_NUMBER } from '../constants'
 import dayjs from 'dayjs'
@@ -8,7 +8,7 @@ import { LoggerService } from './LoggerService'
 export class BaseLog implements LogEntry {
   level: LOG_LEVEL
   mensaje: string
-  detalle: unknown
+  metadata: Metadata
   sistema: string
   modulo: string
   fecha: string
@@ -16,7 +16,7 @@ export class BaseLog implements LogEntry {
 
   constructor(opt?: BaseLogOptions) {
     const level = LOG_LEVEL.ERROR
-    const detalle: unknown = ''
+    const metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
     const sistema = loggerParams?.appName || ''
     const modulo = ''
@@ -35,25 +35,18 @@ export class BaseLog implements LogEntry {
     this.traceStack =
       opt && typeof opt.traceStack !== 'undefined' ? opt.traceStack : traceStack
 
-    if (opt && 'detalle' in opt && typeof opt.detalle !== 'undefined') {
-      if (detalle) {
-        const nuevoDetalle: unknown[] = []
-        if (Array.isArray(opt.detalle)) {
-          opt.detalle.forEach((d) => nuevoDetalle.push(cleanParamValue(d)))
-        } else {
-          nuevoDetalle.push(cleanParamValue(opt.detalle))
-        }
-        if (Array.isArray(detalle)) {
-          detalle.forEach((d) => nuevoDetalle.push(d))
-        } else {
-          nuevoDetalle.push(detalle)
-        }
-        this.detalle = nuevoDetalle
+    if (opt && 'metadata' in opt && typeof opt.metadata !== 'undefined') {
+      if (metadata && Object.keys(metadata).length > 0) {
+        this.metadata = Object.assign(
+          {},
+          metadata,
+          cleanParamValue(opt.metadata)
+        )
       } else {
-        this.detalle = cleanParamValue(opt.detalle)
+        this.metadata = cleanParamValue(opt.metadata)
       }
     } else {
-      this.detalle = detalle
+      this.metadata = metadata
     }
   }
 

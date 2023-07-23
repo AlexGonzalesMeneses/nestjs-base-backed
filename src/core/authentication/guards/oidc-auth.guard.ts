@@ -26,7 +26,9 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
     } catch (err) {
       throw new BaseException(err, {
         accion: `Asegúrese de que el usuario se encuentre registrado en ciudadanía`,
-        detalle: `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`,
+        metadata: {
+          msg: `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`,
+        },
       })
     }
 

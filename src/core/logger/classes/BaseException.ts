@@ -1,5 +1,5 @@
 import { LoggerService } from './LoggerService'
-import { BaseExceptionOptions, BaseLogOptions } from '../types'
+import { BaseExceptionOptions, BaseLogOptions, Metadata } from '../types'
 import {
   cleanParamValue,
   getErrorStack,
@@ -17,7 +17,7 @@ import { inspect } from 'util'
 export class BaseException extends Error implements LogEntry {
   level: LOG_LEVEL
   mensaje: string
-  detalle: unknown
+  metadata: Metadata
   sistema: string
   modulo: string
   fecha: string
@@ -74,7 +74,7 @@ export class BaseException extends Error implements LogEntry {
         ? getErrorStack(error)
         : getErrorStack(new Error())
 
-    let detalle: unknown = ''
+    let metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
     let sistema = loggerParams?.appName || ''
     let modulo = ''
@@ -117,7 +117,7 @@ export class BaseException extends Error implements LogEntry {
       sistema = error.sistema
       modulo = error.modulo
       origen = error.origen
-      detalle = error.detalle
+      metadata = error.metadata
       fecha = error.fecha
       errorParsed = error.error
     }
@@ -271,25 +271,18 @@ export class BaseException extends Error implements LogEntry {
         ? opt.mensaje
         : mensaje
 
-    if (opt && 'detalle' in opt && typeof opt.detalle !== 'undefined') {
-      if (detalle) {
-        const nuevoDetalle: unknown[] = []
-        if (Array.isArray(opt.detalle)) {
-          opt.detalle.forEach((d) => nuevoDetalle.push(cleanParamValue(d)))
-        } else {
-          nuevoDetalle.push(cleanParamValue(opt.detalle))
-        }
-        if (Array.isArray(detalle)) {
-          detalle.forEach((d) => nuevoDetalle.push(d))
-        } else {
-          nuevoDetalle.push(detalle)
-        }
-        this.detalle = nuevoDetalle
+    if (opt && 'metadata' in opt && typeof opt.metadata !== 'undefined') {
+      if (metadata && Object.keys(metadata).length > 0) {
+        this.metadata = Object.assign(
+          {},
+          metadata,
+          cleanParamValue(opt.metadata)
+        )
       } else {
-        this.detalle = cleanParamValue(opt.detalle)
+        this.metadata = cleanParamValue(opt.metadata)
       }
     } else {
-      this.detalle = detalle
+      this.metadata = metadata
     }
 
     this.sistema =
@@ -379,31 +372,16 @@ export class BaseException extends Error implements LogEntry {
       args.push(`─ Acción  : ${this.accion}`)
     }
 
-    if (this.detalle) {
-      // detalle = [{ some: 'value' }, 'información adicional']
-      if (Array.isArray(this.detalle)) {
-        if (this.detalle.length > 0) {
-          args.push('\n───── Detalle ─────────')
-          this.detalle.map((item) => {
-            args.push(
-              typeof item === 'string'
-                ? item
-                : inspect(item, false, null, false)
-            )
-            args.push('')
-          })
-        }
-      }
-
-      // detalle = { some: 'value' }
-      else {
-        args.push('\n───── Detalle ─────────')
+    if (this.metadata && Object.keys(this.metadata).length > 0) {
+      args.push('\n───── Metadata ────────')
+      Object.keys(this.metadata).map((key) => {
+        const item = this.metadata[key]
+        args.push(`- ${key}:`)
         args.push(
-          typeof this.detalle === 'string'
-            ? this.detalle
-            : inspect(this.detalle, false, null, false)
+          typeof item === 'string' ? item : inspect(item, false, null, false)
         )
-      }
+        args.push('')
+      })
     }
 
     if (
@@ -424,6 +402,8 @@ export class BaseException extends Error implements LogEntry {
       args.push('\n───── Trace stack ─────')
       args.push(this.traceStack)
     }
+
+    args.push('')
 
     return args.join('\n')
   }
