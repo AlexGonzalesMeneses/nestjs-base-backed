@@ -1,4 +1,4 @@
-import { BaseException } from '../../core/logger'
+import { BaseException, Metadata } from '../../core/logger'
 
 export class ExternalServiceException extends BaseException {
   constructor(servicio: string, error: unknown)
@@ -7,18 +7,18 @@ export class ExternalServiceException extends BaseException {
     servicio: string,
     error: unknown,
     mensaje: string,
-    detalle: unknown
+    metadata: Metadata
   )
   constructor(
     arg1: string,
     error?: unknown,
     mensaje?: string,
-    detalle?: unknown
+    metadata?: Metadata
   ) {
     const opt = {
       modulo: arg1,
       mensaje,
-      detalle,
+      metadata,
     }
     super(error, opt)
   }

@@ -9,7 +9,7 @@ export class BaseLog implements LogEntry {
   level: LOG_LEVEL
   mensaje: string
   metadata: Metadata
-  sistema: string
+  appName: string
   modulo: string
   fecha: string
   traceStack: string
@@ -18,7 +18,7 @@ export class BaseLog implements LogEntry {
     const level = LOG_LEVEL.ERROR
     const metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
-    const sistema = loggerParams?.appName || ''
+    const appName = loggerParams?.appName || ''
     const modulo = ''
     const traceStack = getErrorStack(new Error())
     const mensaje = ''
@@ -29,8 +29,8 @@ export class BaseLog implements LogEntry {
     this.level = opt && typeof opt.level !== 'undefined' ? opt.level : level
     this.mensaje =
       opt && typeof opt.mensaje !== 'undefined' ? opt.mensaje : mensaje
-    this.sistema =
-      opt && typeof opt.sistema !== 'undefined' ? opt.sistema : sistema
+    this.appName =
+      opt && typeof opt.appName !== 'undefined' ? opt.appName : appName
     this.modulo = opt && typeof opt.modulo !== 'undefined' ? opt.modulo : modulo
     this.traceStack =
       opt && typeof opt.traceStack !== 'undefined' ? opt.traceStack : traceStack

@@ -52,7 +52,7 @@ export class AppController extends BaseController {
             navegador: body.navegador,
             detalle: body.detalle,
           },
-          sistema: body.sistema,
+          appName: body.appName,
           origen: body.origen,
         })
         this.logger.error(except)

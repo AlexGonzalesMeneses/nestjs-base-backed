@@ -18,7 +18,7 @@ export class BaseException extends Error implements LogEntry {
   level: LOG_LEVEL
   mensaje: string
   metadata: Metadata
-  sistema: string
+  appName: string
   modulo: string
   fecha: string
   traceStack: string
@@ -76,7 +76,7 @@ export class BaseException extends Error implements LogEntry {
 
     let metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
-    let sistema = loggerParams?.appName || ''
+    let appName = loggerParams?.appName || ''
     let modulo = ''
     let origen = errorStack ? errorStack.split('\n').shift() || '' : ''
     const traceStack =
@@ -114,7 +114,7 @@ export class BaseException extends Error implements LogEntry {
       mensaje = error.mensaje
       causa = error.causa
       accion = error.accion
-      sistema = error.sistema
+      appName = error.appName
       modulo = error.modulo
       origen = error.origen
       metadata = error.metadata
@@ -285,10 +285,10 @@ export class BaseException extends Error implements LogEntry {
       this.metadata = metadata
     }
 
-    this.sistema =
-      opt && 'sistema' in opt && typeof opt.sistema !== 'undefined'
-        ? opt.sistema
-        : sistema
+    this.appName =
+      opt && 'appName' in opt && typeof opt.appName !== 'undefined'
+        ? opt.appName
+        : appName
 
     this.modulo =
       opt && 'modulo' in opt && typeof opt.modulo !== 'undefined'

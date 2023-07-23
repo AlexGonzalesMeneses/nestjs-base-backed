@@ -6,4 +6,5 @@ export type {
   LoggerOptions,
   BaseExceptionOptions,
   BaseLogOptions,
+  Metadata,
 } from './types'

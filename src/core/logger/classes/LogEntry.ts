@@ -17,7 +17,7 @@ export interface LogEntry {
   /**
    * Identificador de la aplicación. Ej: app-backend | app-frontend | node-script
    */
-  sistema: string
+  appName: string
 
   /**
    * Identificador del módulo. Ej: SEGIP, SIN, MENSAJERÍA

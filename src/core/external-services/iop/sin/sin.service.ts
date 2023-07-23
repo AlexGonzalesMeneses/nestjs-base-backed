@@ -36,7 +36,7 @@ export class SinService extends BaseService {
 
       const response = await firstValueFrom(this.http.request(config))
       const body = response?.data as LoginResponse
-      const detalle = [{ datosSIN }, { response }]
+      const metadata = { datosSIN, response }
 
       if (
         !body.Estado &&
@@ -45,7 +45,7 @@ export class SinService extends BaseService {
       ) {
         const error = body.Mensaje
         mensaje = `No tiene permisos para usar este servicio.`
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        throw new ExternalServiceException('SIN', error, mensaje, metadata)
       }
 
       if (
@@ -55,13 +55,13 @@ export class SinService extends BaseService {
       ) {
         const error = body.Mensaje
         mensaje = `No se encontró el servicio solicitado.`
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        throw new ExternalServiceException('SIN', error, mensaje, metadata)
       }
 
       if (!body.Autenticado) {
         const error = null
         mensaje = body.Mensaje || 'Error desconocido'
-        throw new ExternalServiceException('SIN', error, mensaje, detalle)
+        throw new ExternalServiceException('SIN', error, mensaje, metadata)
       }
 
       return {

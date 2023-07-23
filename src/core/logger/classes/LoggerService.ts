@@ -317,7 +317,7 @@ export class LoggerService {
         caller: caller,
         fecha: info.fecha,
         levelText: info.level,
-        appName: info.sistema,
+        appName: info.appName,
         formato: msg,
         modulo: info.modulo,
         mensaje: info.obtenerMensajeCliente(),

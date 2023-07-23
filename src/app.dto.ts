@@ -16,7 +16,7 @@ export class LogRequestDTO {
 
   @IsString()
   @IsOptional()
-  sistema?: string
+  appName?: string
 
   @IsString()
   @IsOptional()

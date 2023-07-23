@@ -71,7 +71,7 @@ export type BaseLogOptions = {
   level?: LOG_LEVEL
   mensaje?: string
   metadata?: Metadata
-  sistema?: string
+  appName?: string
   modulo?: string
   traceStack?: string
 }

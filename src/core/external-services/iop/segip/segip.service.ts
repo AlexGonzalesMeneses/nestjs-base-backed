@@ -87,12 +87,12 @@ export class SegipService extends BaseService {
       return this.armarRespuesta(exito, mensaje)
     } catch (error) {
       const mensaje = `Ocurrió un problema al contrastar los datos de la persona`
-      const detalle = [{ datosPersona }, { retornarPrimerError }]
+      const metadata = { datosPersona, retornarPrimerError }
       throw new ExternalServiceException(
         'SEGIP:CONTRASTACION',
         error,
         mensaje,
-        detalle
+        metadata
       )
     }
   }

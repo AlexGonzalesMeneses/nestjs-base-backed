@@ -17,8 +17,8 @@ function tarea(datos) {
   } catch (error) {
     logger.error(error, {
       mensaje: 'mensaje genérico opcional',
-      detalle: ['info adicional', datos],
-      modulo: 'MENSAJERÍA'
+      modulo: 'MENSAJERÍA',
+      metadata: { info: 'info adicional', datos },
     })
   }
 }
@@ -29,11 +29,11 @@ Ejemplos de implementación:
 ```ts
 logger.error(error)
 logger.error(error, mensaje)
-logger.error(error, mensaje, detalle)
-logger.error(error, mensaje, detalle. modulo)
+logger.error(error, mensaje, metadata)
+logger.error(error, mensaje, metadata, modulo)
 logger.error(error, {
   mensaje,
-  detalle,
+  metadata,
   modulo,
 })
 
@@ -41,8 +41,8 @@ logger.error(error, {
 logger.error(error, {
   httpStatus,
   mensaje,
-  detalle,
-  sistema,
+  metadata,
+  appName,
   modulo,
   causa,
   accion,
@@ -60,8 +60,8 @@ function tarea(datos) {
   } catch (error) {
     throw new BaseException(error, {
       mensaje: 'mensaje genérico opcional',
-      detalle: ['info adicional', datos],
-      modulo: 'MENSAJERÍA'
+      modulo: 'MENSAJERÍA',
+      metadata: { info: 'info adicional', datos },
     })
   }
 }
@@ -84,8 +84,8 @@ throw new BaseException(error, {
   httpStatus,
   causa,
   mensaje,
-  detalle,
-  sistema,
+  metadata,
+  appName,
   modulo,
   accion,
 })
@@ -137,7 +137,7 @@ function validar(headers) {
     throw new BaseException(null, {
       httpStatus: HttpStatus.UNAUTHORIZED,
       causa: 'Valor no definido "headers.authorization"',
-      detalle: { headers },
+      metadata: { headers },
     })
   }
 }
