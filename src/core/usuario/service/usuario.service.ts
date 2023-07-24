@@ -138,7 +138,7 @@ export class UsuarioService extends BaseService {
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
     if (!rol) {
-      throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
+      throw new PreconditionFailedException(Messages.NO_PERMISSION_FOUND)
     }
 
     if (!TextService.validateLevelPassword(usuarioDto.contrasenaNueva)) {
@@ -534,9 +534,7 @@ export class UsuarioService extends BaseService {
 
   verificarPermisos(usuarioAuditoria, id) {
     if (usuarioAuditoria === id) {
-      throw new ForbiddenException(
-        'No tiene permiso para realizar esta acción porque se trata de su propia cuenta'
-      )
+      throw new ForbiddenException(Messages.EXCEPTION_OWN_ACCOUNT_ACTION)
     }
   }
 
