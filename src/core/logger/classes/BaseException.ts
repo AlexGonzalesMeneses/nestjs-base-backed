@@ -195,7 +195,7 @@ export class BaseException extends Error implements LogEntry {
       codigo = ERROR_CODE.SERVER_TIMEOUT
       mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.SERVER_TIMEOUT})`
       causa = error.response.data // TODO error.toString() ???
-      accion = `Verificar que el servicio al cual se intenta conectar se encuentre activo y respondiendo correctamente`
+      accion = `Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente`
     }
 
     // SERVER_CERT_EXPIRED

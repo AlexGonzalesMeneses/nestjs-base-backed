@@ -98,15 +98,18 @@ export function cleanParamValue(
         }
       }
       if (isConexionError(value)) {
-        const val = 'cause' in value ? (value.cause as object) : value
         const config =
-          'config' in val && val.config && typeof val.config === 'object'
-            ? val.config
+          'config' in value && value.config && typeof value.config === 'object'
+            ? value.config
+            : undefined
+        const cause =
+          'cause' in value && typeof value.cause === 'object'
+            ? value.cause
             : undefined
         return {
-          name: 'name' in val ? val.name : undefined,
-          message: 'message' in val ? val.message : undefined,
-          code: 'code' in val ? val.code : undefined,
+          name: 'name' in value ? value.name : undefined,
+          message: 'message' in value ? value.message : undefined,
+          code: 'code' in value ? value.code : undefined,
           config: config
             ? {
                 headers:
@@ -120,6 +123,15 @@ export function cleanParamValue(
                   'data' in config
                     ? cleanParamValue(config.data, 0, sensitiveParams)
                     : undefined,
+              }
+            : undefined,
+          cause: cause
+            ? {
+                errno: 'errno' in cause ? cause.errno : undefined,
+                code: 'code' in cause ? cause.code : undefined,
+                syscall: 'syscall' in cause ? cause.syscall : undefined,
+                address: 'address' in cause ? cause.address : undefined,
+                port: 'port' in cause ? cause.port : undefined,
               }
             : undefined,
         }
@@ -256,9 +268,13 @@ export function isConexionError(data: unknown): boolean {
       typeof val === 'object' &&
       'code' in val &&
       typeof val.code === 'string' &&
-      ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND'].includes(
-        val.code
-      )
+      [
+        'ESOCKETTIMEDOUT',
+        'ETIMEDOUT',
+        'ECONNREFUSED',
+        'ENOTFOUND',
+        'ECONNRESET',
+      ].includes(val.code)
   )
 }
 
