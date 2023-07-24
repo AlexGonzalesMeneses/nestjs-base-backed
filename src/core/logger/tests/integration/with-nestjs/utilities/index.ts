@@ -112,7 +112,11 @@ function _comparar<T>(obj1: unknown, obj2: unknown, parentValue: T) {
 }
 
 export async function eliminarFicherosLog() {
-  await cmd('rm -rf ../server/logs/server/*.log', __dirname)
+  const files = ['debug', 'error', 'fatal', 'info', 'trace', 'warn']
+  for (const level of files) {
+    const command = `truncate -s 0 ../server/logs/server/${level}.log`
+    await cmd(command, __dirname).catch(() => {})
+  }
   await delay()
 }
 
