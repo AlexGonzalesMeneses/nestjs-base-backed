@@ -136,5 +136,6 @@ export async function testSuit(functions: Array<() => Promise<void>>) {
     if (server) {
       await detenerServer(server)
     }
+    process.exit(0)
   }
 }

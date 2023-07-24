@@ -9,6 +9,12 @@ import { testE3_3 } from './testE3_3'
 import { testE4 } from './testE4'
 import { testE5 } from './testE5'
 import { testE6 } from './testE6'
+import { testE7 } from './testE7'
+import { testE8_1 } from './testE8_1'
+import { testE8_2 } from './testE8_2'
+import { testE8_5 } from './testE8_5'
+import { testE9 } from './testE9'
+import { testE10 } from './testE10'
 
 export default async function init() {
   testSuit([
@@ -22,6 +28,12 @@ export default async function init() {
     testE4,
     testE5,
     testE6,
+    testE7,
+    testE8_1,
+    testE8_2,
+    testE8_5,
+    testE9,
+    testE10,
   ])
 }
 

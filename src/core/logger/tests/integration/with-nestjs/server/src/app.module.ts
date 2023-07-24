@@ -4,9 +4,10 @@ import { AppService } from './app.service'
 import packageJson from '../package.json'
 import { LoggerModule } from '../../../../../../logger'
 import path from 'path'
-import { APP_FILTER } from '@nestjs/core'
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { ExceptionFilter } from './exception.filter'
 import { AppMiddleware } from './app.middleware'
+import { TimeoutInterceptor } from './timeout.interceptor'
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { AppMiddleware } from './app.middleware'
     {
       provide: APP_FILTER,
       useClass: ExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TimeoutInterceptor,
     },
   ],
 })

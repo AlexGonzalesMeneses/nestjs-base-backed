@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Res } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { AppService } from './app.service'
 
 @Controller()
@@ -25,11 +25,5 @@ export class AppController {
     @Query() query: { [key: string]: string }
   ) {
     await this.appService.lanzarExcepcion(codigo, query)
-  }
-
-  @Get('/server-timeout')
-  async getServerTimeout(@Res() res: any) {
-    res.setTimeout(1000)
-    await this.appService.getTimeout()
   }
 }
