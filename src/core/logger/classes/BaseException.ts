@@ -110,7 +110,8 @@ export class BaseException extends Error implements LogEntry {
 
     // EMPTY_ERROR
     if (!error) {
-      mensaje = `Ocurrió un error interno (${ERROR_CODE.EMPTY_ERROR})`
+      codigo = ERROR_CODE.EMPTY_ERROR
+      mensaje = `Error Interno (${ERROR_CODE.EMPTY_ERROR})`
     }
 
     // STRING_ERROR

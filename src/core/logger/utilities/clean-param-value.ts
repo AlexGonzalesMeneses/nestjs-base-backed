@@ -98,14 +98,15 @@ export function cleanParamValue(
         }
       }
       if (isConexionError(value)) {
+        const val = 'cause' in value ? (value.cause as object) : value
         const config =
-          'config' in value && value.config && typeof value.config === 'object'
-            ? value.config
+          'config' in val && val.config && typeof val.config === 'object'
+            ? val.config
             : undefined
         return {
-          name: 'name' in value ? value.name : undefined,
-          message: 'message' in value ? value.message : undefined,
-          code: 'code' in value ? value.code : undefined,
+          name: 'name' in val ? val.name : undefined,
+          message: 'message' in val ? val.message : undefined,
+          code: 'code' in val ? val.code : undefined,
           config: config
             ? {
                 headers:
@@ -201,13 +202,62 @@ export function isAxiosError(data: unknown): boolean {
 }
 
 export function isConexionError(data: unknown): boolean {
+  //   ───── Error ─────────── axios
+  // {
+  //   name: 'Error',
+  //   message: 'connect ECONNREFUSED 127.0.0.1:9999',
+  //   code: 'ECONNREFUSED',
+  //   config: {
+  //     headers: {
+  //       Accept: 'application/json, text/plain, */*',
+  //       'User-Agent': 'axios/1.3.2',
+  //       'Accept-Encoding': 'gzip, compress, deflate, br'
+  //     },
+  //     baseURL: undefined,
+  //     method: 'get',
+  //     url: 'http://localhost:9999',
+  //     data: undefined
+  //   }
+  // }
+
+  // ───── Error ─────────── http
+  // {
+  //   name: 'Error',
+  //   message: 'connect ECONNREFUSED 127.0.0.1:9999',
+  //   code: 'ECONNREFUSED',
+  //   config: undefined
+  // }
+
+  //   ───── Error ─────────── node-fetch
+  // {
+  //   name: 'FetchError',
+  //   message: 'request to http://localhost:9999/ failed, reason: connect ECONNREFUSED 127.0.0.1:9999',
+  //   code: 'ECONNREFUSED',
+  //   config: undefined
+  // }
+
+  //   ───── Error ─────────── fetch
+  // {
+  //   cause: {
+  //     name: 'Error',
+  //     message: 'connect ECONNREFUSED 127.0.0.1:9999',
+  //     code: 'ECONNREFUSED',
+  //     config: undefined
+  //   }
+  // }
+
+  const val =
+    data && typeof data === 'object' && 'cause' in data
+      ? (data.cause as object)
+      : data
+
   return Boolean(
-    data &&
-      typeof data === 'object' &&
-      'code' in data &&
-      typeof data.code === 'string' &&
+    val &&
+      typeof val === 'object' &&
+      'code' in val &&
+      typeof val.code === 'string' &&
       ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND'].includes(
-        data.code
+        val.code
       )
   )
 }
