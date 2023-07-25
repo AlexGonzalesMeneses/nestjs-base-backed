@@ -864,4 +864,8 @@ export class UsuarioService extends BaseService {
   async actualizarDatosPersona(datosPersona: PersonaDto) {
     return await this.usuarioRepositorio.actualizarDatosPersona(datosPersona)
   }
+
+  async obtenerCodigoTest(idUser: string) {
+    return await this.usuarioRepositorio.ObtenerCodigoTest(idUser)
+  }
 }

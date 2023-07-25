@@ -430,4 +430,13 @@ export class UsuarioRepository {
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.manager.transaction<T>(op)
   }
+
+  async ObtenerCodigoTest(idUsuario: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select('usuario.codigoActivacion')
+      .where({ id: idUsuario })
+      .getOne()
+  }
 }
