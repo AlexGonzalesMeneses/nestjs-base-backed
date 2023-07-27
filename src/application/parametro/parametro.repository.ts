@@ -1,4 +1,3 @@
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
 import { Brackets, DataSource } from 'typeorm'
 import { CrearParametroDto } from './dto/crear-parametro.dto'
@@ -24,7 +23,7 @@ export class ParametroRepository {
     parametroDto: ActualizarParametroDto,
     usuarioAuditoria: string
   ) {
-    const datosActualizar: QueryDeepPartialEntity<Parametro> = new Parametro({
+    const datosActualizar = new Parametro({
       ...parametroDto,
       usuarioModificacion: usuarioAuditoria,
     })
