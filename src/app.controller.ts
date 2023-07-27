@@ -1,19 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Inject,
-  Post,
-  Res,
-} from '@nestjs/common'
+import { Controller, Get, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
-import { LogRequestDTO } from './app.dto'
-import { Response } from 'express'
-import { BaseException } from './core/logger'
 
 @Controller()
 export class AppController extends BaseController {
@@ -37,6 +26,7 @@ export class AppController extends BaseController {
     }
   }
 
+  /*
   @Post('/log')
   async registrarLog(@Res() res: Response, @Body() body: LogRequestDTO) {
     try {
@@ -65,4 +55,5 @@ export class AppController extends BaseController {
       //
     }
   }
+  */
 }

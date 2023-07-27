@@ -318,10 +318,8 @@ export class LoggerService {
         fecha: info.fecha,
         levelText: info.level,
         appName: info.appName,
-        formato: msg,
         modulo: info.modulo,
         mensaje: info.obtenerMensajeCliente(),
-        traceStack: info.traceStack,
       }
 
       let errorFields = {}
@@ -333,16 +331,16 @@ export class LoggerService {
           origen: info.origen,
           accion: info.accion,
           error: info.error,
+          formato: msg,
           errorStack: info.errorStackOriginal,
+          traceStack: info.traceStack,
         }
       }
 
-      let metadata = {}
+      const args = { ...logFields, ...errorFields }
       if (info.metadata && Object.keys(info.metadata).length > 0) {
-        metadata = info.metadata
+        Object.assign(args, { metadata: info.metadata })
       }
-
-      const args = { ...logFields, ...errorFields, metadata }
 
       // SAVE WITH PINO
       this.saveWithPino(level, args)

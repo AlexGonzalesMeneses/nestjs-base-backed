@@ -20,6 +20,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const msg = `${req.method} ${url} ${statusCode} ${statusText} (${elapsedTime} seg)`
       logger.trace(msg, {
         req: {
+          finish: true,
           method: req.method,
           url,
           statusCode,

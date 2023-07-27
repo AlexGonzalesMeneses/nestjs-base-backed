@@ -26,11 +26,8 @@ export async function testE1() {
     caller: 'app.middleware.ts:13:12',
     levelText: 'trace',
     appName: 'server',
-    formato: 'GET /api/error/E1...',
     modulo: '',
     mensaje: 'GET /api/error/E1...',
-    traceStack: '.../src/app.middleware.ts:13:12',
-    metadata: {},
   })
   traceFile.line(zeroLine + 1).toHaveProperty('reqId')
 
@@ -63,14 +60,13 @@ export async function testE1() {
     levelText: 'trace',
     appName: 'server',
     modulo: '',
-    traceStack: '.../src/app.middleware.ts:21:14',
   })
   const logEntry3 = traceFile.line(zeroLine + 3).getValue()
-  expect(logEntry3.metadata).toHaveObj({
+  expect(logEntry3.metadata.req).toHaveObj({
     method: 'GET',
     url: '/api/error/E1',
     statusCode: 500,
     statusText: 'Internal Server Error',
   })
-  expect(logEntry3.metadata).toHaveProperty('elapsedTime')
+  expect(logEntry3.metadata.req).toHaveProperty('elapsedTime')
 }
