@@ -57,6 +57,8 @@ dotenv.config()
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*')
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(process.env.PATH_SUBDOMAIN || 'api')
   }
 }

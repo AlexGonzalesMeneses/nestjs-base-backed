@@ -28,11 +28,22 @@ export class TimeoutInterceptor implements NestInterceptor {
       .switchToHttp()
       .getRequest() as Request
 
+    const url = originalUrl.split('?')[0]
+
+    const ignorePaths: string[] = [
+      // rutas a excluir. Ej: '/api/estado'
+    ]
+
+    if (ignorePaths.includes(url)) {
+      return next.handle()
+    }
+
+    const tiempoEspera = tiempoMaximoEspera * 1000
+
     return next.handle().pipe(
-      timeout(tiempoMaximoEspera * 1000),
+      timeout(tiempoEspera),
       catchError((err) => {
         if (err instanceof TimeoutError) {
-          const url = originalUrl.split('?')[0]
           const mensaje = `${method} ${url} tardó demasiado en responder (tiempo transcurrido: ${tiempoMaximoEspera} seg)`
           logger.error(err, mensaje)
           return throwError(() => new RequestTimeoutException())

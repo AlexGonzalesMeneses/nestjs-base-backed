@@ -17,7 +17,7 @@ import { testE9 } from './testE9'
 import { testE10 } from './testE10'
 
 export default async function init() {
-  testSuit([
+  await testSuit([
     testEstado,
     testE0,
     testE1,
