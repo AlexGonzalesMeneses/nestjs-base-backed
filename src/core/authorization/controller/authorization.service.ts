@@ -89,7 +89,7 @@ export class AuthorizationService extends BaseService {
     return [subset, result.length]
   }
 
-  async crearPolitica(politica) {
+  async crearPolitica(politica: politicaType) {
     const { sujeto, objeto, accion, app } = politica
     await this.authZManagerService.addPolicy(sujeto, objeto, accion, app)
     return politica

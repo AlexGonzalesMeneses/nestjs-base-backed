@@ -20,7 +20,7 @@ export class RolRepository {
 
   async listarTodos(paginacionQueryDto: PaginacionQueryDto) {
     const { limite, saltar, filtro, orden, sentido } = paginacionQueryDto
-    const query = await this.dataSource
+    const query = this.dataSource
       .getRepository(Rol)
       .createQueryBuilder('rol')
       .select(['rol.id', 'rol.rol', 'rol.nombre', 'rol.estado'])
@@ -78,14 +78,9 @@ export class RolRepository {
   }
 
   async crear(rolDto: CrearRolDto, usuarioAuditoria: string) {
-    const { nombre, rol } = rolDto
-
-    const nuevoRol = new Rol()
-    nuevoRol.nombre = nombre
-    nuevoRol.rol = rol
-    nuevoRol.usuarioCreacion = usuarioAuditoria
-
-    return await this.dataSource.getRepository(Rol).save(nuevoRol)
+    return await this.dataSource
+      .getRepository(Rol)
+      .save(new Rol({ ...rolDto, usuarioCreacion: usuarioAuditoria }))
   }
 
   async actualizar(id: string, rolDto: CrearRolDto, usuarioAuditoria: string) {
