@@ -18,6 +18,7 @@ import { ConfigService } from '@nestjs/config'
 import { PersonaService } from '../../usuario/service/persona.service'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { Usuario } from 'src/core/usuario/entity/usuario.entity'
+import { CambioRolDto } from '../dto/index.dto'
 
 @Injectable()
 export class AuthenticationService extends BaseService {
@@ -128,18 +129,36 @@ export class AuthenticationService extends BaseService {
   async autenticar(user: PassportUser) {
     const usuario = await this.usuarioService.buscarUsuarioId(user.id)
 
-    const payload: PayloadType = { id: user.id, roles: user.roles }
+    const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
+
+    const payload: PayloadType = {
+      id: user.id,
+      roles: user.roles,
+      idRol: rol.idRol,
+      rol: rol.rol,
+    }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta
     const data = {
       access_token: this.jwtService.sign(payload),
       ...usuario,
+      idRol: rol.idRol,
+      rol: rol.rol,
     }
     return {
       refresh_token: { id: refreshToken.id },
       data,
     }
+  }
+
+  async cambiarRol(user: PassportUser, data: CambioRolDto) {
+    const usuarioRol = {
+      ...user,
+      idRol: data.idRol,
+    }
+
+    return await this.autenticar(usuarioRol)
   }
 
   async validarUsuarioOidc(persona: PersonaDto) {
@@ -281,7 +300,16 @@ export class AuthenticationService extends BaseService {
   }
 
   async autenticarOidc(user: PassportUser) {
-    const payload: PayloadType = { id: user.id, roles: user.roles }
+    const usuario = await this.usuarioService.buscarUsuarioId(user.id)
+
+    const rol = this.usuarioService.obtenerRolActual(usuario.roles, user.idRol)
+
+    const payload: PayloadType = {
+      id: user.id,
+      roles: user.roles,
+      idRol: rol.idRol,
+      rol: rol.rol,
+    }
     // crear refresh_token
     const refreshToken = await this.refreshTokensService.create(user.id)
     // construir respuesta

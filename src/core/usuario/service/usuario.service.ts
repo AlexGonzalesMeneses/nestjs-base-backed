@@ -6,6 +6,7 @@ import {
   NotFoundException,
   PreconditionFailedException,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
 import {
@@ -772,6 +773,11 @@ export class UsuarioService extends BaseService {
     }
   }
 
+  async buscarUsuarioPerfil(id: string, idRol: string) {
+    const perfil = await this.buscarUsuarioId(id)
+    return { ...perfil, idRol }
+  }
+
   async buscarUsuarioId(id: string) {
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(id)
 
@@ -877,5 +883,26 @@ export class UsuarioService extends BaseService {
 
   async actualizarDatosPersona(datosPersona: PersonaDto) {
     return await this.usuarioRepositorio.actualizarDatosPersona(datosPersona)
+  }
+
+  obtenerRolActual(
+    roles: Array<{ idRol: string; rol: string }>,
+    idRol: string | null | undefined
+  ) {
+    if (roles.length < 1) {
+      throw new UnauthorizedException(`El usuario no cuenta con roles.`)
+    }
+
+    // buscar el primer rol
+    if (!idRol) {
+      return roles[0]
+    }
+
+    // buscar el rol activo
+    const rol = roles.find((item) => item.idRol === idRol)
+    if (!rol) {
+      throw new UnauthorizedException(`Rol no permitido.`)
+    }
+    return rol
   }
 }
