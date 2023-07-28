@@ -47,8 +47,11 @@ export class UsuarioController extends BaseController {
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Get('/cuenta/perfil')
   async obtenerPerfil(@Request() req) {
-    const idUsuario = this.getUser(req)
-    const result = await this.usuarioService.buscarUsuarioId(idUsuario)
+    const user = req.user
+    const result = await this.usuarioService.buscarUsuarioPerfil(
+      user.id,
+      user.idRol
+    )
     return this.success(result)
   }
 

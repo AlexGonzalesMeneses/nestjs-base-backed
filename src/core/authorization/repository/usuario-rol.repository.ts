@@ -21,9 +21,9 @@ export class UsuarioRolRepository {
   }
 
   async activar(
-    idUsuario,
-    roles,
-    usuarioActualizacion,
+    idUsuario: string,
+    roles: Array<string>,
+    usuarioAuditoria: string,
     transaction?: EntityManager
   ) {
     return await (
@@ -34,7 +34,7 @@ export class UsuarioRolRepository {
       .update(UsuarioRol)
       .set({
         estado: Status.ACTIVE,
-        usuarioModificacion: usuarioActualizacion,
+        usuarioModificacion: usuarioAuditoria,
       })
       .where('id_usuario = :idUsuario', { idUsuario })
       .andWhere('id_rol IN(:...ids)', { ids: roles })
@@ -42,9 +42,9 @@ export class UsuarioRolRepository {
   }
 
   async inactivar(
-    idUsuario,
-    roles,
-    usuarioActualizacion,
+    idUsuario: string,
+    roles: Array<string>,
+    usuarioAuditoria: string,
     transaction?: EntityManager
   ) {
     return await (
@@ -55,14 +55,19 @@ export class UsuarioRolRepository {
       .update(UsuarioRol)
       .set({
         estado: Status.INACTIVE,
-        usuarioModificacion: usuarioActualizacion,
+        usuarioModificacion: usuarioAuditoria,
       })
       .where('id_usuario = :idUsuario', { idUsuario })
       .andWhere('id_rol IN(:...ids)', { ids: roles })
       .execute()
   }
 
-  async crear(idUsuario, roles, usuarioAuditoria, transaction?: EntityManager) {
+  async crear(
+    idUsuario: string,
+    roles: Array<string>,
+    usuarioAuditoria: string,
+    transaction?: EntityManager
+  ) {
     const usuarioRoles: UsuarioRol[] = roles.map((idRol) => {
       const usuario = new Usuario()
       usuario.id = idUsuario
