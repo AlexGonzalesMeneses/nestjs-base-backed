@@ -216,7 +216,17 @@ npm run seeds:run
 
 **Nota.-**
 
-Para el registro de logs tenemos las siguientes opciones:
+- `LOG_LEVEL` acepta los valores `fatal`, `error`, `warn`, `info`, `debug` y `trace`. (en PROD se recomienda el valor de `info`)
+
+  Por ejemplo:
+
+  - Si `LOG_LEVEL=error` se creará el archivo `error.log`
+  - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
+  - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
+
+  Y asi sucesivamente en el siguiente orden: `data > error > warn > info > debug > trace`
+
+- Para el registro de logs tenemos las siguientes opciones:
 
 **1ra Forma - Con ficheros**
 
@@ -247,4 +257,5 @@ Se recomienda esta opción solamente si no se va a utilizar el servicio de Promt
 Para habilitar esta opción, `LOG_LOKI_URL` debe tener un valor asignado
 
 Puede encontrar más información respecto al despliegue de estos servicios en el siguiente repo:
+
 - [https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/utilidades/gestion-logs](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/utilidades/gestion-logs)
