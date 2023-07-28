@@ -30,7 +30,7 @@ export class ClientOidcService {
     } catch (error: unknown) {
       setTimeout(() => {
         logger.fatal(error, {
-          modulo: 'CIUDADANÏA',
+          modulo: 'CIUDADANÍA',
           mensaje: 'Error de conexión con ciudadanía',
           metadata: { oidcIssuer },
         })
