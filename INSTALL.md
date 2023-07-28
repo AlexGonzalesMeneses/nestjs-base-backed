@@ -133,9 +133,10 @@ npm run seeds:run
 
 **Configuración general de la aplicación**
 
-| Variable         | Valor por defecto | Descripción                                                                  |
-| ---------------- | ----------------- | ---------------------------------------------------------------------------- |
-| `PATH_SUBDOMAIN` | `api`             | Prefijo para todas las rutas de los servicios (Se debe mantener este valor). |
+| Variable                     | Valor por defecto | Descripción                                                                  |
+| ---------------------------- | ----------------- | ---------------------------------------------------------------------------- |
+| `PATH_SUBDOMAIN`             | `api`             | Prefijo para todas las rutas de los servicios (Se debe mantener este valor). |
+| `REQUEST_TIMEOUT_IN_SECONDS` | `30`              | Tiempo máximo de espera para devolver el resultado de una petición.          |
 
 **Configuración para módulo de autenticación**
 
@@ -198,24 +199,24 @@ npm run seeds:run
 
 **Configuración de Logs**
 
-| Variable             | Valor por defecto | Descripción                                                                    |
-| -------------------- | ----------------- | ------------------------------------------------------------------------------ |
-| `LOG_LEVEL`          | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
-| `LOG_PATH`           |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
-| `LOG_SQL`            | `false`           | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
-| `LOG_HIDE`           |                   | Indica los campos que serán ofuscados al momento de guardar los logs.          |
-| `LOG_SIZE`           | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
-| `LOG_INTERVAL`       | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
-| `LOG_COMPRESS`       | `false`           | Para indicar si se comprimirá o no los ficheros de logs.                       |
-| `LOG_URL`            |                   | Indica la URL del servicio de loki para el registro de logs.                   |
-| `LOG_USERNAME`       |                   | Indica el nombre de usuario para autenticarse con el servicio de loki.         |
-| `LOG_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.     |
-| `LOG_BATCHING`       | `true`            | Habilitado el envío de logs por lote cuando se utiliza loki.                   |
-| `LOG_BATCH_INTERVAL` | `5`               | Tiempo en segundos para el envío de logs con loki si `LOG_BATCHING=true`.      |
+| Variable                  | Valor por defecto | Descripción                                                                    |
+| ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
+| `LOG_SQL`                 | `false`           | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
+| `LOG_HIDE`                |                   | Indica los campos que serán ofuscados al momento de guardar los logs.          |
+| `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
+| `LOG_SIZE`                | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
+| `LOG_INTERVAL`            | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
+| `LOG_COMPRESS`            | `false`           | Para indicar si se comprimirá o no los ficheros de logs.                       |
+| `LOG_LOKI_URL`            |                   | Indica la URL del servicio de loki para el registro de logs.                   |
+| `LOG_LOKI_USERNAME`       |                   | Indica el nombre de usuario para autenticarse con el servicio de loki.         |
+| `LOG_LOKI_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.     |
+| `LOG_LOKI_BATCHING`       | `true`            | Habilitado el envío de logs por lote cuando se utiliza loki.                   |
+| `LOG_LOKI_BATCH_INTERVAL` | `5`               | Tiempo en segundos para el envío de logs con loki si `LOG_BATCHING=true`.      |
 
 **Nota.-**
 
-Para habilitar el registro de logs debe elegir una de las siguientes opciones:
+Para el registro de logs tenemos las siguientes opciones:
 
 **1ra Forma - Con ficheros**
 
@@ -241,6 +242,9 @@ del archivo `package.json`) y dentro de esta última se crearán los archivos de
 
 **2da Forma - Con el servicio de loki**
 
-Se recomienda esta opción solamente para entornos de desarrollo.
+Se recomienda esta opción solamente si no se va a utilizar el servicio de Promtail.
 
-Para habilitar esta opción, `LOG_URL` debe tener un valor asignado
+Para habilitar esta opción, `LOG_LOKI_URL` debe tener un valor asignado
+
+Puede encontrar más información respecto al despliegue de estos servicios en el siguiente repo:
+- [https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/utilidades/gestion-logs](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/utilidades/gestion-logs)

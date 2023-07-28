@@ -28,13 +28,13 @@ dotenv.config()
             compress: process.env.LOG_COMPRESS,
           }
         : undefined,
-      lokiParams: process.env.LOG_URL
+      lokiParams: process.env.LOG_LOKI_URL
         ? {
-            url: process.env.LOG_URL,
-            username: process.env.LOG_USERNAME,
-            password: process.env.LOG_PASSWORD,
-            batching: process.env.LOG_BATCHING,
-            batchInterval: process.env.LOG_BATCH_INTERVAL,
+            url: process.env.LOG_LOKI_URL,
+            username: process.env.LOG_LOKI_USERNAME,
+            password: process.env.LOG_LOKI_PASSWORD,
+            batching: process.env.LOG_LOKI_BATCHING,
+            batchInterval: process.env.LOG_LOKI_BATCH_INTERVAL,
           }
         : undefined,
     }),
