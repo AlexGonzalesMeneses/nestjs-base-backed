@@ -15,9 +15,7 @@ import dayjs from 'dayjs'
 import { MensajeriaService } from '../../external-services/mensajeria/mensajeria.service'
 import { PersonaDto } from '../../usuario/dto/persona.dto'
 import { ConfigService } from '@nestjs/config'
-import { UsuarioRolRepository } from '../../authorization/repository/usuario-rol.repository'
 import { PersonaService } from '../../usuario/service/persona.service'
-import { RolRepository } from '../../authorization/repository/rol.repository'
 import { TemplateEmailService } from '../../../common/templates/templates-email.service'
 import { Usuario } from 'src/core/usuario/entity/usuario.entity'
 import { CambioRolDto } from '../dto/index.dto'
@@ -31,16 +29,12 @@ export class AuthenticationService extends BaseService {
     private readonly jwtService: JwtService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly mensajeriaService: MensajeriaService,
-    @Inject(UsuarioRolRepository)
-    private usuarioRolRepositorio: UsuarioRolRepository,
-    @Inject(RolRepository)
-    private rolRepositorio: RolRepository,
     @Inject(ConfigService) private readonly configService: ConfigService
   ) {
     super()
   }
 
-  private async verificarBloqueo(usuario) {
+  private async verificarBloqueo(usuario: Usuario) {
     if (usuario.intentos < Configurations.WRONG_LOGIN_LIMIT) {
       return false
     }
@@ -58,7 +52,7 @@ export class AuthenticationService extends BaseService {
     await this.usuarioService.actualizarDatosBloqueo(
       usuario.id,
       codigo,
-      fechaBloqueo
+      fechaBloqueo.toDate()
     )
     // enviar código por email
     const urlDesbloqueo = `${this.configService.get(
@@ -69,7 +63,7 @@ export class AuthenticationService extends BaseService {
       TemplateEmailService.armarPlantillaBloqueoCuenta(urlDesbloqueo)
 
     await this.mensajeriaService.sendEmail(
-      usuario.correoElectronico,
+      usuario.correoElectronico ?? '',
       Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
       template
     )
@@ -247,7 +241,12 @@ export class AuthenticationService extends BaseService {
       }
       // Crear usuario y rol
       await this.usuarioService.crearConPersonaExistente(
-        respPersona,
+        {
+          ...respPersona,
+          nombres: respPersona.nombres ?? '',
+          primerApellido: respPersona.primerApellido ?? '',
+          segundoApellido: respPersona.segundoApellido ?? '',
+        },
         datosUsuario,
         USUARIO_NORMAL
       )

@@ -52,7 +52,7 @@ export class UsuarioController extends BaseController {
       user.id,
       user.idRol
     )
-    return this.successList(result)
+    return this.success(result)
   }
 
   //create user
@@ -78,7 +78,7 @@ export class UsuarioController extends BaseController {
     @Body() recuperarCuentaDto: RecuperarCuentaDto
   ) {
     const result = await this.usuarioService.recuperarCuenta(recuperarCuentaDto)
-    return this.successList(result, Messages.SUBJECT_EMAIL_ACCOUNT_RECOVERY)
+    return this.success(result, Messages.SUBJECT_EMAIL_ACCOUNT_RECOVERY)
   }
 
   // validate restore user account
