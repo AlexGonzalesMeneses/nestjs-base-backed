@@ -6,6 +6,7 @@ import {
   NotFoundException,
   PreconditionFailedException,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { UsuarioRepository } from '../repository/usuario.repository'
 import {
@@ -34,6 +35,7 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
+import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 
 @Injectable()
 export class UsuarioService extends BaseService {
@@ -205,7 +207,7 @@ export class UsuarioService extends BaseService {
     return await this.usuarioRepositorio.runTransaction(op)
   }
 
-  async activarCuenta(codigo) {
+  async activarCuenta(codigo: string) {
     const usuario = await this.usuarioRepositorio.buscarPorCodigoActivacion(
       codigo
     )
@@ -214,7 +216,7 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_USER)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(
+    await this.usuarioRepositorio.actualizar(
       usuario?.id,
       {
         estado: Status.ACTIVE,
@@ -310,7 +312,7 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.INVALID_PASSWORD_SCORE)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(
+    await this.usuarioRepositorio.actualizar(
       usuario.id,
       {
         fechaBloqueo: null,
@@ -361,8 +363,8 @@ export class UsuarioService extends BaseService {
   }
 
   async crearConPersonaExistente(
-    persona,
-    otrosDatos,
+    persona: PersonaDto,
+    otrosDatos: { correoElectronico: string },
     usuarioAuditoria: string
   ) {
     // verificar si el usuario ya fue registrado
@@ -376,12 +378,16 @@ export class UsuarioService extends BaseService {
 
     const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
 
+    if (!rol) {
+      throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
+    }
+
     const nuevoUsuario = {
       estado: Status.ACTIVE,
       correoElectronico: otrosDatos?.correoElectronico,
       persona,
       ciudadaniaDigital: true,
-      roles: [rol],
+      roles: [rol.id],
     }
     const result = await this.usuarioRepositorio.crearConPersonaExistente(
       nuevoUsuario,
@@ -444,7 +450,7 @@ export class UsuarioService extends BaseService {
     // cambiar estado al usuario y generar una nueva contrasena
     const contrasena = TextService.generateShortRandomText()
 
-    await this.usuarioRepositorio.actualizarUsuario(
+    await this.usuarioRepositorio.actualizar(
       idUsuario,
       {
         contrasena: await TextService.encrypt(contrasena),
@@ -489,7 +495,7 @@ export class UsuarioService extends BaseService {
       throw new NotFoundException(Messages.INVALID_USER)
     }
 
-    await this.usuarioRepositorio.actualizarUsuario(
+    await this.usuarioRepositorio.actualizar(
       idUsuario,
       {
         estado: Status.INACTIVE,
@@ -532,13 +538,17 @@ export class UsuarioService extends BaseService {
     return result.finalizado
   }
 
-  verificarPermisos(usuarioAuditoria, id) {
+  verificarPermisos(usuarioAuditoria: string, id: string) {
     if (usuarioAuditoria === id) {
       throw new ForbiddenException(Messages.EXCEPTION_OWN_ACCOUNT_ACTION)
     }
   }
 
-  async actualizarContrasena(idUsuario, contrasenaActual, contrasenaNueva) {
+  async actualizarContrasena(
+    idUsuario: string,
+    contrasenaActual: string,
+    contrasenaNueva: string
+  ) {
     const hash = TextService.decodeBase64(contrasenaActual)
     const usuario = await this.usuarioRepositorio.buscarUsuarioRolPorId(
       idUsuario
@@ -555,7 +565,7 @@ export class UsuarioService extends BaseService {
     }
 
     // guardar en bd
-    await this.usuarioRepositorio.actualizarUsuario(
+    await this.usuarioRepositorio.actualizar(
       idUsuario,
       {
         contrasena: await TextService.encrypt(contrasena),
@@ -711,7 +721,7 @@ export class UsuarioService extends BaseService {
       if (existe) {
         throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
       }
-      await this.usuarioRepositorio.actualizarUsuario(
+      await this.usuarioRepositorio.actualizar(
         id,
         {
           correoElectronico: correoElectronico,
@@ -727,7 +737,11 @@ export class UsuarioService extends BaseService {
     return { id: usuario.id }
   }
 
-  async actualizarRoles(id, roles, usuarioAuditoria) {
+  async actualizarRoles(
+    id: string,
+    roles: Array<string>,
+    usuarioAuditoria: string
+  ) {
     const usuarioRoles =
       await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id)
 
@@ -750,7 +764,7 @@ export class UsuarioService extends BaseService {
     }
   }
 
-  verificarUsuarioRoles(usuarioRoles, roles) {
+  verificarUsuarioRoles(usuarioRoles: Array<UsuarioRol>, roles: Array<string>) {
     const inactivos = roles.filter((rol) =>
       usuarioRoles.some(
         (usuarioRol) =>
@@ -759,15 +773,12 @@ export class UsuarioService extends BaseService {
     )
 
     const activos = usuarioRoles
-      .map((usuarioRol) =>
-        roles.every(
-          (rol) =>
-            rol !== usuarioRol.rol.id && usuarioRol.estado === Status.ACTIVE
-        )
-          ? usuarioRol.rol.id
-          : null
+      .filter(
+        (usuarioRol) =>
+          !roles.includes(usuarioRol.rol.id) &&
+          usuarioRol.estado === Status.ACTIVE
       )
-      .filter(Boolean)
+      .map((usuarioRol) => usuarioRol.rol.id)
 
     const nuevos = roles.filter((rol) =>
       usuarioRoles.every((usuarioRol) => usuarioRol.rol.id !== rol)
@@ -778,6 +789,11 @@ export class UsuarioService extends BaseService {
       inactivos,
       nuevos,
     }
+  }
+
+  async buscarUsuarioPerfil(id: string, idRol: string) {
+    const perfil = await this.buscarUsuarioId(id)
+    return { ...perfil, idRol }
   }
 
   async buscarUsuarioId(id: string) {
@@ -822,7 +838,11 @@ export class UsuarioService extends BaseService {
     )
   }
 
-  async actualizarDatosBloqueo(idUsuario, codigo, fechaBloqueo) {
+  async actualizarDatosBloqueo(
+    idUsuario: string,
+    codigo: string | null,
+    fechaBloqueo: Date | null
+  ) {
     return await this.usuarioRepositorio.actualizarDatosBloqueo(
       idUsuario,
       codigo,
@@ -830,7 +850,7 @@ export class UsuarioService extends BaseService {
     )
   }
 
-  async actualizarDatosRecuperacion(idUsuario, codigo) {
+  async actualizarDatosRecuperacion(idUsuario: string, codigo: string) {
     return await this.usuarioRepositorio.actualizarDatosRecuperacion(
       idUsuario,
       codigo
@@ -866,7 +886,7 @@ export class UsuarioService extends BaseService {
       codigo
     )
     if (usuario?.fechaBloqueo) {
-      await this.usuarioRepositorio.actualizarUsuario(
+      await this.usuarioRepositorio.actualizar(
         usuario.id,
         {
           fechaBloqueo: null,
@@ -881,5 +901,26 @@ export class UsuarioService extends BaseService {
 
   async actualizarDatosPersona(datosPersona: PersonaDto) {
     return await this.usuarioRepositorio.actualizarDatosPersona(datosPersona)
+  }
+
+  obtenerRolActual(
+    roles: Array<{ idRol: string; rol: string }>,
+    idRol: string | null | undefined
+  ) {
+    if (roles.length < 1) {
+      throw new UnauthorizedException(`El usuario no cuenta con roles.`)
+    }
+
+    // buscar el primer rol
+    if (!idRol) {
+      return roles[0]
+    }
+
+    // buscar el rol activo
+    const rol = roles.find((item) => item.idRol === idRol)
+    if (!rol) {
+      throw new UnauthorizedException(`Rol no permitido.`)
+    }
+    return rol
   }
 }

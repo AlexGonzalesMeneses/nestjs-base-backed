@@ -37,14 +37,12 @@ export class CasbinGuard implements CanActivate {
       })
     }
 
-    for (const rol of user.roles) {
-      const isPermitted = await this.enforcer.enforce(rol, resource, action)
-      if (isPermitted) {
-        this.logger.info(
-          `${action} ${resource} -> true - CASBIN (rol: ${rol} usuario: ${user.id})`
-        )
-        return true
-      }
+    const isPermitted = await this.enforcer.enforce(user.rol, resource, action)
+    if (isPermitted) {
+      this.logger.info(
+        `${action} ${resource} -> true - CASBIN (rol: ${user.rol} usuario: ${user.id})`
+      )
+      return true
     }
 
     throw new BaseException(null, {
