@@ -20,6 +20,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
+import { PoliticaDto } from '../dto/politica.dto'
 
 @ApiBearerAuth('JWT-auth')
 @ApiTags('Autorización')
@@ -37,7 +38,7 @@ export class AuthorizationController extends BaseController {
     required: true,
   })
   @Post('/politicas')
-  async crearPolitica(@Body() politica) {
+  async crearPolitica(@Body() politica: PoliticaDto) {
     const result = await this.authorizationService.crearPolitica(politica)
     return this.successCreate(result)
   }
@@ -50,7 +51,10 @@ export class AuthorizationController extends BaseController {
     required: true,
   })
   @Patch('/politicas')
-  async actualizarPolitica(@Body() politica, @Query() query) {
+  async actualizarPolitica(
+    @Body() politica: PoliticaDto,
+    @Query() query: PoliticaDto
+  ) {
     const result = await this.authorizationService.actualizarPolitica(
       query,
       politica
@@ -71,7 +75,7 @@ export class AuthorizationController extends BaseController {
   @ApiOperation({ summary: 'API para eliminar una política' })
   @ApiQuery({ name: 'id' })
   @Delete('/politicas')
-  async eliminarPolitica(@Query() query) {
+  async eliminarPolitica(@Query() query: PoliticaDto) {
     const result = await this.authorizationService.eliminarPolitica(query)
     return this.successDelete(result)
   }
