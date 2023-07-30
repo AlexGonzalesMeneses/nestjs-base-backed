@@ -174,7 +174,7 @@ export class UsuarioService extends BaseService {
           'URL_FRONTEND'
         )}/activacion?q=${codigo}`
 
-        this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+        // this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
 
         await this.actualizarDatosActivacion(
           usuarioNuevo.id,
@@ -242,7 +242,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuario) {
-      this.logger.info(`Usuario no encontrado`)
+      this.logger.error('Usuario no encontrado')
       return 'Búsqueda terminada'
     }
 
@@ -251,7 +251,7 @@ export class UsuarioService extends BaseService {
       'URL_FRONTEND'
     )}/recuperacion?q=${codigo}`
 
-    this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
+    // this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
 
     await this.actualizarDatosRecuperacion(usuario.id, codigo)
 
@@ -656,7 +656,7 @@ export class UsuarioService extends BaseService {
         'URL_FRONTEND'
       )}/activacion?q=${codigo}`
 
-      this.logger.info(`📩 urlActivacion nuevo: ${urlActivacion}`)
+      // this.logger.info(`📩 urlActivacion nuevo: ${urlActivacion}`)
 
       await this.actualizarDatosActivacion(
         usuario.id,

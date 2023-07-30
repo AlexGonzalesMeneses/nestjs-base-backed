@@ -35,9 +35,13 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
     await super.logIn(request)
 
     const { user } = context.switchToHttp().getRequest()
-    this.logger.info(
-      `${action} ${resource} -> true - LOGIN CON CIUDADANÍA (usuario: ${user?.id})`
-    )
+
+    this.logger.audit({
+      mensaje: 'Ingresó al sistema',
+      contexto: 'authentication',
+      metadata: { usuario: user.id, tipo: 'ciudadanía' },
+    })
+
     return true
   }
 }

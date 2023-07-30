@@ -9,23 +9,25 @@ export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const t1 = Date.now()
     const url = req.originalUrl.split('?')[0]
-    const msg = `${req.method} ${url}...`
-    logger.trace(msg)
+    logger.audit({
+      contexto: 'request',
+      metadata: {
+        method: req.method,
+        url,
+      },
+    })
 
     res.on('finish', () => {
       const t2 = Date.now()
       const statusCode = res.statusCode
-      const statusText = res.statusMessage
       const elapsedTime = (t2 - t1) / 1000
-      const msg = `${req.method} ${url} ${statusCode} ${statusText} (${elapsedTime} seg)`
-      logger.trace(msg, {
-        req: {
-          finish: true,
+      logger.audit({
+        contexto: 'response',
+        metadata: {
           method: req.method,
           url,
-          statusCode,
-          statusText,
-          elapsedTime,
+          code: statusCode,
+          time: elapsedTime,
         },
       })
     })

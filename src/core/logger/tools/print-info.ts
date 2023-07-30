@@ -14,7 +14,13 @@ export function printInfo(appInfo: AppInfo) {
   const appLocalUrl = `http://localhost:${port}`
   const appNetworkUrl = `http://${ip.address()}:${port}`
 
-  logger.info(`${appName} v${appVersion}`)
+  logger.audit({
+    mensaje: '🚀 Servicio desplegado',
+    metadata: {
+      app: appName,
+      version: appVersion,
+    },
+  })
 
   const serviceInfo = `
  ${COLOR.LIGHT_GREY}-${COLOR.RESET} Servicio    : ${COLOR.GREEN}Activo

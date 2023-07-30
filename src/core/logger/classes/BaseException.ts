@@ -1,7 +1,8 @@
 import { LoggerService } from './LoggerService'
-import { BaseExceptionOptions, BaseLogOptions, Metadata } from '../types'
+import { BaseExceptionOptions, LogEntry, Metadata } from '../types'
 import {
   cleanParamValue,
+  getContext,
   getErrorStack,
   getFullErrorStack,
   isAxiosError,
@@ -11,17 +12,42 @@ import {
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { extractMessage } from '../utils'
 import { ERROR_CODE, LOG_LEVEL, LOG_NUMBER } from '../constants'
+import os from 'os'
 import dayjs from 'dayjs'
-import { LogEntry } from './LogEntry'
 import { inspect } from 'util'
+import * as rTracer from 'cls-rtracer'
 
-export class BaseException extends Error implements LogEntry {
+export class BaseException extends Error {
   level: LOG_LEVEL
+
+  /**
+   * Mensaje para el cliente
+   */
   mensaje: string
+
+  /**
+   * Objeto que contiene información adicional
+   */
   metadata: Metadata
+
+  /**
+   * Identificador de la aplicación. Ej: app-backend | app-frontend | node-script
+   */
   appName: string
+
+  /**
+   * Identificador del módulo. Ej: SEGIP, SIN, MENSAJERÍA
+   */
   modulo: string
+
+  /**
+   * Fecha en la que se registró el mensaje (YYYY-MM-DD HH:mm:ss.SSS)
+   */
   fecha: string
+
+  /**
+   * Stack del componente que registró el mensaje (se genera de forma automática)
+   */
   traceStack: string
 
   /**
@@ -64,7 +90,7 @@ export class BaseException extends Error implements LogEntry {
    */
   accion: string
 
-  constructor(error: unknown, opt?: BaseExceptionOptions | BaseLogOptions) {
+  constructor(error: unknown, opt?: BaseExceptionOptions) {
     super(BaseException.name)
 
     // UNKNOWN_ERROR
@@ -373,6 +399,43 @@ export class BaseException extends Error implements LogEntry {
       return LOG_LEVEL.WARN
     }
     return LOG_LEVEL.ERROR
+  }
+
+  getLogEntry(): LogEntry {
+    const reqId = String(rTracer.id() || '') || ''
+    const caller = getContext()
+    const formato = this.toString()
+
+    const args: LogEntry = {
+      level: this.getNumericLevel(),
+      hostname: os.hostname(),
+      pid: process.pid,
+      time: Date.now(),
+
+      reqId: reqId,
+      caller: caller,
+      fecha: this.fecha,
+      levelText: this.level,
+      appName: this.appName,
+      modulo: this.modulo,
+      mensaje: this.obtenerMensajeCliente(),
+
+      httpStatus: this.httpStatus,
+      codigo: this.codigo,
+      causa: this.causa,
+      origen: this.origen,
+      accion: this.accion,
+      error: this.error as object,
+      formato,
+      errorStack: this.errorStackOriginal,
+      traceStack: this.traceStack,
+    }
+
+    if (this.metadata && Object.keys(this.metadata).length > 0) {
+      Object.assign(args, { metadata: this.metadata })
+    }
+
+    return args
   }
 
   toString(): string {

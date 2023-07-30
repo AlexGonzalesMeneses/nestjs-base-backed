@@ -49,10 +49,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       })
     }
 
-    const { user } = context.switchToHttp().getRequest()
-    this.logger.info(
-      `${action} ${resource} -> true - JWT (usuario: ${user?.id})`
-    )
     return true
   }
 }

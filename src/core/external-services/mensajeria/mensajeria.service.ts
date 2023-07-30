@@ -10,8 +10,12 @@ const logger = LoggerService.getInstance()
 @Injectable()
 export class MensajeriaService {
   constructor(private httpService: HttpService) {
-    logger.trace('Instanciando servicio de MENSAJERÍA...', {
-      baseURL: httpService.axiosRef?.defaults?.baseURL,
+    logger.audit({
+      mensaje: 'Instanciando servicio de MENSAJERÍA...',
+      contexto: 'mensajeria',
+      metadata: {
+        baseURL: httpService.axiosRef?.defaults?.baseURL,
+      },
     })
   }
 

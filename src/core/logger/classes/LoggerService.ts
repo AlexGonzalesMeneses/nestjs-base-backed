@@ -6,16 +6,16 @@ import fastRedact, { RedactOptions } from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
 import {
   BaseExceptionOptions,
-  BaseLogOptions,
   Metadata,
   LoggerOptions,
   LoggerParams,
+  AuditMetadata,
+  BaseAuditOptions,
 } from '../types'
-import * as rTracer from 'cls-rtracer'
 import { printLoggerParams, stdoutWrite } from '../tools'
 import { getContext } from '../utilities'
 import { BaseException } from './BaseException'
-import { BaseLog } from './BaseLog'
+import { BaseAudit } from './BaseAudit'
 
 export class LoggerService {
   private static loggerParams: LoggerParams | null = null
@@ -139,21 +139,6 @@ export class LoggerService {
     this.print(exceptInfo)
   }
 
-  fatal(error: unknown): void
-  fatal(error: unknown, mensaje: string): void
-  fatal(error: unknown, mensaje: string, metadata: Metadata): void
-  fatal(
-    error: unknown,
-    mensaje: string,
-    metadata: Metadata,
-    modulo: string
-  ): void
-  fatal(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
-  fatal(...args: unknown[]): void {
-    const exceptInfo = LoggerService.buildException(LOG_LEVEL.FATAL, ...args)
-    this.print(exceptInfo)
-  }
-
   error(error: unknown): void
   error(error: unknown, mensaje: string): void
   error(error: unknown, mensaje: string, metadata: Metadata): void
@@ -163,50 +148,33 @@ export class LoggerService {
     metadata: Metadata,
     modulo: string
   ): void
-  error(error: unknown, opt: BaseExceptionOptions & BaseLogOptions): void
+  error(error: unknown, opt: BaseExceptionOptions): void
   error(...args: unknown[]): void {
     const exceptInfo = LoggerService.buildException(LOG_LEVEL.ERROR, ...args)
     this.print(exceptInfo)
   }
 
-  warn(mensaje: string): void
-  warn(mensaje: string, metadata: Metadata): void
-  warn(mensaje: string, metadata: Metadata, modulo: string): void
-  warn(opt: BaseExceptionOptions & BaseLogOptions): void
+  warn(error: unknown): void
+  warn(error: unknown, mensaje: string): void
+  warn(error: unknown, mensaje: string, metadata: Metadata): void
+  warn(
+    error: unknown,
+    mensaje: string,
+    metadata: Metadata,
+    modulo: string
+  ): void
+  warn(error: unknown, opt: BaseExceptionOptions): void
   warn(...args: unknown[]): void {
-    const exceptInfo = LoggerService.buildException(
-      LOG_LEVEL.WARN,
-      null,
-      ...args
-    )
+    const exceptInfo = LoggerService.buildException(LOG_LEVEL.WARN, ...args)
     this.print(exceptInfo)
   }
 
-  info(mensaje: string): void
-  info(mensaje: string, metadata: Metadata): void
-  info(mensaje: string, metadata: Metadata, modulo: string): void
-  info(opt: BaseLogOptions): void
-  info(...args: unknown[]): void {
-    const logInfo = LoggerService.buildLog(LOG_LEVEL.INFO, ...args)
-    this.print(logInfo)
-  }
-
-  debug(mensaje: string): void
-  debug(mensaje: string, metadata: Metadata): void
-  debug(mensaje: string, metadata: Metadata, modulo: string): void
-  debug(opt: BaseLogOptions): void
-  debug(...args: unknown[]): void {
-    const logInfo = LoggerService.buildLog(LOG_LEVEL.DEBUG, ...args)
-    this.print(logInfo)
-  }
-
-  trace(mensaje: string): void
-  trace(mensaje: string, metadata: Metadata): void
-  trace(mensaje: string, metadata: Metadata, modulo: string): void
-  trace(opt: BaseLogOptions): void
-  trace(...args: unknown[]): void {
-    const logInfo = LoggerService.buildLog(LOG_LEVEL.TRACE, ...args)
-    this.print(logInfo)
+  audit(mensaje: string): void
+  audit(mensaje: string, metadata: AuditMetadata): void
+  audit(opt: BaseAuditOptions): void
+  audit(...args: unknown[]): void {
+    const auditInfo = LoggerService.buildAudit(...args)
+    this.printAudit(auditInfo)
   }
 
   private static buildException(
@@ -258,48 +226,31 @@ export class LoggerService {
     }
   }
 
-  private static buildLog(lvl: LOG_LEVEL, ...args: unknown[]): BaseLog {
-    // 1ra forma - (mensaje: string) => BaseLog
-    if (arguments.length === 2 && typeof args[0] === 'string') {
-      return new BaseLog({
+  private static buildAudit(...args: unknown[]): BaseAudit {
+    // 1ra forma - (mensaje: string) => BaseException
+    if (arguments.length === 1 && typeof args[0] === 'string') {
+      return new BaseAudit({
         mensaje: args[0],
-        level: lvl,
       })
     }
 
-    // 2da forma - (mensaje: string, metadata: Metadata) => BaseLog
-    else if (arguments.length === 3 && typeof args[0] === 'string') {
-      return new BaseLog({
+    // 2da forma - (mensaje: string, metadata: AuditMetadata) => BaseAudit
+    else if (arguments.length === 2 && typeof args[0] === 'string') {
+      return new BaseAudit({
         mensaje: args[0],
-        metadata: args[1] as Metadata,
-        level: lvl,
+        metadata: args[1] as AuditMetadata,
       })
     }
 
-    // 3ra forma - (mensaje: string, metadata: Metadata, modulo: string) => BaseLog
-    else if (
-      arguments.length === 4 &&
-      typeof args[0] === 'string' &&
-      typeof args[2] === 'string'
-    ) {
-      return new BaseLog({
-        mensaje: args[0],
-        metadata: args[1] as Metadata,
-        modulo: args[2],
-        level: lvl,
-      })
-    }
-
-    // 4ta forma - (opt: BaseLogOptions) => BaseLog
+    // 3ra forma - (opt: BaseAuditOptions) => BaseAudit
     else {
-      return new BaseLog({
-        ...(args[0] as BaseLogOptions),
-        level: lvl,
+      return new BaseAudit({
+        ...(args[0] as BaseAuditOptions),
       })
     }
   }
 
-  private print(info: BaseLog | BaseException) {
+  private print(info: BaseException) {
     try {
       const level = info.getLevel()
 
@@ -308,49 +259,36 @@ export class LoggerService {
         return
       }
 
-      const reqId = String(rTracer.id() || '') || ''
-      const caller = getContext()
-      const msg = info.toString()
-
-      const logFields = {
-        reqId: reqId,
-        caller: caller,
-        fecha: info.fecha,
-        levelText: info.level,
-        appName: info.appName,
-        modulo: info.modulo,
-        mensaje: info.obtenerMensajeCliente(),
-      }
-
-      let errorFields = {}
-      if (info instanceof BaseException) {
-        errorFields = {
-          httpStatus: info.httpStatus,
-          codigo: info.codigo,
-          causa: info.causa,
-          origen: info.origen,
-          accion: info.accion,
-          error: info.error,
-          formato: msg,
-          errorStack: info.errorStackOriginal,
-          traceStack: info.traceStack,
-        }
-      }
-
-      const args = { ...logFields, ...errorFields }
-      if (info.metadata && Object.keys(info.metadata).length > 0) {
-        Object.assign(args, { metadata: info.metadata })
-      }
+      const logEntry = info.getLogEntry()
 
       // SAVE WITH PINO
-      this.saveWithPino(level, args)
+      this.saveWithPino(level, logEntry)
 
       if (process.env.NODE_ENV === 'production') {
         return
       }
 
       // PRINT TO CONSOLE
+      const msg = info.toString()
+      const caller = getContext()
       this.printToConsole(level, msg, caller)
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
+    }
+  }
+
+  private printAudit(info: BaseAudit) {
+    try {
+      // SAVE WITH PINO
+      this.saveAuditWithPino(info)
+
+      if (process.env.NODE_ENV === 'production') {
+        return
+      }
+
+      // PRINT TO CONSOLE
+      this.printAuditToConsole(info)
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e)
@@ -364,9 +302,18 @@ export class LoggerService {
     }
   }
 
+  private saveAuditWithPino(info: BaseAudit): void {
+    const level = 'trace'
+    const args = info.getLogEntry()
+    const instance = LoggerService.pinoInstance
+    if (instance && instance.logger[level]) {
+      instance.logger[level](args)
+    }
+  }
+
   private printToConsole(level: LOG_LEVEL, msg: string, caller: string): void {
     const color = this.getColor(level)
-    const time = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
+    const time = dayjs().format('HH:mm:ss.SSS')
     const cTime = `${COLOR.RESET}${time}${COLOR.RESET}`
     const cLevel = `${color}[${level.toUpperCase()}]${COLOR.RESET}`
     const cCaller = `${COLOR.RESET}${caller}${COLOR.RESET}`
@@ -375,6 +322,26 @@ export class LoggerService {
     stdoutWrite(`${cTime} ${cLevel} ${cCaller} ${color}`)
     stdoutWrite(`${color}${msg.replace(/\n/g, `\n${color}`)}\n`)
     stdoutWrite(COLOR.RESET)
+  }
+
+  private printAuditToConsole(info: BaseAudit): void {
+    const metadata = info.metadata || {}
+    const msg = info.mensaje
+      ? `${COLOR.CYAN}${info.mensaje}${COLOR.RESET} `
+      : ''
+
+    const values = Object.keys(metadata).map((key) => {
+      return `${COLOR.LIGHT_GREY}${key}=${COLOR.RESET}${String(metadata[key])}${
+        COLOR.RESET
+      }`
+    })
+
+    const extraValues = values.join(' ')
+    process.stdout.write(
+      `\n${COLOR.LIGHT_GREY}${dayjs().format('HH:mm:ss.SSS')} ${COLOR.RESET}${
+        info.contexto
+      }${COLOR.RESET} ${msg}${COLOR.LIGHT_GREY}${extraValues}${COLOR.RESET}\n`
+    )
   }
 
   private getColor(level: LOG_LEVEL): string {

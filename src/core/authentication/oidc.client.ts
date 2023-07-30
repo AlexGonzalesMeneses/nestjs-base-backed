@@ -19,9 +19,6 @@ export class ClientOidcService {
     const oidcSecret = process.env[`OIDC_CLIENT_SECRET`] || ''
 
     try {
-      logger.trace('Creando cliente de ciudadanía...', {
-        oidcIssuer,
-      })
       const issuer = await Issuer.discover(oidcIssuer)
       ClientOidcService.client = new issuer.Client({
         client_id: oidcClient,
@@ -29,7 +26,7 @@ export class ClientOidcService {
       })
     } catch (error: unknown) {
       setTimeout(() => {
-        logger.fatal(error, {
+        logger.error(error, {
           modulo: 'CIUDADANÍA',
           mensaje: 'Error de conexión con ciudadanía',
           metadata: { oidcIssuer },

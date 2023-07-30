@@ -80,7 +80,6 @@ export class LoggerConfig {
 
   static getPinoHttpConfig(loggerParams: LoggerParams): Options {
     return {
-      // name: loggerParams.appName,
       genReqId: LoggerConfig.genReqId,
       level: 'trace',
       redact: LoggerConfig.redactOptions(loggerParams),
@@ -96,6 +95,7 @@ export class LoggerConfig {
           return
         },
       },
+      base: null,
     }
   }
 }

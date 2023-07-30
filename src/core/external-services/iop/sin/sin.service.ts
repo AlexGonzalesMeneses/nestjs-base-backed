@@ -11,8 +11,12 @@ import { firstValueFrom } from 'rxjs'
 export class SinService extends BaseService {
   constructor(protected http: HttpService) {
     super()
-    this.logger.trace('Instanciando servicio de SIN...', {
-      baseURL: http.axiosRef?.defaults?.baseURL,
+    this.logger.audit({
+      mensaje: 'Instanciando servicio de SIN...',
+      contexto: 'sin',
+      metadata: {
+        baseURL: http.axiosRef?.defaults?.baseURL,
+      },
     })
   }
 
