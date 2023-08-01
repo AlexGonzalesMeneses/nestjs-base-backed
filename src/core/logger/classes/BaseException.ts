@@ -184,7 +184,7 @@ export class BaseException extends Error {
     ) {
       codigo = ERROR_CODE.SERVER_ERROR_1
       mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.SERVER_ERROR_1})`
-      causa = error.response.data.message // TODO error.toString() ???
+      causa = error.response.data.message
       accion = `Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente`
     }
 
@@ -204,7 +204,7 @@ export class BaseException extends Error {
     ) {
       codigo = ERROR_CODE.SERVER_ERROR_2
       mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.SERVER_ERROR_2})`
-      causa = error.response.data.data // TODO error.toString() ???
+      causa = error.response.data.data
       accion = `Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente`
     }
 
@@ -220,7 +220,7 @@ export class BaseException extends Error {
     ) {
       codigo = ERROR_CODE.SERVER_TIMEOUT
       mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.SERVER_TIMEOUT})`
-      causa = error.response.data // TODO error.toString() ???
+      causa = error.response.data
       accion = `Verificar que el servicio en cuestión se encuentre activo y respondiendo correctamente`
     }
 
@@ -233,7 +233,7 @@ export class BaseException extends Error {
         'code' in error &&
         typeof error.code === 'string'
           ? error.code
-          : '' // TODO error.toString() ???
+          : ''
       accion = `Renovar el certificado digital`
     }
 
