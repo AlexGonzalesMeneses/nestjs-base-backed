@@ -202,8 +202,8 @@ npm run seeds:run
 | Variable                  | Valor por defecto | Descripción                                                                    |
 | ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
 | `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
-| `LOG_SQL`                 | `false`           | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
-| `LOG_HIDE`                |                   | Indica los campos que serán ofuscados al momento de guardar los logs.          |
+| `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
+| `LOG_AUDIT_CONTEXT`       | `application,...` | Habilita los logs de auditoria.                                                |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_SIZE`                | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
 | `LOG_INTERVAL`            | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
@@ -224,7 +224,7 @@ npm run seeds:run
   - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
   - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
 
-  Y asi sucesivamente en el siguiente orden: `data > error > warn > info > debug > trace`
+  Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
 - Para el registro de logs tenemos las siguientes opciones:
 

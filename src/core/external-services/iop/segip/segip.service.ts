@@ -27,13 +27,6 @@ enum EstadosDatosEnum {
 export class SegipService extends BaseService {
   constructor(private readonly httpService: HttpService) {
     super()
-    this.logger.audit({
-      mensaje: 'Instanciando servicio de SEGIP...',
-      contexto: 'segip',
-      metadata: {
-        baseURL: httpService.axiosRef?.defaults?.baseURL,
-      },
-    })
   }
 
   /**

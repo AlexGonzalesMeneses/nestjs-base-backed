@@ -3,21 +3,10 @@ import { map } from 'rxjs/operators'
 import { ExternalServiceException } from '../../../common/exceptions'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
-import { LoggerService } from '../../logger/classes'
-
-const logger = LoggerService.getInstance()
 
 @Injectable()
 export class MensajeriaService {
-  constructor(private httpService: HttpService) {
-    logger.audit({
-      mensaje: 'Instanciando servicio de MENSAJERÍA...',
-      contexto: 'mensajeria',
-      metadata: {
-        baseURL: httpService.axiosRef?.defaults?.baseURL,
-      },
-    })
-  }
+  constructor(private httpService: HttpService) {}
 
   /**
    * Metodo para enviar sms

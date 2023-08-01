@@ -3,7 +3,6 @@ import { PinoLogger, LoggerModule as PinoLoggerModule } from 'nestjs-pino'
 import { LoggerService } from './LoggerService'
 import { LoggerOptions } from '../types'
 import { HttpLogger } from 'pino-http'
-import { pino } from 'pino'
 import { LoggerConfig } from './LoggerConfig'
 import { expressMiddleware } from 'cls-rtracer'
 
@@ -16,7 +15,7 @@ export class LoggerModule {
     if (!loggerParams) throw new Error('LoggerService no ha sido inicializado')
 
     const opts = LoggerConfig.getPinoHttpConfig(loggerParams)
-    const stream: pino.DestinationStream = LoggerConfig.getStream(loggerParams)
+    const stream = LoggerConfig.getMainStream(loggerParams)
 
     return {
       module: LoggerModule,

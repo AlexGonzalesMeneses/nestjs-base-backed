@@ -6,7 +6,7 @@ import { stdoutWrite } from '../tools'
 
 export async function _printRoutes(mainRouter: Express) {
   const logger = LoggerService.getInstance()
-  logger.audit('Cargando...')
+  logger.audit('application', 'Cargando...')
 
   if (!mainRouter) {
     stdoutWrite(

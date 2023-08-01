@@ -1,4 +1,4 @@
-import { AuditEntry, AuditMetadata, BaseAuditOptions } from '../types'
+import { AuditEntry, BaseAuditOptions, Metadata } from '../types'
 
 export class BaseAudit {
   /**
@@ -19,25 +19,35 @@ export class BaseAudit {
   /**
    * Objeto que contiene información adicional
    */
-  metadata?: AuditMetadata
+  metadata?: Metadata
 
   constructor(opt: BaseAuditOptions) {
-    this.contexto = opt.contexto || 'application'
+    this.contexto = opt.contexto
     this.mensaje = opt.mensaje
     this.metadata = opt.metadata
   }
 
   getLogEntry(): AuditEntry {
     const args: AuditEntry = {
-      ctx: this.contexto,
+      // time: Date.now(),
+      // level: 10,
+      context: this.contexto,
     }
 
     if (this.mensaje) {
       args.msg = this.mensaje
     }
 
-    if (this.metadata && Object.keys(this.metadata).length > 0) {
-      Object.assign(args, this.metadata)
+    const metadata = this.metadata
+    if (metadata && Object.keys(metadata).length > 0) {
+      // para evitar conflictos con palabras reservadas
+      Object.keys(metadata).map((key) => {
+        if (['level', 'time', 'contexto'].includes(key)) {
+          args[`_${key}`] = metadata[key]
+        } else {
+          args[key] = metadata[key]
+        }
+      })
     }
 
     return args

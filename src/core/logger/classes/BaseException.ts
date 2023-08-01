@@ -18,7 +18,7 @@ import { inspect } from 'util'
 import * as rTracer from 'cls-rtracer'
 
 export class BaseException extends Error {
-  level: LOG_LEVEL
+  level: LOG_LEVEL.ERROR | LOG_LEVEL.WARN
 
   /**
    * Mensaje para el cliente
@@ -300,10 +300,7 @@ export class BaseException extends Error {
         ? opt.httpStatus
         : httpStatus
 
-    this.level =
-      opt && 'level' in opt && typeof opt.level !== 'undefined'
-        ? opt.level
-        : this.levelByStatus(this.httpStatus)
+    this.level = this.levelByStatus(this.httpStatus)
 
     this.mensaje =
       opt && 'mensaje' in opt && typeof opt.mensaje !== 'undefined'
@@ -324,42 +321,25 @@ export class BaseException extends Error {
       this.metadata = metadata
     }
 
-    this.appName =
-      opt && 'appName' in opt && typeof opt.appName !== 'undefined'
-        ? opt.appName
-        : appName
+    this.appName = appName
 
     this.modulo =
       opt && 'modulo' in opt && typeof opt.modulo !== 'undefined'
         ? opt.modulo
         : modulo
 
-    this.traceStack =
-      opt && 'traceStack' in opt && typeof opt.traceStack !== 'undefined'
-        ? opt.traceStack
-        : traceStack
+    this.traceStack = traceStack
 
-    this.errorStack =
-      opt && 'errorStack' in opt && typeof opt.errorStack !== 'undefined'
-        ? opt.errorStack
-        : errorStack
+    this.errorStack = errorStack
 
-    this.errorStackOriginal =
-      opt &&
-      'errorStackOriginal' in opt &&
-      typeof opt.errorStackOriginal !== 'undefined'
-        ? opt.errorStackOriginal
-        : errorStackOriginal
+    this.errorStackOriginal = errorStackOriginal
 
     this.causa =
       opt && 'causa' in opt && typeof opt.causa !== 'undefined'
         ? opt.causa
         : causa
 
-    this.origen =
-      opt && 'origen' in opt && typeof opt.origen !== 'undefined'
-        ? opt.origen
-        : origen
+    this.origen = origen
 
     this.accion =
       opt && 'accion' in opt && typeof opt.accion !== 'undefined'
@@ -392,9 +372,6 @@ export class BaseException extends Error {
   }
 
   private levelByStatus(status: number) {
-    if (status < HttpStatus.BAD_REQUEST) {
-      return LOG_LEVEL.TRACE
-    }
     if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
       return LOG_LEVEL.WARN
     }
@@ -407,10 +384,10 @@ export class BaseException extends Error {
     const formato = this.toString()
 
     const args: LogEntry = {
-      level: this.getNumericLevel(),
+      // level: this.getNumericLevel(),
+      // time: Date.now(),
       hostname: os.hostname(),
       pid: process.pid,
-      time: Date.now(),
 
       reqId: reqId,
       caller: caller,

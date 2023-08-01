@@ -10,6 +10,7 @@ import { LoggerMiddleware } from './common/middlewares'
 import { LoggerModule } from './core/logger'
 import packageJson from '../package.json'
 import { TimeoutInterceptor } from './common/interceptors'
+import path from 'path'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -19,7 +20,6 @@ dotenv.config()
     LoggerModule.forRoot({
       appName: packageJson.name,
       level: process.env.LOG_LEVEL,
-      hide: process.env.LOG_HIDE,
       fileParams: process.env.LOG_PATH
         ? {
             path: process.env.LOG_PATH,
@@ -37,6 +37,10 @@ dotenv.config()
             batchInterval: process.env.LOG_LOKI_BATCH_INTERVAL,
           }
         : undefined,
+      auditParams: {
+        context: process.env.LOG_AUDIT_CONTEXT,
+      },
+      projectPath: path.resolve(__dirname, '../'),
     }),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),

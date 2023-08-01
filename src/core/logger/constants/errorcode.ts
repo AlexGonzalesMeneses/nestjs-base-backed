@@ -1,13 +1,6 @@
 export enum ERROR_CODE {
-  /**
-   * Utilizado cuando se trata de un error desconocido
-   */
-  UNKNOWN_ERROR = 'E0',
-
-  /**
-   * Utilizado cuando el objeto error se encuentra vacío. Ej: error = undefined | null | ''
-   */
-  EMPTY_ERROR = 'E1',
+  UNKNOWN_ERROR = 'E0', // error desconocido
+  EMPTY_ERROR = 'E1', // error = undefined | null | ''
   STRING_ERROR = 'E2', // error = 'BOOM'
   SERVER_CONEXION = 'E3', // error = { code: 'ECONNREFUSED' }
   SERVER_ERROR_1 = 'E4', // body = { message: "detalle del error" }
@@ -17,5 +10,4 @@ export enum ERROR_CODE {
   HTTP_EXCEPTION = 'E8', // error = new HttpException()
   AXIOS_ERROR = 'E9', // error = axios().catch(err => ...)
   SQL_ERROR = 'E10', // error = { name: "QueryFailedError" }
-  // BASE_EXCEPTION = 'E100', // error = new BaseException()
 }

@@ -1,42 +1,105 @@
 import { GenReqId, Options, ReqId } from 'pino-http'
 import * as rTracer from 'cls-rtracer'
-import pino, { multistream } from 'pino'
+import pino, { Level, multistream } from 'pino'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import path from 'path'
-import { LoggerParams } from '../types'
+import { FileParams, LoggerParams } from '../types'
 import { LokiOptions } from 'pino-loki'
-import { DEFAULT_SENSITIVE_PARAMS } from '../constants'
+import { DEFAULT_SENSITIVE_PARAMS, LOG_LEVEL, LOG_NUMBER } from '../constants'
 
 export class LoggerConfig {
-  static getStream(loggerParams: LoggerParams): pino.MultiStreamRes {
-    const streamDisk: pino.StreamEntry[] = []
-    if (loggerParams.fileParams) {
-      const options: RotateOptions = {
-        size: loggerParams.fileParams.size,
-        path: path.resolve(loggerParams.fileParams.path, loggerParams.appName),
-        interval: loggerParams.fileParams.rotateInterval,
-      }
+  static getMainStream(loggerParams: LoggerParams): pino.MultiStreamRes {
+    const streamDisk: pino.StreamEntry[] = loggerParams.fileParams
+      ? LoggerConfig.fileStream(
+          loggerParams.fileParams,
+          loggerParams.appName,
+          loggerParams._levels,
+          {}
+        )
+      : []
+    const lokiStream = LoggerConfig.lokiStream(loggerParams)
+    return multistream([...streamDisk, ...lokiStream])
+  }
 
-      if (
-        loggerParams.fileParams.compress &&
-        loggerParams.fileParams.compress === 'true'
-      ) {
-        options.compress = true
-      }
-      for (const level of loggerParams._levels) {
-        const stream = createStream(`${level}.log`, options)
-        stream.on('error', (e) => {
-          if (!e.message.includes('no such file or directory, rename')) {
-            console.error('Error con el rotado de logs', e)
-          }
-        })
-        streamDisk.push({
-          stream,
-          level,
-        })
-      }
+  static getAuditStream(loggerParams: LoggerParams): pino.MultiStreamRes {
+    const streamDisk: pino.StreamEntry[] = loggerParams.fileParams
+      ? LoggerConfig.fileStream(
+          loggerParams.fileParams,
+          loggerParams.appName,
+          [],
+          LoggerConfig.getCustomLevels(loggerParams)
+        )
+      : []
+    const lokiStream = LoggerConfig.lokiStream(loggerParams)
+    return multistream([...streamDisk, ...lokiStream])
+  }
+
+  static getCustomLevels(loggerParams: LoggerParams) {
+    const customLevels: { [key: string]: number } = {}
+    loggerParams._audit.forEach((ctx, index) => {
+      customLevels[ctx] = index + 100
+    })
+    return customLevels
+  }
+
+  private static fileStream(
+    fileParams: FileParams,
+    appName: string,
+    basicLevels: Level[],
+    auditLevels: { [key: string]: number }
+  ): pino.StreamEntry[] {
+    const streamDisk: pino.StreamEntry[] = []
+
+    const options: RotateOptions = {
+      size: fileParams.size,
+      path: path.resolve(fileParams.path, appName),
+      interval: fileParams.rotateInterval,
     }
 
+    if (fileParams.compress && fileParams.compress === 'true') {
+      options.compress = true
+    }
+
+    // FOR BASIC LOG
+    for (const level of basicLevels) {
+      const basicLevel: Level = LOG_LEVEL[level.toUpperCase()]
+      if (!basicLevel) continue
+      const levelNumber = LOG_NUMBER[level]
+      const stream = createStream(
+        `${levelNumber}_app_${basicLevel}.log`,
+        options
+      )
+      stream.on('error', (e) => {
+        if (!e.message.includes('no such file or directory, rename')) {
+          console.error('Error con el rotado de logs', e)
+        }
+      })
+      streamDisk.push({
+        stream,
+        level: basicLevel,
+      })
+    }
+
+    // FOR AUDIT LOG
+    for (const level of Object.keys(auditLevels)) {
+      const levelNumber = auditLevels[level]
+      if (!levelNumber) continue
+      const stream = createStream(`${levelNumber}_audit_${level}.log`, options)
+      stream.on('error', (e) => {
+        if (!e.message.includes('no such file or directory, rename')) {
+          console.error('Error con el rotado de logs', e)
+        }
+      })
+      streamDisk.push({
+        stream,
+        level: auditLevels[level] as any,
+      })
+    }
+
+    return streamDisk
+  }
+
+  private static lokiStream(loggerParams: LoggerParams): pino.StreamEntry[] {
     const lokiStream: pino.StreamEntry[] = []
     if (loggerParams.lokiParams) {
       lokiStream.push({
@@ -62,8 +125,7 @@ export class LoggerConfig {
         }),
       })
     }
-
-    return multistream([...streamDisk, ...lokiStream])
+    return lokiStream
   }
 
   static redactOptions(loggerParams: LoggerParams) {

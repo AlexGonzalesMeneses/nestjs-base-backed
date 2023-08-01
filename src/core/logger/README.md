@@ -15,11 +15,7 @@ function tarea(datos) {
   try {
     // código inseguro
   } catch (error) {
-    logger.error(error, {
-      mensaje: 'mensaje genérico opcional',
-      modulo: 'MENSAJERÍA',
-      metadata: { info: 'info adicional', datos },
-    })
+    logger.error(error)
   }
 }
 ```
@@ -37,15 +33,40 @@ logger.error(error, {
   modulo,
 })
 
-// todos los parámetros posibles
-logger.error(error, {
-  httpStatus,
+logger.warn(mensaje)
+logger.warn(mensaje, metadata)
+logger.warn(mensaje, metadata, modulo)
+logger.warn({
   mensaje,
   metadata,
-  appName,
   modulo,
-  causa,
-  accion,
+})
+
+logger.info(mensaje)
+logger.info(mensaje, metadata)
+logger.info(mensaje, metadata, modulo)
+logger.info({
+  mensaje,
+  metadata,
+  modulo,
+})
+
+logger.debug(mensaje)
+logger.debug(mensaje, metadata)
+logger.debug(mensaje, metadata, modulo)
+logger.debug({
+  mensaje,
+  metadata,
+  modulo,
+})
+
+logger.trace(mensaje)
+logger.trace(mensaje, metadata)
+logger.trace(mensaje, metadata, modulo)
+logger.trace({
+  mensaje,
+  metadata,
+  modulo,
 })
 ```
 
@@ -70,23 +91,13 @@ function tarea(datos) {
 Ejemplos de implementación:
 
 ```ts
-// Si se conoce el error, el httpStatus y la causa se asignan automáticamente en base a este
 throw new BaseException(error)
-
-// Si no conoce el error, puede especificar manualmente el httpStatus y la causa del mismo
-throw new BaseException(null, {
-  httpStatus,
-  causa,
-})
-
-// Todos los valores posibles
 throw new BaseException(error, {
-  httpStatus,
-  causa,
   mensaje,
   metadata,
-  appName,
   modulo,
+  httpStatus,
+  causa,
   accion,
 })
 ```
@@ -176,5 +187,35 @@ logger.trace('Creando cliente de ciudadanía...', {
 ```ts
 logger.trace('Instanciando servicio de MENSAJERÍA...', {
   baseURL: httpService.axiosRef.defaults.baseURL,
+})
+```
+
+## 3. Logs de auditoría
+
+Estos registros se crean en ficheros independientes y son utilizados para registrar eventos del sistema.
+
+**Ejemplo** Para registrar un error controlado manualmente
+
+```ts
+import { LoggerService } from '../src/core/logger'
+
+const logger = LoggerService.getInstance()
+
+function login(user) {
+  this.logger.audit('authentication', {
+    mensaje: 'Ingresó al sistema',
+    metadata: { usuario: user.id, tipo: 'básico' },
+  })
+}
+```
+
+Ejemplos de implementación:
+
+```ts
+logger.audit('application', mensaje)
+logger.audit('application', mensaje, metadata)
+logger.audit('application', {
+  mensaje,
+  metadata,
 })
 ```

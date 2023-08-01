@@ -109,7 +109,11 @@ export function cleanParamValue(
         return {
           name: 'name' in value ? value.name : undefined,
           message: 'message' in value ? value.message : undefined,
+          errno: 'errno' in value ? value.errno : undefined,
           code: 'code' in value ? value.code : undefined,
+          syscall: 'syscall' in value ? value.syscall : undefined,
+          address: 'address' in value ? value.address : undefined,
+          port: 'port' in value ? value.port : undefined,
           config: config
             ? {
                 headers:
@@ -127,6 +131,8 @@ export function cleanParamValue(
             : undefined,
           cause: cause
             ? {
+                name: 'name' in value ? value.name : undefined,
+                message: 'message' in value ? value.message : undefined,
                 errno: 'errno' in cause ? cause.errno : undefined,
                 code: 'code' in cause ? cause.code : undefined,
                 syscall: 'syscall' in cause ? cause.syscall : undefined,
@@ -256,6 +262,30 @@ export function isConexionError(data: unknown): boolean {
   //     code: 'ECONNREFUSED',
   //     config: undefined
   //   }
+  // }
+
+  //   ───── Error ─────────── fetch v2
+  // {
+  //   name: undefined,
+  //   message: undefined,
+  //   code: undefined,
+  //   config: undefined,
+  //   cause: {
+  //     errno: -111,
+  //     code: 'ECONNREFUSED',
+  //     syscall: 'connect',
+  //     address: '127.0.0.1',
+  //     port: 9999
+  //   }
+  // }
+
+  //   ───── Error ─────────── http v2
+  // {
+  //   errno: -111,
+  //   code: 'ECONNREFUSED',
+  //   syscall: 'connect',
+  //   address: '127.0.0.1',
+  //   port: 9999
   // }
 
   const val =

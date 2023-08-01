@@ -136,9 +136,8 @@ export class AuthenticationController extends BaseController {
         ).id
       : null
 
-    this.logger.audit({
+    this.logger.audit('authentication', {
       mensaje: 'Salió del sistema',
-      contexto: 'authentication',
       metadata: { usuario: idUsuario },
     })
 

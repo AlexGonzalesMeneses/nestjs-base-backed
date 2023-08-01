@@ -25,35 +25,4 @@ export class AppController extends BaseController {
       hora: now.valueOf(),
     }
   }
-
-  /*
-  @Post('/log')
-  async registrarLog(@Res() res: Response, @Body() body: LogRequestDTO) {
-    try {
-      const codigoHttp = body.codigo || HttpStatus.INTERNAL_SERVER_ERROR
-      if (codigoHttp >= HttpStatus.BAD_REQUEST) {
-        const except = new BaseException(null, {
-          mensaje: body.mensaje,
-          httpStatus: codigoHttp,
-          causa: String(body.causa),
-          accion: body.accion,
-          metadata: {
-            fecha: body.fecha,
-            navegador: body.navegador,
-            detalle: body.detalle,
-          },
-          appName: body.appName,
-          origen: body.origen,
-        })
-        this.logger.error(except)
-      } else {
-        this.logger.trace(body)
-      }
-
-      return res.status(204).send()
-    } catch (err) {
-      //
-    }
-  }
-  */
 }

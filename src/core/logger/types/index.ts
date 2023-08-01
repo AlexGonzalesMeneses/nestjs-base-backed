@@ -18,6 +18,10 @@ export type LokiParams = {
   batchInterval: string
 }
 
+export type AuditParams = {
+  context: string
+}
+
 export type LoggerParams = {
   appName: string
   level: string
@@ -25,7 +29,9 @@ export type LoggerParams = {
   projectPath: string
   fileParams?: FileParams
   lokiParams?: LokiParams
+  auditParams?: AuditParams
   _levels: Level[]
+  _audit: string[]
 }
 
 export type LoggerOptions = {
@@ -35,6 +41,7 @@ export type LoggerOptions = {
   projectPath?: string
   fileParams?: Partial<FileParams>
   lokiParams?: Partial<LokiParams>
+  auditParams?: Partial<AuditParams>
 }
 
 export type AppInfo = {
@@ -60,18 +67,36 @@ export type SQLLogLevel = {
 }
 
 export type BaseExceptionOptions = {
-  level?: LOG_LEVEL
   mensaje?: string
   metadata?: Metadata
-  appName?: string
   modulo?: string
-  traceStack?: string
   httpStatus?: HttpStatus
-  errorStack?: string
-  errorStackOriginal?: string
   causa?: string
-  origen?: string
   accion?: string
+}
+
+export type BaseLogOptions = {
+  level?: LOG_LEVEL.WARN | LOG_LEVEL.INFO | LOG_LEVEL.DEBUG | LOG_LEVEL.TRACE
+  mensaje?: string
+  metadata?: Metadata
+  modulo?: string
+}
+
+export type BaseAuditOptions = {
+  contexto: string
+  mensaje?: string
+  metadata?: Metadata
+}
+
+export type LogOptions = {
+  mensaje?: string
+  metadata?: Metadata
+  modulo?: string
+}
+
+export type AuditOptions = {
+  mensaje?: string
+  metadata?: Metadata
 }
 
 export type Metadata = { [key: string]: unknown }
@@ -84,36 +109,31 @@ export type ObjectOrError = {
 
 export type LogEntry = {
   appName: string
-  caller: string
+  caller?: string
   fecha: string // con formato YYYY-MM-DD HH:mm:ss.SSS
   hostname: string
-  level: number // 40=warn, 50=error
+  level?: number // 40=warn, 50=error
   levelText: string // error | warn
   mensaje: string
   metadata?: Metadata
-  modulo: string
+  modulo?: string
   pid: number
-  time: number // miliseconds
-  reqId: string
-  accion: string // negarse, llorar, aceptar.
-  causa: string
-  codigo: string // ERROR_CODE
+  time?: number // miliseconds
+  reqId?: string
+  accion?: string // negarse, llorar, aceptar.
+  causa?: string
+  codigo?: string // ERROR_CODE
   error?: object // error parseado
   errorStack?: string
-  formato: string
-  httpStatus: number // ^400 | ^500
-  origen: string // 'at printError (.../casos_uso/printError.ts:8:15)'
-  traceStack: string
+  formato?: string
+  httpStatus?: number // ^400 | ^500
+  origen?: string // 'at printError (.../casos_uso/printError.ts:8:15)'
+  traceStack?: string
 }
 
-export type AuditMetadata = {
-  [key: string]: string | boolean | number | null | undefined
-}
-
-export type AuditEntry = AuditMetadata
-
-export type BaseAuditOptions = {
-  contexto?: string
-  mensaje?: string
-  metadata?: AuditMetadata
+export type AuditEntry = {
+  level?: number // 10=application | 11=request | ...
+  time?: number // miliseconds
+  msg?: string
+  [key: string]: unknown // metadata key:value
 }

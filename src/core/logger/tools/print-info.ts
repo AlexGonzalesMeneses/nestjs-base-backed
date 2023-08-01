@@ -14,7 +14,7 @@ export function printInfo(appInfo: AppInfo) {
   const appLocalUrl = `http://localhost:${port}`
   const appNetworkUrl = `http://${ip.address()}:${port}`
 
-  logger.audit({
+  logger.audit('application', {
     mensaje: '🚀 Servicio desplegado',
     metadata: {
       app: appName,

@@ -33,9 +33,8 @@ export class LocalAuthGuard extends AuthGuard('local') {
 
     const { user } = context.switchToHttp().getRequest()
 
-    this.logger.audit({
+    this.logger.audit('authentication', {
       mensaje: 'Ingresó al sistema',
-      contexto: 'authentication',
       metadata: { usuario: user.id, tipo: 'básico' },
     })
 
