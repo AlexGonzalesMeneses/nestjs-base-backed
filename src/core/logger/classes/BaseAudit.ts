@@ -42,7 +42,7 @@ export class BaseAudit {
     if (metadata && Object.keys(metadata).length > 0) {
       // para evitar conflictos con palabras reservadas
       Object.keys(metadata).map((key) => {
-        if (['level', 'time', 'contexto'].includes(key)) {
+        if (['level', 'time', 'context'].includes(key)) {
           args[`_${key}`] = metadata[key]
         } else {
           args[key] = metadata[key]
