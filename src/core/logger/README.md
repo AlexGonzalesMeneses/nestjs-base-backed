@@ -190,7 +190,29 @@ logger.trace('Instanciando servicio de MENSAJERÍA...', {
 })
 ```
 
-## 3. Logs de auditoría
+## 3. Logs para servicios externos
+
+Ejemplo:
+
+```ts
+function tarea(datos) {
+  try {
+    // código inseguro
+  } catch (error) {
+    throw new ExternalServiceException('SEGIP:CONTRASTACION', error)
+  }
+}
+```
+
+Ejemplos de implementación:
+
+```ts
+throw new ExternalServiceException(servicio, error)
+throw new ExternalServiceException(servicio, error, mensaje)
+throw new ExternalServiceException(servicio, error, mensaje, metadata)
+```
+
+## 4. Logs de auditoría
 
 Estos registros se crean en ficheros independientes y son utilizados para registrar eventos del sistema.
 
