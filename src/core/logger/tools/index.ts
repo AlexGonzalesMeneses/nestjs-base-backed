@@ -1,6 +1,4 @@
-export { printExpressRoutes } from './print-express-routes'
 export { printNestJSRoutes as printRoutes } from './print-nestjs-routes'
-export { printExpressLogo } from './print-express-logo'
 export { printNestJSLogo as printLogo } from './print-nestjs-logo'
 export { printInfo } from './print-info'
 export { printLoggerParams } from './print-logger-params'
