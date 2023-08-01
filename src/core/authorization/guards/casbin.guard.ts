@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
 import { Request } from 'express'
@@ -27,8 +28,7 @@ export class CasbinGuard implements CanActivate {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!user) {
-      throw new BaseException(null, {
-        httpStatus: HttpStatus.UNAUTHORIZED,
+      throw new BaseException(new UnauthorizedException(), {
         causa: 'Valor "req.user" no definido',
         accion: 'Agregar JWTGuard. Ej.: @UseGuards(JwtAuthGuard, CasbinGuard)',
         metadata: {
@@ -40,6 +40,7 @@ export class CasbinGuard implements CanActivate {
     const isPermitted = await this.enforcer.enforce(user.rol, resource, action)
     if (isPermitted) {
       this.logger.audit('casbin', {
+        mensaje: 'Acceso permitido',
         metadata: {
           v0: user.rol,
           v1: action,
@@ -49,6 +50,16 @@ export class CasbinGuard implements CanActivate {
       })
       return true
     }
+
+    this.logger.audit('casbin', {
+      mensaje: 'Acceso no autorizado',
+      metadata: {
+        v0: user.rol,
+        v1: action,
+        v2: resource,
+        usuario: user.id,
+      },
+    })
 
     throw new BaseException(null, {
       httpStatus: HttpStatus.FORBIDDEN,

@@ -2,6 +2,7 @@ import { BaseException } from '../../core/logger'
 import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { BaseExceptionFilter } from '../base/base-exception-filter'
+import { ErrorResponseDto } from '../dto/error-response.dto'
 
 @Catch()
 export class HttpExceptionFilter extends BaseExceptionFilter {
@@ -32,15 +33,18 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
 
     this.logger.error(except)
 
-    const errorResult = {
+    const errorResult: ErrorResponseDto = {
       finalizado: false,
       codigo: except.getHttpStatus(),
       timestamp: Math.floor(Date.now() / 1000),
       mensaje: except.obtenerMensajeCliente(),
-      datos: {
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      errorResult.datos = {
         causa: except.getCausa(),
         accion: except.getAccion(),
-      },
+      }
     }
 
     response.status(errorResult.codigo).json(errorResult)
