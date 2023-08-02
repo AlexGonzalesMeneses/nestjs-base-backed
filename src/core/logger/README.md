@@ -160,6 +160,7 @@ Ejemplos de implementación:
 
 ```ts
 throw new EntityUnauthorizedException()
+throw new EntityUnauthorizedException(mensaje)
 throw new EntityUnauthorizedException({
   mensaje,
   metadata,
