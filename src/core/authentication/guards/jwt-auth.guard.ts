@@ -1,10 +1,6 @@
+import { EntityForbiddenException } from '../../../common/exceptions'
 import { BaseException, LoggerService } from '../../logger'
-import {
-  ExecutionContext,
-  ForbiddenException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common'
+import { ExecutionContext, Injectable } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 
@@ -23,8 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!headers.authorization) {
-      throw new BaseException(null, {
-        httpStatus: HttpStatus.FORBIDDEN,
+      throw new EntityForbiddenException({
         causa: 'Valor "headers.authorization" no definido',
         accion: 'Agregar el token de acceso en el header de la petición',
         metadata: {
@@ -35,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       const isPermitted = (await super.canActivate(context)) as boolean
-      if (!isPermitted) throw new ForbiddenException()
+      if (!isPermitted) throw new EntityForbiddenException()
     } catch (err) {
       const token = headers.authorization
         ? `${headers.authorization.substring(0, 20)}...`

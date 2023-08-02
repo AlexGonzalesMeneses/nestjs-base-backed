@@ -70,7 +70,7 @@ logger.trace({
 })
 ```
 
-**Ejemplo 2** Para lanzar una excepción controlada
+**Ejemplo 2** Para lanzar una excepción controlada de un error desconocido
 
 ```ts
 import { BaseException } from '../src/core/logger'
@@ -79,11 +79,7 @@ function tarea(datos) {
   try {
     // código inseguro
   } catch (error) {
-    throw new BaseException(error, {
-      mensaje: 'mensaje genérico opcional',
-      modulo: 'MENSAJERÍA',
-      metadata: { info: 'info adicional', datos },
-    })
+    throw new BaseException(error)
   }
 }
 ```
@@ -137,21 +133,40 @@ function validar(headers) {
 }
 ```
 
+Ejemplos de implementación:
+
+```ts
+throw new UnauthorizedException()
+throw new UnauthorizedException(mensaje)
+```
+
 **Ejemplo 2:** Para lanzar una excepción personalizada (de tipo `BaseException`)
 
 ```ts
-import { BaseException } from '../src/core/logger'
+import { EntityUnauthorizedException } from '../src/common/exceptions'
 import { HttpStatus } from '@nestjs/common'
 
 function validar(headers) {
   if (!headers.authorization) {
-    throw new BaseException(null, {
-      httpStatus: HttpStatus.UNAUTHORIZED,
+    throw new EntityUnauthorizedException({
       causa: 'Valor no definido "headers.authorization"',
       metadata: { headers },
     })
   }
 }
+```
+
+Ejemplos de implementación:
+
+```ts
+throw new EntityUnauthorizedException()
+throw new EntityUnauthorizedException({
+  mensaje,
+  metadata,
+  modulo,
+  causa,
+  accion,
+})
 ```
 
 ## 2.2 Errores No Controlados

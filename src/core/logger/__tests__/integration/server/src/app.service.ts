@@ -49,6 +49,9 @@ export class AppService {
       if (query.variant === '400') {
         await throws.HTTP_EXCEPTION_400()
       }
+      if (query.variant === 'E400') {
+        await throws.ENTITY_EXCEPTION_400()
+      }
       if (query.variant === '401') {
         await throws.HTTP_EXCEPTION_401()
       }

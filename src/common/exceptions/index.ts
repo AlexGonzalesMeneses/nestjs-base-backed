@@ -1,1 +1,8 @@
 export { ExternalServiceException } from './external-service.exception'
+export { EntityBadRequestException } from './entity-bad-request.exception'
+export { EntityForbiddenException } from './entity-forbidden.exception'
+export { EntityInternalServerErrorException } from './entity-internal-server-error.exception'
+export { EntityNotFoundException } from './entity-not-found.exception.ts'
+export { EntityPreconditionFailedException } from './entity-precondition-failed.exception'
+export { EntityRequestTimeoutException } from './entity-request-timeout.exception'
+export { EntityUnauthorizedException } from './entity-unauthorized.exception'

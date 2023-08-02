@@ -1,11 +1,13 @@
-import { BaseException, LoggerService } from '../../logger'
+import {
+  EntityForbiddenException,
+  EntityUnauthorizedException,
+} from '../../../common/exceptions'
+import { LoggerService } from '../../logger'
 import {
   CanActivate,
   ExecutionContext,
-  HttpStatus,
   Inject,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { AUTHZ_ENFORCER } from 'nest-authz'
 import { Request } from 'express'
@@ -28,7 +30,7 @@ export class CasbinGuard implements CanActivate {
     const resource = Object.keys(query).length ? route.path : originalUrl
 
     if (!user) {
-      throw new BaseException(new UnauthorizedException(), {
+      throw new EntityUnauthorizedException({
         causa: 'Valor "req.user" no definido',
         accion: 'Agregar JWTGuard. Ej.: @UseGuards(JwtAuthGuard, CasbinGuard)',
         metadata: {
@@ -61,8 +63,7 @@ export class CasbinGuard implements CanActivate {
       },
     })
 
-    throw new BaseException(null, {
-      httpStatus: HttpStatus.FORBIDDEN,
+    throw new EntityForbiddenException({
       causa: `No se encontraron roles válidos que puedan acceder a este recurso`,
       accion: 'Definir la regla CASBIN para consumir el recurso',
       metadata: {

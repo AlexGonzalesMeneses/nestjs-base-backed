@@ -18,6 +18,7 @@ import { testE8_2 } from './casos_uso/testE8_2'
 import { testE8_5 } from './casos_uso/testE8_5'
 import { testE9 } from './casos_uso/testE9'
 import { testE10 } from './casos_uso/testE10'
+import { testE8_E400 } from './casos_uso/testE8_E400'
 
 let server: Server | null = null
 
@@ -124,5 +125,9 @@ describe('Logger prueba de integración', () => {
 
   it('[logger] error de tipo testE10 (SQL_ERROR) ', async () => {
     await testE10()
+  })
+
+  it('[logger] error de tipo testE8_E400 (HTTP_EXCEPTION EntityBadRequestException) ', async () => {
+    await testE8_E400()
   })
 })
