@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -37,11 +38,15 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
+import { ConfigService } from '@nestjs/config'
 
 @Controller('usuarios')
 @ApiTags('Usuarios')
 export class UsuarioController extends BaseController {
-  constructor(private usuarioService: UsuarioService) {
+  constructor(
+    private usuarioService: UsuarioService,
+    private configService: ConfigService
+  ) {
     super()
   }
 
@@ -327,5 +332,15 @@ export class UsuarioController extends BaseController {
     const { id: idDesbloqueo } = query
     const result = await this.usuarioService.desbloquearCuenta(idDesbloqueo)
     return this.successUpdate(result, Messages.SUCCESS_ACCOUNT_UNLOCK)
+  }
+
+  @Get('/test/codigo/:id')
+  async obtenerCodigo(@Param() params: ParamIdDto) {
+    if (this.configService.get('NODE_ENV') === 'production') {
+      throw new NotFoundException(Messages.EXCEPTION_NOT_FOUND)
+    }
+    const { id: idUsuario } = params
+    const result = await this.usuarioService.obtenerCodigoTest(idUsuario)
+    return this.success(result, Messages.SUCCESS_DEFAULT)
   }
 }
