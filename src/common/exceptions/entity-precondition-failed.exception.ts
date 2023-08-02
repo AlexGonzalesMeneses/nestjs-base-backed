@@ -3,7 +3,12 @@ import { BaseException } from '../../core/logger'
 import { EntityExceptionOptions } from './types'
 
 export class EntityPreconditionFailedException extends BaseException {
-  constructor(options?: EntityExceptionOptions) {
-    super(new PreconditionFailedException(), options)
+  constructor(mensaje: string)
+  constructor(options?: EntityExceptionOptions)
+  constructor(arg1?: string | EntityExceptionOptions) {
+    super(
+      new PreconditionFailedException(),
+      typeof arg1 === 'string' ? { mensaje: arg1 } : arg1
+    )
   }
 }
