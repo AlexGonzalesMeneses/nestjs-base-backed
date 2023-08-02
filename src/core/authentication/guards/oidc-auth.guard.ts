@@ -24,7 +24,7 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
       const isPermitted = (await super.canActivate(context)) as boolean
       if (!isPermitted) throw new UnauthorizedException()
     } catch (err) {
-      const errMsg = `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con ciudadania)`
+      const errMsg = `${action} ${resource} -> false - LOGIN CON CIUDADANÍA (Error con Ciudadanía)`
       this.logger.error(errMsg, err)
       throw err
     }

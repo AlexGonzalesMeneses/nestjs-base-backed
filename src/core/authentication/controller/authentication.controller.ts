@@ -31,7 +31,7 @@ import {
 
 export class AuthSchema {
   @ApiProperty({
-    example: 'USER',
+    example: 'ADMINISTRADOR',
     description: 'Usuario',
   })
   usuario: string
@@ -42,6 +42,7 @@ export class AuthSchema {
   })
   contrasena: string
 }
+
 @Controller()
 @ApiTags('Autenticación')
 export class AuthenticationController extends BaseController {
@@ -87,7 +88,7 @@ export class AuthenticationController extends BaseController {
   ) {
     if (!req.user) {
       throw new BadRequestException(
-        `Es necesario que este autenticado para consumir este recurso.`
+        `Es necesario que esté autenticado para consumir este recurso.`
       )
     }
     const result = await this.autenticacionService.cambiarRol(req.user, body)
@@ -135,7 +136,7 @@ export class AuthenticationController extends BaseController {
   }
 
   @ApiOperation({ summary: 'API para logout digital' })
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logoutCiudadania(@Req() req: Request, @Res() res: Response) {

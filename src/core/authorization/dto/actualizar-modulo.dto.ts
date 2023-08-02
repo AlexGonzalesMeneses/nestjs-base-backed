@@ -10,17 +10,17 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ActualizarModuloDto {
-  @ApiProperty({ example: 'modulo prueba actualizado' })
+  @ApiProperty({ example: 'Trámites' })
   @IsNotEmpty()
   @IsString()
   label: string
 
-  @ApiProperty({ example: '/prueba/modulo/actualizado' })
+  @ApiProperty({ example: '/admin/tramites' })
   @IsNotEmpty()
   @IsString()
   url: string
 
-  @ApiProperty({ example: 'modulo prueba nombre actualizado' })
+  @ApiProperty({ example: 'Módulo de trámites' })
   @IsNotEmpty()
   @IsString()
   nombre: string

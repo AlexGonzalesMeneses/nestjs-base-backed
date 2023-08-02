@@ -10,12 +10,12 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PropiedadesDto {
-  @ApiProperty({ example: 'person' })
+  @ApiProperty({ example: 'dashboard' })
   @IsOptional()
   @IsString()
   icono?: string
 
-  @ApiProperty({ example: 'descripción nuevo módulo' })
+  @ApiProperty({ example: 'Módulo de estadísticas' })
   @IsString()
   descripcion?: string
 
@@ -26,17 +26,17 @@ export class PropiedadesDto {
 
 export class CrearModuloDto {
   id: string
-  @ApiProperty({ example: 'modulo prueba' })
+  @ApiProperty({ example: 'Estadísticas' })
   @IsNotEmpty()
   @IsString()
   label: string
 
-  @ApiProperty({ example: '/prueba/modulo' })
+  @ApiProperty({ example: '/admin/estadisticas' })
   @IsNotEmpty()
   @IsString()
   url: string
 
-  @ApiProperty({ example: 'modulo prueba nombre' })
+  @ApiProperty({ example: 'Estadísticas' })
   @IsNotEmpty()
   @IsString()
   nombre: string

@@ -25,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth()
 @ApiTags('Módulos')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/modulos')

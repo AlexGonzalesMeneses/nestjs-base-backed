@@ -26,7 +26,7 @@ describe('LoggerService', () => {
   it('streams', () => {
     expect(Array.isArray(LoggerConfig.getStream().streams)).toEqual(true)
   })
-  it('Configuracion', () => {
+  it('Configuración', () => {
     expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('name')
     expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty('genReqId')
     expect(LoggerConfig.getLoggerConfig().pinoHttp).toHaveProperty(

@@ -1,4 +1,4 @@
-import { TokenDto } from './../dto/index.dto'
+import { TokenDto } from '../dto/index.dto'
 import {
   Body,
   Controller,
@@ -33,10 +33,11 @@ export class RefreshTokensController extends BaseController {
   ) {
     super()
   }
+
   @ApiOperation({
     summary: 'API que actualiza el token de acceso usando un refresh token',
   })
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @Post('token')
   async getAccessToken(
     @Req() req: Request,

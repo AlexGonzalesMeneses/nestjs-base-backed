@@ -226,7 +226,7 @@ export class AuthenticationService extends BaseService {
         }
       }
 
-      // Persona existe en base de datos, sólo crear usuario
+      // Persona existe en base de datos, solo crear usuario
       if (respPersona.estado === Status.INACTIVE) {
         throw new UnauthorizedException(Messages.INACTIVE_PERSON)
       }

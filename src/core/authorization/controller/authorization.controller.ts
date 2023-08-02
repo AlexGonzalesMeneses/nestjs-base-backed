@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger'
 import { PoliticaDto } from '../dto/politica.dto'
 
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth()
 @ApiTags('Autorización')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion')
@@ -33,8 +33,7 @@ export class AuthorizationController extends BaseController {
 
   @ApiOperation({ summary: 'API para crear una nueva política' })
   @ApiBody({
-    //type: CrearParametroDto,
-    description: 'new Politica',
+    description: 'Crear nueva política',
     required: true,
   })
   @Post('/politicas')
@@ -43,11 +42,10 @@ export class AuthorizationController extends BaseController {
     return this.successCreate(result)
   }
 
-  @ApiOperation({ summary: 'API para actualizar una nueva politica' })
+  @ApiOperation({ summary: 'API para actualizar una nueva política' })
   @ApiQuery({ name: 'id' })
   @ApiBody({
-    //type: CrearParametroDto,
-    description: 'Politica',
+    description: 'Actualizar política',
     required: true,
   })
   @Patch('/politicas')

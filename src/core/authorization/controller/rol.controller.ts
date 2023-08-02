@@ -26,7 +26,7 @@ import {
 } from '@nestjs/swagger'
 
 @ApiTags('Roles')
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, CasbinGuard)
 @Controller('autorizacion/roles')
 export class RolController extends BaseController {
@@ -34,7 +34,7 @@ export class RolController extends BaseController {
     super()
   }
 
-  @ApiOperation({ summary: 'API para obtener el listado de  Roles' })
+  @ApiOperation({ summary: 'API para obtener el listado de Roles' })
   @Get()
   async listar() {
     const result = await this.rolService.listar()
@@ -48,7 +48,7 @@ export class RolController extends BaseController {
     return this.successListRows(result)
   }
 
-  @ApiOperation({ summary: 'API para crear un Rol' })
+  @ApiOperation({ summary: 'API para crear un rol' })
   @ApiBody({
     type: CrearRolDto,
     description: 'new Rol',
@@ -61,7 +61,7 @@ export class RolController extends BaseController {
     return this.successCreate(result)
   }
 
-  @ApiOperation({ summary: 'API para actualizar un Rol' })
+  @ApiOperation({ summary: 'API para actualizar un rol' })
   @ApiProperty({
     type: ParamIdDto,
   })
@@ -86,7 +86,7 @@ export class RolController extends BaseController {
     return this.successUpdate(result)
   }
 
-  @ApiOperation({ summary: 'API para activar un Rol' })
+  @ApiOperation({ summary: 'API para activar un rol' })
   @ApiProperty({
     type: ParamIdDto,
   })
@@ -98,7 +98,7 @@ export class RolController extends BaseController {
     return this.successUpdate(result)
   }
 
-  @ApiOperation({ summary: 'API para inactivar un Rol' })
+  @ApiOperation({ summary: 'API para inactivar un rol' })
   @ApiProperty({
     type: ParamIdDto,
   })

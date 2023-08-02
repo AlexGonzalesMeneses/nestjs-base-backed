@@ -58,8 +58,8 @@ Documentación relacionada con el proyecto:
 
 1. [Instalación y Configuración](INSTALL.md)
 2. [Arquitectura](/docs/arquitectura.md)
-3. [Documentacion de APIS](/docs/openapi.yaml)
-4. [Documentacion de Permisos](/docs/permisos.md)
+3. [Documentación de APIS](/docs/openapi.yaml)
+4. [Documentación de Permisos](/docs/permisos.md)
 
 ## Comandos útiles
 

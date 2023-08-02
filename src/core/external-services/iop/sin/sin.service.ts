@@ -15,7 +15,7 @@ export class SinService extends BaseExternalService {
 
   /**
    * @title Login
-   * @description Metodo para verificar si la información de la empresa existe en el servicio del SIN
+   * @description Método para verificar si la información de la empresa existe en el servicio del SIN
    */
   async login(datosSIN: SINCredencialesDTO): Promise<LoginResult> {
     try {

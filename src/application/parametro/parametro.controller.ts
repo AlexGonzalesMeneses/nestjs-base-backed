@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger'
 
 @ApiTags('Parámetros')
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth()
 @Controller('parametros')
 @UseGuards(JwtAuthGuard, CasbinGuard)
 export class ParametroController extends BaseController {

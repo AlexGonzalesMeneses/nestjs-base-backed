@@ -11,9 +11,11 @@ export class CrearUsuarioCiudadaniaDto {
 
   @ApiProperty({ example: 'ACTIVO' })
   estado?: string
+
   @ApiProperty({ example: ['d5de12df-3cc3-5a58-a742-be24030482d8'] })
   @IsNotEmpty()
   roles: Array<string>
+
   @ApiProperty({ example: false })
   @Transform(() => true)
   ciudadaniaDigital?: boolean = true
