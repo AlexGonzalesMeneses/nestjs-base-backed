@@ -205,9 +205,8 @@ npm run seeds:run
 | `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                |
 | `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
-| `LOG_SIZE`                | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
-| `LOG_INTERVAL`            | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
-| `LOG_COMPRESS`            | `false`           | Para indicar si se comprimirá o no los ficheros de logs.                       |
+| `LOG_SIZE`                | `50M`             | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
+| `LOG_INTERVAL`            | `7d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
 | `LOG_LOKI_URL`            |                   | Indica la URL del servicio de loki para el registro de logs.                   |
 | `LOG_LOKI_USERNAME`       |                   | Indica el nombre de usuario para autenticarse con el servicio de loki.         |
 | `LOG_LOKI_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.     |

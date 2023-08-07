@@ -8,9 +8,9 @@ export const DEFAULT_PARAMS: LoggerParams = {
   projectPath: process.cwd(),
   fileParams: {
     path: '',
-    size: '5M',
-    rotateInterval: '1d',
-    compress: 'false',
+    size: '50M',
+    rotateInterval: '7d',
+    compress: 'true',
   },
   lokiParams: {
     url: '',

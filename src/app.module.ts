@@ -25,7 +25,6 @@ dotenv.config()
             path: process.env.LOG_PATH,
             size: process.env.LOG_SIZE,
             rotateInterval: process.env.LOG_INTERVAL,
-            compress: process.env.LOG_COMPRESS,
           }
         : undefined,
       lokiParams: process.env.LOG_LOKI_URL
