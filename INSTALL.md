@@ -202,8 +202,8 @@ npm run seeds:run
 | Variable                  | Valor por defecto | Descripción                                                                    |
 | ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
 | `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
+| `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                |
 | `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
-| `LOG_AUDIT_CONTEXT`       | `application ...` | Habilita los logs de auditoria.                                                |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_SIZE`                | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
 | `LOG_INTERVAL`            | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
@@ -226,7 +226,7 @@ npm run seeds:run
 
   Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
-- `LOG_AUDIT_CONTEXT` indica los logs de auditoría que serán registrados, por ejemplo `application request response` registrará solamente aquellos logs que pertenecen a los contextos `application`, `request` y `response`.
+- `LOG_AUDIT` indica los logs de auditoría que serán registrados, por ejemplo `application request response` registrará solamente aquellos logs que pertenecen a los contextos `application`, `request` y `response`.
 
 Para el registro de logs tenemos las siguientes opciones:
 

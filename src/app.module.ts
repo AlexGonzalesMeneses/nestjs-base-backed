@@ -38,7 +38,7 @@ dotenv.config()
           }
         : undefined,
       auditParams: {
-        context: process.env.LOG_AUDIT_CONTEXT,
+        context: process.env.LOG_AUDIT,
       },
       projectPath: path.resolve(__dirname, '../'),
     }),
