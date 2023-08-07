@@ -5,7 +5,7 @@ export {
   BaseAudit,
 } from './classes'
 export { printInfo, printLogo, printRoutes } from './tools'
-export { SQLLogger } from './utilities'
+export { SQLLogger, getReqID, getIPAddress } from './utilities'
 export type {
   AppInfo,
   LoggerOptions,

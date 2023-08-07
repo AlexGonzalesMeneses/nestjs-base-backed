@@ -5,6 +5,8 @@ import {
   getContext,
   getErrorStack,
   getFullErrorStack,
+  getHostname,
+  getReqID,
   isAxiosError,
   isCertExpiredError,
   isConexionError,
@@ -12,10 +14,8 @@ import {
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { extractMessage } from '../utils'
 import { ERROR_CODE, LOG_LEVEL, LOG_NUMBER } from '../constants'
-import os from 'os'
 import dayjs from 'dayjs'
 import { inspect } from 'util'
-import * as rTracer from 'cls-rtracer'
 
 export class BaseException extends Error {
   level: LOG_LEVEL.ERROR | LOG_LEVEL.WARN
@@ -379,18 +379,14 @@ export class BaseException extends Error {
   }
 
   getLogEntry(): LogEntry {
-    const reqId = String(rTracer.id() || '') || ''
-    const caller = getContext()
-    const formato = this.toString()
-
     const args: LogEntry = {
       // level: this.getNumericLevel(),
       // time: Date.now(),
-      hostname: os.hostname(),
+      hostname: getHostname(),
       pid: process.pid,
 
-      reqId: reqId,
-      caller: caller,
+      reqId: getReqID(),
+      caller: getContext(),
       fecha: this.fecha,
       levelText: this.level,
       appName: this.appName,
@@ -403,7 +399,7 @@ export class BaseException extends Error {
       origen: this.origen,
       accion: this.accion,
       error: this.error as object,
-      formato,
+      formato: this.toString(),
       errorStack: this.errorStackOriginal,
       traceStack: this.traceStack,
     }

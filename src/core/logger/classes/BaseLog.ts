@@ -1,10 +1,13 @@
 import { BaseLogOptions, LogEntry, Metadata } from '../types'
-import { cleanParamValue, getContext } from '../utilities'
+import {
+  cleanParamValue,
+  getContext,
+  getHostname,
+  getReqID,
+} from '../utilities'
 import { LOG_LEVEL, LOG_NUMBER } from '../constants'
 import dayjs from 'dayjs'
 import { LoggerService } from './LoggerService'
-import * as rTracer from 'cls-rtracer'
-import os from 'os'
 import { inspect } from 'util'
 
 export class BaseLog {
@@ -85,17 +88,14 @@ export class BaseLog {
   }
 
   getLogEntry(): LogEntry {
-    const reqId = String(rTracer.id() || '') || ''
-    const caller = getContext()
-
     const args: LogEntry = {
       // level: this.getNumericLevel(),
       // time: Date.now(),
-      hostname: os.hostname(),
+      hostname: getHostname(),
       pid: process.pid,
 
-      reqId: reqId,
-      caller: caller,
+      reqId: getReqID(),
+      caller: getContext(),
       fecha: this.fecha,
       levelText: this.level,
       appName: this.appName,

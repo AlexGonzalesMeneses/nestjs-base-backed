@@ -10,7 +10,6 @@ import { LoggerMiddleware } from './common/middlewares'
 import { LoggerModule } from './core/logger'
 import packageJson from '../package.json'
 import { TimeoutInterceptor } from './common/interceptors'
-import path from 'path'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -39,7 +38,6 @@ dotenv.config()
       auditParams: {
         context: process.env.LOG_AUDIT,
       },
-      projectPath: path.resolve(__dirname, '../'),
     }),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),

@@ -1,8 +1,8 @@
 import { COLOR } from '../constants'
-import ip from 'ip'
 import { LoggerService } from '../classes'
 import { stdoutWrite } from '../tools'
 import { AppInfo } from '../types'
+import { getIPAddress } from '../utilities'
 
 export function printInfo(appInfo: AppInfo) {
   const logger = LoggerService.getInstance()
@@ -12,7 +12,7 @@ export function printInfo(appInfo: AppInfo) {
   const nodeEnv = appInfo.env
   const port = appInfo.port
   const appLocalUrl = `http://localhost:${port}`
-  const appNetworkUrl = `http://${ip.address()}:${port}`
+  const appNetworkUrl = `http://${getIPAddress()}:${port}`
 
   logger.audit('application', {
     mensaje: '🚀 Servicio desplegado',

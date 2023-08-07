@@ -29,8 +29,8 @@ export class BaseAudit {
 
   getLogEntry(): AuditEntry {
     const args: AuditEntry = {
-      // time: Date.now(),
       // level: 10,
+      // time: Date.now(),
       context: this.contexto,
     }
 
