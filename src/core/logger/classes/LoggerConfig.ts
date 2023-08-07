@@ -5,7 +5,7 @@ import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import path from 'path'
 import { FileParams, LoggerParams } from '../types'
 import { LokiOptions } from 'pino-loki'
-import { DEFAULT_SENSITIVE_PARAMS, LOG_LEVEL, LOG_NUMBER } from '../constants'
+import { DEFAULT_SENSITIVE_PARAMS, LOG_LEVEL } from '../constants'
 
 export class LoggerConfig {
   static getMainStream(loggerParams: LoggerParams): pino.MultiStreamRes {
@@ -64,11 +64,7 @@ export class LoggerConfig {
     for (const level of basicLevels) {
       const basicLevel: Level = LOG_LEVEL[level.toUpperCase()]
       if (!basicLevel) continue
-      const levelNumber = LOG_NUMBER[level]
-      const stream = createStream(
-        `${levelNumber}_app_${basicLevel}.log`,
-        options
-      )
+      const stream = createStream(`${basicLevel}.log`, options)
       stream.on('error', (e) => {
         if (!e.message.includes('no such file or directory, rename')) {
           console.error('Error con el rotado de logs', e)
@@ -84,7 +80,7 @@ export class LoggerConfig {
     for (const level of Object.keys(auditLevels)) {
       const levelNumber = auditLevels[level]
       if (!levelNumber) continue
-      const stream = createStream(`${levelNumber}_audit_${level}.log`, options)
+      const stream = createStream(`audit_${level}.log`, options)
       stream.on('error', (e) => {
         if (!e.message.includes('no such file or directory, rename')) {
           console.error('Error con el rotado de logs', e)
