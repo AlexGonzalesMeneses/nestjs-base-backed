@@ -123,8 +123,8 @@ export class LoggerService {
       _audit: [],
     }
 
-    loggerParams._levels = (loggerParams.level.split(',') as Level[]) || []
-    loggerParams._audit = loggerParams.auditParams?.context.split(',') || []
+    loggerParams._levels = LoggerService.getLevelList(loggerParams.level)
+    loggerParams._audit = loggerParams.auditParams?.context.split(' ') || []
 
     const opts = LoggerConfig.getPinoHttpConfig(loggerParams)
     const stream = LoggerConfig.getMainStream(loggerParams)
@@ -479,5 +479,21 @@ export class LoggerService {
 
   private getColor(level: LOG_LEVEL): string {
     return LOG_COLOR[level]
+  }
+
+  private static getLevelList(logLevel: string): Level[] {
+    if (!LOG_LEVEL[logLevel.toUpperCase()]) {
+      return []
+    }
+
+    const levelSelected: Level[] = []
+    for (const levelKey of Object.keys(LOG_LEVEL)) {
+      const level = LOG_LEVEL[levelKey]
+      levelSelected.push(level)
+      if (level === logLevel) {
+        break
+      }
+    }
+    return levelSelected
   }
 }

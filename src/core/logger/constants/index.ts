@@ -19,7 +19,6 @@ export enum COLOR {
 
 //Más info:  https://betterstack.com/community/guides/logging/log-levels-explained/
 export enum LOG_LEVEL {
-  FATAL = 'fatal', // 60 Mensajes críticos (Ej.: conexión a la base de datos)
   ERROR = 'error', // 50 Mensajes de error (Ej.: errores del lado del servidor HTTP 500)
   WARN = 'warn', // 40 Mensajes de advertencia (Ej.: errores del lado del cliente HTTP 400)
   INFO = 'info', // 30 Mensajes informativos (Ej.: cuando un servicio ha sido iniciado o detenido, cuando un componente ha sido activado)
@@ -28,7 +27,6 @@ export enum LOG_LEVEL {
 }
 
 export const LOG_NUMBER = {
-  [LOG_LEVEL.FATAL]: 60,
   [LOG_LEVEL.ERROR]: 50,
   [LOG_LEVEL.WARN]: 40,
   [LOG_LEVEL.INFO]: 30,
@@ -37,7 +35,6 @@ export const LOG_NUMBER = {
 }
 
 export const LOG_COLOR = {
-  [LOG_LEVEL.FATAL]: COLOR.RED,
   [LOG_LEVEL.ERROR]: COLOR.LIGHT_RED,
   [LOG_LEVEL.WARN]: COLOR.YELLOW,
   [LOG_LEVEL.INFO]: COLOR.CYAN,

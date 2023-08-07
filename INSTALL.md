@@ -203,7 +203,7 @@ npm run seeds:run
 | ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
 | `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
 | `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
-| `LOG_AUDIT_CONTEXT`       | `application,...` | Habilita los logs de auditoria.                                                |
+| `LOG_AUDIT_CONTEXT`       | `application ...` | Habilita los logs de auditoria.                                                |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_SIZE`                | `5M`              | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
 | `LOG_INTERVAL`            | `1d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
@@ -216,7 +216,7 @@ npm run seeds:run
 
 **Nota.-**
 
-- `LOG_LEVEL` acepta los valores `fatal`, `error`, `warn`, `info`, `debug` y `trace`. (en PROD se recomienda el valor de `info`)
+- `LOG_LEVEL` acepta los valores `error`, `warn`, `info`, `debug` y `trace`. (en PROD se recomienda el valor de `info`)
 
   Por ejemplo:
 
@@ -226,14 +226,16 @@ npm run seeds:run
 
   Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
-- Para el registro de logs tenemos las siguientes opciones:
+- `LOG_AUDIT_CONTEXT` indica los logs de auditoría que serán registrados, por ejemplo `application request response` registrará solamente aquellos logs que pertenecen a los contextos `application`, `request` y `response`.
+
+Para el registro de logs tenemos las siguientes opciones:
 
 **1ra Forma - Con ficheros**
 
 Para habilitar esta opción, `LOG_PATH` debe tener un valor asignado
 
 `LOG_PATH` dentro de esta carpeta (Se recomienda el valor `/tmp/logs/`) automáticamente se creará otro directorio con el nombre del proyecto (propiedad `name`
-del archivo `package.json`) y dentro de esta última se crearán los archivos de logs `fatal.log`, `error.log`, `warn.log` e `info.log`.
+del archivo `package.json`) y dentro de esta última se crearán los archivos de logs `error.log`, `warn.log` e `info.log`.
 
 `LOG_SIZE` acepta los siguientes valores:
 
