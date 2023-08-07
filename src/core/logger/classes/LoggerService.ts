@@ -187,7 +187,8 @@ export class LoggerService {
   ): void
   error(error: unknown, opt: LogOptions): void
   error(...args: unknown[]): void {
-    const exceptInfo = this.buildException(...args)
+    const caller = getContext(3)
+    const exceptInfo = this.buildException(caller, ...args)
     this.printException(exceptInfo)
   }
 
@@ -235,16 +236,17 @@ export class LoggerService {
     this.printAudit(auditInfo)
   }
 
-  private buildException(...args: unknown[]): BaseException {
+  private buildException(origen: string, ...args: unknown[]): BaseException {
     // 1ra forma - (error: unknown) => BaseException
     if (arguments.length === 1) {
-      return new BaseException(args[0])
+      return new BaseException(args[0], { origen })
     }
 
     // 2da forma - (error: unknown, mensaje: string) => BaseException
     else if (arguments.length === 2 && typeof args[1] === 'string') {
       return new BaseException(args[0], {
         mensaje: args[1],
+        origen,
       })
     }
 
@@ -253,6 +255,7 @@ export class LoggerService {
       return new BaseException(args[0], {
         mensaje: args[1],
         metadata: args[2] as Metadata,
+        origen,
       })
     }
 
@@ -266,6 +269,7 @@ export class LoggerService {
         mensaje: args[1],
         metadata: args[2] as Metadata,
         modulo: args[3],
+        origen,
       })
     }
 
@@ -273,6 +277,7 @@ export class LoggerService {
     else {
       return new BaseException(args[0], {
         ...(args[1] as BaseExceptionOptions),
+        origen,
       })
     }
   }

@@ -73,6 +73,7 @@ export type BaseExceptionOptions = {
   httpStatus?: HttpStatus
   causa?: string
   accion?: string
+  origen?: string
 }
 
 export type BaseLogOptions = {

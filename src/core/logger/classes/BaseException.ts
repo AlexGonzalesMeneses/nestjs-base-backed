@@ -101,14 +101,14 @@ export class BaseException extends Error {
         ? error.errorStack
         : error instanceof Error
         ? getErrorStack(error)
-        : getErrorStack(new Error())
+        : ''
 
     const errorStackOriginal =
       error instanceof BaseException
         ? error.errorStackOriginal
         : error instanceof Error
         ? getFullErrorStack(error)
-        : getFullErrorStack(new Error())
+        : ''
 
     let metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
@@ -339,7 +339,11 @@ export class BaseException extends Error {
         ? opt.causa
         : causa
 
-    this.origen = origen
+    this.origen =
+      origen ||
+      (opt && 'origen' in opt && typeof opt.origen !== 'undefined'
+        ? opt.origen
+        : '')
 
     this.accion =
       opt && 'accion' in opt && typeof opt.accion !== 'undefined'
