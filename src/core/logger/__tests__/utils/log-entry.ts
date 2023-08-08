@@ -4,6 +4,9 @@ import { cmd } from './cmd'
 import packageJson from '../../../../../package.json'
 
 export async function createLogFile(filename: string) {
+  if (!process.env.LOG_PATH) {
+    throw new Error('Se requiere la variable de entorno process.env.LOG_PATH')
+  }
   const basePath = path.resolve(String(process.env.LOG_PATH), packageJson.name)
   const filePath = path.resolve(basePath, filename)
 
@@ -21,6 +24,10 @@ export async function createLogFile(filename: string) {
 }
 
 export const readLogFile = <T>(filename: string) => {
+  if (!process.env.LOG_PATH) {
+    throw new Error('Se requiere la variable de entorno process.env.LOG_PATH')
+  }
+
   const basePath = path.resolve(String(process.env.LOG_PATH), packageJson.name)
   const filePath = path.resolve(basePath, filename)
   const fileContent = fs.readFileSync(filePath).toString()
