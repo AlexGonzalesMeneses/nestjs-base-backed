@@ -1,9 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import { cmd } from './cmd'
+import packageJson from '../../../../../package.json'
 
 export async function createLogFile(filename: string) {
-  const basePath = path.resolve(__dirname, '../log-storage')
+  const basePath = path.resolve(String(process.env.LOG_PATH), packageJson.name)
   const filePath = path.resolve(basePath, filename)
 
   // Se elimina el contenido del fichero
@@ -20,9 +21,9 @@ export async function createLogFile(filename: string) {
 }
 
 export const readLogFile = <T>(filename: string) => {
-  const fileContent = fs
-    .readFileSync(path.resolve(__dirname, '../log-storage', filename))
-    .toString()
+  const basePath = path.resolve(String(process.env.LOG_PATH), packageJson.name)
+  const filePath = path.resolve(basePath, filename)
+  const fileContent = fs.readFileSync(filePath).toString()
 
   const rows = fileContent
     .split('\n')
