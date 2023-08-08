@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "setup": "npm run migrations:clean && npm run schema:drop && npm run migrations:generate database/migrations/init && npm run migrations:run && npm run seeds:run",
-    "dev": "FORCE_SQL_LOG=true npm run start:dev",
+    "dev": "LOG_SQL=true LOG_CONSOLE=true npm run start:dev",
     "start": "nest start",
     "start:dev": "NODE_ENV=development nest start --watch",
     "db:create": "bash ./database/scripts/create-database.sh",

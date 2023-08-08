@@ -17,10 +17,7 @@ dotenv.config()
 @Module({
   imports: [
     LoggerModule.forRoot({
-      console: String(
-        process.env.FORCE_CONSOLE_LOG === 'true' ||
-          process.env.NODE_ENV !== 'production'
-      ),
+      console: process.env.LOG_CONSOLE,
       appName: packageJson.name,
       level: process.env.LOG_LEVEL,
       fileParams: process.env.LOG_PATH

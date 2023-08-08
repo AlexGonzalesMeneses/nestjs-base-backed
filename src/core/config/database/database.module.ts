@@ -21,10 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
         logger: new SQLLogger({
           logger: LoggerService.getInstance(),
           level: {
-            query:
-              configService.get('NODE_ENV') === 'development' &&
-              (!(configService.get('LOG_SQL') !== 'true') ||
-                configService.get('FORCE_SQL_LOG') === 'true'),
+            query: configService.get('LOG_SQL') === 'true',
             error: true,
           },
         }),

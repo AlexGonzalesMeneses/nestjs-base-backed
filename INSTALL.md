@@ -199,20 +199,21 @@ npm run seeds:run
 
 **Configuración de Logs**
 
-| Variable                  | Valor por defecto | Descripción                                                                    |
-| ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
-| `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
-| `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                |
-| `LOG_SECRET`              |                   | Clave utilizada para habilitar e inhabilitar logs en tiempo de ejecución.      |
-| `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
-| `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
-| `LOG_SIZE`                | `50M`             | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
-| `LOG_INTERVAL`            | `7d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.   |
-| `LOG_LOKI_URL`            |                   | Indica la URL del servicio de loki para el registro de logs.                   |
-| `LOG_LOKI_USERNAME`       |                   | Indica el nombre de usuario para autenticarse con el servicio de loki.         |
-| `LOG_LOKI_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.     |
-| `LOG_LOKI_BATCHING`       | `true`            | Habilitado el envío de logs por lote cuando se utiliza loki.                   |
-| `LOG_LOKI_BATCH_INTERVAL` | `5`               | Tiempo en segundos para el envío de logs con loki si `LOG_BATCHING=true`.      |
+| Variable                  | Valor por defecto | Descripción                                                                              |
+| ------------------------- | ----------------- | ---------------------------------------------------------------------------------------- |
+| `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                                   |
+| `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                          |
+| `LOG_SECRET`              |                   | Clave utilizada para habilitar e inhabilitar logs en tiempo de ejecución.                |
+| `LOG_CONSOLE`             | `true`            | Indica si se mostrarán los logs en la terminal (en PRODUCCIÓN utilizar el valor `false`) |
+| `LOG_SQL`                 | `true`            | Habilita los logs SQL (en PRODUCCIÓN utilizar el valor `false`)                          |
+| `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.               |
+| `LOG_SIZE`                | `50M`             | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar.           |
+| `LOG_INTERVAL`            | `7d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.             |
+| `LOG_LOKI_URL`            |                   | Indica la URL del servicio de loki para el registro de logs.                             |
+| `LOG_LOKI_USERNAME`       |                   | Indica el nombre de usuario para autenticarse con el servicio de loki.                   |
+| `LOG_LOKI_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.               |
+| `LOG_LOKI_BATCHING`       | `true`            | Habilitado el envío de logs por lote cuando se utiliza loki.                             |
+| `LOG_LOKI_BATCH_INTERVAL` | `5`               | Tiempo en segundos para el envío de logs con loki si `LOG_BATCHING=true`.                |
 
 **Nota.-**
 
