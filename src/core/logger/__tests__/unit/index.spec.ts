@@ -13,6 +13,7 @@ import { ocultarInfo } from './casos_uso/ocultarInfo'
 dotenv.config()
 
 const loggerOptions: LoggerOptions = {
+  console: 'false',
   appName: packageJson.name,
   level: 'trace',
   fileParams: process.env.LOG_PATH

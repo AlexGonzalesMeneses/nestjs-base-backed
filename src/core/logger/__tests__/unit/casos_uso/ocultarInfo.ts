@@ -45,7 +45,7 @@ export async function ocultarInfo() {
   }
 
   logger.info({ metadata: data })
-  delay()
+  await delay()
 
   const zeroLine = 21
   const logFile = readLogFile<LogEntry>('trace.log')

@@ -2,8 +2,9 @@ import { LoggerService } from '../classes'
 import { LoggerParams, SQLLoggerParams } from '../types'
 
 export const DEFAULT_PARAMS: LoggerParams = {
+  console: 'true',
   appName: 'app',
-  level: 'info,warn,error',
+  level: 'info',
   hide: '',
   projectPath: process.cwd(),
   fileParams: {

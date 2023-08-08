@@ -23,6 +23,7 @@ export type AuditParams = {
 }
 
 export type LoggerParams = {
+  console: string
   appName: string
   level: string
   hide: string
@@ -35,6 +36,7 @@ export type LoggerParams = {
 }
 
 export type LoggerOptions = {
+  console?: string
   appName?: string
   level?: string
   hide?: string

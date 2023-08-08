@@ -20,6 +20,8 @@ import { BaseAudit } from './BaseAudit'
 import { BaseLog } from './BaseLog'
 
 export class LoggerService {
+  private static CONSOLA_HABILITADA = true
+
   private static loggerParams: LoggerParams | null = null
   private static loggerInstance: LoggerService | null = null
 
@@ -32,6 +34,10 @@ export class LoggerService {
     if (LoggerService.mainPinoInstance) return
 
     const loggerParams: LoggerParams = {
+      console:
+        typeof options.console === 'undefined'
+          ? DEFAULT_PARAMS.console
+          : String(options.console === 'true'),
       appName:
         typeof options.appName === 'undefined'
           ? DEFAULT_PARAMS.appName
@@ -140,6 +146,7 @@ export class LoggerService {
     LoggerService.mainPinoInstance = mainLogger
     LoggerService.auditPinoInstance = auditLogger
     LoggerService.loggerParams = loggerParams
+    LoggerService.CONSOLA_HABILITADA = loggerParams.console === 'true'
     printLoggerParams(loggerParams)
   }
 
@@ -407,7 +414,7 @@ export class LoggerService {
       // SAVE WITH PINO
       this.saveWithPino(level, info)
 
-      if (process.env.NODE_ENV === 'production') {
+      if (!LoggerService.CONSOLA_HABILITADA) {
         return
       }
 
@@ -428,7 +435,7 @@ export class LoggerService {
       // SAVE WITH PINO
       this.saveWithPino(level, info)
 
-      if (process.env.NODE_ENV === 'production') {
+      if (!LoggerService.CONSOLA_HABILITADA) {
         return
       }
 
@@ -447,7 +454,7 @@ export class LoggerService {
       // SAVE WITH PINO
       this.saveAuditWithPino(info)
 
-      if (process.env.NODE_ENV === 'production') {
+      if (!LoggerService.CONSOLA_HABILITADA) {
         return
       }
 
