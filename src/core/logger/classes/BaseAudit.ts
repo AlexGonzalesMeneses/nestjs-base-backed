@@ -34,6 +34,7 @@ export class BaseAudit {
       // time: Date.now(),
       context: this.contexto,
       reqId: getReqID(),
+      pid: process.pid,
     }
 
     if (this.mensaje) {
@@ -44,7 +45,7 @@ export class BaseAudit {
     if (metadata && Object.keys(metadata).length > 0) {
       // para evitar conflictos con palabras reservadas
       Object.keys(metadata).map((key) => {
-        if (['level', 'time', 'context', 'msg', 'reqId'].includes(key)) {
+        if (['level', 'time', 'context', 'msg', 'reqId', 'pid'].includes(key)) {
           args[`_${key}`] = metadata[key]
         } else {
           args[key] = metadata[key]

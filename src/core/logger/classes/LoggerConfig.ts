@@ -7,7 +7,9 @@ import { DEFAULT_SENSITIVE_PARAMS, LOG_LEVEL } from '../constants'
 
 export class LoggerConfig {
   static getMainStream(loggerParams: LoggerParams): pino.MultiStreamRes {
-    const basicLevels: Level[] = ['trace']
+    const basicLevels: Level[] = Object.keys(LOG_LEVEL).map(
+      (key) => LOG_LEVEL[key]
+    )
     const streamDisk: pino.StreamEntry[] = loggerParams.fileParams
       ? LoggerConfig.fileStream(
           loggerParams.fileParams,
