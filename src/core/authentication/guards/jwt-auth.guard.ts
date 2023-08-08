@@ -1,6 +1,9 @@
-import { EntityForbiddenException } from '../../../common/exceptions'
 import { BaseException, LoggerService } from '../../logger'
-import { ExecutionContext, Injectable } from '@nestjs/common'
+import {
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 
@@ -18,19 +21,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     } = context.switchToHttp().getRequest() as Request
     const resource = Object.keys(query).length ? route.path : originalUrl
 
-    if (!headers.authorization) {
-      throw new EntityForbiddenException({
-        causa: 'Valor "headers.authorization" no definido',
-        accion: 'Agregar el token de acceso en el header de la petición',
-        metadata: {
-          msg: `${action} ${resource} -> false - Token inválido (req.headers.authorization)`,
-        },
-      })
-    }
-
     try {
+      if (!headers.authorization) {
+        throw new ForbiddenException()
+      }
+
       const isPermitted = (await super.canActivate(context)) as boolean
-      if (!isPermitted) throw new EntityForbiddenException()
+      if (!isPermitted) throw new ForbiddenException()
     } catch (err) {
       const token = headers.authorization
         ? `${headers.authorization.substring(0, 20)}...`
@@ -39,7 +36,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new BaseException(err, {
         accion: 'Verificar que el token sea el correcto',
         metadata: {
-          msg: `${action} ${resource} -> false - Token inválido (${token})`,
+          msg: `JWT ${action} ${resource} -> false - Token inválido (${token})`,
         },
       })
     }

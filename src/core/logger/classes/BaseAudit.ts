@@ -1,4 +1,5 @@
 import { AuditEntry, BaseAuditOptions, Metadata } from '../types'
+import { getReqID } from '../utilities'
 
 export class BaseAudit {
   /**
@@ -32,6 +33,7 @@ export class BaseAudit {
       // level: 10,
       // time: Date.now(),
       context: this.contexto,
+      reqId: getReqID(),
     }
 
     if (this.mensaje) {
@@ -42,7 +44,7 @@ export class BaseAudit {
     if (metadata && Object.keys(metadata).length > 0) {
       // para evitar conflictos con palabras reservadas
       Object.keys(metadata).map((key) => {
-        if (['level', 'time', 'context', 'msg'].includes(key)) {
+        if (['level', 'time', 'context', 'msg', 'reqId'].includes(key)) {
           args[`_${key}`] = metadata[key]
         } else {
           args[key] = metadata[key]

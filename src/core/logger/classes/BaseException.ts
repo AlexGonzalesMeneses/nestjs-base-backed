@@ -242,7 +242,7 @@ export class BaseException extends Error {
       codigo = ERROR_CODE.HTTP_EXCEPTION
       httpStatus = error.getStatus()
       mensaje = extractMessage(error)
-      causa = error.toString()
+      causa = error.cause ? String(error.cause) : error.toString()
       accion =
         httpStatus === HttpStatus.BAD_REQUEST
           ? 'Verifique que los datos de entrada se estén enviando correctamente'
@@ -257,7 +257,6 @@ export class BaseException extends Error {
           : httpStatus === HttpStatus.PRECONDITION_FAILED
           ? 'Verifique que se cumpla con todas las condiciones requeridas para consumir este recurso'
           : 'Más info en detalles'
-      errorParsed = null
     }
 
     // AXIOS_ERROR

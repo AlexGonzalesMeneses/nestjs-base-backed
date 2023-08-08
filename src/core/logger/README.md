@@ -138,36 +138,7 @@ Ejemplos de implementación:
 ```ts
 throw new UnauthorizedException()
 throw new UnauthorizedException(mensaje)
-```
-
-**Ejemplo 2:** Para lanzar una excepción personalizada (de tipo `BaseException`)
-
-```ts
-import { EntityUnauthorizedException } from '../src/common/exceptions'
-import { HttpStatus } from '@nestjs/common'
-
-function validar(headers) {
-  if (!headers.authorization) {
-    throw new EntityUnauthorizedException({
-      causa: 'Valor no definido "headers.authorization"',
-      metadata: { headers },
-    })
-  }
-}
-```
-
-Ejemplos de implementación:
-
-```ts
-throw new EntityUnauthorizedException()
-throw new EntityUnauthorizedException(mensaje)
-throw new EntityUnauthorizedException({
-  mensaje,
-  metadata,
-  modulo,
-  causa,
-  accion,
-})
+throw new UnauthorizedException(mensaje, { cause })
 ```
 
 ## 2.2 Errores No Controlados
@@ -187,24 +158,6 @@ async recuperar() {
 ```
 
 **Nota.-** Estos tipos de errores siempre serán de tipo `500 Internal Server Exception`
-
-## 3. Para registrar eventos
-
-**Ejemplo 1:** Archivo `src/core/authentication/oidc.client.ts`
-
-```ts
-logger.trace('Creando cliente de ciudadanía...', {
-  oidcIssuer,
-})
-```
-
-**Ejemplo 2:** Archivo `src/core/external-services/mensajeria/mensajeria.service.ts`
-
-```ts
-logger.trace('Instanciando servicio de MENSAJERÍA...', {
-  baseURL: httpService.axiosRef.defaults.baseURL,
-})
-```
 
 ## 3. Logs para servicios externos
 
@@ -232,7 +185,7 @@ throw new ExternalServiceException(servicio, error, mensaje, metadata)
 
 Estos registros se crean en ficheros independientes y son utilizados para registrar eventos del sistema.
 
-**Ejemplo** Para registrar un error controlado manualmente
+**Ejemplo**
 
 ```ts
 import { LoggerService } from '../src/core/logger'
