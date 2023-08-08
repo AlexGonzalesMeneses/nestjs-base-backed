@@ -280,12 +280,12 @@ export class LoggerService {
 
   private buildException(origen: string, ...args: unknown[]): BaseException {
     // 1ra forma - (error: unknown) => BaseException
-    if (arguments.length === 1) {
+    if (arguments.length === 2) {
       return new BaseException(args[0], { origen })
     }
 
     // 2da forma - (error: unknown, mensaje: string) => BaseException
-    else if (arguments.length === 2 && typeof args[1] === 'string') {
+    else if (arguments.length === 3 && typeof args[1] === 'string') {
       return new BaseException(args[0], {
         mensaje: args[1],
         origen,
@@ -293,7 +293,7 @@ export class LoggerService {
     }
 
     // 3ra forma - (error: unknown, mensaje: string, metadata: Metadata) => BaseException
-    else if (arguments.length === 3 && typeof args[1] === 'string') {
+    else if (arguments.length === 4 && typeof args[1] === 'string') {
       return new BaseException(args[0], {
         mensaje: args[1],
         metadata: args[2] as Metadata,
@@ -303,7 +303,7 @@ export class LoggerService {
 
     // 4ta forma - (error: unknown, mensaje: string, metadata: Metadata, modulo: string) => BaseException
     else if (
-      arguments.length === 4 &&
+      arguments.length === 5 &&
       typeof args[1] === 'string' &&
       typeof args[3] === 'string'
     ) {
