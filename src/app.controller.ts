@@ -1,8 +1,16 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Patch,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseController } from './common/base/base-controller'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
+import { LOG_LEVEL, LoggerService } from './core/logger'
 
 @Controller()
 export class AppController extends BaseController {
@@ -24,5 +32,28 @@ export class AppController extends BaseController {
       fecha: now.format('YYYY-MM-DD HH:mm:ss.SSS'),
       hora: now.valueOf(),
     }
+  }
+
+  @Get('/log-level')
+  async estadoNivelActual() {
+    return LoggerService.getLevelStatus()
+  }
+
+  @Patch('/log-level')
+  async cambiarNivel(
+    @Body() body: { level?: string; audit?: string; secret: string }
+  ) {
+    if (!body.secret || body.secret !== process.env.LOG_SECRET) {
+      throw new UnauthorizedException()
+    }
+    const level = body.level
+    if (typeof level !== 'undefined' && LOG_LEVEL[level.toUpperCase()]) {
+      LoggerService.changeLevel(level as LOG_LEVEL)
+    }
+    const audit = body.audit
+    if (typeof audit !== 'undefined') {
+      LoggerService.changeAudit(audit)
+    }
+    return LoggerService.getLevelStatus()
   }
 }

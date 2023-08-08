@@ -1,11 +1,8 @@
 import { COLOR } from '../constants'
-import { LoggerService } from '../classes'
 import { stdoutWrite } from '../tools'
+import { LoggerParams } from '../types'
 
-export function printLoggerParams() {
-  const loggerParams = LoggerService.getLoggerParams()
-  if (!loggerParams) throw new Error('LoggerService no ha sido inicializado')
-
+export function printLoggerParams(loggerParams: LoggerParams) {
   stdoutWrite(
     `\n${COLOR.LIGHT_GREY} ┌──────── Logger Service ───────── ...${COLOR.RESET}\n`
   )

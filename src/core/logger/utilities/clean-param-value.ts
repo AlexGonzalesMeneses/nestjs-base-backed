@@ -22,8 +22,9 @@ export function cleanParamValue(
       !(value instanceof Error)
     ) {
       try {
-        value = LoggerService.redact
-          ? JSON.parse(LoggerService.redact(JSON.parse(JSON.stringify(value))))
+        const redact = LoggerService.getRedact()
+        value = redact
+          ? JSON.parse(redact(JSON.parse(JSON.stringify(value))))
           : JSON.parse(JSON.stringify(value))
       } catch (err) {
         // lo intentamos :)

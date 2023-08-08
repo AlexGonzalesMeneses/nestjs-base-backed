@@ -1,8 +1,7 @@
 import dayjs from 'dayjs'
-import { Level, pino } from 'pino'
-import pinoHttp, { HttpLogger } from 'pino-http'
+import { pino, Logger } from 'pino'
 import { COLOR, DEFAULT_PARAMS, LOG_COLOR, LOG_LEVEL } from '../constants'
-import fastRedact, { RedactOptions } from 'fast-redact'
+import fastRedact from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
 import {
   BaseExceptionOptions,
@@ -24,23 +23,12 @@ export class LoggerService {
   private static loggerParams: LoggerParams | null = null
   private static loggerInstance: LoggerService | null = null
 
-  private static mainPinoInstance: HttpLogger | null = null
-  private static auditPinoInstance: HttpLogger | null = null
+  private static mainPinoInstance: Logger | null = null
+  private static auditPinoInstance: Logger | null = null
 
-  static redact: fastRedact.redactFn | null = null
+  private static redact: fastRedact.redactFn | null = null
 
-  static initializeWithoutPino(options: LoggerOptions) {
-    LoggerService._initialize(options, false)
-  }
-
-  static initialize(options: LoggerOptions) {
-    LoggerService._initialize(options, true)
-  }
-
-  private static _initialize(
-    options: LoggerOptions,
-    createMainPinoInstance: boolean
-  ): void {
+  static initialize(options: LoggerOptions): void {
     if (LoggerService.mainPinoInstance) return
 
     const loggerParams: LoggerParams = {
@@ -123,40 +111,36 @@ export class LoggerService {
       _audit: [],
     }
 
-    loggerParams._levels = LoggerService.getLevelList(loggerParams.level)
+    loggerParams._levels = Object.keys(LOG_LEVEL).map((key) => LOG_LEVEL[key])
     loggerParams._audit = loggerParams.auditParams?.context.split(' ') || []
 
-    const opts = LoggerConfig.getPinoHttpConfig(loggerParams)
+    const opts = LoggerConfig.getMainConfig(loggerParams)
     const stream = LoggerConfig.getMainStream(loggerParams)
-
-    LoggerService.loggerParams = loggerParams
-    LoggerService.redact = fastRedact(opts.redact as RedactOptions)
+    const redact = LoggerConfig.getRedactOptions(loggerParams)
 
     // CREANDO LA INSTANCIA PRINCIPAL
-    if (createMainPinoInstance) {
-      LoggerService.mainPinoInstance = pinoHttp(opts, stream)
-    }
+    const mainLogger = pino(opts, stream)
+    mainLogger.on('level-change', (lvl, val, prevLvl, prevVal) => {
+      process.stdout.write(
+        `\n[logger] Cambio de nivel - valor previo: ${prevVal} ${prevLvl} nuevo valor: ${val} ${lvl}\n`
+      )
+    })
 
     // CREANDO LA INSTANCIA PARA AUDIT
-    const customLevels = LoggerConfig.getCustomLevels(loggerParams)
-    const customLevelsKeys = Object.keys(customLevels)
-    const firstLevel =
-      customLevelsKeys.length > 0 ? customLevelsKeys[0] : undefined
-    const auditOpts = {
-      ...opts,
-      level: firstLevel,
-      useOnlyCustomLevels: true,
-      customLevels,
-    }
+    const auditOpts = LoggerConfig.getAuditConfig(loggerParams)
     const auditStream = LoggerConfig.getAuditStream(loggerParams)
-    LoggerService.auditPinoInstance = pinoHttp(auditOpts, auditStream)
+    const auditLogger = pino(auditOpts, auditStream)
+    auditLogger.on('level-change', (lvl, val, prevLvl, prevVal) => {
+      process.stdout.write(
+        `\n[logger] Cambio de nivel - valor previo: ${prevVal} ${prevLvl} nuevo valor: ${val} ${lvl}\n`
+      )
+    })
 
-    printLoggerParams()
-  }
-
-  static registerPinoInstance(httpLogger: HttpLogger): void {
-    if (LoggerService.mainPinoInstance) return
-    LoggerService.mainPinoInstance = httpLogger
+    LoggerService.redact = fastRedact(redact)
+    LoggerService.mainPinoInstance = mainLogger
+    LoggerService.auditPinoInstance = auditLogger
+    LoggerService.loggerParams = loggerParams
+    printLoggerParams(loggerParams)
   }
 
   static getInstance(): LoggerService {
@@ -168,12 +152,46 @@ export class LoggerService {
     return LoggerService.loggerInstance
   }
 
-  static getPinoInstance(): HttpLogger | null {
-    return LoggerService.mainPinoInstance
-  }
-
   static getLoggerParams(): LoggerParams | null {
     return LoggerService.loggerParams
+  }
+
+  static getRedact() {
+    return LoggerService.redact
+  }
+
+  static changeLevel(newLevel: LOG_LEVEL) {
+    if (LoggerService.mainPinoInstance) {
+      LoggerService.mainPinoInstance.level = newLevel
+      return true
+    }
+    return false
+  }
+
+  static changeAudit(audit: string) {
+    if (LoggerService.loggerParams) {
+      LoggerService.loggerParams._audit = !audit ? [] : audit.split(' ') || []
+      return true
+    }
+    return false
+  }
+
+  static getLevelStatus() {
+    const baseInstance = LoggerService.mainPinoInstance
+    const auditInstance = LoggerService.auditPinoInstance
+    const levels = LoggerService.loggerParams?._levels || []
+    const audit = LoggerService.loggerParams?._audit || []
+    return {
+      pid: process.pid,
+      base: levels.map((lvl) => ({
+        level: lvl,
+        estado: baseInstance?.isLevelEnabled(lvl) ? 'activo' : 'inactivo',
+      })),
+      audit: audit.map((lvl) => ({
+        level: lvl,
+        estado: auditInstance?.isLevelEnabled(lvl) ? 'activo' : 'inactivo',
+      })),
+    }
   }
 
   error(error: unknown): void
@@ -197,6 +215,10 @@ export class LoggerService {
   warn(mensaje: string, metadata: Metadata, modulo: string): void
   warn(opt: LogOptions): void
   warn(...args: unknown[]): void {
+    const pinoLogger = LoggerService.mainPinoInstance
+    if (!pinoLogger || !pinoLogger.isLevelEnabled(LOG_LEVEL.WARN)) {
+      return
+    }
     const logInfo = this.buildLog(LOG_LEVEL.WARN, ...args)
     this.printLog(logInfo)
   }
@@ -206,6 +228,10 @@ export class LoggerService {
   info(mensaje: string, metadata: Metadata, modulo: string): void
   info(opt: LogOptions): void
   info(...args: unknown[]): void {
+    const pinoLogger = LoggerService.mainPinoInstance
+    if (!pinoLogger || !pinoLogger.isLevelEnabled(LOG_LEVEL.INFO)) {
+      return
+    }
     const logInfo = this.buildLog(LOG_LEVEL.INFO, ...args)
     this.printLog(logInfo)
   }
@@ -215,6 +241,10 @@ export class LoggerService {
   debug(mensaje: string, metadata: Metadata, modulo: string): void
   debug(opt: LogOptions): void
   debug(...args: unknown[]): void {
+    const pinoLogger = LoggerService.mainPinoInstance
+    if (!pinoLogger || !pinoLogger.isLevelEnabled(LOG_LEVEL.DEBUG)) {
+      return
+    }
     const logInfo = this.buildLog(LOG_LEVEL.DEBUG, ...args)
     this.printLog(logInfo)
   }
@@ -224,6 +254,10 @@ export class LoggerService {
   trace(mensaje: string, metadata: Metadata, modulo: string): void
   trace(opt: LogOptions): void
   trace(...args: unknown[]): void {
+    const pinoLogger = LoggerService.mainPinoInstance
+    if (!pinoLogger || !pinoLogger.isLevelEnabled(LOG_LEVEL.TRACE)) {
+      return
+    }
     const logInfo = this.buildLog(LOG_LEVEL.TRACE, ...args)
     this.printLog(logInfo)
   }
@@ -232,6 +266,14 @@ export class LoggerService {
   audit(contexto: string, mensaje: string, metadata: Metadata): void
   audit(contexto: string, opt: AuditOptions): void
   audit(contexto: string, ...args: unknown[]): void {
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (
+      !pinoLogger ||
+      !pinoLogger.isLevelEnabled(contexto) ||
+      !LoggerService.loggerParams?._audit.includes(contexto)
+    ) {
+      return
+    }
     const auditInfo = LoggerService.buildAudit(contexto, ...args)
     this.printAudit(auditInfo)
   }
@@ -357,15 +399,13 @@ export class LoggerService {
     try {
       const level = info.getLevel()
 
-      const levelSelected = LoggerService.loggerParams?._levels || []
-      if (!levelSelected.includes(level as pino.Level)) {
+      const pinoLogger = LoggerService.mainPinoInstance
+      if (!pinoLogger || !pinoLogger.isLevelEnabled(level)) {
         return
       }
 
-      const logEntry = info.getLogEntry()
-
       // SAVE WITH PINO
-      this.saveWithPino(level, logEntry)
+      this.saveWithPino(level, info)
 
       if (process.env.NODE_ENV === 'production') {
         return
@@ -385,15 +425,8 @@ export class LoggerService {
     try {
       const level = info.getLevel()
 
-      const levelSelected = LoggerService.loggerParams?._levels || []
-      if (!levelSelected.includes(level as pino.Level)) {
-        return
-      }
-
-      const logEntry = info.getLogEntry()
-
       // SAVE WITH PINO
-      this.saveWithPino(level, logEntry)
+      this.saveWithPino(level, info)
 
       if (process.env.NODE_ENV === 'production') {
         return
@@ -411,13 +444,6 @@ export class LoggerService {
 
   private printAudit(info: BaseAudit) {
     try {
-      const level = info.contexto
-
-      const levelSelected = LoggerService.loggerParams?._audit || []
-      if (!levelSelected.includes(level)) {
-        return
-      }
-
       // SAVE WITH PINO
       this.saveAuditWithPino(info)
 
@@ -433,19 +459,20 @@ export class LoggerService {
     }
   }
 
-  private saveWithPino(level: LOG_LEVEL, args: { [key: string]: unknown }) {
-    const instance = LoggerService.mainPinoInstance
-    if (instance && instance.logger[level]) {
-      instance.logger[level](args)
+  private saveWithPino(level: LOG_LEVEL, info: BaseLog | BaseException) {
+    const args = info.getLogEntry()
+    const pinoLogger = LoggerService.mainPinoInstance
+    if (pinoLogger && pinoLogger[level]) {
+      pinoLogger[level](args)
     }
   }
 
   private saveAuditWithPino(info: BaseAudit): void {
     const level = info.contexto
     const args = info.getLogEntry()
-    const auditInstance = LoggerService.auditPinoInstance
-    if (auditInstance) {
-      auditInstance.logger[level](args)
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (pinoLogger && pinoLogger[level]) {
+      pinoLogger[level](args)
     }
   }
 
@@ -484,21 +511,5 @@ export class LoggerService {
 
   private getColor(level: LOG_LEVEL): string {
     return LOG_COLOR[level]
-  }
-
-  private static getLevelList(logLevel: string): Level[] {
-    if (!LOG_LEVEL[logLevel.toUpperCase()]) {
-      return []
-    }
-
-    const levelSelected: Level[] = []
-    for (const levelKey of Object.keys(LOG_LEVEL)) {
-      const level = LOG_LEVEL[levelKey]
-      levelSelected.push(level)
-      if (level === logLevel) {
-        break
-      }
-    }
-    return levelSelected
   }
 }

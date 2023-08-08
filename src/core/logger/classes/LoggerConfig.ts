@@ -1,5 +1,3 @@
-import { GenReqId, Options, ReqId } from 'pino-http'
-import * as rTracer from 'cls-rtracer'
 import pino, { Level, multistream } from 'pino'
 import { createStream, Options as RotateOptions } from 'rotating-file-stream'
 import path from 'path'
@@ -9,11 +7,12 @@ import { DEFAULT_SENSITIVE_PARAMS, LOG_LEVEL } from '../constants'
 
 export class LoggerConfig {
   static getMainStream(loggerParams: LoggerParams): pino.MultiStreamRes {
+    const basicLevels: Level[] = ['trace']
     const streamDisk: pino.StreamEntry[] = loggerParams.fileParams
       ? LoggerConfig.fileStream(
           loggerParams.fileParams,
           loggerParams.appName,
-          loggerParams._levels,
+          basicLevels,
           {}
         )
       : []
@@ -34,7 +33,7 @@ export class LoggerConfig {
     return multistream([...streamDisk, ...lokiStream], { dedupe: true })
   }
 
-  static getCustomLevels(loggerParams: LoggerParams) {
+  private static getCustomLevels(loggerParams: LoggerParams) {
     const customLevels: { [key: string]: number } = {}
     loggerParams._audit.forEach((ctx, index) => {
       customLevels[ctx] = index + 100
@@ -124,7 +123,7 @@ export class LoggerConfig {
     return lokiStream
   }
 
-  static redactOptions(loggerParams: LoggerParams) {
+  static getRedactOptions(loggerParams: LoggerParams) {
     const customPaths = loggerParams.hide ? loggerParams.hide.split(' ') : []
     return {
       paths: customPaths.concat(DEFAULT_SENSITIVE_PARAMS),
@@ -132,28 +131,26 @@ export class LoggerConfig {
     }
   }
 
-  private static genReqId: GenReqId = () => {
-    return rTracer.id() as ReqId
+  static getMainConfig(loggerParams: LoggerParams) {
+    return {
+      level: loggerParams.level,
+      redact: LoggerConfig.getRedactOptions(loggerParams),
+      base: null,
+    }
   }
 
-  static getPinoHttpConfig(loggerParams: LoggerParams): Options {
+  static getAuditConfig(loggerParams: LoggerParams) {
+    const customLevels = LoggerConfig.getCustomLevels(loggerParams)
+    const customLevelsKeys = Object.keys(customLevels)
+    const firstLevel =
+      customLevelsKeys.length > 0 ? customLevelsKeys[0] : undefined
+
     return {
-      genReqId: LoggerConfig.genReqId,
-      level: 'trace',
-      redact: LoggerConfig.redactOptions(loggerParams),
-      autoLogging: false,
-      serializers: {
-        err: () => {
-          return
-        },
-        req: () => {
-          return
-        },
-        res: () => {
-          return
-        },
-      },
+      level: firstLevel,
+      redact: LoggerConfig.getRedactOptions(loggerParams),
       base: null,
+      useOnlyCustomLevels: true,
+      customLevels,
     }
   }
 }

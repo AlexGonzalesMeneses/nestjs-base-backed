@@ -203,6 +203,7 @@ npm run seeds:run
 | ------------------------- | ----------------- | ------------------------------------------------------------------------------ |
 | `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                         |
 | `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                |
+| `LOG_SECRET`              |                   | Clave utilizada para habilitar e inhabilitar logs en tiempo de ejecución.      |
 | `LOG_SQL`                 | `true`            | Solo funciona con el modo desarrollo muestra las consultas SQL.                |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.     |
 | `LOG_SIZE`                | `50M`             | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar. |
@@ -219,13 +220,17 @@ npm run seeds:run
 
   Por ejemplo:
 
-  - Si `LOG_LEVEL=error` se creará el archivo `error.log`
-  - Si `LOG_LEVEL=warn` se crearán los archivos `error.log` y `warn.log`
-  - Si `LOG_LEVEL=info` se crearán los archivos `error.log`, `warn.log` e `info.log`
+  - Si `LOG_LEVEL=error`, en el archivo `app_trace.log` se registrarán logs de tipo `error`.
+  - Si `LOG_LEVEL=warn`, en el archivo `app_trace.log` se registrarán logs de tipo `error` y `warn`.
+  - Si `LOG_LEVEL=info`, en el archivo `app_trace.log` se registrarán logs de tipo `error`, `warn` e `info`.
 
   Y asi sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
 
-- `LOG_AUDIT` indica los logs de auditoría que serán registrados, por ejemplo `application request response` registrará solamente aquellos logs que pertenecen a los contextos `application`, `request` y `response`.
+- `LOG_AUDIT` acepta valores separados por espacios en blanco.
+
+  Por Ejemplo:
+
+  - Si `LOG_AUDIT=application request response`, en los archivos `audit_application.log`, `audit_request.log` y `audit_response.log` se registrarán logs de tipo `application`, `request` y `response` respectivamente.
 
 Para el registro de logs tenemos las siguientes opciones:
 
