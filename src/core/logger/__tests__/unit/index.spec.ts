@@ -1,4 +1,5 @@
 import path from 'path'
+import dotenv from 'dotenv'
 import packageJson from '../../../../../package.json'
 import { LoggerOptions, LoggerService } from '../../../logger'
 import { createLogFile, delay } from '../utils'
@@ -7,8 +8,8 @@ import { printWarn } from './casos_uso/printWarn'
 import { printInfo } from './casos_uso/printInfo'
 import { printDebug } from './casos_uso/printDebug'
 import { printTrace } from './casos_uso/printTrace'
+import { ocultarInfo } from './casos_uso/ocultarInfo'
 
-import dotenv from 'dotenv'
 dotenv.config()
 
 const loggerOptions: LoggerOptions = {
@@ -67,5 +68,9 @@ describe('Logger prueba unitaria', () => {
 
   it('[logger] print trace', async () => {
     await printTrace()
+  })
+
+  it('[logger] ocultar info', async () => {
+    await ocultarInfo()
   })
 })
