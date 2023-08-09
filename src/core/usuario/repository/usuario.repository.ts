@@ -247,6 +247,7 @@ export class UsuarioRepository {
         : undefined,
       codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
       usuarioModificacion: usuarioAuditoria,
+      ciudadaniaDigital: usuarioDto.ciudadaniaDigital || undefined,
     })
     return await repo.update(idUsuario, datosActualizar)
   }

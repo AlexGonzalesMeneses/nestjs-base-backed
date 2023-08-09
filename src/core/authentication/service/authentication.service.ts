@@ -272,9 +272,9 @@ export class AuthenticationService extends BaseService {
     }
 
     if (
-      datosPersona.nombres !== persona.nombres &&
-      datosPersona.primerApellido !== persona.primerApellido &&
-      datosPersona.segundoApellido !== persona.segundoApellido &&
+      datosPersona.nombres !== persona.nombres ||
+      datosPersona.primerApellido !== persona.primerApellido ||
+      datosPersona.segundoApellido !== persona.segundoApellido ||
       datosPersona.fechaNacimiento !== persona.fechaNacimiento
     ) {
       // Actualizar datos de persona
@@ -288,6 +288,17 @@ export class AuthenticationService extends BaseService {
         {
           correoElectronico: datosUsuario.correoElectronico,
           roles: respuesta.usuarioRol.map((value) => value.rol.id),
+        },
+        USUARIO_SISTEMA
+      )
+    }
+    /// En caso de que el usuario haya sido registrado localmente, pero luego haya iniciado sesión con Ciudadanía
+    if (!respuesta.ciudadaniaDigital) {
+      await this.usuarioService.actualizarDatos(
+        respuesta.id,
+        {
+          roles: respuesta.usuarioRol.map((value) => value.rol.id),
+          ciudadaniaDigital: true,
         },
         USUARIO_SISTEMA
       )

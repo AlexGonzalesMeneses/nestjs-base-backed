@@ -692,7 +692,7 @@ export class UsuarioService extends BaseService {
       throw new NotFoundException(Messages.INVALID_USER)
     }
 
-    const { correoElectronico, roles } = usuarioDto
+    const { correoElectronico, roles, ciudadaniaDigital } = usuarioDto
     // 2. verificar que el email no este registrado
 
     if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
@@ -706,6 +706,16 @@ export class UsuarioService extends BaseService {
         id,
         {
           correoElectronico: correoElectronico,
+        },
+        usuarioAuditoria
+      )
+    }
+
+    if (ciudadaniaDigital) {
+      await this.usuarioRepositorio.actualizar(
+        id,
+        {
+          ciudadaniaDigital: ciudadaniaDigital,
         },
         usuarioAuditoria
       )
@@ -910,6 +920,7 @@ export class UsuarioService extends BaseService {
     }
     return rol
   }
+
   async obtenerCodigoTest(idUser: string) {
     return await this.usuarioRepositorio.obtenerCodigoTest(idUser)
   }
