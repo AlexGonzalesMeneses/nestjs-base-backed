@@ -42,7 +42,6 @@ export class AuthenticationController extends BaseController {
     }
     const result = await this.autenticacionService.autenticar(req.user)
 
-    this.logger.info(`Usuario: ${result.data.id} ingresó al sistema`)
     /* sendRefreshToken(res, result.refresh_token.id); */
     const refreshToken = result.refresh_token.id
     return res
@@ -121,9 +120,7 @@ export class AuthenticationController extends BaseController {
       req.user?.idToken || req.session?.passport?.user?.idToken || null
 
     // req.logout();
-    req.session.destroy(() => {
-      this.logger.info('sesión finalizada')
-    })
+    req.session.destroy(() => ({}))
     const issuer = await Issuer.discover(
       this.configService.get('OIDC_ISSUER') || ''
     )
@@ -139,7 +136,10 @@ export class AuthenticationController extends BaseController {
         ).id
       : null
 
-    this.logger.info(`Usuario: ${idUsuario} salió del sistema`)
+    this.logger.audit('authentication', {
+      mensaje: 'Salió del sistema',
+      metadata: { usuario: idUsuario },
+    })
 
     if (!(url && idToken)) {
       return res.status(200).json()

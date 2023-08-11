@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { map } from 'rxjs/operators'
-import { ExternalServiceException } from '../../../common/exceptions/external-service.exception'
+import { ExternalServiceException } from '../../../common/exceptions'
 import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
 
@@ -23,9 +23,10 @@ export class MensajeriaService {
         .post('/sms', smsBody)
         .pipe(map((res) => res.data))
 
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:SMS', error)
+      const mensaje = 'Ocurrió un error al enviar el mensaje por SMS'
+      throw new ExternalServiceException('MENSAJERÍA:SMS', error, mensaje)
     }
   }
 
@@ -45,10 +46,10 @@ export class MensajeriaService {
       const response = this.httpService
         .post('/correo', emailBody)
         .pipe(map((res) => res.data))
-
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:CORREO', error)
+      const mensaje = 'Ocurrió un error al enviar el mensaje por E-MAIL'
+      throw new ExternalServiceException('MENSAJERÍA:CORREO', error, mensaje)
     }
   }
 
@@ -62,9 +63,10 @@ export class MensajeriaService {
         .get(`/sms/reporte/${id}`)
         .pipe(map((res) => res.data))
 
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:SMS', error)
+      const mensaje = 'Ocurrió un error al obtener el reporte del SMS'
+      throw new ExternalServiceException('MENSAJERÍA:SMS', error, mensaje)
     }
   }
 
@@ -77,9 +79,10 @@ export class MensajeriaService {
       const response = this.httpService
         .get(`/correo/reporte/${id}`)
         .pipe(map((res) => res.data))
-      return firstValueFrom(response)
+      return await firstValueFrom(response)
     } catch (error) {
-      throw new ExternalServiceException('MENSAJERIA:CORREO', error)
+      const mensaje = 'Ocurrió un error al obtener el reporte del E-MAIL'
+      throw new ExternalServiceException('MENSAJERÍA:CORREO', error, mensaje)
     }
   }
 }

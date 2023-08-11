@@ -1,4 +1,4 @@
-import { BaseService } from '../../../common/base/base-service'
+import { BaseService } from '../../../common/base'
 import {
   ForbiddenException,
   Inject,
@@ -133,7 +133,10 @@ export class UsuarioService extends BaseService {
       datosCorreo,
       usuarioDto.persona.nroDocumento,
       contrasena
-    ).catch((err) => this.logger.error(err))
+    ).catch((error) => {
+      const mensaje = `Falló al enviar la contraseña del usuario por correo electrónico`
+      this.logger.error(error, mensaje)
+    })
 
     return crearResult
   }
@@ -224,7 +227,10 @@ export class UsuarioService extends BaseService {
             Messages.NEW_USER_ACCOUNT_VERIFY,
             template
           )
-          .catch((err) => this.logger.error(err))
+          .catch((err) => {
+            const mensaje = `Falló al enviar el correo de activación de cuenta`
+            this.logger.error(err, mensaje)
+          })
       }
       return usuarioNuevo
     }
@@ -266,7 +272,7 @@ export class UsuarioService extends BaseService {
     )
 
     if (!usuario) {
-      this.logger.info(`Usuario no encontrado`)
+      this.logger.error('Usuario no encontrado')
       return 'Búsqueda terminada'
     }
 
@@ -275,7 +281,7 @@ export class UsuarioService extends BaseService {
       'URL_FRONTEND'
     )}/recuperacion?q=${codigo}`
 
-    this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
+    // this.logger.info(`📩 urlRecuperacion: ${urlRecuperacion}`)
 
     await this.actualizarDatosRecuperacion(usuario.id, codigo)
 
@@ -289,7 +295,10 @@ export class UsuarioService extends BaseService {
           Messages.SUBJECT_EMAIL_ACCOUNT_LOCKED,
           template
         )
-        .catch((err) => this.logger.error(err))
+        .catch((err) => {
+          const mensaje = `Falló al enviar el correo de recuperación de cuenta`
+          this.logger.error(err, mensaje)
+        })
     }
     return 'Búsqueda terminada'
   }
@@ -556,7 +565,10 @@ export class UsuarioService extends BaseService {
         datosCorreo,
         usuario.usuario,
         contrasena
-      ).catch((err) => this.logger.error(err))
+      ).catch((err) => {
+        const mensaje = `Falló al enviar el correo de activación de cuenta`
+        this.logger.error(err, mensaje)
+      })
     }
 
     return { id: usuarioActualizado.id, estado: usuarioActualizado.estado }
@@ -703,7 +715,10 @@ export class UsuarioService extends BaseService {
           datosCorreo,
           usuarioActualizado.usuario,
           contrasena
-        ).catch((err) => this.logger.error(err))
+        ).catch((error) => {
+          const mensaje = `Ocurrió un error al enviar el correo electrónico para restaurar la contraseña`
+          this.logger.error(error, mensaje)
+        })
       }
 
       return usuarioActualizado
@@ -728,7 +743,7 @@ export class UsuarioService extends BaseService {
         'URL_FRONTEND'
       )}/activacion?q=${codigo}`
 
-      this.logger.info(`📩 urlActivacion nuevo: ${urlActivacion}`)
+      // this.logger.info(`📩 urlActivacion nuevo: ${urlActivacion}`)
 
       await this.actualizarDatosActivacion(
         usuario.id,
@@ -747,7 +762,10 @@ export class UsuarioService extends BaseService {
             Messages.NEW_USER_ACCOUNT_VERIFY,
             template
           )
-          .catch((err) => this.logger.error(err))
+          .catch((error) => {
+            const mensaje = `Ocurrió un error al enviar el correo electrónico de activación de cuenta`
+            this.logger.error(error, mensaje)
+          })
       }
 
       const usuarioActualizado = await this.usuarioRepositorio.buscarPorId(
