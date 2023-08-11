@@ -3,7 +3,7 @@ import { format } from 'sql-formatter'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
 import { stdoutWrite } from '../tools'
 import { COLOR, DEFAULT_SQL_LOGGER_PARAMS, ERROR_CODE } from '../constants'
-import { SQLLoggerParams, SQLLoggerOptions } from '../types'
+import { SQLLoggerOptions, SQLLoggerParams } from '../types'
 import { BaseException } from '../classes'
 
 export class SQLLogger extends AdvancedConsoleLogger {
@@ -18,7 +18,7 @@ export class SQLLogger extends AdvancedConsoleLogger {
     if (!this.params.level.query) {
       return
     }
-    const sql = this.buildSql(query, parameters, false, false)
+    const sql = this.buildSql(query, parameters, false, true)
     stdoutWrite(`\n${COLOR.LIGHT_GREY}\n${sql}\n${COLOR.RESET}\n`)
   }
 

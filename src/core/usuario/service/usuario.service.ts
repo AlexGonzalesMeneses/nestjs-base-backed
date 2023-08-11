@@ -1,4 +1,4 @@
-import { BaseService } from '../../../common/base/base-service'
+import { BaseService } from '../../../common/base'
 import {
   ForbiddenException,
   Inject,
@@ -35,6 +35,7 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
+import { PersonaRepository } from '../repository/persona.repository'
 
 @Injectable()
 export class UsuarioService extends BaseService {
@@ -45,6 +46,8 @@ export class UsuarioService extends BaseService {
     private usuarioRolRepositorio: UsuarioRolRepository,
     @Inject(RolRepository)
     private rolRepositorio: RolRepository,
+    @Inject(PersonaRepository)
+    private personaRepositorio: PersonaRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
@@ -80,8 +83,8 @@ export class UsuarioService extends BaseService {
       throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
     }
 
-    // contrastacion segip
-    const { persona } = usuarioDto
+    // Constrastación SEGIP
+    const { persona, roles } = usuarioDto
     const contrastaSegip = await this.segipServices.contrastar(persona)
 
     if (!contrastaSegip?.finalizado) {
@@ -97,12 +100,33 @@ export class UsuarioService extends BaseService {
     const op = async (transaction: EntityManager) => {
       usuarioDto.contrasena = await TextService.encrypt(contrasena)
       usuarioDto.estado = Status.ACTIVE
-      return await this.usuarioRepositorio.crear(
-        usuarioDto,
+
+      const persona = await this.personaRepositorio.crear(
+        usuarioDto.persona,
         usuarioAuditoria,
         transaction
       )
+
+      const usuario = await this.usuarioRepositorio.crear(
+        persona.id,
+        {
+          ...usuarioDto,
+          usuario: usuarioDto.usuario ?? usuarioDto?.persona?.nroDocumento,
+        },
+        usuarioAuditoria,
+        transaction
+      )
+
+      await this.usuarioRolRepositorio.crear(
+        usuario.id,
+        roles,
+        usuarioAuditoria,
+        transaction
+      )
+
+      return usuario
     }
+
     const crearResult = await this.usuarioRepositorio.runTransaction(op)
 
     await this.enviarCorreoContrasenia(
@@ -147,19 +171,24 @@ export class UsuarioService extends BaseService {
     }
 
     const op = async (transaction: EntityManager) => {
+      const personaNueva = await this.personaRepositorio.crear(
+        {
+          nombres: usuarioDto.nombres,
+          primerApellido: '',
+          segundoApellido: '',
+          nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
+          fechaNacimiento: new Date(),
+          tipoDocumento: TipoDocumento.OTRO,
+        },
+        USUARIO_NORMAL,
+        transaction
+      )
+
       const usuarioNuevo = await this.usuarioRepositorio.crear(
+        personaNueva.id,
         {
           usuario: usuarioDto.correoElectronico,
-          persona: {
-            nombres: usuarioDto.nombres,
-            primerApellido: '',
-            segundoApellido: '',
-            nroDocumento: TextService.textToUuid(usuarioDto.correoElectronico),
-            fechaNacimiento: new Date(),
-            tipoDocumento: TipoDocumento.OTRO,
-          },
           correoElectronico: usuarioDto.correoElectronico,
-          roles: rol?.id ? [rol?.id] : [],
           estado: Status.PENDING,
           contrasena: await TextService.encrypt(usuarioDto.contrasenaNueva),
         },
@@ -167,40 +196,42 @@ export class UsuarioService extends BaseService {
         transaction
       )
 
-      if (usuarioNuevo?.id) {
-        const codigo = TextService.generateUuid()
-        const urlActivacion = `${this.configService.get(
-          'URL_FRONTEND'
-        )}/activacion?q=${codigo}`
+      await this.usuarioRolRepositorio.crear(
+        usuarioNuevo.id,
+        [rol.id],
+        USUARIO_NORMAL,
+        transaction
+      )
 
-        // this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
+      const codigo = TextService.generateUuid()
+      const urlActivacion = `${this.configService.get(
+        'URL_FRONTEND'
+      )}/activacion?q=${codigo}`
 
-        await this.actualizarDatosActivacion(
-          usuarioNuevo.id,
-          codigo,
-          USUARIO_NORMAL,
-          transaction
-        )
+      this.logger.info(`📩 urlActivacion: ${urlActivacion}`)
 
-        const template =
-          TemplateEmailService.armarPlantillaActivacionCuentaManual(
-            urlActivacion
+      await this.actualizarDatosActivacion(
+        usuarioNuevo.id,
+        codigo,
+        USUARIO_NORMAL,
+        transaction
+      )
+
+      const template =
+        TemplateEmailService.armarPlantillaActivacionCuentaManual(urlActivacion)
+
+      if (usuarioNuevo.correoElectronico) {
+        await this.mensajeriaService
+          .sendEmail(
+            usuarioNuevo.correoElectronico,
+            Messages.NEW_USER_ACCOUNT_VERIFY,
+            template
           )
-
-        if (usuarioNuevo.correoElectronico) {
-          await this.mensajeriaService
-            .sendEmail(
-              usuarioNuevo.correoElectronico,
-              Messages.NEW_USER_ACCOUNT_VERIFY,
-              template
-            )
-            .catch((err) => {
-              const mensaje = `Falló al enviar el correo de activación de cuenta`
-              this.logger.error(err, mensaje)
-            })
-        }
+          .catch((err) => {
+            const mensaje = `Falló al enviar el correo de activación de cuenta`
+            this.logger.error(err, mensaje)
+          })
       }
-
       return usuarioNuevo
     }
     return await this.usuarioRepositorio.runTransaction(op)
@@ -342,56 +373,91 @@ export class UsuarioService extends BaseService {
     usuarioDto: CrearUsuarioCiudadaniaDto,
     usuarioAuditoria: string
   ) {
-    const persona = new PersonaDto()
-    persona.nroDocumento = usuarioDto.usuario
-    const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
-    if (usuario) {
-      throw new PreconditionFailedException(Messages.EXISTING_USER)
-    }
-
-    usuarioDto.estado = Status.ACTIVE
-
     const op = async (transaction: EntityManager) => {
-      return await this.usuarioRepositorio.crear(
+      const persona = new PersonaDto()
+      persona.nroDocumento = usuarioDto.usuario
+      const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
+
+      if (usuario) {
+        throw new PreconditionFailedException(Messages.EXISTING_USER)
+      }
+
+      const personaResult = await this.personaRepositorio.crear(
+        persona,
+        usuarioAuditoria,
+        transaction
+      )
+
+      usuarioDto.estado = Status.ACTIVE
+
+      const usuarioResult = await this.usuarioRepositorio.crear(
+        personaResult.id,
         usuarioDto as CrearUsuarioDto,
         usuarioAuditoria,
         transaction
       )
+
+      const rol = await this.rolRepositorio.buscarPorNombreRol(
+        'USUARIO',
+        transaction
+      )
+
+      if (!rol) {
+        throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
+      }
+
+      await this.usuarioRolRepositorio.crear(
+        usuarioResult.id,
+        [rol.id],
+        usuarioAuditoria,
+        transaction
+      )
+
+      return usuarioResult
     }
     return await this.usuarioRepositorio.runTransaction(op)
   }
 
   async crearConPersonaExistente(
-    persona: PersonaDto,
+    idPersona: string,
+    nroDocumento: string,
     otrosDatos: { correoElectronico: string },
     usuarioAuditoria: string
   ) {
-    // verificar si el usuario ya fue registrado
-    const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
-      persona.nroDocumento
-    )
+    const op = async (transaction: EntityManager) => {
+      // verificar si el usuario ya fue registrado
+      const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
+        nroDocumento,
+        transaction
+      )
 
-    if (usuario) {
-      throw new PreconditionFailedException(Messages.EXISTING_USER)
+      if (usuario) {
+        throw new PreconditionFailedException(Messages.EXISTING_USER)
+      }
+
+      const rol = await this.rolRepositorio.buscarPorNombreRol(
+        'USUARIO',
+        transaction
+      )
+
+      if (!rol) {
+        throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
+      }
+
+      return await this.usuarioRepositorio.crear(
+        idPersona,
+        {
+          estado: Status.ACTIVE,
+          correoElectronico: otrosDatos?.correoElectronico,
+          ciudadaniaDigital: true,
+        },
+        usuarioAuditoria,
+        transaction
+      )
     }
 
-    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
+    const result = await this.usuarioRepositorio.runTransaction(op)
 
-    if (!rol) {
-      throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
-    }
-
-    const nuevoUsuario = {
-      estado: Status.ACTIVE,
-      correoElectronico: otrosDatos?.correoElectronico,
-      persona,
-      ciudadaniaDigital: true,
-      roles: [rol.id],
-    }
-    const result = await this.usuarioRepositorio.crearConPersonaExistente(
-      nuevoUsuario,
-      usuarioAuditoria
-    )
     return { id: result.id, estado: result.estado }
   }
 
@@ -400,38 +466,60 @@ export class UsuarioService extends BaseService {
     otrosDatos: { correoElectronico: string },
     usuarioAuditoria: string
   ) {
-    const persona = new PersonaDto()
-    // completar campos de Ciudadanía
-    persona.tipoDocumento = personaCiudadania.tipoDocumento
-    persona.nroDocumento = personaCiudadania.nroDocumento
-    persona.fechaNacimiento = personaCiudadania.fechaNacimiento
-    persona.nombres = personaCiudadania.nombres
-    persona.primerApellido = personaCiudadania.primerApellido
-    persona.segundoApellido = personaCiudadania.segundoApellido
-
-    const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
-      persona.nroDocumento
-    )
-    if (usuario) throw new PreconditionFailedException(Messages.EXISTING_USER)
-
-    const rol = await this.rolRepositorio.buscarPorNombreRol('USUARIO')
-
-    const nuevoUsuario: CrearUsuarioDto = {
-      usuario: personaCiudadania.nroDocumento,
-      estado: Status.ACTIVE,
-      correoElectronico: otrosDatos?.correoElectronico,
-      persona,
-      ciudadaniaDigital: true,
-      roles: rol?.id ? [rol?.id] : [],
-    }
-
     const op = async (transaction: EntityManager) => {
-      return await this.usuarioRepositorio.crear(
-        nuevoUsuario,
+      const persona = new PersonaDto()
+      // completar campos de Ciudadanía
+      persona.tipoDocumento = personaCiudadania.tipoDocumento
+      persona.nroDocumento = personaCiudadania.nroDocumento
+      persona.fechaNacimiento = personaCiudadania.fechaNacimiento
+      persona.nombres = personaCiudadania.nombres
+      persona.primerApellido = personaCiudadania.primerApellido
+      persona.segundoApellido = personaCiudadania.segundoApellido
+
+      const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
+        persona.nroDocumento,
+        transaction
+      )
+
+      if (usuario) throw new PreconditionFailedException(Messages.EXISTING_USER)
+
+      const rol = await this.rolRepositorio.buscarPorNombreRol(
+        'USUARIO',
+        transaction
+      )
+
+      if (!rol) {
+        throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
+      }
+
+      const nuevaPersona = await this.personaRepositorio.crear(
+        persona,
         usuarioAuditoria,
         transaction
       )
+
+      const nuevoUsuario = await this.usuarioRepositorio.crear(
+        nuevaPersona.id,
+        {
+          usuario: personaCiudadania.nroDocumento,
+          estado: Status.ACTIVE,
+          correoElectronico: otrosDatos?.correoElectronico,
+          ciudadaniaDigital: true,
+        },
+        usuarioAuditoria,
+        transaction
+      )
+
+      await this.usuarioRolRepositorio.crear(
+        nuevoUsuario.id,
+        [rol.id],
+        usuarioAuditoria,
+        transaction
+      )
+
+      return nuevoUsuario
     }
+
     const result = await this.usuarioRepositorio.runTransaction(op)
 
     return { id: result.id, estado: result.estado }
@@ -704,45 +792,93 @@ export class UsuarioService extends BaseService {
   ) {
     this.verificarPermisos(id, usuarioAuditoria)
     // 1. verificar que exista el usuario
-    const usuario = await this.usuarioRepositorio.buscarPorId(id)
+    const op = async (transaction: EntityManager) => {
+      const usuario = await this.usuarioRepositorio.buscarPorId(id, transaction)
 
-    if (!usuario) {
-      throw new NotFoundException(Messages.INVALID_USER)
-    }
-
-    const { correoElectronico, roles } = usuarioDto
-    // 2. verificar que el email no este registrado
-
-    if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
-      const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        correoElectronico
-      )
-      if (existe) {
-        throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+      if (!usuario) {
+        throw new NotFoundException(Messages.INVALID_USER)
       }
-      await this.usuarioRepositorio.actualizar(
-        id,
-        {
-          correoElectronico: correoElectronico,
-        },
-        usuarioAuditoria
-      )
+
+      const { persona } = usuarioDto
+
+      if (persona) {
+        //contrastación SEGIP
+
+        const contrastaSegip = await this.segipServices.contrastar(persona)
+        if (!contrastaSegip?.finalizado) {
+          throw new PreconditionFailedException(contrastaSegip?.mensaje)
+        }
+
+        const personaResult = await this.personaRepositorio.buscarPersonaId(
+          usuario.idPersona,
+          transaction
+        )
+        if (!personaResult) {
+          throw new PreconditionFailedException(Messages.INVALID_USER)
+        }
+
+        await this.usuarioRepositorio.ActualizarDatosPersonaId(
+          personaResult.id,
+          persona,
+          transaction
+        )
+      }
+
+      const { correoElectronico, roles, ciudadaniaDigital } = usuarioDto
+      // 2. verificar que el email no este registrado
+
+      if (
+        correoElectronico &&
+        correoElectronico !== usuario.correoElectronico
+      ) {
+        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+          correoElectronico,
+          transaction
+        )
+        if (existe) {
+          throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+        }
+        await this.usuarioRepositorio.actualizar(
+          id,
+          {
+            correoElectronico: correoElectronico,
+          },
+          usuarioAuditoria,
+          transaction
+        )
+      }
+
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        await this.actualizarRoles(id, roles, usuarioAuditoria, transaction)
+      }
+
+      if (ciudadaniaDigital) {
+        await this.usuarioRepositorio.actualizar(
+          id,
+          {
+            ciudadaniaDigital: ciudadaniaDigital,
+          },
+          usuarioAuditoria
+        )
+      }
+
+      return { id: usuario.id }
     }
 
-    if (roles.length > 0) {
-      // realizar reglas de roles
-      await this.actualizarRoles(id, roles, usuarioAuditoria)
-    }
-    return { id: usuario.id }
+    const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
+
+    return { id: usuarioResult.id }
   }
 
   async actualizarRoles(
     id: string,
     roles: Array<string>,
-    usuarioAuditoria: string
+    usuarioAuditoria: string,
+    transaccion?: EntityManager
   ) {
     const usuarioRoles =
-      await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id)
+      await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id, transaccion)
 
     const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
       usuarioRoles,
@@ -751,15 +887,30 @@ export class UsuarioService extends BaseService {
 
     // ACTIVAR roles inactivos
     if (inactivos.length > 0) {
-      await this.usuarioRolRepositorio.activar(id, inactivos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.activar(
+        id,
+        inactivos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
     // INACTIVAR roles activos
     if (activos.length > 0) {
-      await this.usuarioRolRepositorio.inactivar(id, activos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.inactivar(
+        id,
+        activos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
     // CREAR nuevos roles
     if (nuevos.length > 0) {
-      await this.usuarioRolRepositorio.crear(id, nuevos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.crear(
+        id,
+        nuevos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
   }
 
@@ -928,6 +1079,7 @@ export class UsuarioService extends BaseService {
     }
     return rol
   }
+
   async obtenerCodigoTest(idUser: string) {
     return await this.usuarioRepositorio.obtenerCodigoTest(idUser)
   }
