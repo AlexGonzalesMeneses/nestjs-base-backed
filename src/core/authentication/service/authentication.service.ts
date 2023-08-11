@@ -113,7 +113,7 @@ export class AuthenticationService extends BaseService {
       await this.generarIntentoBloqueo(respuesta)
       throw new UnauthorizedException(Messages.INVALID_USER_CREDENTIALS)
     }
-    // si se logra autenticar con exito => reiniciar contador de intentos a 0
+    // si se logra autenticar con éxito => reiniciar contador de intentos a 0
     if (respuesta.intentos > 0) {
       await this.usuarioService.actualizarContadorBloqueos(respuesta.id, 0)
     }
@@ -196,7 +196,9 @@ export class AuthenticationService extends BaseService {
 
   async validarOCrearUsuarioOidc(
     persona: PersonaDto,
-    datosUsuario: { correoElectronico: string }
+    datosUsuario: {
+      correoElectronico: string
+    }
   ) {
     const respuesta = await this.usuarioService.buscarUsuarioPorCI(persona)
 
@@ -226,10 +228,11 @@ export class AuthenticationService extends BaseService {
         }
       }
 
-      // Persona existe en base de datos, sólo crear usuario
+      // Persona existe en base de datos, solo crear usuario
       if (respPersona.estado === Status.INACTIVE) {
         throw new UnauthorizedException(Messages.INACTIVE_PERSON)
       }
+
       // Actualizar datos persona
       if (
         respPersona.nombres !== persona.nombres ||
@@ -241,12 +244,8 @@ export class AuthenticationService extends BaseService {
       }
       // Crear usuario y rol
       await this.usuarioService.crearConPersonaExistente(
-        {
-          ...respPersona,
-          nombres: respPersona.nombres ?? '',
-          primerApellido: respPersona.primerApellido ?? '',
-          segundoApellido: respPersona.segundoApellido ?? '',
-        },
+        respPersona.id,
+        respPersona.nroDocumento,
         datosUsuario,
         USUARIO_NORMAL
       )

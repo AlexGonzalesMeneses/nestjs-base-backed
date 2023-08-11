@@ -1,5 +1,5 @@
 import { UsuarioRol } from '../entity/usuario-rol.entity'
-import { DataSource } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { Usuario } from '../../usuario/entity/usuario.entity'
 import { Rol } from '../entity/rol.entity'
 import { Status } from '../../../common/constants'
@@ -57,7 +57,8 @@ export class UsuarioRolRepository {
   async crear(
     idUsuario: string,
     roles: Array<string>,
-    usuarioAuditoria: string
+    usuarioAuditoria: string,
+    transaction?: EntityManager
   ) {
     const usuarioRoles: UsuarioRol[] = roles.map((idRol) => {
       const usuario = new Usuario()
@@ -74,6 +75,9 @@ export class UsuarioRolRepository {
       return usuarioRol
     })
 
-    return await this.dataSource.getRepository(UsuarioRol).save(usuarioRoles)
+    return await (transaction
+      ? transaction.getRepository(UsuarioRol)
+      : this.dataSource.getRepository(UsuarioRol)
+    ).save(usuarioRoles)
   }
 }
