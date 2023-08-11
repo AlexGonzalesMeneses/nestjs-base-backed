@@ -1,8 +1,5 @@
 import { TextService } from '../../../common/lib/text.service'
-import { Rol } from '../../authorization/entity/rol.entity'
-import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 import { Persona } from '../entity/persona.entity'
-import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { Usuario } from '../entity/usuario.entity'
 import { PersonaDto } from '../dto/persona.dto'
 import { Status } from '../../../common/constants'
@@ -11,7 +8,7 @@ import { Injectable } from '@nestjs/common'
 import { Brackets, DataSource, EntityManager } from 'typeorm'
 import { ActualizarUsuarioDto } from '../dto/actualizar-usuario.dto'
 import dayjs from 'dayjs'
-//import { UpdateUsuarioDto } from '../dto/update-Usuario.dto'
+import { UsuarioDto } from '../dto/usuario.dto'
 
 @Injectable()
 export class UsuarioRepository {
@@ -159,9 +156,12 @@ export class UsuarioRepository {
       .getOne()
   }
 
-  async verificarExisteUsuarioPorCI(ci: string) {
-    return await this.dataSource
-      .getRepository(Usuario)
+  async verificarExisteUsuarioPorCI(ci: string, transaction: EntityManager) {
+    const repo = transaction
+      ? transaction.getRepository(Usuario)
+      : this.dataSource.getRepository(Usuario)
+
+    return await repo
       .createQueryBuilder('usuario')
       .leftJoin('usuario.persona', 'persona')
       .select('usuario.id')
@@ -180,22 +180,15 @@ export class UsuarioRepository {
   }
 
   async crear(
-    usuarioDto: CrearUsuarioDto,
+    idPersona: string,
+    usuarioDto: UsuarioDto,
     usuarioAuditoria: string,
     transaction: EntityManager
   ) {
-    const personaResult = await transaction.getRepository(Persona).save(
-      new Persona({
-        ...usuarioDto?.persona,
-        usuarioCreacion: usuarioAuditoria,
-      })
-    )
-
-    const usuarioResult = await transaction.getRepository(Usuario).save(
+    return await transaction.getRepository(Usuario).save(
       new Usuario({
-        idPersona: personaResult.id,
-        usuarioRol: [],
-        usuario: usuarioDto.usuario || usuarioDto?.persona?.nroDocumento, // TODO revisar usuario
+        idPersona: idPersona,
+        usuario: usuarioDto.usuario,
         estado: usuarioDto?.estado ?? Status.CREATE,
         correoElectronico: usuarioDto?.correoElectronico,
         contrasena:
@@ -205,29 +198,6 @@ export class UsuarioRepository {
         usuarioCreacion: usuarioAuditoria,
       })
     )
-
-    const usuarioRoles = usuarioDto.roles.map((idRol) => {
-      // Rol
-      const rol = new Rol()
-      rol.id = idRol
-
-      // UsuarioRol
-      const usuarioRol = new UsuarioRol()
-      usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
-      usuarioRol.idUsuario = usuarioResult.id
-
-      return usuarioRol
-    })
-
-    await transaction
-      .createQueryBuilder()
-      .insert()
-      .into(UsuarioRol)
-      .values(usuarioRoles)
-      .execute()
-
-    return usuarioResult
   }
 
   async actualizar(
@@ -250,40 +220,9 @@ export class UsuarioRepository {
         : undefined,
       codigoDesbloqueo: usuarioDto.codigoDesbloqueo,
       usuarioModificacion: usuarioAuditoria,
+      ciudadaniaDigital: usuarioDto.ciudadaniaDigital || undefined,
     })
     return await repo.update(idUsuario, datosActualizar)
-  }
-
-  async crearConPersonaExistente(
-    usuarioDto: CrearUsuarioDto,
-    usuarioAuditoria: string
-  ) {
-    const usuarioRoles = usuarioDto.roles.map((idRol) => {
-      // Rol
-      const rol = new Rol()
-      rol.id = idRol
-      const usuarioRol = new UsuarioRol()
-      usuarioRol.rol = rol
-      usuarioRol.usuarioCreacion = usuarioAuditoria
-
-      return usuarioRol
-    })
-
-    // Usuario
-
-    return await this.dataSource.getRepository(Usuario).save({
-      ...usuarioDto,
-      persona: usuarioDto.persona,
-      usuario: usuarioDto?.persona?.nroDocumento ?? usuarioDto.usuario,
-      estado: usuarioDto?.estado ?? Status.CREATE,
-      correoElectronico: usuarioDto?.correoElectronico,
-      contrasena:
-        usuarioDto?.contrasena ??
-        (await TextService.encrypt(TextService.generateUuid())),
-      ciudadaniaDigital: usuarioDto?.ciudadaniaDigital ?? false,
-      usuarioRol: usuarioRoles,
-      usuarioCreacion: usuarioAuditoria,
-    })
   }
 
   async actualizarContadorBloqueos(idUsuario: string, intento: number) {
@@ -409,9 +348,9 @@ export class UsuarioRepository {
     return this.dataSource.manager.transaction<T>(op)
   }
 
-  async UpdateDatosPersona(
-    persona: PersonaDto,
+  async ActualizarDatosPersonaId(
     idPersona: string,
+    persona: PersonaDto,
     transaction?: EntityManager
   ) {
     const datosActualizar = new Persona({
@@ -428,5 +367,14 @@ export class UsuarioRepository {
         id: idPersona,
       })
       .execute()
+  }
+
+  async obtenerCodigoTest(idUsuario: string) {
+    return await this.dataSource
+      .getRepository(Usuario)
+      .createQueryBuilder('usuario')
+      .select(['usuario.codigoActivacion', 'usuario.codigoDesbloqueo'])
+      .where({ id: idUsuario })
+      .getOne()
   }
 }

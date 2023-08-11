@@ -4,6 +4,7 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   ValidateIf,
   ValidateNested,
 } from '../../../common/validation'
@@ -24,4 +25,7 @@ export class ActualizarUsuarioRolDto {
   @IsArray()
   @ValidateIf((o) => !o.correoElectronico)
   roles: Array<string>
+
+  @IsOptional()
+  ciudadaniaDigital?: boolean
 }
