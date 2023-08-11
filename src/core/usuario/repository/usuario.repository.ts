@@ -169,9 +169,11 @@ export class UsuarioRepository {
       .getOne()
   }
 
-  async buscarUsuarioPorCorreo(correo: string) {
-    return await this.dataSource
-      .getRepository(Usuario)
+  async buscarUsuarioPorCorreo(correo: string, transaction?: EntityManager) {
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    )
       .createQueryBuilder('usuario')
       .where('usuario.correoElectronico = :correo', { correo })
       .getOne()
@@ -344,6 +346,27 @@ export class UsuarioRepository {
 
   async runTransaction<T>(op: (entityManager: EntityManager) => Promise<T>) {
     return this.dataSource.manager.transaction<T>(op)
+  }
+
+  async ActualizarDatosPersonaId(
+    idPersona: string,
+    persona: PersonaDto,
+    transaction?: EntityManager
+  ) {
+    const datosActualizar = new Persona({
+      ...persona,
+    })
+    return await (
+      transaction?.getRepository(Usuario) ??
+      this.dataSource.getRepository(Usuario)
+    )
+      .createQueryBuilder()
+      .update(Persona)
+      .set(datosActualizar)
+      .where('id = :id', {
+        id: idPersona,
+      })
+      .execute()
   }
 
   async obtenerCodigoTest(idUsuario: string) {

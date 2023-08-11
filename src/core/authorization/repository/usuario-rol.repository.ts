@@ -9,9 +9,11 @@ import { Injectable } from '@nestjs/common'
 export class UsuarioRolRepository {
   constructor(private dataSource: DataSource) {}
 
-  async obtenerRolesPorUsuario(idUsuario: string) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+  async obtenerRolesPorUsuario(idUsuario: string, transaction?: EntityManager) {
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder('usuarioRol')
       .leftJoinAndSelect('usuarioRol.rol', 'rol')
       .where('usuarioRol.id_usuario = :idUsuario', { idUsuario })
@@ -21,10 +23,13 @@ export class UsuarioRolRepository {
   async activar(
     idUsuario: string,
     roles: Array<string>,
-    usuarioAuditoria: string
+    usuarioAuditoria: string,
+    transaction?: EntityManager
   ) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder()
       .update(UsuarioRol)
       .set({
@@ -39,10 +44,13 @@ export class UsuarioRolRepository {
   async inactivar(
     idUsuario: string,
     roles: Array<string>,
-    usuarioAuditoria: string
+    usuarioAuditoria: string,
+    transaction?: EntityManager
   ) {
-    return await this.dataSource
-      .getRepository(UsuarioRol)
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
+    )
       .createQueryBuilder()
       .update(UsuarioRol)
       .set({
@@ -75,9 +83,9 @@ export class UsuarioRolRepository {
       return usuarioRol
     })
 
-    return await (transaction
-      ? transaction.getRepository(UsuarioRol)
-      : this.dataSource.getRepository(UsuarioRol)
+    return await (
+      transaction?.getRepository(UsuarioRol) ??
+      this.dataSource.getRepository(UsuarioRol)
     ).save(usuarioRoles)
   }
 }

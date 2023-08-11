@@ -42,12 +42,12 @@ export class UsuarioService extends BaseService {
   constructor(
     @Inject(UsuarioRepository)
     private usuarioRepositorio: UsuarioRepository,
-    @Inject(PersonaRepository)
-    private personaRepositorio: PersonaRepository,
     @Inject(UsuarioRolRepository)
     private usuarioRolRepositorio: UsuarioRolRepository,
     @Inject(RolRepository)
     private rolRepositorio: RolRepository,
+    @Inject(PersonaRepository)
+    private personaRepositorio: PersonaRepository,
     private readonly mensajeriaService: MensajeriaService,
     private readonly authorizationService: AuthorizationService,
     private readonly segipServices: SegipService,
@@ -774,55 +774,93 @@ export class UsuarioService extends BaseService {
   ) {
     this.verificarPermisos(id, usuarioAuditoria)
     // 1. verificar que exista el usuario
-    const usuario = await this.usuarioRepositorio.buscarPorId(id)
+    const op = async (transaction: EntityManager) => {
+      const usuario = await this.usuarioRepositorio.buscarPorId(id, transaction)
 
-    if (!usuario) {
-      throw new NotFoundException(Messages.INVALID_USER)
-    }
-
-    const { correoElectronico, roles, ciudadaniaDigital } = usuarioDto
-    // 2. verificar que el email no este registrado
-
-    if (correoElectronico && correoElectronico !== usuario.correoElectronico) {
-      const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
-        correoElectronico
-      )
-      if (existe) {
-        throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+      if (!usuario) {
+        throw new NotFoundException(Messages.INVALID_USER)
       }
-      await this.usuarioRepositorio.actualizar(
-        id,
-        {
-          correoElectronico: correoElectronico,
-        },
-        usuarioAuditoria
-      )
+
+      const { persona } = usuarioDto
+
+      if (persona) {
+        //contrastación SEGIP
+
+        const contrastaSegip = await this.segipServices.contrastar(persona)
+        if (!contrastaSegip?.finalizado) {
+          throw new PreconditionFailedException(contrastaSegip?.mensaje)
+        }
+
+        const personaResult = await this.personaRepositorio.buscarPersonaId(
+          usuario.idPersona,
+          transaction
+        )
+        if (!personaResult) {
+          throw new PreconditionFailedException(Messages.INVALID_USER)
+        }
+
+        await this.usuarioRepositorio.ActualizarDatosPersonaId(
+          personaResult.id,
+          persona,
+          transaction
+        )
+      }
+
+      const { correoElectronico, roles, ciudadaniaDigital } = usuarioDto
+      // 2. verificar que el email no este registrado
+
+      if (
+        correoElectronico &&
+        correoElectronico !== usuario.correoElectronico
+      ) {
+        const existe = await this.usuarioRepositorio.buscarUsuarioPorCorreo(
+          correoElectronico,
+          transaction
+        )
+        if (existe) {
+          throw new PreconditionFailedException(Messages.EXISTING_EMAIL)
+        }
+        await this.usuarioRepositorio.actualizar(
+          id,
+          {
+            correoElectronico: correoElectronico,
+          },
+          usuarioAuditoria,
+          transaction
+        )
+      }
+
+      if (roles.length > 0) {
+        // realizar reglas de roles
+        await this.actualizarRoles(id, roles, usuarioAuditoria, transaction)
+      }
+
+      if (ciudadaniaDigital) {
+        await this.usuarioRepositorio.actualizar(
+          id,
+          {
+            ciudadaniaDigital: ciudadaniaDigital,
+          },
+          usuarioAuditoria
+        )
+      }
+
+      return { id: usuario.id }
     }
 
-    if (ciudadaniaDigital) {
-      await this.usuarioRepositorio.actualizar(
-        id,
-        {
-          ciudadaniaDigital: ciudadaniaDigital,
-        },
-        usuarioAuditoria
-      )
-    }
+    const usuarioResult = await this.usuarioRepositorio.runTransaction(op)
 
-    if (roles.length > 0) {
-      // realizar reglas de roles
-      await this.actualizarRoles(id, roles, usuarioAuditoria)
-    }
-    return { id: usuario.id }
+    return { id: usuarioResult.id }
   }
 
   async actualizarRoles(
     id: string,
     roles: Array<string>,
-    usuarioAuditoria: string
+    usuarioAuditoria: string,
+    transaccion?: EntityManager
   ) {
     const usuarioRoles =
-      await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id)
+      await this.usuarioRolRepositorio.obtenerRolesPorUsuario(id, transaccion)
 
     const { inactivos, activos, nuevos } = this.verificarUsuarioRoles(
       usuarioRoles,
@@ -831,15 +869,30 @@ export class UsuarioService extends BaseService {
 
     // ACTIVAR roles inactivos
     if (inactivos.length > 0) {
-      await this.usuarioRolRepositorio.activar(id, inactivos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.activar(
+        id,
+        inactivos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
     // INACTIVAR roles activos
     if (activos.length > 0) {
-      await this.usuarioRolRepositorio.inactivar(id, activos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.inactivar(
+        id,
+        activos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
     // CREAR nuevos roles
     if (nuevos.length > 0) {
-      await this.usuarioRolRepositorio.crear(id, nuevos, usuarioAuditoria)
+      await this.usuarioRolRepositorio.crear(
+        id,
+        nuevos,
+        usuarioAuditoria,
+        transaccion
+      )
     }
   }
 

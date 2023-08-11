@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   CorreoLista,
   IsArray,
@@ -5,9 +6,15 @@ import {
   IsNotEmpty,
   IsOptional,
   ValidateIf,
+  ValidateNested,
 } from '../../../common/validation'
+import { PersonaDto } from './persona.dto'
 
 export class ActualizarUsuarioRolDto {
+  @ValidateNested()
+  @Type(() => PersonaDto)
+  persona?: PersonaDto
+
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()

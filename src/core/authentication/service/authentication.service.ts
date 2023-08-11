@@ -180,9 +180,9 @@ export class AuthenticationService extends BaseService {
 
     // actualizar datos persona
     if (
-      datosPersona.nombres !== persona.nombres &&
-      datosPersona.primerApellido !== persona.primerApellido &&
-      datosPersona.segundoApellido !== persona.segundoApellido &&
+      datosPersona.nombres !== persona.nombres ||
+      datosPersona.primerApellido !== persona.primerApellido ||
+      datosPersona.segundoApellido !== persona.segundoApellido ||
       datosPersona.fechaNacimiento !== persona.fechaNacimiento
     ) {
       await this.usuarioService.actualizarDatosPersona(persona)
