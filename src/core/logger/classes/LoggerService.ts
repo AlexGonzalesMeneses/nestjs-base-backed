@@ -1,10 +1,17 @@
 import dayjs from 'dayjs'
 import { Logger, pino } from 'pino'
-import { COLOR, DEFAULT_PARAMS, LOG_COLOR, LOG_LEVEL } from '../constants'
+import {
+  COLOR,
+  DEFAULT_PARAMS,
+  LOG_AUDIT_COLOR,
+  LOG_COLOR,
+  LOG_LEVEL,
+} from '../constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
 import {
   AuditOptions,
+  AuditType,
   BaseAuditOptions,
   BaseExceptionOptions,
   BaseLogOptions,
@@ -18,6 +25,7 @@ import { getContext } from '../utilities'
 import { BaseException } from './BaseException'
 import { BaseAudit } from './BaseAudit'
 import { BaseLog } from './BaseLog'
+import { inspect } from 'util'
 
 export class LoggerService {
   private static CONSOLA_HABILITADA = true
@@ -280,7 +288,71 @@ export class LoggerService {
     ) {
       return
     }
-    const auditInfo = LoggerService.buildAudit(contexto, ...args)
+    const auditInfo = LoggerService.buildAudit('none', contexto, ...args)
+    this.printAudit(auditInfo)
+  }
+
+  auditError(contexto: string, mensaje: string): void
+  auditError(contexto: string, mensaje: string, metadata: Metadata): void
+  auditError(contexto: string, opt: AuditOptions): void
+  auditError(contexto: string, ...args: unknown[]): void {
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (
+      !pinoLogger ||
+      !pinoLogger.isLevelEnabled(contexto) ||
+      !LoggerService.loggerParams?._audit.includes(contexto)
+    ) {
+      return
+    }
+    const auditInfo = LoggerService.buildAudit('error', contexto, ...args)
+    this.printAudit(auditInfo)
+  }
+
+  auditWarning(contexto: string, mensaje: string): void
+  auditWarning(contexto: string, mensaje: string, metadata: Metadata): void
+  auditWarning(contexto: string, opt: AuditOptions): void
+  auditWarning(contexto: string, ...args: unknown[]): void {
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (
+      !pinoLogger ||
+      !pinoLogger.isLevelEnabled(contexto) ||
+      !LoggerService.loggerParams?._audit.includes(contexto)
+    ) {
+      return
+    }
+    const auditInfo = LoggerService.buildAudit('warning', contexto, ...args)
+    this.printAudit(auditInfo)
+  }
+
+  auditSuccess(contexto: string, mensaje: string): void
+  auditSuccess(contexto: string, mensaje: string, metadata: Metadata): void
+  auditSuccess(contexto: string, opt: AuditOptions): void
+  auditSuccess(contexto: string, ...args: unknown[]): void {
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (
+      !pinoLogger ||
+      !pinoLogger.isLevelEnabled(contexto) ||
+      !LoggerService.loggerParams?._audit.includes(contexto)
+    ) {
+      return
+    }
+    const auditInfo = LoggerService.buildAudit('success', contexto, ...args)
+    this.printAudit(auditInfo)
+  }
+
+  auditInfo(contexto: string, mensaje: string): void
+  auditInfo(contexto: string, mensaje: string, metadata: Metadata): void
+  auditInfo(contexto: string, opt: AuditOptions): void
+  auditInfo(contexto: string, ...args: unknown[]): void {
+    const pinoLogger = LoggerService.auditPinoInstance
+    if (
+      !pinoLogger ||
+      !pinoLogger.isLevelEnabled(contexto) ||
+      !LoggerService.loggerParams?._audit.includes(contexto)
+    ) {
+      return
+    }
+    const auditInfo = LoggerService.buildAudit('info', contexto, ...args)
     this.printAudit(auditInfo)
   }
 
@@ -374,18 +446,24 @@ export class LoggerService {
     }
   }
 
-  private static buildAudit(contexto: string, ...args: unknown[]): BaseAudit {
+  private static buildAudit(
+    tipo: AuditType,
+    contexto: string,
+    ...args: unknown[]
+  ): BaseAudit {
     // 1ra forma - (contexto: string, mensaje: string) => BaseAudit
-    if (arguments.length === 2 && typeof args[0] === 'string') {
+    if (arguments.length === 3 && typeof args[0] === 'string') {
       return new BaseAudit({
+        tipo,
         contexto,
         mensaje: args[0],
       })
     }
 
     // 2da forma - (contexto: string, mensaje: string, metadata: Metadata) => BaseAudit
-    else if (arguments.length === 3 && typeof args[0] === 'string') {
+    else if (arguments.length === 4 && typeof args[0] === 'string') {
       return new BaseAudit({
+        tipo,
         contexto,
         mensaje: args[0],
         metadata: args[1] as Metadata,
@@ -396,6 +474,7 @@ export class LoggerService {
     else {
       return new BaseAudit({
         ...(args[0] as BaseAuditOptions),
+        tipo,
         contexto,
       })
     }
@@ -483,9 +562,9 @@ export class LoggerService {
   }
 
   private printToConsole(level: LOG_LEVEL, msg: string, caller: string): void {
-    const color = this.getColor(level)
+    const color = LOG_COLOR[level]
     const time = dayjs().format('HH:mm:ss.SSS')
-    const cTime = `${COLOR.LIGHT_GREY}${time}${COLOR.RESET}`
+    const cTime = `${COLOR.RESET}${time}${COLOR.RESET}`
     const cLevel = `${color}[${level.toUpperCase()}]${COLOR.RESET}`
     const cCaller = `${COLOR.RESET}${caller}${COLOR.RESET}`
 
@@ -496,26 +575,40 @@ export class LoggerService {
   }
 
   private printAuditToConsole(info: BaseAudit): void {
+    const colorPrimario = LOG_AUDIT_COLOR[info.tipo]
+    const colorSecundario = colorPrimario
+
     const metadata = info.metadata || {}
-    const msg = info.mensaje ? info.mensaje : ''
     const time = dayjs().format('HH:mm:ss.SSS')
-    const cTime = `${COLOR.LIGHT_GREY}${time}${COLOR.RESET}`
-    const cLevel = `${COLOR.RESET}[${info.contexto}]${COLOR.RESET}`
-    const cMsg = `${COLOR.CYAN}${msg}${COLOR.RESET}`
-    const cValues = Object.keys(metadata)
-      .filter((key) => typeof metadata[key] !== 'undefined')
-      .map(
-        (key) =>
-          `${COLOR.LIGHT_GREY}${key}=${COLOR.RESET}${String(metadata[key])}`
-      )
-      .join(' ')
+    const timeColor = info.tipo === 'none' ? COLOR.LIGHT_GREY : COLOR.RESET
+    const cTime = `${timeColor}${time}${COLOR.RESET}`
 
-    stdoutWrite('\n')
-    stdoutWrite(`${cTime} ${cLevel} ${cMsg} ${cValues}\n`)
-    stdoutWrite(COLOR.RESET)
-  }
+    // FORMATO PERSONALIZADO
+    if (info.formato) {
+      const msg = info.formato
+      const cLevel = `${colorPrimario}[${info.contexto}]${COLOR.RESET}`
+      const cMsg = `${colorSecundario}${msg}${COLOR.RESET}`
+      stdoutWrite('\n')
+      stdoutWrite(`${cTime} ${cLevel} ${cMsg}\n`)
+      stdoutWrite(COLOR.RESET)
+    }
 
-  private getColor(level: LOG_LEVEL): string {
-    return LOG_COLOR[level]
+    // FORMATO POR DEFECTO
+    else {
+      const msg = info.mensaje ? info.mensaje : ''
+      const cLevel = `${colorPrimario}[${info.contexto}]${COLOR.RESET}`
+      const cMsg = `${timeColor}${msg}${COLOR.RESET}`
+      const cValues = Object.keys(metadata)
+        .filter((key) => typeof metadata[key] !== 'undefined')
+        .map((key) => {
+          const value = inspect(metadata[key], false, null, false)
+          const cValue = value.replace(/\n/g, `\n${colorSecundario}`)
+          return `${COLOR.LIGHT_GREY}${key}=${colorSecundario}${cValue}`
+        })
+        .join(' ')
+      stdoutWrite('\n')
+      stdoutWrite(`${cTime} ${cLevel} ${cMsg} ${cValues}\n`)
+      stdoutWrite(COLOR.RESET)
+    }
   }
 }

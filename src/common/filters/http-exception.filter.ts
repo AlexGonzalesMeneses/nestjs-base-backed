@@ -47,6 +47,22 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
       }
     }
 
+    if (errorResult.codigo >= 500) {
+      this.logger.auditError('http-exception', {
+        metadata: {
+          codigo: errorResult.codigo,
+          mensaje: errorResult.mensaje,
+        },
+      })
+    } else {
+      this.logger.auditWarning('http-exception', {
+        metadata: {
+          codigo: errorResult.codigo,
+          mensaje: errorResult.mensaje,
+        },
+      })
+    }
+
     response.status(errorResult.codigo).json(errorResult)
   }
 }

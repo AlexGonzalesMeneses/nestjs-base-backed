@@ -1,4 +1,4 @@
-import { AuditEntry, BaseAuditOptions, Metadata } from '../types'
+import { AuditEntry, AuditType, BaseAuditOptions, Metadata } from '../types'
 import { getReqID } from '../utilities'
 
 export class BaseAudit {
@@ -13,19 +13,26 @@ export class BaseAudit {
   mensaje?: string
 
   /**
-   * Fecha en la que se registró el mensaje (YYYY-MM-DD HH:mm:ss.SSS)
-   */
-  fecha: string
-
-  /**
    * Objeto que contiene información adicional
    */
   metadata?: Metadata
+
+  /**
+   * Mensaje para la consola (Advertencia: Este dato NO SE GUARDA EN LOS FICHEROS DE LOGS)
+   */
+  formato?: string
+
+  /**
+   * Indica el tipo de resaltado del mensaje por consola
+   */
+  tipo: AuditType
 
   constructor(opt: BaseAuditOptions) {
     this.contexto = opt.contexto
     this.mensaje = opt.mensaje
     this.metadata = opt.metadata
+    this.formato = opt.formato
+    this.tipo = opt.tipo || 'none'
   }
 
   getLogEntry(): AuditEntry {
@@ -33,7 +40,7 @@ export class BaseAudit {
       // level: 10,
       // time: Date.now(),
       context: this.contexto,
-      reqId: getReqID(),
+      reqId: getReqID() || undefined,
       pid: process.pid,
     }
 

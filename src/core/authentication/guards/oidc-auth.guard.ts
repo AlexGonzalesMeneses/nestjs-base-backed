@@ -38,7 +38,10 @@ export class OidcAuthGuard extends AuthGuard('oidc') {
 
     this.logger.audit('authentication', {
       mensaje: 'Ingresó al sistema',
-      metadata: { usuario: user.id, tipo: 'ciudadanía' },
+      metadata: {
+        tipo: 'CIUDADANÍA',
+        usuario: user.id,
+      },
     })
 
     return true

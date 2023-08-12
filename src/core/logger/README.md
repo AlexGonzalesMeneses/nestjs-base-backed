@@ -208,5 +208,15 @@ logger.audit('application', mensaje, metadata)
 logger.audit('application', {
   mensaje,
   metadata,
+  formato, // Para darle formato cuando se imprime en la consola
 })
+```
+
+Además se incluyen tipos de auditoría para diferenciarlos cuando se imprimen por la consola, no tiene ningún efecto en los ficheros de logs.
+
+```ts
+logger.auditError('application', mensaje)
+logger.auditWarning('application', mensaje)
+logger.auditSuccess('application', mensaje)
+logger.auditInfo('application', mensaje)
 ```

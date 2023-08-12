@@ -14,20 +14,22 @@ export class LoggerMiddleware implements NestMiddleware {
         method: req.method,
         url,
       },
+      formato: `${req.method} ${url}`,
     })
 
     res.on('finish', () => {
       const t2 = Date.now()
       const statusCode = res.statusCode
       const elapsedTime = (t2 - t1) / 1000
-      logger.audit('response', {
+      logger.auditInfo('response', {
         metadata: {
+          code: statusCode,
+          elapsedTime,
           method: req.method,
           url,
-          code: statusCode,
-          time: elapsedTime,
           usuario: req.user?.id,
         },
+        formato: `${req.method} ${url} ${statusCode} - ${elapsedTime} seg.`,
       })
     })
 
