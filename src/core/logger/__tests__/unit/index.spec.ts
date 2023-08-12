@@ -41,6 +41,10 @@ const loggerOptions: LoggerOptions = {
 describe('Logger prueba unitaria', () => {
   beforeAll(async () => {
     await createLogFile('trace.log')
+    await createLogFile('debug.log')
+    await createLogFile('info.log')
+    await createLogFile('warn.log')
+    await createLogFile('error.log')
     await createLogFile('audit_application.log')
     LoggerService.initialize(loggerOptions)
     await delay()

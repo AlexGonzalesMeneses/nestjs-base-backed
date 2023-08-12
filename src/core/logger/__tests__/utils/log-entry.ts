@@ -39,7 +39,7 @@ export const readLogFile = <T>(filename: string) => {
 
   return {
     getEntry: (line: number) => {
-      process.stdout.write(`\n[readLogFile] ${filename} line: ${line}\n`)
+      // process.stdout.write(`\n[readLogFile] ${filename} line: ${line}\n`)
       return rows[line - 1]
     },
     getValue: (fromLine?: number) => {

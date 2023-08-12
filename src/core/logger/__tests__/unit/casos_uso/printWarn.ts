@@ -14,8 +14,8 @@ export async function printWarn() {
   })
   await delay()
 
-  const zeroLine = 5
-  const logFile = readLogFile<LogEntry>('trace.log')
+  const zeroLine = 0
+  const logFile = readLogFile<LogEntry>('warn.log')
   expect(logFile.getValue(zeroLine + 1)).toHaveLength(4)
 
   const firstEntry = logFile.getEntry(zeroLine + 1)
