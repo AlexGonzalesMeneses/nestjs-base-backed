@@ -29,7 +29,7 @@ export class BaseLog {
   appName: string
 
   /**
-   * Identificador del módulo. Ej: SEGIP, SIN, MENSAJERÍA
+   * Identificador del módulo. Ej.: SEGIP, SIN, MENSAJERÍA
    */
   modulo: string
 
@@ -50,10 +50,9 @@ export class BaseLog {
     const appName = loggerParams?.appName || ''
     const modulo = ''
     const mensaje = ''
-    const fecha = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
 
     // GUARDAMOS LOS DATOS
-    this.fecha = fecha
+    this.fecha = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
     this.level = opt && typeof opt.level !== 'undefined' ? opt.level : level
     this.mensaje =
       opt && typeof opt.mensaje !== 'undefined' ? opt.mensaje : mensaje

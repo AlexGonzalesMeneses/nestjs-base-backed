@@ -11,7 +11,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { UsuarioService } from '../service/usuario.service'

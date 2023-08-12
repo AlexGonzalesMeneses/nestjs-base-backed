@@ -1,17 +1,17 @@
 import dayjs from 'dayjs'
-import { pino, Logger } from 'pino'
+import { Logger, pino } from 'pino'
 import { COLOR, DEFAULT_PARAMS, LOG_COLOR, LOG_LEVEL } from '../constants'
 import fastRedact from 'fast-redact'
 import { LoggerConfig } from './LoggerConfig'
 import {
+  AuditOptions,
+  BaseAuditOptions,
   BaseExceptionOptions,
-  Metadata,
+  BaseLogOptions,
   LoggerOptions,
   LoggerParams,
-  BaseAuditOptions,
-  BaseLogOptions,
   LogOptions,
-  AuditOptions,
+  Metadata,
 } from '../types'
 import { printLoggerParams, stdoutWrite } from '../tools'
 import { getContext } from '../utilities'
@@ -154,8 +154,7 @@ export class LoggerService {
     if (LoggerService.loggerInstance) {
       return LoggerService.loggerInstance
     }
-    const logger = new LoggerService()
-    LoggerService.loggerInstance = logger
+    LoggerService.loggerInstance = new LoggerService()
     return LoggerService.loggerInstance
   }
 

@@ -205,8 +205,8 @@ entorno `LOG_SQL=true` o temporalmente levantando la aplicación con el comando 
 |---------------------------|-------------------|------------------------------------------------------------------------------------------|
 | `LOG_LEVEL`               | `info`            | Nivel de logs (en PRODUCCIÓN utilizar el valor `info`)                                   |
 | `LOG_AUDIT`               | `application ...` | Habilita los logs de auditoria.                                                          |
-| `LOG_CONSOLE`             | `false`            | Indica si se mostrarán los logs en la terminal (en PRODUCCIÓN utilizar el valor `false`) |
-| `LOG_SQL`                 | `false`            | Habilita los logs SQL (en PRODUCCIÓN utilizar el valor `false`)                          |
+| `LOG_CONSOLE`             | `false`           | Indica si se mostrarán los logs en la terminal (en PRODUCCIÓN utilizar el valor `false`) |
+| `LOG_SQL`                 | `false`           | Habilita los logs SQL (en PRODUCCIÓN utilizar el valor `false`)                          |
 | `LOG_PATH`                |                   | Ruta absoluta de la carpeta logs. Si esta vacio no se crearán los archvos.               |
 | `LOG_SIZE`                | `50M`             | Para los ficheros de logs es el tamaño máximo que estos pueden llegar a pesar.           |
 | `LOG_INTERVAL`            | `7d`              | Para los ficheros de logs es el intervalo de tiempo para rotar los ficheros.             |

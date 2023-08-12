@@ -1,7 +1,7 @@
 import { BaseException } from '../../core/logger'
 import { ArgumentsHost, Catch } from '@nestjs/common'
 import { Request, Response } from 'express'
-import { BaseExceptionFilter } from '../base/base-exception-filter'
+import { BaseExceptionFilter } from '../base'
 import { ErrorResponseDto } from '../dto/error-response.dto'
 
 @Catch()

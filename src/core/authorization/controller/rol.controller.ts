@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { RolService } from '../service/rol.service'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearRolDto } from '../dto/crear-rol.dto'

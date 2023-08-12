@@ -180,7 +180,7 @@ export function cleanParamValue(
 }
 
 function isAxiosResponse(data: unknown) {
-  const result = Boolean(
+  return Boolean(
     data &&
       typeof data === 'object' &&
       'data' in data &&
@@ -194,11 +194,10 @@ function isAxiosResponse(data: unknown) {
       'config' in data &&
       typeof data.config !== 'undefined'
   )
-  return result
 }
 
 function isAxiosRequest(data: unknown) {
-  const result = Boolean(
+  return Boolean(
     data &&
       typeof data === 'object' &&
       'path' in data &&
@@ -212,7 +211,6 @@ function isAxiosRequest(data: unknown) {
       'res' in data &&
       typeof data.res !== 'undefined'
   )
-  return result
 }
 
 export function isAxiosError(data: unknown): boolean {

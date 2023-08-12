@@ -148,12 +148,12 @@ Algunos errores que pueden presentarse de manera imprevista son los siguientes:
 **Ejemplo 1:** Cuando una consulta SQL no se encuentra bien formulada:
 
 ```ts
-async recuperar() {
+async function recuperar() {
   return await this.dataSource
     .getRepository(Usuario)
-    .createQueryBuilder('usuario')
-    .leftJoinAndSelect('usuario.relacioninexistente', 'relacioninexistente')
-    .getMany()
+    .createQueryBuilder("usuario")
+    .leftJoinAndSelect("usuario.relacioninexistente", "relacioninexistente")
+    .getMany();
 }
 ```
 

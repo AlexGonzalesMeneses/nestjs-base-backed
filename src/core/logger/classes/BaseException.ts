@@ -31,12 +31,12 @@ export class BaseException extends Error {
   metadata: Metadata
 
   /**
-   * Identificador de la aplicación. Ej: app-backend | app-frontend | node-script
+   * Identificador de la aplicación. Ej.: app-backend | app-frontend | node-script
    */
   appName: string
 
   /**
-   * Identificador del módulo. Ej: SEGIP, SIN, MENSAJERÍA
+   * Identificador del módulo. Ej.: SEGIP, SIN, MENSAJERÍA
    */
   modulo: string
 
@@ -51,12 +51,12 @@ export class BaseException extends Error {
   traceStack: string
 
   /**
-   * Código que indica el tipo de error detectado
+   * Código que índica el tipo de error detectado
    */
   codigo: ERROR_CODE
 
   /**
-   * Código HTTP en caso de que el tipo de excepción sea HTTP
+   * Código de respuesta HTTP en caso de que la excepción sea del tipo correspondiente
    */
   httpStatus: HttpStatus
 
@@ -81,12 +81,12 @@ export class BaseException extends Error {
   causa: string
 
   /**
-   * Ruta del archivo que originó el error (Ej: .../src/main.ts:24:4)
+   * Ruta del archivo que originó el error (Ej.: .../src/main.ts:24:4)
    */
   origen: string
 
   /**
-   * Mensaje que indica cómo resolver el error en base a la causa detectada
+   * Mensaje que índica cómo resolver el error con base en la causa detectada
    */
   accion: string
 
@@ -253,7 +253,7 @@ export class BaseException extends Error {
           : httpStatus === HttpStatus.NOT_FOUND
           ? 'Verifique que el recurso solicitado realmente exista'
           : httpStatus === HttpStatus.REQUEST_TIMEOUT
-          ? 'Verifique que el servicio responda en un tiempo menor al tiempo máximo de espera establecido en la variable de entorno REQUEST_TIMEOUT_IN_SECONDS'
+          ? 'Verífica que el servicio responda en un tiempo inferior al máximo establecido de espera en la variable de entorno REQUEST_TIMEOUT_IN_SECONDS'
           : httpStatus === HttpStatus.PRECONDITION_FAILED
           ? 'Verifique que se cumpla con todas las condiciones requeridas para consumir este recurso'
           : 'Más info en detalles'

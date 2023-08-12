@@ -13,7 +13,7 @@ import {
 import { Request, Response } from 'express'
 import { Issuer } from 'openid-client'
 import { CookieService } from '../../../common/lib/cookie.service'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { AuthenticationService } from '../service/authentication.service'

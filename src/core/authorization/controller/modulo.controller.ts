@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'

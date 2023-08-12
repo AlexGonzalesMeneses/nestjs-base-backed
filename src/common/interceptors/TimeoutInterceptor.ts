@@ -1,8 +1,8 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
   RequestTimeoutException,
 } from '@nestjs/common'
 import { Observable, throwError, TimeoutError } from 'rxjs'
@@ -10,6 +10,7 @@ import { catchError, timeout } from 'rxjs/operators'
 import { Request } from 'express'
 
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 const DEFAULT_REQUEST_TIMEOUT_IN_SECONDS = '30'
