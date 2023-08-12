@@ -220,14 +220,6 @@ entorno `LOG_SQL=true` o temporalmente levantando la aplicación con el comando 
 
 - `LOG_LEVEL` acepta los valores `error`, `warn`, `info`, `debug` y `trace`. (en PROD se recomienda el valor de `info`)
 
-  Por ejemplo:
-
-    - Si `LOG_LEVEL=error`, en el archivo `app_trace.log` se registrarán logs de tipo `error`.
-    - Si `LOG_LEVEL=warn`, en el archivo `app_trace.log` se registrarán logs de tipo `error` y `warn`.
-    - Si `LOG_LEVEL=info`, en el archivo `app_trace.log` se registrarán logs de tipo `error`, `warn` e `info`.
-
-  Y así sucesivamente en el siguiente orden: `error > warn > info > debug > trace`
-
 - `LOG_AUDIT` acepta valores separados por espacios en blanco.
 
   Por Ejemplo:

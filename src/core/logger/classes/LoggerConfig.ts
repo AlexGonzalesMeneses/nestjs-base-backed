@@ -19,7 +19,7 @@ export class LoggerConfig {
         )
       : []
     const lokiStream = LoggerConfig.lokiStream(loggerParams)
-    return multistream([...streamDisk, ...lokiStream])
+    return multistream([...streamDisk, ...lokiStream], { dedupe: true })
   }
 
   static getAuditStream(loggerParams: LoggerParams): pino.MultiStreamRes {
