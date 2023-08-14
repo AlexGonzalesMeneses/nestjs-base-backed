@@ -47,8 +47,8 @@ export async function ocultarInfo() {
   logger.info({ metadata: data })
   await delay()
 
-  const zeroLine = 21
-  const logFile = readLogFile<LogEntry>('trace.log')
+  const zeroLine = 4
+  const logFile = readLogFile<LogEntry>('info.log')
   expect(logFile.getValue(zeroLine + 1)).toHaveLength(1)
 
   const firstEntry = logFile.getEntry(zeroLine + 1)

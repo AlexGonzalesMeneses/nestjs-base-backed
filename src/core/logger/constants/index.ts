@@ -42,5 +42,13 @@ export const LOG_COLOR = {
   [LOG_LEVEL.TRACE]: COLOR.LIGHT_GREY,
 }
 
+export const LOG_AUDIT_COLOR = {
+  ['error']: COLOR.LIGHT_RED,
+  ['warning']: COLOR.YELLOW,
+  ['info']: COLOR.CYAN,
+  ['success']: COLOR.GREEN,
+  ['none']: COLOR.LIGHT_GREY,
+}
+
 export * from './initial-values'
 export * from './errorcode'

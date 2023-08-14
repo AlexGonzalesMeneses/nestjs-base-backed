@@ -85,10 +85,14 @@ export type BaseLogOptions = {
   modulo?: string
 }
 
+export type AuditType = 'error' | 'warning' | 'success' | 'info' | 'none'
+
 export type BaseAuditOptions = {
   contexto: string
   mensaje?: string
   metadata?: Metadata
+  formato?: string
+  tipo?: AuditType
 }
 
 export type LogOptions = {
@@ -100,6 +104,7 @@ export type LogOptions = {
 export type AuditOptions = {
   mensaje?: string
   metadata?: Metadata
+  formato?: string
 }
 
 export type Metadata = { [key: string]: unknown }

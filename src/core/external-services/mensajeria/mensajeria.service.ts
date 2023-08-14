@@ -1,3 +1,4 @@
+import { BaseService } from '../../../common/base'
 import { Injectable } from '@nestjs/common'
 import { map } from 'rxjs/operators'
 import { ExternalServiceException } from '../../../common/exceptions'
@@ -5,8 +6,10 @@ import { HttpService } from '@nestjs/axios'
 import { firstValueFrom } from 'rxjs'
 
 @Injectable()
-export class MensajeriaService {
-  constructor(private httpService: HttpService) {}
+export class MensajeriaService extends BaseService {
+  constructor(private httpService: HttpService) {
+    super()
+  }
 
   /**
    * Metodo para enviar sms
@@ -46,8 +49,14 @@ export class MensajeriaService {
       const response = this.httpService
         .post('/correo', emailBody)
         .pipe(map((res) => res.data))
-      return await firstValueFrom(response)
+      const result = await firstValueFrom(response)
+      this.logger.auditInfo('mensajeria', 'E-MAIL enviado correctamente')
+      return result
     } catch (error) {
+      this.logger.auditError('mensajeria', 'Falló al enviar el E-MAIL', {
+        status: error.response?.status,
+        data: error.response?.data,
+      })
       const mensaje = 'Ocurrió un error al enviar el mensaje por E-MAIL'
       throw new ExternalServiceException('MENSAJERÍA:CORREO', error, mensaje)
     }

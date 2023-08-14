@@ -14,7 +14,7 @@ export async function printTrace() {
   })
   await delay()
 
-  const zeroLine = 17
+  const zeroLine = 0
   const logFile = readLogFile<LogEntry>('trace.log')
   expect(logFile.getValue(zeroLine + 1)).toHaveLength(4)
 

@@ -35,7 +35,10 @@ export class LocalAuthGuard extends AuthGuard('local') {
 
     this.logger.audit('authentication', {
       mensaje: 'Ingresó al sistema',
-      metadata: { usuario: user.id, tipo: 'básico' },
+      metadata: {
+        tipo: 'LOGIN BÁSICO',
+        usuario: user.id,
+      },
     })
 
     return true
