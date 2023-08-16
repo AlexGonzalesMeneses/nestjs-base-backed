@@ -114,13 +114,16 @@ export class BaseException extends Error {
     const loggerParams = LoggerService.getLoggerParams()
     let appName = loggerParams?.appName || ''
     let modulo = ''
-    let origen = errorStackOriginal
-      ? (errorStackOriginal.split('\n').splice(1, 1).shift() || '').trim()
-      : ''
+    let origen = errorStack ? (errorStack.split('\n').shift() || '').trim() : ''
+
     const traceStack =
       error instanceof BaseException
         ? error.traceStack
         : getErrorStack(new Error())
+
+    if (!origen) {
+      origen = traceStack ? (traceStack.split('\n').shift() || '').trim() : ''
+    }
 
     let errorParsed: unknown = error
       ? error instanceof BaseException

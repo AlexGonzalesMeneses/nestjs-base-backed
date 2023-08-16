@@ -143,6 +143,43 @@ export function cleanParamValue(
             : undefined,
         }
       }
+      if (isCertExpiredError(value)) {
+        const config =
+          'config' in value && value.config && typeof value.config === 'object'
+            ? value.config
+            : undefined
+        const cause =
+          'cause' in value && typeof value.cause === 'object'
+            ? value.cause
+            : undefined
+        return {
+          name: 'name' in value ? value.name : undefined,
+          message: 'message' in value ? value.message : undefined,
+          code: 'code' in value ? value.code : undefined,
+          config: config
+            ? {
+                headers:
+                  'headers' in config
+                    ? cleanParamValue(config.headers, 0, sensitiveParams)
+                    : undefined,
+                baseURL: 'baseURL' in config ? config.baseURL : undefined,
+                method: 'method' in config ? config.method : undefined,
+                url: 'url' in config ? config.url : undefined,
+                data:
+                  'data' in config
+                    ? cleanParamValue(config.data, 0, sensitiveParams)
+                    : undefined,
+              }
+            : undefined,
+          cause: cause
+            ? {
+                name: 'name' in value ? value.name : undefined,
+                message: 'message' in value ? value.message : undefined,
+                code: 'code' in cause ? cause.code : undefined,
+              }
+            : undefined,
+        }
+      }
       return Object.keys(value).reduce((prev, curr) => {
         // Por seguridad se ofusca el valor de parámetros con información sensible
         if (sensitiveParams.includes(curr.toLowerCase())) {
@@ -219,74 +256,6 @@ export function isAxiosError(data: unknown): boolean {
 }
 
 export function isConexionError(data: unknown): boolean {
-  //   ───── Error ─────────── axios
-  // {
-  //   name: 'Error',
-  //   message: 'connect ECONNREFUSED 127.0.0.1:9999',
-  //   code: 'ECONNREFUSED',
-  //   config: {
-  //     headers: {
-  //       Accept: 'application/json, text/plain, */*',
-  //       'User-Agent': 'axios/1.3.2',
-  //       'Accept-Encoding': 'gzip, compress, deflate, br'
-  //     },
-  //     baseURL: undefined,
-  //     method: 'get',
-  //     url: 'http://localhost:9999',
-  //     data: undefined
-  //   }
-  // }
-
-  // ───── Error ─────────── http
-  // {
-  //   name: 'Error',
-  //   message: 'connect ECONNREFUSED 127.0.0.1:9999',
-  //   code: 'ECONNREFUSED',
-  //   config: undefined
-  // }
-
-  //   ───── Error ─────────── node-fetch
-  // {
-  //   name: 'FetchError',
-  //   message: 'request to http://localhost:9999/ failed, reason: connect ECONNREFUSED 127.0.0.1:9999',
-  //   code: 'ECONNREFUSED',
-  //   config: undefined
-  // }
-
-  //   ───── Error ─────────── fetch
-  // {
-  //   cause: {
-  //     name: 'Error',
-  //     message: 'connect ECONNREFUSED 127.0.0.1:9999',
-  //     code: 'ECONNREFUSED',
-  //     config: undefined
-  //   }
-  // }
-
-  //   ───── Error ─────────── fetch v2
-  // {
-  //   name: undefined,
-  //   message: undefined,
-  //   code: undefined,
-  //   config: undefined,
-  //   cause: {
-  //     errno: -111,
-  //     code: 'ECONNREFUSED',
-  //     syscall: 'connect',
-  //     address: '127.0.0.1',
-  //     port: 9999
-  //   }
-  // }
-
-  //   ───── Error ─────────── http v2
-  // {
-  //   errno: -111,
-  //   code: 'ECONNREFUSED',
-  //   syscall: 'connect',
-  //   address: '127.0.0.1',
-  //   port: 9999
-  // }
-
   const val =
     data && typeof data === 'object' && 'cause' in data
       ? (data.cause as object)
