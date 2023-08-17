@@ -17,6 +17,16 @@ import { ERROR_CODE, LOG_LEVEL, LOG_NUMBER } from '../constants'
 import dayjs from 'dayjs'
 import { inspect } from 'util'
 
+const ignoreStackPaths = [
+  'node:internal',
+  'node_modules',
+  'src/driver',
+  'src/query-builder',
+  'src/entity-manager',
+  'src/core/logger',
+  'src/common/exceptions',
+]
+
 export class BaseException extends Error {
   level: LOG_LEVEL.ERROR | LOG_LEVEL.WARN
 
@@ -112,9 +122,22 @@ export class BaseException extends Error {
 
     let metadata: Metadata = {}
     const loggerParams = LoggerService.getLoggerParams()
+    const projectPath = loggerParams?.projectPath || ''
+
     let appName = loggerParams?.appName || ''
     let modulo = ''
-    let origen = errorStack ? (errorStack.split('\n').shift() || '').trim() : ''
+    let origen = errorStack
+      ? (
+          errorStack
+            .split('\n')
+            .filter(
+              (x) =>
+                x.includes(projectPath) &&
+                !ignoreStackPaths.some((y) => x.includes(y))
+            )
+            .shift() || ''
+        ).trim()
+      : ''
 
     const traceStack =
       error instanceof BaseException
@@ -122,7 +145,18 @@ export class BaseException extends Error {
         : getErrorStack(new Error())
 
     if (!origen) {
-      origen = traceStack ? (traceStack.split('\n').shift() || '').trim() : ''
+      origen = traceStack
+        ? (
+            traceStack
+              .split('\n')
+              .filter(
+                (x) =>
+                  x.includes(projectPath) &&
+                  !ignoreStackPaths.some((y) => x.includes(y))
+              )
+              .shift() || ''
+          ).trim()
+        : ''
     }
 
     let errorParsed: unknown = error
