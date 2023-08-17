@@ -256,7 +256,7 @@ export class BaseException extends Error {
           : httpStatus === HttpStatus.NOT_FOUND
           ? 'Verifique que el recurso solicitado realmente exista'
           : httpStatus === HttpStatus.REQUEST_TIMEOUT
-          ? 'Verífica que el servicio responda en un tiempo inferior al máximo establecido de espera en la variable de entorno REQUEST_TIMEOUT_IN_SECONDS'
+          ? 'Verífica que el servicio responda en un tiempo inferior al tiempo máximo establecido'
           : httpStatus === HttpStatus.PRECONDITION_FAILED
           ? 'Verifique que se cumpla con todas las condiciones requeridas para consumir este recurso'
           : 'Más info en detalles'
