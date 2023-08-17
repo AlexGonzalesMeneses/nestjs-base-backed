@@ -1,12 +1,12 @@
 import { LoggerService } from '../classes'
 
 const ignoreStackPaths = [
-  '.../node_modules',
-  '.../src/driver',
-  '.../src/query-builder',
-  '.../src/entity-manager',
-  '.../src/core/logger',
-  '.../src/common/exceptions',
+  './node_modules',
+  './src/driver',
+  './src/query-builder',
+  './src/entity-manager',
+  './src/core/logger',
+  './src/common/exceptions',
 ]
 
 export function getErrorStack(error: Error) {
@@ -16,14 +16,13 @@ export function getErrorStack(error: Error) {
     const customErrorStack = String(error.stack)
       .split('\n')
       .map((line) =>
-        projectPath ? line.replace(new RegExp(projectPath, 'g'), '...') : line
+        projectPath ? line.replace(new RegExp(projectPath, 'g'), '.') : line
       )
       .filter(
         (line) =>
-          line.includes('.../') &&
-          !ignoreStackPaths.some((x) => line.includes(x))
+          line.includes('./') && !ignoreStackPaths.some((x) => line.includes(x))
       )
-      .map((line) => line.substring(line.indexOf('.../'), line.length - 1))
+      .map((line) => line.substring(line.indexOf('./'), line.length - 1))
       .join('\n')
       .trim()
     return customErrorStack || ''
@@ -39,7 +38,7 @@ export function getFullErrorStack(error: Error) {
     const customErrorStack = String(error.stack)
       .split('\n')
       .map((line) =>
-        projectPath ? line.replace(new RegExp(projectPath, 'g'), '...') : line
+        projectPath ? line.replace(new RegExp(projectPath, 'g'), '.') : line
       )
       .join('\n')
       .trim()
