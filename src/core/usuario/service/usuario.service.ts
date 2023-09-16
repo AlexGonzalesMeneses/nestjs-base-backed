@@ -434,16 +434,7 @@ export class UsuarioService extends BaseService {
         throw new PreconditionFailedException(Messages.EXISTING_USER)
       }
 
-      const rol = await this.rolRepositorio.buscarPorNombreRol(
-        'USUARIO',
-        transaction
-      )
-
-      if (!rol) {
-        throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
-      }
-
-      return await this.usuarioRepositorio.crear(
+      const usuarioResult = await this.usuarioRepositorio.crear(
         idPersona,
         {
           estado: Status.ACTIVE,
@@ -453,6 +444,24 @@ export class UsuarioService extends BaseService {
         usuarioAuditoria,
         transaction
       )
+
+      const rol = await this.rolRepositorio.buscarPorNombreRol(
+        'USUARIO',
+        transaction
+      )
+
+      if (!rol) {
+        throw new NotFoundException(Messages.NO_PERMISSION_FOUND)
+      }
+
+      await this.usuarioRolRepositorio.crear(
+        usuarioResult.id,
+        [rol.id],
+        usuarioAuditoria,
+        transaction
+      )
+
+      return usuarioResult
     }
 
     const result = await this.usuarioRepositorio.runTransaction(op)
