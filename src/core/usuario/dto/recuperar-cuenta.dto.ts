@@ -11,6 +11,7 @@ export class RecuperarCuentaDto {
   @IsNotEmpty()
   @IsEmail()
   @CorreoLista()
+  @ApiProperty({ example: '123456@gmail.com' })
   correoElectronico: string
 }
 

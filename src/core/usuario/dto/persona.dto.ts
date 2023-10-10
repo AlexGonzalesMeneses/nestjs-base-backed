@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PersonaDto {
-  @ApiProperty({ example: '4192294' })
+  @ApiProperty({ example: '4192299' })
   @IsNotEmpty()
   @NroDocumento()
   @Transform(({ value }) => value?.trim())

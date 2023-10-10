@@ -12,7 +12,7 @@ import {
 import { PersonaDto } from './persona.dto'
 
 export class ActualizarUsuarioRolDto {
-  @ApiProperty({ example: 'correo@yopmail.com' })
+  @ApiProperty({ example: PersonaDto })
   @ValidateNested()
   @Type(() => PersonaDto)
   persona?: PersonaDto
@@ -21,6 +21,7 @@ export class ActualizarUsuarioRolDto {
   @IsEmail()
   @CorreoLista()
   @ValidateIf((o) => !o.roles)
+  @ApiProperty({ example: 'asdfg123@gmail.com' })
   correoElectronico?: string | null
 
   @ApiProperty({ example: ['3'] })

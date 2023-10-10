@@ -19,6 +19,7 @@ import { RefreshTokensService } from '../service/refreshTokens.service'
 import { BaseController } from '../../../common/base/base-controller'
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiProperty,
   ApiTags,

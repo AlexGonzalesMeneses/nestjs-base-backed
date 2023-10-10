@@ -25,6 +25,7 @@ export class CrearUsuarioDto {
   ciudadaniaDigital?: boolean
 
   @IsNotEmpty()
+  @ApiProperty({ example: ['1'] })
   roles: Array<string>
   usuarioCreacion?: string
 }

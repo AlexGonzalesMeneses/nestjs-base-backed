@@ -33,6 +33,7 @@ export class AuthorizationController extends BaseController {
 
   @ApiOperation({ summary: 'API para crear una nueva política' })
   @ApiBody({
+    type: PoliticaDto,
     description: 'Crear nueva política',
     required: true,
   })
@@ -45,6 +46,7 @@ export class AuthorizationController extends BaseController {
   @ApiOperation({ summary: 'API para actualizar una nueva política' })
   @ApiQuery({ name: 'id' })
   @ApiBody({
+    type: PoliticaDto,
     description: 'Actualizar política',
     required: true,
   })
