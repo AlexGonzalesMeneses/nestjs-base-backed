@@ -38,6 +38,9 @@ export class RefreshTokensController extends BaseController {
   @ApiOperation({
     summary: 'API que actualiza el token de acceso usando un refresh token',
   })
+  @ApiBody({
+    type: TokenDto,
+  })
   @ApiBearerAuth()
   @Post('token')
   async getAccessToken(
