@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  CorreoLista,
   IsEmail,
   IsNotEmpty,
-  CorreoLista,
   ValidateNested,
 } from '../../../common/validation'
 import { PersonaDto } from './persona.dto'
@@ -21,9 +21,9 @@ export class CrearUsuarioDto {
   @ValidateNested()
   @Type(() => PersonaDto)
   persona: PersonaDto
-  @ApiProperty({ example: false })
-  ciudadaniaDigital?: boolean = false
-  @ApiProperty({ example: ['3'] })
+
+  ciudadaniaDigital?: boolean
+
   @IsNotEmpty()
   roles: Array<string>
   usuarioCreacion?: string

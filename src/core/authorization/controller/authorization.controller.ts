@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
@@ -64,9 +64,8 @@ export class AuthorizationController extends BaseController {
   @ApiQuery({ name: 'query', type: FiltrosPoliticasDto })
   @Get('/politicas')
   async listarPoliticas(@Query() paginacionQueryDto: FiltrosPoliticasDto) {
-    const result = await this.authorizationService.listarPoliticas(
-      paginacionQueryDto
-    )
+    const result =
+      await this.authorizationService.listarPoliticas(paginacionQueryDto)
     return this.successListRows(result)
   }
 

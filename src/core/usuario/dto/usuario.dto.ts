@@ -1,28 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty } from '../../../common/validation'
-import { PersonaDto } from './persona.dto'
+import { CorreoLista, IsEmail, IsNotEmpty } from '../../../common/validation'
+
 export class UsuarioDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  usuario: string
-  @ApiProperty()
-  @IsNotEmpty()
-  contrasena: string
-  @ApiProperty()
+  usuario?: string
+
   estado?: string
-  @ApiProperty()
-  persona: PersonaDto
-  @ApiProperty()
+
+  contrasena?: string
+
+  @IsNotEmpty()
+  @IsEmail()
+  @CorreoLista()
+  correoElectronico: string
+
+  ciudadaniaDigital?: boolean
+
   usuarioCreacion?: string
-  /*   @ApiProperty()
-  email: string;
-
-  @ApiProperty()
-  code_activacion: string;
-
-  @ApiProperty()
-  last_login: string;
-
-  @ApiProperty()
-  end_last_login: string; */
 }

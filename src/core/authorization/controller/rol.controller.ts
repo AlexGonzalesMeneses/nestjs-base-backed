@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { RolService } from '../service/rol.service'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearRolDto } from '../dto/crear-rol.dto'
@@ -24,6 +24,7 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger'
+import { Request } from 'express'
 
 @ApiTags('Roles')
 @ApiBearerAuth()
@@ -55,7 +56,7 @@ export class RolController extends BaseController {
     required: true,
   })
   @Post()
-  async crear(@Req() req, @Body() rolDto: CrearRolDto) {
+  async crear(@Req() req: Request, @Body() rolDto: CrearRolDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.rolService.crear(rolDto, usuarioAuditoria)
     return this.successCreate(result)
@@ -73,7 +74,7 @@ export class RolController extends BaseController {
   @Patch(':id')
   async actualizar(
     @Param() params: ParamIdDto,
-    @Req() req,
+    @Req() req: Request,
     @Body() rolDto: ActualizarRolDto
   ) {
     const { id: idRol } = params
@@ -91,7 +92,7 @@ export class RolController extends BaseController {
     type: ParamIdDto,
   })
   @Patch('/:id/activacion')
-  async activar(@Req() req, @Param() params: ParamIdDto) {
+  async activar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idRol } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.rolService.activar(idRol, usuarioAuditoria)
@@ -103,7 +104,7 @@ export class RolController extends BaseController {
     type: ParamIdDto,
   })
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() params: ParamIdDto) {
+  async inactivar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idRol } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.rolService.inactivar(idRol, usuarioAuditoria)

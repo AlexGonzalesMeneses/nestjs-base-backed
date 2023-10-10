@@ -19,6 +19,7 @@ export enum Order {
 export enum TipoDocumento {
   CI = 'CI',
   PASAPORTE = 'PASAPORTE',
+  CIE = 'CIE',
   OTRO = 'OTRO',
 }
 

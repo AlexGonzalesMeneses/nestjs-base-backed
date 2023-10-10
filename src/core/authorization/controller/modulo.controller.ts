@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import { ModuloService } from '../service/modulo.service'
 import { CrearModuloDto, FiltroModuloDto } from '../dto/crear-modulo.dto'
 import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
@@ -24,6 +24,7 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger'
+import { Request } from 'express'
 
 @ApiBearerAuth()
 @ApiTags('Módulos')
@@ -48,7 +49,7 @@ export class ModuloController extends BaseController {
     required: true,
   })
   @Post()
-  async crear(@Req() req, @Body() moduloDto: CrearModuloDto) {
+  async crear(@Req() req: Request, @Body() moduloDto: CrearModuloDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.crear(moduloDto, usuarioAuditoria)
     return this.successCreate(result)
@@ -66,7 +67,7 @@ export class ModuloController extends BaseController {
   @Patch(':id')
   async actualizar(
     @Param() params: ParamIdDto,
-    @Req() req,
+    @Req() req: Request,
     @Body() moduloDto: ActualizarModuloDto
   ) {
     const { id: idModulo } = params
@@ -96,7 +97,7 @@ export class ModuloController extends BaseController {
   })
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/activacion')
-  async activar(@Req() req, @Param() params: ParamIdDto) {
+  async activar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idModulo } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.activar(idModulo, usuarioAuditoria)
@@ -110,7 +111,7 @@ export class ModuloController extends BaseController {
   })
   @UseGuards(JwtAuthGuard, CasbinGuard)
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() params: ParamIdDto) {
+  async inactivar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idModulo } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.moduloService.inactivar(

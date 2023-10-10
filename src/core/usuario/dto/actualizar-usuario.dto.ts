@@ -37,4 +37,7 @@ export class ActualizarUsuarioDto {
   @ApiProperty()
   @IsOptional()
   codigoRecuperacion?: string | null
+
+  @IsOptional()
+  ciudadaniaDigital?: boolean | null
 }

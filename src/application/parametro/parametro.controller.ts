@@ -14,7 +14,7 @@ import { CrearParametroDto } from './dto/crear-parametro.dto'
 import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../../core/authorization/guards/casbin.guard'
 import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { BaseController } from '../../common/base/base-controller'
+import { BaseController } from '../../common/base'
 import { ParamGrupoDto } from './dto/grupo.dto'
 import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
 import { ParamIdDto } from '../../common/dto/params-id.dto'
@@ -25,6 +25,7 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger'
+import { Request } from 'express'
 
 @ApiTags('Parámetros')
 @ApiBearerAuth()
@@ -62,7 +63,7 @@ export class ParametroController extends BaseController {
     required: true,
   })
   @Post()
-  async crear(@Req() req, @Body() parametroDto: CrearParametroDto) {
+  async crear(@Req() req: Request, @Body() parametroDto: CrearParametroDto) {
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.crear(
       parametroDto,
@@ -83,7 +84,7 @@ export class ParametroController extends BaseController {
   @Patch(':id')
   async actualizar(
     @Param() params: ParamIdDto,
-    @Req() req,
+    @Req() req: Request,
     @Body() parametroDto: ActualizarParametroDto
   ) {
     const { id: idParametro } = params
@@ -101,7 +102,7 @@ export class ParametroController extends BaseController {
     type: ParamIdDto,
   })
   @Patch('/:id/activacion')
-  async activar(@Req() req, @Param() params: ParamIdDto) {
+  async activar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.activar(
@@ -116,7 +117,7 @@ export class ParametroController extends BaseController {
     type: ParamIdDto,
   })
   @Patch('/:id/inactivacion')
-  async inactivar(@Req() req, @Param() params: ParamIdDto) {
+  async inactivar(@Req() req: Request, @Param() params: ParamIdDto) {
     const { id: idParametro } = params
     const usuarioAuditoria = this.getUser(req)
     const result = await this.parametroServicio.inactivar(
