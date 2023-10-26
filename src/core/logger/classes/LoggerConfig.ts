@@ -72,8 +72,10 @@ export class LoggerConfig {
           console.error('Error con el rotado de logs', e)
         }
       })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      stream.on('rotate', (oldFile: string, newFile: string) => {
+
+      // stream.on('rotate', (oldFile: string, newFile: string) // en caso de necesitar alguna operación con el nuevo archivo
+
+      stream.on('rotate', (oldFile: string) => {
         const gzip = zlib.createGzip()
         const input = fs.createReadStream(oldFile)
         const output = fs.createWriteStream(oldFile + '.gz')

@@ -242,8 +242,7 @@ function isAxiosRequest(data: unknown) {
 }
 
 export function isAxiosError(data: unknown): boolean {
-  const result = Boolean(data instanceof Error && data.name === 'AxiosError')
-  return result
+  return Boolean(data instanceof Error && data.name === 'AxiosError')
 }
 
 export function isConexionError(data: unknown): boolean {

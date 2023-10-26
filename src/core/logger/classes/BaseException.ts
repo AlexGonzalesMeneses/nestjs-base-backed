@@ -14,7 +14,7 @@ import {
 } from '../utilities'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { extractMessage } from '../utils'
-import { ERROR_CODE, ERROR_NAME, LOG_LEVEL, LOG_NUMBER } from '../constants'
+import { ERROR_CODE, ERROR_NAME, LOG_LEVEL } from '../constants'
 import { inspect } from 'util'
 
 export class BaseException extends Error {
@@ -139,7 +139,7 @@ export class BaseException extends Error {
 
     let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
     let mensaje = `Error Interno (${ERROR_CODE.UNKNOWN_ERROR})`
-    let causa = ''
+    let causa: string
     let accion = ''
     let clientInfo: unknown
     let fecha = timeToPrint()
@@ -374,14 +374,6 @@ export class BaseException extends Error {
         : clientInfo
   }
 
-  getAccion() {
-    return this.accion
-  }
-
-  getCausa() {
-    return this.causa
-  }
-
   getHttpStatus() {
     return this.httpStatus
   }
@@ -392,10 +384,6 @@ export class BaseException extends Error {
 
   getLevel() {
     return this.level
-  }
-
-  getNumericLevel() {
-    return LOG_NUMBER[this.level]
   }
 
   private levelByStatus(status: number) {

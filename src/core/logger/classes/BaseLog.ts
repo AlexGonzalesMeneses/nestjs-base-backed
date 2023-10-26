@@ -1,6 +1,6 @@
 import { BaseLogOptions, LogEntry, Metadata } from '../types'
 import { cleanParamValue, getReqID } from '../utilities'
-import { LOG_LEVEL, LOG_NUMBER } from '../constants'
+import { LOG_LEVEL } from '../constants'
 import dayjs from 'dayjs'
 import { LoggerService } from './LoggerService'
 import { inspect } from 'util'
@@ -75,10 +75,6 @@ export class BaseLog {
 
   getLevel() {
     return this.level
-  }
-
-  getNumericLevel() {
-    return LOG_NUMBER[this.level]
   }
 
   getLogEntry(): LogEntry {

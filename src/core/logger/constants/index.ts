@@ -26,14 +26,6 @@ export enum LOG_LEVEL {
   TRACE = 'trace', // 10 Mensajes para el desarrollador (Ej.: Para rastrear la ruta de ejecución del código en un programa - solo para test y desarrollo)
 }
 
-export const LOG_NUMBER = {
-  [LOG_LEVEL.ERROR]: 50,
-  [LOG_LEVEL.WARN]: 40,
-  [LOG_LEVEL.INFO]: 30,
-  [LOG_LEVEL.DEBUG]: 20,
-  [LOG_LEVEL.TRACE]: 10,
-}
-
 export const LOG_COLOR = {
   [LOG_LEVEL.ERROR]: COLOR.LIGHT_RED,
   [LOG_LEVEL.WARN]: COLOR.YELLOW,
