@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.9.0...v1.9.1) (2023-10-26)
+
+
+### Features
+
+* :sparkles: upgrade mejoras y correcciones del módulo de logger ([97a735e](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/97a735e77a66305a738cf1bd5a479cef68e1def8))
+* actualización de dependencias, soporte para Node 20 🎉 ([f4ed6df](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/f4ed6df8b9a9c0247b2b578a636b499797c9c1a9))
+* se agrego documentación en formato OpenApi para controladores y dtos ([e5d9b65](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/e5d9b65c5d4d0228daca48d98d47e53366e6cfc2))
+
+
+### Bug Fixes
+
+* adicionado tipo de documento "CIE" entre los tipos de documento permitidos para personas ([c5b4432](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/c5b44328d00ea3ff7ca39431c003bc53c8173bd8))
+* corregido error ocasionado al registrar un usuario con el registro de una persona existente ([b402e8d](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b402e8ddec969e80dd55a0c68a4901d9e100d4eb))
+* corrigiendo y añadiendo swagger a los endpoints ([fb9ef4a](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/fb9ef4a79c08d90fc2508a964d90414aecba6ee0))
+* corrigiendo y añadiendo swagger a los endpoints ([2b65045](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/2b650451ab882ce2dfca4fc45f9716dc45a1f953))
+
 ## [1.9.0](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.8.1...v1.9.0) (2023-08-17)
 
 
