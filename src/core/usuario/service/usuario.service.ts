@@ -651,7 +651,7 @@ export class UsuarioService extends BaseService {
     if (!(usuario && (await TextService.compare(hash, usuario.contrasena)))) {
       throw new PreconditionFailedException(Messages.INVALID_CREDENTIALS)
     }
-    // validar que la contrasena nueva cumpla nivel de seguridad
+    // validar que la contraseña nueva cumpla nivel de seguridad
     const contrasena = TextService.decodeBase64(contrasenaNueva)
 
     if (!TextService.validateLevelPassword(contrasena)) {
