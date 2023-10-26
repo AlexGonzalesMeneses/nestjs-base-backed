@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
-import { CrearParametroDto } from '../dto/crear-parametro.dto'
+import { CrearParametroDto } from '../dto'
 import { ParametroRepository } from '../repository'
 import { ParametroService } from './parametro.service'
 import { TextService } from '../../../common/lib/text.service'

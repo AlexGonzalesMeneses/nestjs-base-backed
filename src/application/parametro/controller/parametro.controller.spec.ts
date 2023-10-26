@@ -8,6 +8,7 @@ import { TextService } from '../../../common/lib/text.service'
 import { CrearParametroDto } from '../dto'
 import { ParametroController } from '../controller'
 import { ParametroService } from '../service'
+import { Request } from 'express'
 
 const resParametro = {
   id: TextService.generateUuid(),
@@ -16,11 +17,11 @@ const resParametro = {
   grupo: 'TD',
 }
 
-const mockRequest: any = {
+const mockRequest = {
   user: {
     id: TextService.generateUuid(),
   },
-}
+} as Request
 
 const resListar = [1, resParametro]
 
@@ -65,7 +66,7 @@ describe('ParametroController', () => {
     expect(result.datos).toHaveProperty('filas')
   })
 
-  it('[listarPorGrupo] Debería listar parametros por grupo', async () => {
+  it('[listarPorGrupo] Debería listar parámetros por grupo', async () => {
     const mockRequest = {
       grupo: 'TD',
     }
