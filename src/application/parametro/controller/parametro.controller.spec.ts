@@ -2,13 +2,12 @@ import { CanActivate } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { plainToClass } from 'class-transformer'
 import { AuthZManagementService } from 'nest-authz'
-import { CasbinGuard } from '../../core/authorization/guards/casbin.guard'
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { TextService } from '../../common/lib/text.service'
-import { CrearParametroDto } from './dto/crear-parametro.dto'
-import { ParametroController } from './parametro.controller'
-import { ParametroService } from './parametro.service'
-import { Request } from 'express'
+import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard'
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
+import { TextService } from '../../../common/lib/text.service'
+import { CrearParametroDto } from '../dto'
+import { ParametroController } from '../controller'
+import { ParametroService } from '../service'
 
 const resParametro = {
   id: TextService.generateUuid(),
@@ -17,11 +16,11 @@ const resParametro = {
   grupo: 'TD',
 }
 
-const mockRequest = {
+const mockRequest: any = {
   user: {
     id: TextService.generateUuid(),
   },
-} as Request
+}
 
 const resListar = [1, resParametro]
 
