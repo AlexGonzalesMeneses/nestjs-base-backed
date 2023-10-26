@@ -126,7 +126,7 @@ entorno `LOG_SQL=true` o temporalmente levantando la aplicación con el comando 
 | `DB_PORT`                | `5432`            | puerto de despliegue de la base de datos.                                                         |
 | `DB_SCHEMA`              | `proyecto`        | Utilizado para almacenar las tablas del proyecto, y todo lo relacionado con la lógica de negocio. |
 | `DB_SCHEMA_USUARIOS`     | `usuarios`        | Utilizado para almacenar la tabla usuarios, roles y todo lo relacionado con la autenticación.     |
-| `DB_SCHEMA_PARAMETRICAS` | `parametricas`    | Utilizado para almanecar tablas de tipo paramétricas.                                             |
+| `DB_SCHEMA_PARAMETRICAS` | `parametricas`    | Utilizado para almacenar tablas de tipo paramétricas.                                             |
 
 **Configuración general de la aplicación**
 
