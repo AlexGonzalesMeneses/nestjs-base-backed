@@ -16,7 +16,7 @@ import { CookieService } from '../../../common/lib/cookie.service'
 import { LocalAuthGuard } from '../guards/local-auth.guard'
 import { OidcAuthGuard } from '../guards/oidc-auth.guard'
 import { RefreshTokensService } from '../service/refreshTokens.service'
-import { BaseController } from '../../../common/base/base-controller'
+import { BaseController } from '../../../common/base'
 import {
   ApiBearerAuth,
   ApiBody,
@@ -41,7 +41,6 @@ export class RefreshTokensController extends BaseController {
   @ApiBody({
     type: TokenDto,
   })
-  @ApiBearerAuth()
   @Post('token')
   async getAccessToken(
     @Req() req: Request,
@@ -72,6 +71,7 @@ export class RefreshTokensController extends BaseController {
     name: 'id',
     example: 255,
   })
+  @ApiBearerAuth()
   @UseGuards(LocalAuthGuard)
   @UseGuards(OidcAuthGuard)
   @Delete(':id')

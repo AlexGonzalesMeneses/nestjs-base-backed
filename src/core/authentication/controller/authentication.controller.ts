@@ -20,28 +20,8 @@ import { AuthenticationService } from '../service/authentication.service'
 import { RefreshTokensService } from '../service/refreshTokens.service'
 import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 import { ConfigService } from '@nestjs/config'
-import { CambioRolDto } from '../dto/index.dto'
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiProperty,
-  ApiTags,
-} from '@nestjs/swagger'
-
-export class AuthSchema {
-  @ApiProperty({
-    example: 'ADMINISTRADOR',
-    description: 'Usuario',
-  })
-  usuario: string
-
-  @ApiProperty({
-    example: 'MTIz',
-    description: 'Contraseña',
-  })
-  contrasena: string
-}
+import { AuthDto, CambioRolDto } from '../dto/index.dto'
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 
 @Controller()
 @ApiTags('Autenticación')
@@ -55,7 +35,7 @@ export class AuthenticationController extends BaseController {
   }
 
   @ApiOperation({ summary: 'API para autenticación con usuario y contraseña' })
-  @ApiBody({ description: 'Autenticación de usuarios', type: AuthSchema })
+  @ApiBody({ description: 'Autenticación de usuarios', type: AuthDto })
   @UseGuards(LocalAuthGuard)
   @Post('auth')
   async login(@Req() req: Request, @Res() res: Response) {
@@ -78,6 +58,7 @@ export class AuthenticationController extends BaseController {
       .send({ finalizado: true, mensaje: 'ok', datos: result.data })
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch('cambiarRol')
   async changeRol(

@@ -4,7 +4,7 @@ import { getReqID } from '../utilities'
 
 export class BaseAudit {
   /**
-   * Indica el nivel de de importancia para el resaltado del mensaje por consola
+   * Índica el nivel de la importancia para el resaltado del mensaje por consola
    */
   level: AUDIT_LEVEL
 

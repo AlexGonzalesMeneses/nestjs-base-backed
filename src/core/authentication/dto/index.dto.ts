@@ -14,3 +14,17 @@ export class TokenDto {
   @ApiProperty({ example: '' })
   token: string
 }
+
+export class AuthDto {
+  @ApiProperty({
+    example: 'ADMINISTRADOR',
+    description: 'Usuario',
+  })
+  usuario: string
+
+  @ApiProperty({
+    example: 'MTIz',
+    description: 'Contraseña',
+  })
+  contrasena: string
+}

@@ -97,7 +97,6 @@ export class UsuarioController extends BaseController {
 
   //create user account
   @ApiOperation({ summary: 'API para crear una nueva Cuenta' })
-  @ApiBearerAuth()
   @ApiBody({
     type: CrearUsuarioDto,
     description: 'Nueva cuenta de usuario',
@@ -111,7 +110,6 @@ export class UsuarioController extends BaseController {
 
   //restore user account
   @ApiOperation({ summary: 'API para recuperar una Cuenta' })
-  @ApiBearerAuth()
   @ApiBody({
     type: RecuperarCuentaDto,
     description: 'Cuenta',
@@ -125,7 +123,6 @@ export class UsuarioController extends BaseController {
 
   // validate restore user account
   @ApiOperation({ summary: 'API para validar recuperación una Cuenta' })
-  @ApiBearerAuth()
   @ApiBody({
     type: ValidarRecuperarCuentaDto,
     description: 'Cuenta',
@@ -143,7 +140,6 @@ export class UsuarioController extends BaseController {
 
   // activar usuario
   @ApiOperation({ summary: 'API para activar una Cuenta' })
-  @ApiBearerAuth()
   @ApiBody({
     type: ActivarCuentaDto,
     description: 'Cuenta',
@@ -159,7 +155,6 @@ export class UsuarioController extends BaseController {
 
   // validate restore user account
   @ApiOperation({ summary: 'API para nueva Contraseña' })
-  @ApiBearerAuth()
   @ApiBody({
     type: NuevaContrasenaDto,
     description: 'Cuenta',
