@@ -9,15 +9,18 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { ParametroService } from './parametro.service'
-import { CrearParametroDto } from './dto/crear-parametro.dto'
-import { JwtAuthGuard } from '../../core/authentication/guards/jwt-auth.guard'
-import { CasbinGuard } from '../../core/authorization/guards/casbin.guard'
-import { PaginacionQueryDto } from '../../common/dto/paginacion-query.dto'
-import { BaseController } from '../../common/base'
-import { ParamGrupoDto } from './dto/grupo.dto'
-import { ActualizarParametroDto } from './dto/actualizar-parametro.dto'
-import { ParamIdDto } from '../../common/dto/params-id.dto'
+import { ParametroService } from '../service'
+import { JwtAuthGuard } from '../../../core/authentication/guards/jwt-auth.guard'
+import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard'
+import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
+import { BaseController } from '../../../common/base'
+import { ParamIdDto } from '../../../common/dto/params-id.dto'
+import { Request } from 'express'
+import {
+  ActualizarParametroDto,
+  CrearParametroDto,
+  ParamGrupoDto,
+} from '../dto'
 import {
   ApiBearerAuth,
   ApiBody,
@@ -25,7 +28,6 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger'
-import { Request } from 'express'
 
 @ApiTags('Parámetros')
 @ApiBearerAuth()

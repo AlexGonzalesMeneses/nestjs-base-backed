@@ -14,14 +14,14 @@
 ├─scripts                       # directorio que contiene scripts
 ├─src
 |  ├── application              # directorio con logica de negocio de la aplicación
-|  |    ├── parametricas
+|  |    ├── parametro
 |  |    |   ├── constant                # directorio con constantes
 |  |    |   ├── controller              # directorio con controladores
 |  |    |   ├── dto                     # directorio con DTO's
 |  |    |   ├── entity                  # directorio con entidades
 |  |    |   ├── repository              # directorio con repositorios
 |  |    |   ├── service                 # directorio con servicios
-|  |    |   └── parametricas.module.ts  # Fichero para cargar el módulo paramétricas
+|  |    |   └── parametro.module.ts     # Fichero para cargar el módulo paramétricas
 |  |    ├── ...
 |  |    └── moduloN
 |  |    └── application.module.ts       # Fichero para cargar los módulos de la aplicación

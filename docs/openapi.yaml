@@ -12,7 +12,7 @@ paths:
     get:
       operationId: AppController_verificarEstado
       summary: API para obtener el estado de la aplicación
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -22,7 +22,7 @@ paths:
     post:
       operationId: AuthorizationController_crearPolitica
       summary: API para crear una nueva política
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Crear nueva política
@@ -36,7 +36,7 @@ paths:
       tags: &ref_0
         - Autorización
       security: &ref_1
-        - bearer: [ ]
+        - bearer: []
     patch:
       operationId: AuthorizationController_actualizarPolitica
       summary: API para actualizar una nueva política
@@ -68,7 +68,7 @@ paths:
         - name: id
           required: true
           in: query
-          schema: { }
+          schema: {}
       requestBody:
         required: true
         description: Actualizar política
@@ -171,7 +171,7 @@ paths:
         - name: id
           required: true
           in: query
-          schema: { }
+          schema: {}
       responses:
         '200':
           description: ''
@@ -181,7 +181,7 @@ paths:
     get:
       operationId: AuthorizationController_obtenerRoles
       summary: API para obtener las politicas definidas en formato CASBIN
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -191,18 +191,18 @@ paths:
     get:
       operationId: RolController_listar
       summary: API para obtener el listado de Roles
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
       tags: &ref_2
         - Roles
       security: &ref_3
-        - bearer: [ ]
+        - bearer: []
     post:
       operationId: RolController_crear
       summary: API para crear un rol
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: new Rol
@@ -341,11 +341,11 @@ paths:
       tags: &ref_4
         - Módulos
       security: &ref_5
-        - bearer: [ ]
+        - bearer: []
     post:
       operationId: ModuloController_crear
       summary: API para crear un Módulo
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: new Modulo
@@ -431,7 +431,7 @@ paths:
     post:
       operationId: AuthenticationController_login
       summary: API para autenticación con usuario y contraseña
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Autenticación de usuarios
@@ -447,7 +447,7 @@ paths:
   /cambiarRol:
     patch:
       operationId: AuthenticationController_changeRol
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         content:
@@ -459,12 +459,12 @@ paths:
           description: ''
       tags: *ref_6
       security:
-        - bearer: [ ]
+        - bearer: []
   /ciudadania-auth:
     get:
       operationId: AuthenticationController_loginCiudadania
       summary: API para autenticación con ciudadania digital
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -473,7 +473,7 @@ paths:
     get:
       operationId: AuthenticationController_loginCiudadaniaCallback
       summary: API para autorización con ciudadania digital
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -482,18 +482,18 @@ paths:
     get:
       operationId: AuthenticationController_logoutCiudadania
       summary: API para logout digital
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
       tags: *ref_6
       security:
-        - bearer: [ ]
+        - bearer: []
   /token:
     post:
       operationId: RefreshTokensController_getAccessToken
       summary: API que actualiza el token de acceso usando un refresh token
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         content:
@@ -520,7 +520,7 @@ paths:
           description: ''
       tags: *ref_7
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios:
     get:
       operationId: UsuarioController_listar
@@ -557,11 +557,11 @@ paths:
       tags: &ref_8
         - Usuarios
       security:
-        - bearer: [ ]
+        - bearer: []
     post:
       operationId: UsuarioController_crear
       summary: API para crear un nuevo usuario
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: new Usuario
@@ -574,23 +574,23 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/cuenta/perfil:
     get:
       operationId: UsuarioController_obtenerPerfil
       summary: Obtiene la información del perfil del usuario
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/crear-cuenta:
     post:
       operationId: UsuarioController_crearUsuario
       summary: API para crear una nueva Cuenta
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Nueva cuenta de usuario
@@ -606,7 +606,7 @@ paths:
     post:
       operationId: UsuarioController_recuperarCuenta
       summary: API para recuperar una Cuenta
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Cuenta
@@ -622,7 +622,7 @@ paths:
     post:
       operationId: UsuarioController_validarRecuperarCuenta
       summary: API para validar recuperación una Cuenta
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Cuenta
@@ -638,7 +638,7 @@ paths:
     patch:
       operationId: UsuarioController_activarCuenta
       summary: API para activar una Cuenta
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Cuenta
@@ -654,7 +654,7 @@ paths:
     patch:
       operationId: UsuarioController_nuevaContrasena
       summary: API para nueva Contraseña
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Cuenta
@@ -670,7 +670,7 @@ paths:
     post:
       operationId: UsuarioController_crearConCiudadania
       summary: API para crear un nuevo usuario relacionado con Ciudadanía Digital
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         content:
@@ -682,7 +682,7 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/{id}/activacion:
     patch:
       operationId: UsuarioController_activar
@@ -699,7 +699,7 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/{id}/inactivacion:
     patch:
       operationId: UsuarioController_inactivar
@@ -716,12 +716,12 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/cuenta/contrasena:
     patch:
       operationId: UsuarioController_actualizarContrasena
       summary: Actualiza la contrasena de un usuario authenticado
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: new Rol
@@ -734,7 +734,7 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/{id}/restauracion:
     patch:
       operationId: UsuarioController_restaurarContrasena
@@ -751,7 +751,7 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/{id}/reenviar:
     patch:
       operationId: UsuarioController_reenviarCorreoActivacion
@@ -768,7 +768,7 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/{id}:
     patch:
       operationId: UsuarioController_actualizarDatos
@@ -792,12 +792,12 @@ paths:
           description: ''
       tags: *ref_8
       security:
-        - bearer: [ ]
+        - bearer: []
   /usuarios/cuenta/desbloqueo:
     get:
       operationId: UsuarioController_desbloquearCuenta
       summary: Desbloquea una cuenta bloqueada por muchos intentos fallidos
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -852,11 +852,11 @@ paths:
       tags: &ref_9
         - Parámetros
       security: &ref_10
-        - bearer: [ ]
+        - bearer: []
     post:
       operationId: ParametroController_crear
       summary: API para crear un nuevo parámetro
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: new Parametro
@@ -1225,16 +1225,16 @@ components:
       properties:
         codigo:
           type: string
-          example: TD-2
+          example: TD-CI
         nombre:
           type: string
-          example: Documento de extranjería
+          example: Cédula de identidad
         grupo:
           type: string
-          example: TD
+          example: CD
         descripcion:
           type: string
-          example: Tipo de documento de extranjería
+          example: Cédula de identidad
         estado:
           type: string
           example: ACTIVO
@@ -1249,16 +1249,16 @@ components:
       properties:
         codigo:
           type: string
-          example: TD-2
+          example: TD-CI
         nombre:
           type: string
-          example: Documento de extranjería actualizado
+          example: Cédula de identidad
         grupo:
           type: string
-          example: TD
+          example: CD
         descripcion:
           type: string
-          example: Tipo de documento de extranjería actualizado
+          example: Cédula de identidad
         estado:
           type: string
           example: ACTIVO
