@@ -4,7 +4,7 @@
 
 | Nombre       | Versión | Descripción                                            | Instalación                                      |
 |--------------|---------|--------------------------------------------------------|--------------------------------------------------|
-| `PostgreSQL` | ^14     | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
+| `PostgreSQL` | ^16     | Gestor de base de datos.                               | https://www.postgresql.org/download/linux/debian |
 | `NodeJS`     | ^18     | Entorno de programación de JavaScript.                 | `nvm install 18` https://github.com/nvm-sh/nvm   |
 | `NPM`        | ^9      | Gestor de paquetes de NodeJS.                          | `npm install -g npm@9.7.1`                       |
 | `PM2`        | ^5.3    | Gestor avanzado de procesos de producción para NodeJS. | `npm install -g pm2@5.3`                         |
@@ -45,14 +45,9 @@ cp ecosystem.config.js.sample ecosystem.config.js
 
 ### Creación y configuración de la Base de Datos
 
-```bash
-# Crear los siguientes esquemas de base de datos:
-create schema proyecto;
-create schema usuarios;
-create schema parametricas;
-```
+Ver el archivo [database/scripts/README.md](./database/scripts/README.md)
 
-Para más detalles ver el archivo [database/scripts/CREATE_DATABASE.md](./database/scripts/CREATE_DATABASE.md)
+Una vez se tenga creada la base de datos y sus respectivos esquemas ejecutar el siguiente comando para crear las tablas:
 
 ```bash
 # Configura la base de datos.
@@ -69,7 +64,7 @@ npm run start
 npm run start:dev
 
 # Ejecución en modo desarrollo (muestra logs de las consultas SQL)
-npm run start:dev:sql
+npm run dev
 
 # Ejecución en modo PRODUCCIÓN
 npm run build
