@@ -7,7 +7,7 @@ arg1=${1:-pg16}
 
 dockerContainer="${arg1}"
 
-echo -e "\n\n >>> Creando backup de la base de datos...\n"
+echo -e "\n\n >>> Creando backup de la base de datos desde $dockerContainer...\n"
 sleep 2;
 
 echo -e "\nPreparando script...\n";
@@ -16,6 +16,9 @@ docker cp $(dirname "$0")/dbbackup.sh $dockerContainer:/tmp/backups/dbbackup.sh
 sleep 2;
 
 echo -e "\nEjecutando script para crear el backup...\n";
+echo -e "\n ========= dbbackup.sh =========\n";
+docker exec $dockerContainer bash -c 'cat /tmp/backups/dbbackup.sh'
+echo -e "\n -------------------------------\n";
 docker exec $dockerContainer bash -c 'cd /tmp/backups && bash dbbackup.sh'
 sleep 2;
 

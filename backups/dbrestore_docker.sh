@@ -7,7 +7,7 @@ arg1=${1:-pg16}
 
 dockerContainer="${arg1}"
 
-echo -e "\n\n >>> Restaurando backup de Base de Datos...\n"
+echo -e "\n\n >>> Restaurando backup de Base de Datos en $dockerContainer...\n"
 sleep 2;
 
 echo -e "\nReiniciando el contenedor $dockerContainer...\n";
@@ -22,10 +22,16 @@ docker cp $(dirname "$0")/*.gz $dockerContainer:/tmp/restore
 sleep 2;
 
 echo -e "\nEjecutando script de restauración (dbrestore.sql)...\n";
+echo -e "\n ========= dbrestore.sql =========\n";
+docker exec $dockerContainer bash -c 'cat /tmp/restore/dbrestore.sql';
+echo -e "\n ---------------------------------\n";
 docker exec $dockerContainer bash -c 'psql -U postgres -f /tmp/restore/dbrestore.sql'
 sleep 2;
 
 echo -e "\nEjecutando script de restauración (dbrestore.sh)...\n";
+echo -e "\n ========= dbrestore.sh =========\n";
+docker exec $dockerContainer bash -c 'cat /tmp/restore/dbrestore.sh';
+echo -e "\n --------------------------------\n";
 docker exec $dockerContainer bash -c 'cd /tmp/restore && bash dbrestore.sh'
 sleep 2;
 
