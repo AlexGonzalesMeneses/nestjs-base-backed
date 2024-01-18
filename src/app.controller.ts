@@ -4,7 +4,6 @@ import { BaseController } from './common/base'
 import packageJson from '../package.json'
 import dayjs from 'dayjs'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { SetRequestTimeout } from './common/interceptors'
 
 @Controller()
 @ApiTags('Estado')
@@ -13,7 +12,6 @@ export class AppController extends BaseController {
     super()
   }
 
-  @SetRequestTimeout(30) // Para cambiar el tiempo máximo de espera
   @ApiOperation({ summary: 'API para obtener el estado de la aplicación' })
   @Get('/estado')
   async verificarEstado() {
