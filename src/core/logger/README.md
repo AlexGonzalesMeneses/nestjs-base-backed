@@ -4,7 +4,7 @@ Librería para registrar eventos o capturar errores del sistema.
 
 ## Modo de uso
 
-**Ejemplo 1** Para registrar un ERROR CONOCIDO manualmente
+**Ejemplo 1** Para registrar un ERROR HTTP manualmente
 
 ```ts
 import { LoggerService } from '../src/core/logger'

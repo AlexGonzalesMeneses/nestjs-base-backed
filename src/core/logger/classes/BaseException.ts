@@ -12,10 +12,11 @@ import {
   isConexionError,
   timeToPrint,
 } from '../utilities'
-import { HttpException, HttpStatus } from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common'
 import { extractMessage } from '../utils'
 import { ERROR_CODE, ERROR_NAME, LOG_LEVEL } from '../constants'
 import { inspect } from 'util'
+import { HttpMessages } from '../messages'
 
 export class BaseException extends Error {
   level: LOG_LEVEL.ERROR | LOG_LEVEL.WARN
@@ -250,6 +251,26 @@ export class BaseException extends Error {
           ? error.code
           : ''
       accion = `Renovar el certificado digital`
+    }
+
+    // DTO_VALIDATION_ERROR
+    else if (
+      error instanceof BadRequestException &&
+      errorStack?.includes('ValidationPipe.exceptionFactory')
+    ) {
+      const errorResponse = error.getResponse()
+      const reglasDTO =
+        typeof errorResponse === 'object' &&
+        errorResponse &&
+        'message' in errorResponse &&
+        Array.isArray(errorResponse.message)
+          ? errorResponse.message.join(' | ')
+          : ''
+      codigo = ERROR_CODE.DTO_VALIDATION_ERROR
+      httpStatus = error.getStatus()
+      mensaje = HttpMessages.EXCEPTION_BAD_REQUEST
+      causa = reglasDTO
+      accion = `Verifique que los datos de entrada cumplan con las reglas establecidas en el DTO`
     }
 
     // HTTP_EXCEPTION

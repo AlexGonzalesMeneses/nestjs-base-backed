@@ -1,29 +1,30 @@
 export enum ERROR_CODE {
-  UNKNOWN_ERROR = 'E01', // error = 'BOOM' | { name: 'Error' } | new Error() | undefined | null | ''
-  HTTP_EXCEPTION = 'E02', // error = new HttpException()
+  UNKNOWN_ERROR = 'E50', // error = 'BOOM' | { name: 'Error' } | new Error() | undefined | null | ''
+  HTTP_EXCEPTION = 'E40', // error = new HttpException()
 
-  SERVER_CONEXION = 'E03', // error = { code: 'ECONNREFUSED' }
-  SERVER_TIMEOUT = 'E04', // response = { data: "The upstream server is timing out" }
-  SERVER_CERT_EXPIRED = 'E05', // error = { code: 'CERT_HAS_EXPIRED' }
+  SQL_ERROR = 'EDB-50', // error = { name: "QueryFailedError" }
+  AXIOS_ERROR = 'AXS-50', // error = axios().catch(err => ...)
+  DTO_VALIDATION_ERROR = 'EVAL-40', // error = new BadRequestException() - DTO
 
-  SQL_ERROR = 'E06', // error = { name: "QueryFailedError" }
-  AXIOS_ERROR = 'E07', // error = axios().catch(err => ...)
-
-  SERVER_ERROR_1 = 'E08', // body = { message: "detalle del error" }
-  SERVER_ERROR_2 = 'E09', // body = { data: "detalle del error" }
+  SERVER_CONEXION = 'ES-CONN', // error = { code: 'ECONNREFUSED' }
+  SERVER_TIMEOUT = 'ES-TIMEOUT', // response = { data: "The upstream server is timing out" }
+  SERVER_CERT_EXPIRED = 'ES-CERT', // error = { code: 'CERT_HAS_EXPIRED' }
+  SERVER_ERROR_1 = 'ES-MSG', // body = { message: "detalle del error" }
+  SERVER_ERROR_2 = 'ES-DAT', // body = { data: "detalle del error" }
 }
 
 export enum ERROR_NAME {
-  E01 = 'ERROR DESCONOCIDO',
-  E02 = 'ERROR CONOCIDO',
+  E50 = 'ERROR DESCONOCIDO',
+  E40 = 'ERROR HTTP',
 
-  E03 = 'ERROR DE CONEXIÓN CON SERVICIO EXTERNO',
-  E04 = 'ERROR DE TIMEOUT CON SERVICIO EXTERNO',
-  E05 = 'ERROR DE CERTIFICADO CON SERVICIO EXTERNO',
+  'EDB-50' = 'ERROR DE CONSULTA CON LA BASE DE DATOS',
+  'AXS-50' = 'ERROR DE CONSULTA CON EL SERVICIO EXTERNO',
+  'EVAL-40' = 'ERROR DE VALIDACIÓN CON EL DTO',
 
-  E06 = 'ERROR DE CONSULTA CON BASE DE DATOS',
-  E07 = 'ERROR DE CONSULTA CON SERVICIO EXTERNO',
+  'ES-CONN' = 'ERROR DE CONEXIÓN CON EL SERVICIO EXTERNO',
+  'ES-TIMEOUT' = 'ERROR DE TIMEOUT CON EL SERVICIO EXTERNO',
+  'ES-CERT' = 'ERROR DE CERTIFICADO CON EL SERVICIO EXTERNO',
 
-  E08 = 'ERROR DESCONOCIDO CON SERVICIO EXTERNO (message)',
-  E09 = 'ERROR DESCONOCIDO CON SERVICIO EXTERNO (data)',
+  'ES-MSG' = 'ERROR DESCONOCIDO CON EL SERVICIO EXTERNO (message)',
+  'ES-DAT' = 'ERROR DESCONOCIDO CON EL SERVICIO EXTERNO (data)',
 }

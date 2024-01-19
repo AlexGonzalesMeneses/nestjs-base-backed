@@ -314,7 +314,7 @@ export class LoggerService {
 
       // PRINT TO CONSOLE
       const msg = info.toString()
-      const caller = getContext()
+      const caller = getContext(4)
       this.printToConsole(level, msg, caller)
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -335,7 +335,7 @@ export class LoggerService {
 
       // PRINT TO CONSOLE
       const msg = info.toString()
-      const caller = getContext()
+      const caller = getContext(5)
       this.printToConsole(level, msg, caller)
     } catch (e) {
       // eslint-disable-next-line no-console
