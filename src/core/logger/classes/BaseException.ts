@@ -268,7 +268,7 @@ export class BaseException extends Error {
           : ''
       codigo = ERROR_CODE.DTO_VALIDATION_ERROR
       httpStatus = error.getStatus()
-      mensaje = HttpMessages.EXCEPTION_BAD_REQUEST
+      mensaje = `${HttpMessages.EXCEPTION_BAD_REQUEST} (${ERROR_CODE.DTO_VALIDATION_ERROR})`
       causa = reglasDTO
       accion = `Verifique que los datos de entrada cumplan con las reglas establecidas en el DTO`
     }
