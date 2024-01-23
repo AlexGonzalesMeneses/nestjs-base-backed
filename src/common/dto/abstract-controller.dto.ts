@@ -14,7 +14,7 @@ export abstract class AbstractController {
       mensaje: message,
       datos: data,
     }
-    logger.debug(`[response] body = ${JSON.stringify(body, null, 2)}`)
+    logger.debug('[response] body = ', body)
     return body
   }
 

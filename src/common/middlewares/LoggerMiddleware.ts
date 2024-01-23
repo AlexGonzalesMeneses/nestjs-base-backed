@@ -18,15 +18,11 @@ export class LoggerMiddleware implements NestMiddleware {
     })
 
     if (Object.keys(req.query || {}).length > 0) {
-      logger.debug(
-        `[request] query = ${JSON.stringify(req.query || {}, null, 2)}`
-      )
+      logger.debug('[request] query =', req.query)
     }
 
     if (Object.keys(req.body || {}).length > 0) {
-      logger.debug(
-        `[request] body = ${JSON.stringify(req.body || {}, null, 2)}`
-      )
+      logger.debug('[request] body = ', req.body)
     }
 
     res.on('finish', () => {
