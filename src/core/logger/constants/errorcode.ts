@@ -3,8 +3,7 @@ export enum ERROR_CODE {
   HTTP_EXCEPTION = 'E-40', // error = new HttpException()
   SQL_ERROR = 'E-SQL', // error = { name: "QueryFailedError" }
   DTO_VALIDATION_ERROR = 'E-DTO', // error = new BadRequestException() - DTO
-
-  AXIOS_ERROR = 'ES-REQUEST', // error = axios().catch(err => ...)
+  SERVER_AXIOS_ERROR = 'ES-REQUEST', // error = axios().catch(err => ...)
   SERVER_CONEXION = 'ES-ECONNREFUSED', // error = { code: 'ECONNREFUSED' }
   SERVER_TIMEOUT = 'ES-TIMEOUT', // response = { data: "The upstream server is timing out" }
   SERVER_CERT_EXPIRED = 'ES-CERT', // error = { code: 'CERT_HAS_EXPIRED' }
@@ -17,8 +16,7 @@ export enum ERROR_NAME {
   'E-40' = 'Error HTTP',
   'E-SQL' = 'Error de consulta con la Base de Datos',
   'E-DTO' = 'Error de validación con el DTO',
-
-  'ES-REQUEST' = 'Error de consulta con servicio externo',
+  'ES-REQUEST' = 'Error de consulta con Servicio Externo',
   'ES-ECONNREFUSED' = 'Error de conexión con Servicio Externo',
   'ES-TIMEOUT' = 'Error de TIEMOUT con Servicio Externo',
   'ES-CERT' = 'Error de certificado con Servicio Externo',

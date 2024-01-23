@@ -295,21 +295,21 @@ export class BaseException extends Error {
                     : 'Más info en detalles'
     }
 
-    // AXIOS_ERROR
+    // SERVER_AXIOS_ERROR
     else if (
       isAxiosError(error) &&
       typeof error === 'object' &&
       'response' in error &&
       error.response
     ) {
-      codigo = ERROR_CODE.AXIOS_ERROR
+      codigo = ERROR_CODE.SERVER_AXIOS_ERROR
       httpStatus =
         typeof error.response === 'object' &&
         'status' in error.response &&
         typeof error.response.status === 'number'
           ? error.response.status
           : HttpStatus.INTERNAL_SERVER_ERROR
-      mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.AXIOS_ERROR})`
+      mensaje = `Ocurrió un error con un servicio externo (${ERROR_CODE.SERVER_AXIOS_ERROR})`
       causa = `Error HTTP ${httpStatus} (Servicio externo)`
       accion = 'Revisar la respuesta devuelta por el servicio externo'
     }
