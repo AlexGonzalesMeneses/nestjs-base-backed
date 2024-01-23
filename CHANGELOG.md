@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.3](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.9.2...v1.9.3) (2024-01-21)
+
+
+### Features
+
+* :sparkles: se agregó el decorador SetRequestTimeout para controlar el tiempo máximo de respuesta para cada petición ([79f275e](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/79f275e625f8b878c2425083b3313d3a55d99e02))
+* actualización de dependencias Nest 10.3.0, TypeORM 0.3.19, TypeScript 5.3.3 ([ac24412](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/ac24412bfd3567562a8a6f6c9123a22dd55899c0))
+* añadida regla "require-await" para asegurar el uso correcto de Async/Await ([61db7ec](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/61db7ece48b3514a3ff7a9db7f354422d2f9f35e))
+* archivo params/index.ts habilitado por defecto ([6c99421](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/6c99421771b8e72c1a1cc0386c800857af18dec0))
+* se añade regla de EsLiint que valida la ejecución de promesas no controladas ([b50064c](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/b50064c81c77589a558627448b3be78fa00ab0ae))
+
+
+### Bug Fixes
+
+* :bug: cambio de versión de bcrypt para evitar problemas cuando se despliega con docker ([074ad32](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/commit/074ad322a6ca765d57e9e99f8f48a5739f440459))
+
 ### [1.9.2](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/agetic-nestjs-base-backend/compare/v1.9.0...v1.9.2) (2023-12-03)
 
 
