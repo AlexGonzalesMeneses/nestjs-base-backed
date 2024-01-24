@@ -393,6 +393,8 @@ export class BaseException extends Error {
       opt && 'clientInfo' in opt && typeof opt.clientInfo !== 'undefined'
         ? opt.clientInfo
         : clientInfo
+
+    this.message = this.obtenerMensajeCliente()
   }
 
   getHttpStatus() {
