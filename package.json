@@ -32,7 +32,7 @@
     "seeds:run": "npm run typeorm -- migration:run -d ormconfig-seed.ts",
     "schema:drop": "npm run typeorm -- schema:drop -d ormconfig-default.ts",
     "rimraf": "./node_modules/rimraf/bin.js",
-    "compodoc": "compodoc -p tsconfig.json -o --language es-ES --disableCoverage --customLogo 'docs/imagenes/logoAgetic.png' --hideGenerator",
+    "compodoc": "compodoc -p tsconfig.json -o --language es-ES --disableCoverage --hideGenerator",
     "db:diagram": "ts-node ./node_modules/.bin/typeorm-uml ormconfig-default.ts -d ormconfig-default.ts -d docs/ERD.png",
     "prepare": "husky install",
     "check-node-version": "node ./node_modules/.bin/check-node-version",
