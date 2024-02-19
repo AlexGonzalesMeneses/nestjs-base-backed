@@ -151,7 +151,8 @@ export class AuthenticationController extends BaseController {
     const issuer = await Issuer.discover(
       this.configService.get('OIDC_ISSUER') || ''
     )
-    const url = issuer.metadata.end_session_endpoint
+    const urlEndSession = issuer.metadata.end_session_endpoint
+
     res.clearCookie('connect.sid')
     res.clearCookie('jid', jid)
     const idUsuario = req.headers.authorization
@@ -168,19 +169,24 @@ export class AuthenticationController extends BaseController {
       metadata: { usuario: idUsuario },
     })
 
-    // ciudadania v2
-    if (!(url && idToken)) {
+    // Ciudadanía v2
+    if (!(urlEndSession && idToken)) {
       return res.status(200).json()
     }
 
-    const params = idToken
-      ? `&id_token_hint=${idToken}&mensaje=${mensaje}`
-      : `&mensaje=${mensaje}`
+    const urlResponse = new URL(urlEndSession)
+
+    urlResponse.searchParams.append(
+      'post_logout_redirect_uri',
+      this.configService.get('OIDC_POST_LOGOUT_REDIRECT_URI') ?? ''
+    )
+    if (idToken) {
+      urlResponse.searchParams.append('id_token_hint', idToken)
+    }
+    urlResponse.searchParams.append('mensaje', mensaje)
 
     return res.status(200).json({
-      url: `${url}?post_logout_redirect_uri=${this.configService.get(
-        'OIDC_POST_LOGOUT_REDIRECT_URI'
-      )}${params}`,
+      url: urlResponse.toString(),
     })
   }
 }
