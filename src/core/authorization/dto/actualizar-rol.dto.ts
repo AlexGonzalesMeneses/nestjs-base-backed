@@ -10,6 +10,10 @@ export class ActualizarRolDto {
   @ApiProperty({ example: 'Administrador' })
   nombre: string
 
+  @ApiProperty({ example: 'Descripcion' })
+  @IsNotEmpty()
+  descripcion: string
+
   @ApiProperty({ example: 'ACTIVO' })
   estado?: string
 }

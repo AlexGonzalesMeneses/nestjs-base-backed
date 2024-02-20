@@ -13,7 +13,13 @@ export class RolRepository {
     return await this.dataSource
       .getRepository(Rol)
       .createQueryBuilder('rol')
-      .select(['rol.id', 'rol.rol', 'rol.nombre', 'rol.estado'])
+      .select([
+        'rol.id',
+        'rol.rol',
+        'rol.nombre',
+        'rol.descripcion',
+        'rol.estado',
+      ])
       .where({ estado: Status.ACTIVE })
       .getMany()
   }
@@ -23,7 +29,13 @@ export class RolRepository {
     const query = this.dataSource
       .getRepository(Rol)
       .createQueryBuilder('rol')
-      .select(['rol.id', 'rol.rol', 'rol.nombre', 'rol.estado'])
+      .select([
+        'rol.id',
+        'rol.rol',
+        'rol.nombre',
+        'rol.descripcion',
+        'rol.estado',
+      ])
       .take(limite)
       .skip(saltar)
 
@@ -33,6 +45,9 @@ export class RolRepository {
         break
       case 'nombre':
         query.addOrderBy('rol.nombre', sentido)
+        break
+      case 'descripcion':
+        query.addOrderBy('rol.descripcion', sentido)
         break
       case 'estado':
         query.addOrderBy('rol.estado', sentido)
