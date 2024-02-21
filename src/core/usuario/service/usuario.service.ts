@@ -483,6 +483,8 @@ export class UsuarioService extends BaseService {
       persona.nombres = personaCiudadania.nombres
       persona.primerApellido = personaCiudadania.primerApellido
       persona.segundoApellido = personaCiudadania.segundoApellido
+      persona.telefono = personaCiudadania.telefono
+      persona.uuid_ciudadania = personaCiudadania.uuid_ciudadania
 
       const usuario = await this.usuarioRepositorio.verificarExisteUsuarioPorCI(
         persona.nroDocumento,
