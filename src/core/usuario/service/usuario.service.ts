@@ -67,7 +67,7 @@ export class UsuarioService extends BaseService {
   async crear(usuarioDto: CrearUsuarioDto, usuarioAuditoria: string) {
     // verificar si el usuario ya fue registrado
     const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
-      usuarioDto.persona
+      usuarioDto.persona.nroDocumento
     )
 
     if (usuario) {
@@ -375,7 +375,9 @@ export class UsuarioService extends BaseService {
     const op = async (transaction: EntityManager) => {
       const persona = new PersonaDto()
       persona.nroDocumento = usuarioDto.usuario
-      const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
+      const usuario = await this.usuarioRepositorio.buscarUsuarioPorCI(
+        persona.nroDocumento
+      )
 
       if (usuario) {
         throw new PreconditionFailedException(Messages.EXISTING_USER)
@@ -993,7 +995,9 @@ export class UsuarioService extends BaseService {
   }
 
   async buscarUsuarioPorCI(persona: PersonaDto) {
-    return await this.usuarioRepositorio.buscarUsuarioPorCI(persona)
+    return await this.usuarioRepositorio.buscarUsuarioPorCI(
+      persona.nroDocumento
+    )
   }
 
   async actualizarContadorBloqueos(idUsuario: string, intento: number) {
