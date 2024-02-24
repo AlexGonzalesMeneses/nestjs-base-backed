@@ -975,13 +975,14 @@ export class UsuarioService extends BaseService {
         usuario.usuarioRol
           .filter((value) => value.estado === Status.ACTIVE)
           .map(async (usuarioRol) => {
-            const { id, rol, nombre } = usuarioRol.rol
+            const { id, rol, nombre, descripcion } = usuarioRol.rol
             const modulos =
               await this.authorizationService.obtenerPermisosPorRol(rol)
             return {
               idRol: id,
               rol,
               nombre,
+              descripcion,
               modulos,
             }
           })
