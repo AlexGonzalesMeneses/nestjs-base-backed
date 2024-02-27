@@ -44,11 +44,13 @@ export class Persona extends AuditoriaEntity {
   id: string
 
   @Column({
+    name: 'uuid_ciudadano',
     type: 'uuid',
     nullable: true,
+    unique: true,
     comment: 'UUID de Ciudadanía Digital',
   })
-  uuid_ciudadania?: string | null
+  uuidCiudadano?: string | null
 
   @Column({
     length: 100,

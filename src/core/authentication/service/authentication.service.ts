@@ -240,7 +240,7 @@ export class AuthenticationService extends BaseService {
         respPersona.segundoApellido !== persona.segundoApellido ||
         respPersona.fechaNacimiento !== persona.fechaNacimiento ||
         respPersona.telefono !== persona.telefono ||
-        respPersona.uuid_ciudadania !== persona.uuid_ciudadania
+        respPersona.uuidCiudadano !== persona.uuid_ciudadania
       ) {
         await this.usuarioService.actualizarDatosPersona(persona)
       }
@@ -278,7 +278,7 @@ export class AuthenticationService extends BaseService {
       datosPersona.segundoApellido !== persona.segundoApellido ||
       datosPersona.fechaNacimiento !== persona.fechaNacimiento ||
       datosPersona.telefono !== persona.telefono ||
-      datosPersona.uuid_ciudadania !== persona.uuid_ciudadania
+      datosPersona.uuidCiudadano !== persona.uuid_ciudadania
     ) {
       // Actualizar datos de persona
       await this.usuarioService.actualizarDatosPersona(persona)
