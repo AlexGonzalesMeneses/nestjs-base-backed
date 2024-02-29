@@ -6,6 +6,7 @@ import { PersonaDto } from '../../usuario/dto/persona.dto'
 import { AuthenticationService } from '../service/authentication.service'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { Messages } from 'src/common/constants/response-messages'
 
 dayjs.extend(customParseFormat)
 
@@ -87,7 +88,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.segundoApellido = nombre.segundo_apellido
       // const correoElectronico = userinfo.email;
       persona.telefono = userinfo.celular
-      persona.uuid_ciudadania = userinfo.sub
+      persona.uuidCiudadano = userinfo.sub
 
       const datosUsuario = {
         correoElectronico: userinfo.email,
@@ -105,7 +106,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       )
 
       if (!usuario || !usuario.roles || usuario.roles.length === 0) {
-        throw new UnauthorizedException()
+        throw new UnauthorizedException(Messages.EXCEPTION_UNAUTHORIZED)
       }
 
       return {
@@ -117,8 +118,12 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         exp: tokenset.expires_at,
       }
     } catch (err) {
-      process.stdout.write('')
-      throw err
+      return {
+        idToken: tokenset.id_token,
+        error: err.message || Messages.EXCEPTION_UNAUTHORIZED,
+        id: '',
+        roles: [],
+      }
     }
   }
 }
