@@ -88,7 +88,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       persona.segundoApellido = nombre.segundo_apellido
       // const correoElectronico = userinfo.email;
       persona.telefono = userinfo.celular
-      persona.uuid_ciudadania = userinfo.sub
+      persona.uuidCiudadano = userinfo.sub
 
       const datosUsuario = {
         correoElectronico: userinfo.email,
