@@ -14,7 +14,7 @@ export class LoggerMiddleware implements NestMiddleware {
         method: req.method,
         url,
       },
-      formato: `${req.method} ${url}`,
+      formato: `${req.method} ${url}...`,
     })
 
     if (Object.keys(req.query || {}).length > 0) {
