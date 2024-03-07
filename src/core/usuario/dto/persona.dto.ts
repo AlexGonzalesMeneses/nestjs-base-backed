@@ -1,12 +1,12 @@
 import { Transform } from 'class-transformer'
 import {
+  IsDateString,
   IsNotEmpty,
   IsString,
+  IsUUID,
   NombreApellido,
   NroDocumento,
-  IsDateString,
   ValidateIf,
-  IsUUID,
 } from '../../../common/validation'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional } from 'class-validator'
@@ -47,5 +47,5 @@ export class PersonaDto {
   @ApiProperty({ example: '32f26897-cd66-4d1e-9feb-b785994f6a86 ' })
   @IsOptional()
   @IsUUID()
-  uuid_ciudadania?: string | null
+  uuidCiudadano?: string | null
 }
