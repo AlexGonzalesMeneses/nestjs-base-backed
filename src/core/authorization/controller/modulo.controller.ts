@@ -45,7 +45,7 @@ export class ModuloController extends BaseController {
   @ApiOperation({ summary: 'API para crear un Módulo' })
   @ApiBody({
     type: CrearModuloDto,
-    description: 'new Modulo',
+    description: 'Esta API permite crear un nuevo módulo utilizando los datos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Post()
@@ -61,7 +61,7 @@ export class ModuloController extends BaseController {
   })
   @ApiBody({
     type: ActualizarModuloDto,
-    description: 'Modulo',
+    description: 'Esta API permite actualizar un módulo existente utilizando los datos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Patch(':id')
