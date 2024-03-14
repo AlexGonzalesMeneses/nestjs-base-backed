@@ -52,7 +52,8 @@ export class RolController extends BaseController {
   @ApiOperation({ summary: 'API para crear un rol' })
   @ApiBody({
     type: CrearRolDto,
-    description: 'new Rol',
+    description:
+      'Esta API permite crear un nuevo rol utilizando los datos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Post()
@@ -68,7 +69,8 @@ export class RolController extends BaseController {
   })
   @ApiBody({
     type: ActualizarRolDto,
-    description: 'new Rol',
+    description:
+      'Esta API permite actualizar un rol existente utilizando los datos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Patch(':id')

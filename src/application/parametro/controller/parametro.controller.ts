@@ -61,7 +61,8 @@ export class ParametroController extends BaseController {
   @ApiOperation({ summary: 'API para crear un nuevo parámetro' })
   @ApiBody({
     type: CrearParametroDto,
-    description: 'new Parametro',
+    description:
+      'Esta API permite crear un nuevo parámetro utilizando los datos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Post()
@@ -80,7 +81,8 @@ export class ParametroController extends BaseController {
   })
   @ApiBody({
     type: ActualizarParametroDto,
-    description: 'new Rol',
+    description:
+      'Esta API permite actualizar un parámetro existente utilizando los atributos proporcionados en el cuerpo de la solicitud.',
     required: true,
   })
   @Patch(':id')
