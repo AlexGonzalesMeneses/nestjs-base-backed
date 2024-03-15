@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -10,7 +10,7 @@ import {
 import { Usuario } from './usuario.entity'
 import { PersonaEstado, TiposDocumento, TiposGenero } from '../constant'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
 
 dotenv.config()
 

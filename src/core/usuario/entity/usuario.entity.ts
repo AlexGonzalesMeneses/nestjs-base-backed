@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -10,11 +10,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { UsuarioRol } from '../../authorization/entity/usuario-rol.entity'
 import { Persona } from './persona.entity'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 import { UsuarioEstado } from '../constant'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
+import { UsuarioRol } from '@/core/authorization/entity/usuario-rol.entity'
 
 dotenv.config()
 @Check(UtilService.buildStatusCheck(UsuarioEstado))

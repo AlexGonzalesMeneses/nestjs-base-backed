@@ -1,4 +1,4 @@
-import { Genero, Status, TipoDocumento } from '../../../common/constants'
+import { Genero, Status, TipoDocumento } from '@/common/constants'
 export const PersonaEstado = {
   ACTIVE: Status.ACTIVE,
   INACTIVE: Status.INACTIVE,

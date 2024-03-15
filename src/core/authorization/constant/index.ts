@@ -1,4 +1,4 @@
-import { Status } from '../../../common/constants'
+import { Status } from '@/common/constants'
 export const ModuloEstado = {
   ACTIVE: Status.ACTIVE,
   INACTIVE: Status.INACTIVE,

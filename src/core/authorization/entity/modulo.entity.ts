@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -10,8 +10,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 import { ModuloEstado } from '../constant'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
+
 dotenv.config()
 
 export type Propiedades = {

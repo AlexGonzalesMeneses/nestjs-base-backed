@@ -1,4 +1,4 @@
-import { Status } from '../../../common/constants'
+import { Status } from '@/common/constants'
 
 export enum ParametroEstado {
   ACTIVO = Status.ACTIVE,

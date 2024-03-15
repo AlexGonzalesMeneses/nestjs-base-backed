@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -9,9 +9,8 @@ import {
 } from 'typeorm'
 import { UsuarioRol } from './usuario-rol.entity'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 import { RolEstado } from '../constant'
-
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
 dotenv.config()
 
 @Check(UtilService.buildStatusCheck(RolEstado))
@@ -34,6 +33,9 @@ export class Rol extends AuditoriaEntity {
 
   @Column({ length: 100, type: 'varchar', comment: 'Nombre de rol' })
   nombre: string
+
+  @Column({ length: 255, type: 'varchar', comment: 'Descripción de rol' })
+  descripcion: string
 
   @OneToMany(() => UsuarioRol, (usuarioRol) => usuarioRol.rol)
   usuarioRol: UsuarioRol[]
