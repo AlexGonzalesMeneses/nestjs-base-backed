@@ -9,17 +9,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Rol } from './rol.entity'
-import { Status } from '../../../common/constants'
 import dotenv from 'dotenv'
 import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
 import { UtilService } from '../../../common/lib/util.service'
+import { UsuarioRolEstado } from '../constant/index'
 
 dotenv.config()
-
-export const UsuarioRolEstado = {
-  ACTIVE: Status.ACTIVE,
-  INACTIVE: Status.INACTIVE,
-}
 
 @Check(UtilService.buildStatusCheck(UsuarioRolEstado))
 @Entity({ name: 'usuarios_roles', schema: process.env.DB_SCHEMA_USUARIOS })

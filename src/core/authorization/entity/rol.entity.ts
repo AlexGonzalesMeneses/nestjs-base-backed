@@ -10,14 +10,9 @@ import {
 import { UsuarioRol } from './usuario-rol.entity'
 import dotenv from 'dotenv'
 import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
-import { Status } from '../../../common/constants'
+import { RolEstado } from '../constant'
 
 dotenv.config()
-
-export const RolEstado = {
-  ACTIVE: Status.ACTIVE,
-  INACTIVE: Status.INACTIVE,
-}
 
 @Check(UtilService.buildStatusCheck(RolEstado))
 @Entity({ name: 'roles', schema: process.env.DB_SCHEMA_USUARIOS })
