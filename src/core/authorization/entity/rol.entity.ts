@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -9,8 +9,8 @@ import {
 } from 'typeorm'
 import { UsuarioRol } from './usuario-rol.entity'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
-import { Status } from '../../../common/constants'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
+import { Status } from '@/common/constants'
 
 dotenv.config()
 

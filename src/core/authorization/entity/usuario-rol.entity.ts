@@ -1,4 +1,3 @@
-import { Usuario } from '../../usuario/entity/usuario.entity'
 import {
   BeforeInsert,
   Check,
@@ -9,10 +8,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Rol } from './rol.entity'
-import { Status } from '../../../common/constants'
+import { Status } from '@/common/constants'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
-import { UtilService } from '../../../common/lib/util.service'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
+import { UtilService } from '@/common/lib/util.service'
+import { Usuario } from '@/core/usuario/entity/usuario.entity'
 
 dotenv.config()
 

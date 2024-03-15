@@ -10,4 +10,4 @@ import { Parametro } from '@/application/parametro/entity/parametro.entity'
   providers: [ParametroService, ParametroRepository],
   imports: [TypeOrmModule.forFeature([Parametro])],
 })
-export class ParametroModule { }
+export class ParametroModule {}

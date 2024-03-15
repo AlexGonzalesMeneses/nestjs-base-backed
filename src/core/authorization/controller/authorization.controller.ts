@@ -8,8 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
-import { BaseController } from '../../../common/base'
+import { BaseController } from '@/common/base'
 import { AuthorizationService } from './authorization.service'
 import { CasbinGuard } from '../guards/casbin.guard'
 import { FiltrosPoliticasDto } from '../dto/filtros-politicas.dto'
@@ -21,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { PoliticaDto } from '../dto/politica.dto'
+import { JwtAuthGuard } from '@/core/authentication/guards/jwt-auth.guard'
 
 @ApiBearerAuth()
 @ApiTags('Autorización')

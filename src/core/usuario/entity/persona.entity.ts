@@ -1,4 +1,4 @@
-import { UtilService } from '../../../common/lib/util.service'
+import { UtilService } from '@/common/lib/util.service'
 import {
   BeforeInsert,
   Check,
@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Usuario } from './usuario.entity'
-import { Genero, Status, TipoDocumento } from '../../../common/constants'
+import { Genero, Status, TipoDocumento } from '@/common/constants'
 import dotenv from 'dotenv'
-import { AuditoriaEntity } from '../../../common/entity/auditoria.entity'
+import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
 
 dotenv.config()
 

@@ -12,9 +12,9 @@ import {
 import { ParametroService } from '../service'
 import { JwtAuthGuard } from '../../../core/authentication/guards/jwt-auth.guard'
 import { CasbinGuard } from '../../../core/authorization/guards/casbin.guard'
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
-import { BaseController } from '../../../common/base'
-import { ParamIdDto } from '../../../common/dto/params-id.dto'
+import { PaginacionQueryDto } from '@/common/dto/paginacion-query.dto'
+import { BaseController } from '@/common/base'
+import { ParamIdDto } from '@/common/dto/params-id.dto'
 import { Request } from 'express'
 import {
   ActualizarParametroDto,
