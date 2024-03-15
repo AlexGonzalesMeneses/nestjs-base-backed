@@ -10,12 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { RolService } from '../service/rol.service'
-import { BaseController } from '../../../common/base'
+import { BaseController } from '@/common/base'
 import { CasbinGuard } from '../guards/casbin.guard'
-import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
 import { CrearRolDto } from '../dto/crear-rol.dto'
-import { ParamIdDto } from '../../../common/dto/params-id.dto'
-import { PaginacionQueryDto } from '../../../common/dto/paginacion-query.dto'
+import { ParamIdDto } from '@/common/dto/params-id.dto'
+import { PaginacionQueryDto } from '@/common/dto/paginacion-query.dto'
 import { ActualizarRolDto } from '../dto/actualizar-rol.dto'
 import {
   ApiBearerAuth,
@@ -25,6 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { Request } from 'express'
+import { JwtAuthGuard } from '@/core/authentication/guards/jwt-auth.guard'
 
 @ApiTags('Roles')
 @ApiBearerAuth()

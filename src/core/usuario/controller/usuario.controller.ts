@@ -11,17 +11,15 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import { BaseController } from '../../../common/base'
-import { JwtAuthGuard } from '../../authentication/guards/jwt-auth.guard'
+import { BaseController } from '@/common/base'
 import { CrearUsuarioDto } from '../dto/crear-usuario.dto'
 import { UsuarioService } from '../service/usuario.service'
-import { Messages } from '../../../common/constants/response-messages'
-import { ParamUuidDto } from '../../../common/dto/params-uuid.dto'
+import { Messages } from '@/common/constants/response-messages'
+import { ParamUuidDto } from '@/common/dto/params-uuid.dto'
 import { ActualizarContrasenaDto } from '../dto/actualizar-contrasena.dto'
 import { ActualizarUsuarioRolDto } from '../dto/actualizar-usuario-rol.dto'
 import { CrearUsuarioCiudadaniaDto } from '../dto/crear-usuario-ciudadania.dto'
 import { FiltrosUsuarioDto } from '../dto/filtros-usuario.dto'
-import { CasbinGuard } from '../../authorization/guards/casbin.guard'
 import { CrearUsuarioCuentaDto } from '../dto/crear-usuario-cuenta.dto'
 import {
   ActivarCuentaDto,
@@ -29,7 +27,7 @@ import {
   RecuperarCuentaDto,
   ValidarRecuperarCuentaDto,
 } from '../dto/recuperar-cuenta.dto'
-import { ParamIdDto } from '../../../common/dto/params-id.dto'
+import { ParamIdDto } from '@/common/dto/params-id.dto'
 import {
   ApiBearerAuth,
   ApiBody,
@@ -40,6 +38,8 @@ import {
 } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import { Request } from 'express'
+import { CasbinGuard } from '@/core/authorization/guards/casbin.guard'
+import { JwtAuthGuard } from '@/core/authentication/guards/jwt-auth.guard'
 
 @Controller('usuarios')
 @ApiTags('Usuarios')
