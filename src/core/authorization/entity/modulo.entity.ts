@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import dotenv from 'dotenv'
+import { ModuloEstado } from '../constant'
 import { AuditoriaEntity } from '@/common/entity/auditoria.entity'
-import { Status } from '@/common/constants'
 
 dotenv.config()
 
@@ -19,11 +19,6 @@ export type Propiedades = {
   icono?: string
   descripcion?: string
   orden: number
-}
-
-export const ModuloEstado = {
-  ACTIVE: Status.ACTIVE,
-  INACTIVE: Status.INACTIVE,
 }
 
 @Check(UtilService.buildStatusCheck(ModuloEstado))
