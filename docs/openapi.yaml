@@ -4,9 +4,7 @@ info:
   version: '1.0'
   description: Documentación Backend base - NestJS
   contact:
-    name: agetic@agetic.gob.bo
-servers:
-  - url: 'https://base.agcs.agetic.gob.bo/ws/api'
+    name: Ingenieros anónimos
 paths:
   /estado:
     get:

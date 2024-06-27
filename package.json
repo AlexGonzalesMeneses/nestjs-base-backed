@@ -1,8 +1,8 @@
 {
-  "name": "agetic-nestjs-base-backend",
+  "name": "nestjs-base-backend",
   "version": "1.11.1",
   "description": "Backend base con Nest.js, TypeORM y TypeScript",
-  "author": "agetic@agetic.gob.bo",
+  "author": "Ingenieros anónimos",
   "private": true,
   "license": "LPG-Bolivia",
   "scripts": {

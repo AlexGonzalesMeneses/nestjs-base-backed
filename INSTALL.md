@@ -13,12 +13,8 @@
 
 ### Clonación del proyecto e instalación de dependencias
 
-```bash
-# Clonación del proyecto
-git clone git@gitlab.agetic.gob.bo:agetic/agetic/proyectos-base/agetic-nestjs-base-backend.git
-
 # Ingresamos dentro de la carpeta del proyecto
-cd agetic-nestjs-base-backend
+cd nestjs-base-backend
 
 # Cambiamos a la rama develop
 git checkout develop
@@ -204,12 +200,3 @@ npm run seeds:run
 | `LOG_LOKI_PASSWORD`       |                   | Indica la contraseña de usuario para autenticarse con el servicio de loki.                 |
 | `LOG_LOKI_BATCHING`       | `true`            | Habilitado el envío de logs por lote cuando se utiliza loki.                               |
 | `LOG_LOKI_BATCH_INTERVAL` | `5`               | Tiempo en segundos para el envío de logs con loki si `LOG_BATCHING=true`.                  |
-
-### Monitoreo de logs
-
-Para más info sobre los códigos de error ver el archivo [src/core/logger/README.md](./src/core/logger/README.md)
-
-Esta configuración es opcional y se utiliza para visualizar logs en tiempo real. Puede encontrar más información
-respecto al despliegue de estos servicios en el siguiente enlace:
-
-- [Proyectos Base / Utilidades / Gestión Logs](https://gitlab.agetic.gob.bo/agetic/agetic/proyectos-base/utilidades/gestion-logs)
