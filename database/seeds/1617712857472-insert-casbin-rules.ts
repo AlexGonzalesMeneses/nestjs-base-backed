@@ -14,6 +14,11 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         [RolEnum.TECNICO]: 'read',
       },
 
+      '/admin/clientes': {
+        [RolEnum.ADMINISTRADOR]: 'read|update|create',
+        [RolEnum.TECNICO]: 'read',
+      },
+
       '/admin/modulos': {
         [RolEnum.ADMINISTRADOR]: 'read|update|create',
       },
@@ -112,6 +117,14 @@ export class insertCasbinRules1617712857472 implements MigrationInterface {
         [RolEnum.TECNICO]: 'GET|POST',
       },
       '/api/parametros/:id': {
+        [RolEnum.ADMINISTRADOR]: 'PATCH',
+      },
+
+      '/api/clientes': {
+        [RolEnum.ADMINISTRADOR]: 'GET|POST',
+        [RolEnum.TECNICO]: 'GET|POST',
+      },
+      '/api/clientes/:id': {
         [RolEnum.ADMINISTRADOR]: 'PATCH',
       },
 

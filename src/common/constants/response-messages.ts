@@ -46,4 +46,8 @@ export enum Messages {
 
   // Parámetros
   REPEATED_PARAMETER = 'Parámetro repetido.',
+
+  // Clientes
+  REPEATED_CLIENT = 'Cliente repetido',
+  NOT_FOUND_CLIENT = 'No se encontro al cliente.',
 }
